@@ -26,12 +26,13 @@ __title__="FreeCAD PyFlow"
 __url__ = "http://www.freecadbuch.de"
 __vers__ ="0.01"
 
-import PyFlow
+import nodeeditor
+
 
 import os
 import re
 global __dir__
-__dir__ = os.path.dirname(PyFlow.__file__)
+__dir__ = os.path.dirname(nodeeditor.__file__)
 
 import sys
 
@@ -188,12 +189,18 @@ if FreeCAD.GuiUp:
 	current=[]
 	_current=[]
 
-	current += [c3bI(["nodeeditor"], always, 'fc_nodeeditor', 'test_AA',icon="/../icons/AA")]
-	current += [c3bI(["nodeeditor"], always, 'fc_nodeeditor', 'test_BB',icon="/../icons/BB")]
-	current += [c3bI(["nodeeditor"], always, 'fc_nodeeditor', 'reset',icon=None)]
-	current += [c3bI(["nodeeditor"], always, 'fc_nodeeditor', 'T1',icon=None)]
-	current += [c3bI(["nodeeditor"], always, 'fc_nodeeditor', 'T2',icon=None)]
-	current += [c3bI(["nodeeditor"], always, 'fc_nodeeditor', 'T3',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_AA',icon="/../icons/AA")]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_BB',icon="/../icons/BB")]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'reset',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'T1',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'T2',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'T3',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'hide PyFlow',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'show PyFlow',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'save Graph',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'load Graph',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'clear Graph',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'load File',icon=None)]
 
 	toolbars = [
 				['Tools', tools],
@@ -266,3 +273,4 @@ static char * nurbs_xpm[] = {
 
 
 FreeCADGui.addWorkbench(PyFlow(toolbars, __vers__))
+

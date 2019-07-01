@@ -3,6 +3,12 @@ from FreeCAD import Vector as MVector
 
 #from nodeeditor.wrapper import MVector # as Vector
 
+import numpy as np
+
+class Array(object):
+	def __init__(self,dat=[]):
+		self.dat=np.array(dat)
+
 from PyFlow.Core import(
     FunctionLibraryBase,
     IMPLEMENT_NODE
@@ -16,10 +22,35 @@ class Vector(FunctionLibraryBase):
 
     @staticmethod
     @IMPLEMENT_NODE(returns=('VectorPin', MVector()), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})
-    def vecCreate():
-        '''Zero Vector.'''
+    def vecCreate( X=('FloatPin', 0), Y=('FloatPin', 0), Z=('FloatPin', 0)):
+        ''' vector by coordinates X, Y, Z.'''
+        v = MVector(X,Y,Z)
+        return v
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('VectorPin', MVector()), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})
+    def vecArray ( X=('ArrayPin', Array())):
+        ''' vector by coordinates X, Y, Z.'''
         v = MVector()
         return v
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('FloatPin', 0), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})
+    def vecX( Vector=('VectorPin', MVector())):
+        ''' vector coordinate x'''
+        return Vector.x
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('FloatPin', 0), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})
+    def vecY( Vector=('VectorPin', MVector())):
+        ''' vector coordinate y'''
+        return Vector.y
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('FloatPin', 0), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})
+    def vecZ( Vector=('VectorPin', MVector())):
+        ''' vector coordinate z'''
+        return Vector.z
 
     @staticmethod
     @IMPLEMENT_NODE(returns=("FloatPin", 0.0), meta={'Category': 'Vector', 'Keywords': ['vector', '|', 'dot', 'product']})

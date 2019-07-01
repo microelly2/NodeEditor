@@ -42,7 +42,7 @@ class VectorPin(PinBase):
 
     @staticmethod
     def color():
-        return (170, 100, 200, 255)
+        return (200, 200, 50, 255)
 
     @staticmethod
     def pinDataTypeHint():

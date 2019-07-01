@@ -40,7 +40,7 @@ class RotationPin(PinBase):
 
     @staticmethod
     def color():
-        return (170, 100, 200, 255)
+        return (200, 50, 50, 255)
 
     @staticmethod
     def pinDataTypeHint():

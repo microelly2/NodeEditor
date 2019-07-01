@@ -9,7 +9,6 @@ from PyFlow.Core.Common import *
 
 class PlacementEncoder(json.JSONEncoder):
     def default(self, vec3):
-        say("encode")
         if isinstance(vec3, Placement):
             return {Placement.__name__: []}
         json.JSONEncoder.default(self, vec3)
@@ -20,7 +19,6 @@ class PlacementDecoder(json.JSONDecoder):
         super(PlacementDecoder, self).__init__(object_hook=self.object_hook, *args, **kwargs)
 
     def object_hook(self, vec3Dict):
-        say("decode hook")
         return Placement()
         #return Placement(vec3Dict[Placement.__name__])
 
