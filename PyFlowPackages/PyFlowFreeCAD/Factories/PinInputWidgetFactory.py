@@ -17,8 +17,8 @@ FLOAT_DECIMALS = 5
 import numpy as np
 
 class Array(object):
-	def __init__(self,dat=[]):
-		self.dat=np.array(dat)
+    def __init__(self,dat=[]):
+        self.dat=np.array(dat)
 
 class VectorInputWidget(InputWidgetRaw):
     """Vector3 data input widget"""
@@ -298,7 +298,8 @@ class ArrayInputWidget(InputWidgetRaw):
         #self.dsbZ.setValue(val.z)
         pass
 
-    def resizeEvent(self, event):
+    def XresizeEvent(self, event):
+        
         if self.width() < 260:
             for x in [self.dsbX, self.dsbY, self.dsbZ]:
                 x.hideSlider()
@@ -307,6 +308,9 @@ class ArrayInputWidget(InputWidgetRaw):
             for x in [self.dsbX, self.dsbY, self.dsbZ]:
                 x.showSlider()
                 x.showLabel()
+        super(ArrayInputWidget, self).resizeEvent(event)
+
+    def resizeEvent(self, event):
         super(ArrayInputWidget, self).resizeEvent(event)
 
 
@@ -830,6 +834,8 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     if dataType == 'PlacementPin':
         return PlacementInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
     if dataType == 'ArrayPin':
+        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+    if dataType == 'FCobjPin':
         return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
 
 

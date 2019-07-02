@@ -27,12 +27,12 @@ class Vector(FunctionLibraryBase):
         v = MVector(X,Y,Z)
         return v
 
-    @staticmethod
-    @IMPLEMENT_NODE(returns=('VectorPin', MVector()), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})
-    def vecArray ( X=('ArrayPin', Array())):
-        ''' vector by coordinates X, Y, Z.'''
-        v = MVector()
-        return v
+#    @staticmethod
+#    @IMPLEMENT_NODE(returns=('VectorPin', MVector()), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})
+#    def vecArray ( X=('ArrayPin', Array())):
+#        ''' vector by coordinates X, Y, Z.'''
+#        v = MVector()
+#        return v
 
     @staticmethod
     @IMPLEMENT_NODE(returns=('FloatPin', 0), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})

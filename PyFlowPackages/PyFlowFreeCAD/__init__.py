@@ -8,6 +8,7 @@ from PyFlow.Packages.PyFlowFreeCAD.Pins.VectorPin import VectorPin
 from PyFlow.Packages.PyFlowFreeCAD.Pins.RotationPin import RotationPin
 from PyFlow.Packages.PyFlowFreeCAD.Pins.PlacementPin import PlacementPin
 from PyFlow.Packages.PyFlowFreeCAD.Pins.ArrayPin import ArrayPin
+from PyFlow.Packages.PyFlowFreeCAD.Pins.FCobjPin import FCobjPin
 
 # Function based nodes
 from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Vector import Vector
@@ -18,6 +19,7 @@ from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Placement import Placement
 from PyFlow.Packages.PyFlowFreeCAD.Factories.PinInputWidgetFactory import getInputWidget
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import FreeCAD_Placement
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import FreeCAD_Object
 
 _FOO_LIBS = {
     Vector.__name__: Vector(PACKAGE_NAME),
@@ -27,6 +29,7 @@ _FOO_LIBS = {
 
 _NODES = {
 	FreeCAD_Placement.__name__: FreeCAD_Placement,
+	FreeCAD_Object.__name__: FreeCAD_Object,
 
 }
 
@@ -35,6 +38,7 @@ _PINS = {
     RotationPin.__name__: RotationPin,
     PlacementPin.__name__: PlacementPin,
 	ArrayPin.__name__: ArrayPin,
+	FCobjPin.__name__: FCobjPin,
 }
 
 
