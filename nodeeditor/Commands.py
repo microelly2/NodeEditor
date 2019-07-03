@@ -242,9 +242,9 @@ def test_AA():
 	a=pfwrap.getGraphManager()
 	gg=a.getAllGraphs()[0]
 
-	fpath='/home/thomas/Schreibtisch/ax.json'
+	tempd=instance.getTempDirectory()
+	fpath=tempd+'/_refreshguiswap.json'
 	saveData = gg.serialize()
-	say("------------------")
 
 	with open(fpath, 'w') as f:
 		json.dump(saveData, f, indent=4)
@@ -405,5 +405,6 @@ def loadFile():
 
 
 def T2():
-		box=FreeCAD.ActiveDocument.addObject("Part::Box","Box")
-		box2=FreeCAD.ActiveDocument.addObject("Part::Box","Box")
+	instance=pfwrap.getInstance()
+	t=instance.getTempDirectory()
+	say(t)
