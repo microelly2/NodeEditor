@@ -183,6 +183,7 @@ def scene_B(instance):
 	fpo2.setPosition(300,-100)
 	gg.addNode(fpo2)
 	connection = pfwrap.connect(fpo,'Object', fpo2,'ObjectA')
+	connection = pfwrap.connect(fpo,'Shape_out', fpo2,'Shape_in')
 	connection = pfwrap.connect(fpo,'outExec', fpo2,'inExec')
 	connection = pfwrap.connect(fpo2,'outExec', printNode,'inExec')
 	connection = pfwrap.connect(fpo2,'Object', printNode,'entity')
@@ -408,3 +409,29 @@ def T2():
 	instance=pfwrap.getInstance()
 	t=instance.getTempDirectory()
 	say(t)
+
+def T2():
+	import store
+	reload (store)
+	if 0:
+		store.store().addid(T2)
+		store.store().addid(T3)
+		store.store().addid(loadFile)
+	store.store().add(id(store),store)
+	store.store().add(id(store),store)
+	v=pfwrap
+	j="pyflpw"
+	store.store().add(j,v)
+	store.store().list()
+
+
+
+def T2():
+	'''logger clear'''
+	instance=pfwrap.getInstance()
+	for t in instance._tools:
+		if t.name() == 'Logger':
+			say(t)
+			t.clearView()
+			t.hide()
+

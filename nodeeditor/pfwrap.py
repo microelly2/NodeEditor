@@ -37,10 +37,9 @@ def deleteInstance():
 def getInstance():
 
 	try:
-		say("try FreeCAD.PF ...")
 		return FreeCAD.PF
 	except:
-		say("fails, recreate FreeCAD.PF! ")
+		pass
 	try: INITIALIZE()
 	except: pass
 
@@ -65,7 +64,7 @@ def getInstance():
 		NodeBase,
 		GraphManager
 	)
-
+	print ("create instance")
 	return instance
 
 from PyFlow import(

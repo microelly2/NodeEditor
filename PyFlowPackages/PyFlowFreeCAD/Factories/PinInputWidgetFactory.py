@@ -837,6 +837,8 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
         return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
     if dataType == 'FCobjPin':
         return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+    if dataType == 'ShapePin':
+        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
 
 
     if dataType == 'FloatVector3Pin':

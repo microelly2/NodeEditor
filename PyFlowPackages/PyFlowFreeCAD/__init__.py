@@ -8,7 +8,8 @@ from PyFlow.Packages.PyFlowFreeCAD.Pins.VectorPin import VectorPin
 from PyFlow.Packages.PyFlowFreeCAD.Pins.RotationPin import RotationPin
 from PyFlow.Packages.PyFlowFreeCAD.Pins.PlacementPin import PlacementPin
 from PyFlow.Packages.PyFlowFreeCAD.Pins.ArrayPin import ArrayPin
-from PyFlow.Packages.PyFlowFreeCAD.Pins.FCobjPin import FCobjPin
+from PyFlow.Packages.PyFlowFreeCAD.Pins.FCobjPin import FCobjPin,ShapePin
+
 
 # Function based nodes
 from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Vector import Vector
@@ -17,6 +18,11 @@ from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Placement import Placement
 
 # Factories
 from PyFlow.Packages.PyFlowFreeCAD.Factories.PinInputWidgetFactory import getInputWidget
+
+
+#from PyFlow.Packages.PyFlowBase.Factories.UIPinFactory import createUIPin
+from PyFlow.Packages.PyFlowFreeCAD.Factories.UINodeFactory import createUINode
+
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import FreeCAD_Placement
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import FreeCAD_Object
@@ -39,6 +45,7 @@ _PINS = {
     PlacementPin.__name__: PlacementPin,
 	ArrayPin.__name__: ArrayPin,
 	FCobjPin.__name__: FCobjPin,
+	ShapePin.__name__: ShapePin,
 }
 
 
@@ -68,3 +75,15 @@ class PyFlowFreeCAD(IPackage):
     @staticmethod
     def PinsInputWidgetFactory():
         return getInputWidget
+
+
+
+
+#    @staticmethod
+ #   def UIPinsFactory():
+  #      return createUIPin
+
+    @staticmethod
+    def UINodesFactory():
+        return createUINode
+
