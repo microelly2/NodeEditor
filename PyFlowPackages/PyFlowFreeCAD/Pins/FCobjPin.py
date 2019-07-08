@@ -105,3 +105,49 @@ class ShapePin(FCobjPin):
         #say("FCobj Pin Processing send data!:",data,data.__class__.__name__)
         #return FCobjPin.internalDataStructure()(data)
         return data
+
+class EnumSelection():
+    pass
+
+
+class EnumerationPin(FCobjPin):
+    """doc string for FloatFCobjPin"""
+    def __init__(self, name, parent, direction, **kwargs):
+        say("QQcreate pin",name,parent.getName())
+        super(EnumerationPin, self).__init__(name, parent, direction, **kwargs)
+        self.values=["tic","tac","toe"]
+        self.setDefaultValue(self.values[0])
+
+
+    def x__init__(self, name, parent, direction, **kwargs):
+        say("create pin",name,parent.getName())
+        super(EnumerationPin, self).__init__(name, parent, direction, **kwargs)
+        self.setDefaultValue(None)
+
+
+
+    @staticmethod
+    def IsValuePin():
+        return True
+
+    @staticmethod
+    def supportedDataTypes():
+        return ('ShapePin',None)
+
+    @staticmethod
+    def color():
+        return (150, 150, 0, 255)
+
+    @staticmethod
+    def pinDataTypeHint():
+        return 'EnumerationPin', None
+
+    @staticmethod
+    def internalDataStructure():
+        return EnumSelection
+
+    @staticmethod
+    def processData(data):
+        #say("FCobj Pin Processing send data!:",data,data.__class__.__name__)
+        #return FCobjPin.internalDataStructure()(data)
+        return data
