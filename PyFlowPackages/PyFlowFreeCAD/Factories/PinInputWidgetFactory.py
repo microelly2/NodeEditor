@@ -9,12 +9,52 @@ from PyFlow.UI.Widgets.InputWidgets import *
 from PyFlow.UI.Widgets.QtSliders import pyf_Slider
 
 from Qt import QtWidgets
+from Qt import QtCore
+from Qt.QtWidgets import *
+
 
 FLOAT_SINGLE_STEP = 0.01
 FLOAT_DECIMALS = 5
 
 
 import numpy as np
+from nodeeditor.say import *
+
+
+class EnumerationInputWidget(InputWidgetSingle):
+    """
+    String list selection input widget
+    """
+
+    def __init__(self, parent=None, **kwds):
+        super(EnumerationInputWidget, self).__init__(parent=parent, **kwds)
+
+        self.le = QComboBox(self)
+        self.setWidget(self.le)
+        self.le.currentIndexChanged.connect(lambda:self.dataSetCallback(self.le.currentText()))
+
+
+    def blockWidgetSignals(self, bLocked):
+        self.le.blockSignals(bLocked)
+
+    def setWidgetValue(self, val):
+        try:
+            ix=self.pin._rawPin.values.index(val)
+        except:
+            ix=0
+        self.le.setCurrentIndex(ix)
+
+    def runpin(self):
+        '''set data from sel.pin._rawPin'''
+        d=self.pin._rawPin._data
+        for i,item in enumerate(self.pin._rawPin.values):
+            self.le.addItem(item)
+        try:
+            ix=self.pin._rawPin.values.index(d)
+        except:
+            ix=0
+        self.le.setCurrentIndex(ix)
+
 
 class Array(object):
     def __init__(self,dat=[]):
@@ -827,6 +867,7 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     '''
     factory method
     '''
+    
     if dataType == 'VectorPin':
         return VectorInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
     if dataType == 'RotationPin':
@@ -839,6 +880,9 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
         return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
     if dataType == 'ShapePin':
         return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+
+    if dataType == 'EnumerationPin':
+        return EnumerationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
 
 
     if dataType == 'FloatVector3Pin':
