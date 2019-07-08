@@ -94,7 +94,7 @@ class FreeCAD_Object(NodeBase):
 			say("s:::::::",s)
 			if s <>  None:
 				say("!!!!!!!!!!!!!!!!!!!!show")
-				Part.show(s)
+				#Part.show(s)
 
 			#store.store().dela(shapein)
 			store.store().list()
@@ -108,8 +108,6 @@ class FreeCAD_Object(NodeBase):
 			say ("nothing found")
 			c=None
 
-		print("input object from pin",self.obja,"getData ..",self.obja.getData())
-
 		# use the input object
 		if self.obja.getData() == None:
 			say( "no input object")
@@ -118,9 +116,45 @@ class FreeCAD_Object(NodeBase):
 			c=FreeCAD.ActiveDocument.getObject(self.obja.getData())
 			
 
+
 		# if this is not possible fall back to the given name for the obj
 		if c== None:
 			c=FreeCAD.ActiveDocument.getObject(self.vobjname.getData())
+
+
+		say("!!",self.uid)
+		say(str(self.uid))
+		yid="ID_"+str(self.uid)
+		yid=yid.replace('-','_')
+		say(str(self.uid).replace('-','_'))
+
+		if 1 or c==None:
+			cc=FreeCAD.ActiveDocument.getObject(yid)
+
+		if cc == None:
+			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
+		say("created",cc.Name,yid)
+
+
+		print("input object from pin",self.obja,"getData ..",self.obja.getData())
+
+		if shapein <> None:
+			say("shapein",shapein)
+			s=store.store().get(shapein)
+			
+			#
+			say("s:::::::",s)
+			if s <>  None:
+				say("!!!!!!!!!!!!!!!!!!!!show")
+				#Part.show(s)
+
+			#store.store().dela(shapein)
+			store.store().list()
+
+			if s <> None:
+					say("!!!!!!!!!!!!!!!!!!!!show")
+					cc.Shape=s
+
 
 		if c == None:
 			self.obj.setData(None)
@@ -139,3 +173,122 @@ class FreeCAD_Object(NodeBase):
 		say ("data set to output object is done, exex...")
 		self.outExec.call()
 		say ("Ende exec for ---",self.getName())
+
+
+
+
+class FreeCAD_Toy(NodeBase):
+	'''erzeuge eine zufallsBox'''
+
+	def __init__(self, name):
+
+		super(FreeCAD_Toy, self).__init__(name="MyToy")
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		name="MyToy"
+		self.objname.setData(name)
+
+	def compute(self, *args, **kwargs):
+
+		say ("in compute",self.getName(),"objname is",self.objname.getData())
+
+		yid="ID_"+str(self.uid)
+		yid=yid.replace('-','_')
+		say(str(self.uid).replace('-','_'))
+
+		cc=FreeCAD.ActiveDocument.getObject(yid)
+
+		if cc == None:
+			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
+
+			say("created",cc.Name,yid)
+
+		cc.Label=self.objname.getData()
+
+		import Part
+		import random
+		shape=Part.makeBox(10+30*random.random(),10+30*random.random(),10+30*random.random())
+		cc.Shape=shape
+
+		if self.part.hasConnections():
+			say("sende an Part")
+			if cc == None:
+				self.part.setData(None)
+			else:
+				self.part.setData(cc.Name)
+		say ("data set to output object is done, exex...")
+		self.outExec.call()
+		say ("Ende exec for ---",self.getName())
+
+
+
+class FreeCAD_Bar(NodeBase):
+	'''fusion of two parts example'''
+	def __init__(self, name):
+
+		super(FreeCAD_Bar, self).__init__(name="Fusion")
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.part1 = self.createInputPin('Part_in1', 'FCobjPin')
+		self.part2 = self.createInputPin('Part_in2', 'FCobjPin')
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.mode = self.createInputPin('mode', 'EnumerationPin')
+		self.mode.values=["tic","tac","toe"]
+		self.mode.setData("toe")
+
+		self.objname.setData(name)
+
+	def compute(self, *args, **kwargs):
+
+		say ("in compute",self.getName(),"objname is",self.objname.getData())
+
+		yid="ID_"+str(self.uid)
+		yid=yid.replace('-','_')
+		say(str(self.uid).replace('-','_'))
+
+		cc=FreeCAD.ActiveDocument.getObject(yid)
+		if cc == None:
+			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
+			say("created",cc.Name,yid)
+
+		cc.Label=self.objname.getData()
+
+
+		import Part
+
+		say("getData:",self.part1.getData(),self.part1.getData().__class__)
+		say("!",self.part1,self.part1.__class__)
+		
+		part1=FreeCAD.ActiveDocument.getObject(self.part1.getData())
+		part2=FreeCAD.ActiveDocument.getObject(self.part2.getData())
+		if part1 <> None and part2 <> None:
+			say("parts 1 2")
+			say(part1.Name)
+			say(part2.Name)
+			shape=part1.Shape.fuse(part2.Shape)
+			cc.Shape=shape
+		else:
+			cc.Shape=Part.Shape()
+
+		if self.part.hasConnections():
+			say("sende an Part")
+			if cc == None:
+				self.part.setData(None)
+			else:
+				self.part.setData(cc.Name)
+		say ("data set to output object is done, exex...")
+		self.outExec.call()
+		say ("Ende exec for ---",self.getName())
+
+
+
+
+
+
+
+
+class FreeCAD_Foo(NodeBase):
+	pass
