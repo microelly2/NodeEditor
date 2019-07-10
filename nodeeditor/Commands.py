@@ -58,7 +58,7 @@ def test_AA():
 	FreeCAD.Console.PrintMessage("\ntest_A\n")
 
 
-def reset():
+def XXreset():
 	try:
 		FreeCAd.t.hide()
 	except:
@@ -262,12 +262,114 @@ def scene_C(instance):
 
 
 
+def scene_D(instance):
+
+	clearGraph()
+	a=pfwrap.getGraphManager()
+	gg=a.getAllGraphs()[0]
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","Boxxy")
+	t.setPosition(-200,-200)
+	gg.addNode(t)
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 def test_AA():
+
+	instance=pfwrap.getInstance()
+	say(instance)
+	instance.show()
+
+	a=pfwrap.getGraphManager()
+
+	from PyFlow import(
+		INITIALIZE,
+		GET_PACKAGES
+	)
+
+
+	from PyFlow.Core import(
+		GraphBase,
+		PinBase,
+		NodeBase,
+		GraphManager
+	)
+
+	scene_A(instance)
+	#scene_B(instance)
+	#scene_C(instance)
+
+	#refresh gui ...
+	a=pfwrap.getGraphManager()
+	gg=a.getAllGraphs()[0]
+	
+
+	tempd=instance.getTempDirectory()
+	fpath=tempd+'/_refreshguiswap.json'
+	saveData = gg.serialize()
+
+	with open(fpath, 'w') as f:
+		json.dump(saveData, f, indent=4)
+
+	with open(fpath, 'r') as f:
+		data = json.load(f)
+		FreeCAD.data=data
+		instance.loadFromData(data, fpath)
+
+def test_BB():
+
+	instance=pfwrap.getInstance()
+	say(instance)
+	instance.show()
+
+	a=pfwrap.getGraphManager()
+
+	from PyFlow import(
+		INITIALIZE,
+		GET_PACKAGES
+	)
+
+
+	from PyFlow.Core import(
+		GraphBase,
+		PinBase,
+		NodeBase,
+		GraphManager
+	)
+
+	#scene_A(instance)
+	scene_B(instance)
+	#scene_C(instance)
+
+	#refresh gui ...
+	a=pfwrap.getGraphManager()
+	gg=a.getAllGraphs()[0]
+	
+
+	tempd=instance.getTempDirectory()
+	fpath=tempd+'/_refreshguiswap.json'
+	saveData = gg.serialize()
+
+	with open(fpath, 'w') as f:
+		json.dump(saveData, f, indent=4)
+
+	with open(fpath, 'r') as f:
+		data = json.load(f)
+		FreeCAD.data=data
+		instance.loadFromData(data, fpath)
+
+def test_CC():
 
 	instance=pfwrap.getInstance()
 	say(instance)
@@ -310,15 +412,65 @@ def test_AA():
 		instance.loadFromData(data, fpath)
 
 
+def test_DD():
 
-def test_BB():
+	instance=pfwrap.getInstance()
+	say(instance)
+	instance.show()
+
+	a=pfwrap.getGraphManager()
+
+	from PyFlow import(
+		INITIALIZE,
+		GET_PACKAGES
+	)
+
+
+	from PyFlow.Core import(
+		GraphBase,
+		PinBase,
+		NodeBase,
+		GraphManager
+	)
+
+	#scene_A(instance)
+	#scene_B(instance)
+	scene_D(instance)
+
+	#refresh gui ...
+	a=pfwrap.getGraphManager()
+	gg=a.getAllGraphs()[0]
+	
+
+	tempd=instance.getTempDirectory()
+	fpath=tempd+'/_refreshguiswap.json'
+	saveData = gg.serialize()
+
+	with open(fpath, 'w') as f:
+		json.dump(saveData, f, indent=4)
+
+	with open(fpath, 'r') as f:
+		data = json.load(f)
+		FreeCAD.data=data
+		instance.loadFromData(data, fpath)
+
+
+
+def test_CC():
 	#import nodeeditior
 	mm=pfwrap.getGraphManager()
 	for n in mm.getAllNodes():
 		print n.getName()
-		if n.getName() =='MySequence':
+		if n.getName() =='Boxxy':
 			FreeCAD.n=n
 
+
+def reset():
+	'''file laden und graph anzeigen testcase'''
+	showPyFlow()
+	import FreeCAD
+	FreeCAD.open(u"/home/thomas/aa.FCStd")
+	loadGraph()
 
 class MyDockWidget(QDockWidget):
 

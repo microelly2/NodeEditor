@@ -1,6 +1,7 @@
 import FreeCAD,FreeCADGui
 from PythonObjects import FeaturePython,ViewProvider
 import pfwrap
+from nodeeditor.say import *
 
 def _PyFlowGraph(FeaturePython):
 

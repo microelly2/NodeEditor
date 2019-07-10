@@ -228,6 +228,70 @@ class FreeCAD_Toy(NodeBase):
 		say ("Ende exec for ---",self.getName())
 
 
+def getDatalist(node,pinnames):
+	namelist=pinnames.split()
+	ll=[node.getPinN(a).getData() for a in namelist]
+	return ll
+
+def applyPins(node,ff,zz):
+	zz2=getDatalist(node,zz)
+	return ff(*zz2)
+
+
+
+class FreeCAD_Box(NodeBase):
+	'''erzeuge einer Part.Box'''
+
+	def __init__(self, name="MyToy"):
+
+		super(FreeCAD_Box, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.randomize = self.createInputPin("randomize", 'BoolPin')
+		self.length = self.createInputPin("length", 'FloatPin')
+		self.width = self.createInputPin("width", 'FloatPin')
+		self.height = self.createInputPin("height", 'FloatPin')
+		self.position = self.createInputPin("position", 'VectorPin')
+		self.direction = self.createInputPin("direction", 'VectorPin')
+
+		name="MyBox"
+		self.objname.setData(name)
+		self.length.setData(10)
+		self.width.setData(20)
+		self.height.setData(30)
+		self.position.setData(FreeCAD.Vector(10,20,30))
+		self.direction.setData(FreeCAD.Vector(0,0,1))
+
+	def compute(self, *args, **kwargs):
+
+		yid="ID_"+str(self.uid)
+		yid=yid.replace('-','_')
+
+		cc=FreeCAD.ActiveDocument.getObject(yid)
+		if cc == None:
+			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
+
+		cc.Label=self.objname.getData()
+
+		import Part
+		shape=applyPins(self,Part.makeBox,"length width height position direction")
+
+		cc.Shape=shape
+
+		if self.part.hasConnections():
+			say("sende an Part")
+			if cc == None:
+				self.part.setData(None)
+			else:
+				self.part.setData(cc.Name)
+		self.outExec.call()
+		import FreeCADGui
+		FreeCADGui.SendMsgToActiveView("ViewFit")
+		
+
+
 
 class FreeCAD_Bar(NodeBase):
 	'''boolean ops of two parts example'''
@@ -316,4 +380,4 @@ class FreeCAD_Foo(NodeBase):
 
 
 def nodelist():
-	return [FreeCAD_Foo,FreeCAD_Toy,FreeCAD_Bar,FreeCAD_Object]
+	return [FreeCAD_Foo,FreeCAD_Toy,FreeCAD_Bar,FreeCAD_Object,FreeCAD_Box]

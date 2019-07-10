@@ -191,6 +191,8 @@ if FreeCAD.GuiUp:
 
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_AA',icon="/../icons/AA")]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_BB',icon="/../icons/BB")]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_CC',icon="/../icons/CC")]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_DD',icon="/../icons/DD")]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'reset',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'T1',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'T2',icon=None)]
