@@ -9,6 +9,8 @@ import Part
 
 import nodeeditor.store as store
 
+
+
 # exmaple shape
 def createShape(a):
 
@@ -180,13 +182,14 @@ class FreeCAD_Object(NodeBase):
 class FreeCAD_Toy(NodeBase):
 	'''erzeuge eine zufallsBox'''
 
-	def __init__(self, name):
+	def __init__(self, name="MyToy"):
 
-		super(FreeCAD_Toy, self).__init__(name="MyToy")
+		super(FreeCAD_Toy, self).__init__(name)
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 		self.part = self.createOutputPin('Part', 'FCobjPin')
 		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.randomize = self.createInputPin("randomize", 'BoolPin')
 		name="MyToy"
 		self.objname.setData(name)
 
@@ -209,7 +212,9 @@ class FreeCAD_Toy(NodeBase):
 
 		import Part
 		import random
-		shape=Part.makeBox(10+30*random.random(),10+30*random.random(),10+30*random.random())
+		
+		f=30 if self.randomize.getData() else 0
+		shape=Part.makeBox(10+f*random.random(),10+f*random.random(),10+f*random.random())
 		cc.Shape=shape
 
 		if self.part.hasConnections():
@@ -225,19 +230,22 @@ class FreeCAD_Toy(NodeBase):
 
 
 class FreeCAD_Bar(NodeBase):
-	'''fusion of two parts example'''
-	def __init__(self, name):
+	'''boolean ops of two parts example'''
+	def __init__(self, name="Fusion"):
 
-		super(FreeCAD_Bar, self).__init__(name="Fusion")
+		super(FreeCAD_Bar, self).__init__(name)
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 		self.part = self.createOutputPin('Part', 'FCobjPin')
 		self.part1 = self.createInputPin('Part_in1', 'FCobjPin')
 		self.part2 = self.createInputPin('Part_in2', 'FCobjPin')
 		self.objname = self.createInputPin("objectname", 'StringPin')
+
 		self.mode = self.createInputPin('mode', 'EnumerationPin')
-		self.mode.values=["tic","tac","toe"]
-		self.mode.setData("toe")
+		self.mode.values=["fuse","cut","common"]
+		self.mode.setData("fuse")
+
+		self.volume = self.createOutputPin('Volume', 'FloatPin')
 
 		self.objname.setData(name)
 
@@ -256,22 +264,33 @@ class FreeCAD_Bar(NodeBase):
 
 		cc.Label=self.objname.getData()
 
-
 		import Part
 
 		say("getData:",self.part1.getData(),self.part1.getData().__class__)
 		say("!",self.part1,self.part1.__class__)
-		
-		part1=FreeCAD.ActiveDocument.getObject(self.part1.getData())
-		part2=FreeCAD.ActiveDocument.getObject(self.part2.getData())
+
+		part1=self.part1.getData()
+		if part1 <> None:
+			part1=FreeCAD.ActiveDocument.getObject(part1)
+
+		part2=self.part2.getData()
+		if part2 <> None:
+			part2=FreeCAD.ActiveDocument.getObject(part2)
+
 		if part1 <> None and part2 <> None:
 			say("parts 1 2")
 			say(part1.Name)
 			say(part2.Name)
-			shape=part1.Shape.fuse(part2.Shape)
+			mode=self.mode.getData()
+			if mode == 'common':
+				shape=part1.Shape.common(part2.Shape)
+			elif mode == 'cut':
+				shape=part1.Shape.cut(part2.Shape)
+			else:
+				shape=part1.Shape.fuse(part2.Shape)
 			cc.Shape=shape
 		else:
-			cc.Shape=Part.Shape()
+			return
 
 		if self.part.hasConnections():
 			say("sende an Part")
@@ -279,6 +298,8 @@ class FreeCAD_Bar(NodeBase):
 				self.part.setData(None)
 			else:
 				self.part.setData(cc.Name)
+		say("Volume",cc.Shape.Volume)
+		self.volume.setData(cc.Shape.Volume)
 		say ("data set to output object is done, exex...")
 		self.outExec.call()
 		say ("Ende exec for ---",self.getName())
@@ -292,3 +313,7 @@ class FreeCAD_Bar(NodeBase):
 
 class FreeCAD_Foo(NodeBase):
 	pass
+
+
+def nodelist():
+	return [FreeCAD_Foo,FreeCAD_Toy,FreeCAD_Bar,FreeCAD_Object]

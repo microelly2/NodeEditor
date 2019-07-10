@@ -40,7 +40,7 @@ class FCobjDecoder(json.JSONDecoder):
 class FCobjPin(PinBase):
     """doc string for FloatFCobjPin"""
     def __init__(self, name, parent, direction, **kwargs):
-        say("create pin",name,parent.getName())
+        #say("create pin",name,parent.getName())
         super(FCobjPin, self).__init__(name, parent, direction, **kwargs)
         self.setDefaultValue(None)
 
@@ -113,16 +113,11 @@ class EnumSelection():
 class EnumerationPin(FCobjPin):
     """doc string for FloatFCobjPin"""
     def __init__(self, name, parent, direction, **kwargs):
-        say("QQcreate pin",name,parent.getName())
+        #say("create pin",name,parent.getName())
         super(EnumerationPin, self).__init__(name, parent, direction, **kwargs)
         self.values=["tic","tac","toe"]
         self.setDefaultValue(self.values[0])
 
-
-    def x__init__(self, name, parent, direction, **kwargs):
-        say("create pin",name,parent.getName())
-        super(EnumerationPin, self).__init__(name, parent, direction, **kwargs)
-        self.setDefaultValue(None)
 
 
 
@@ -151,3 +146,7 @@ class EnumerationPin(FCobjPin):
         #say("FCobj Pin Processing send data!:",data,data.__class__.__name__)
         #return FCobjPin.internalDataStructure()(data)
         return data
+
+
+def nodelist():
+    return [EnumerationPin,ShapePin,FCobjPin]

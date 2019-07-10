@@ -27,7 +27,6 @@ from PyFlow.Core import(
 
 
 def deleteInstance():
-	say ("delet instance")
 	FreeCAD.PF.hide()
 	#FreeCAD.PF.deleteLater() # geth nicht wegen logger
 	del(FreeCAD.PF)
@@ -48,7 +47,8 @@ def getInstance():
 
 	t=instance.windowTitle()
 	if not t.startswith("FreeCAD NodeEditor"):
-		instance.setWindowTitle("FreeCAD NodeEditor v0.01 @ "+instance.windowTitle())
+		instance.setWindowTitle("FreeCAD NodeEditor v0.03 @ "+instance.windowTitle())
+		instance.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
 
 	FreeCAD.PF=instance
 
@@ -97,3 +97,6 @@ def createNode(packageName,nodeClass,nodeName):
 
 def connect(nodeA,pinNameA,nodeB,pinNameB):
 	return connectPins(nodeA[str(pinNameA)], nodeB[str(pinNameB)])
+
+def chainExec(nodeA,nodeB):
+	return connectPins(nodeA[str('outExec')], nodeB[str('inExec')])

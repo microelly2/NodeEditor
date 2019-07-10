@@ -10,8 +10,8 @@
 import os
 os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
 import Qt
-print (Qt)
-print Qt.IsPyQt4
+#print (Qt)
+#print ("is pyqt4:",Qt.IsPyQt4)
 
 from PyFlow.Core.Common import *
 from nodeeditor.say import *
@@ -212,7 +212,59 @@ def scene_B(instance):
 	connection = pfwrap.connect(ri,'Result', fb,'Z')
 	connection = pfwrap.connect(fb,'out', fp,'Placement_Base')
 	connection = pfwrap.connect(tim,'OUT', fp,'inExec')
-	
+
+
+
+
+def scene_C(instance):
+
+	clearGraph()
+	a=pfwrap.getGraphManager()
+	gg=a.getAllGraphs()[0]
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Toy","Toy")
+	t.setPosition(-200,-200)
+	gg.addNode(t)
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Toy","Toy2")
+	t2.setPosition(-200,00)
+	gg.addNode(t2)
+
+	tf = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Bar","Boolean")
+	tf.setPosition(100,-200)
+	gg.addNode(tf)
+
+	connection = pfwrap.connect(t,'Part', tf,'Part_in1')
+	connection = pfwrap.connect(t2,'Part', tf,'Part_in2')
+
+	connection = pfwrap.connect(t,'outExec', tf,'inExec')
+	connection = pfwrap.connect(t2,'outExec', tf,'inExec')
+	connection = pfwrap.chainExec(t,tf)
+
+	tim = pfwrap.createNode('PyFlowBase',"timer","MyTimer")
+	tim.setPosition(-500,-200)
+	gg.addNode(tim)
+
+	s = pfwrap.createNode('PyFlowBase',"sequence","MySequence")
+	s.setPosition(-400,-00)
+	gg.addNode(s)
+	s.createOutputPin()
+	s.createOutputPin()
+
+	connection = pfwrap.connect(tim,'OUT', s,'inExec')
+	connection = pfwrap.connect(s,'1', t,'inExec')
+	#connection = pfwrap.connect(s,'2', t2,'inExec')
+
+
+
+
+
+
+
+
+
+
+
 
 
 def test_AA():
@@ -237,11 +289,13 @@ def test_AA():
 	)
 
 	#scene_A(instance)
-	scene_B(instance)
+	#scene_B(instance)
+	scene_C(instance)
 
 	#refresh gui ...
 	a=pfwrap.getGraphManager()
 	gg=a.getAllGraphs()[0]
+	
 
 	tempd=instance.getTempDirectory()
 	fpath=tempd+'/_refreshguiswap.json'
@@ -252,8 +306,18 @@ def test_AA():
 
 	with open(fpath, 'r') as f:
 		data = json.load(f)
+		FreeCAD.data=data
 		instance.loadFromData(data, fpath)
 
+
+
+def test_BB():
+	#import nodeeditior
+	mm=pfwrap.getGraphManager()
+	for n in mm.getAllNodes():
+		print n.getName()
+		if n.getName() =='MySequence':
+			FreeCAD.n=n
 
 
 class MyDockWidget(QDockWidget):
