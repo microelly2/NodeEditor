@@ -8,6 +8,7 @@ import FreeCAD
 import Part
 
 import nodeeditor.store as store
+import numpy as np
 
 
 
@@ -54,6 +55,13 @@ class FreeCAD_Object(NodeBase):
 		self.shapeout = self.createOutputPin('Shape_out', 'FCobjPin')
 		self.shapein = self.createInputPin('Shape_in', 'FCobjPin')
 
+		if 0:
+			self.arrout = self.createOutputPin('Array_out', 'FCobjPin')
+			self.arrin = self.createInputPin('Array_in', 'FCobjPin')
+		else:
+			self.arrout = self.createOutputPin('Array_out', 'ArrayPin')
+			self.arrin = self.createInputPin('Array_in', 'ArrayPin')
+
 		self.vobjname = self.createInputPin("objectname", 'StringPin')
 		self.vobjname.setData(name)
 
@@ -83,7 +91,24 @@ class FreeCAD_Object(NodeBase):
 	def compute(self, *args, **kwargs):
 
 		say ("in compute",self.getName(),"objname is",self.vobjname.getData())
-		store.store().list()
+		say("#----------------------------------------############################")
+		say("#----------------------------------------############################")
+
+		ss=self.arrin.getArray()
+		say("getArray",ss)
+
+		# array erzeugen und  senden
+		say("connected?",self.arrout.hasConnections())
+		if 1 or self.arrout.hasConnections():
+
+				varr=np.round(np.random.random((3,4)),2)
+				say("store ",varr)
+				store.store().add(str(self.arrout.uid),varr)
+				self.arrout.setData(str(self.arrout.uid))
+		say ("array done ok")
+		say("#----------------------------------------############################")
+		say("#----------------------------------------############################")
+
 
 		say ("get shapein")
 		shapein=self.shapein.getData()
@@ -572,8 +597,29 @@ class FreeCAD_Bar(FreeCadNodeBase):
 
 
 
-class FreeCAD_Foo(NodeBase):
-	pass
+class FreeCAD_Foo(FreeCadNodeBase):
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_Foo, self).__init__(name)
+		self.Arr_in = self.createInputPin('Array_in', 'ArrayPin')
+		self.Arr_out = self.createOutputPin('Array_out', 'ArrayPin')
+
+
+	def compute(self, *args, **kwargs):
+
+		say("")
+		say ("in compute",self.getName(),"objname is",self.objname.getData())
+
+		ss=self.Arr_in.getArray()
+		say("got Array",ss)
+
+
+		varr=np.round(np.random.random((3,4)),2)
+		say("store Array",varr)
+		self.Arr_out.setArray(varr)
+
+		self.postCompute()
+
+
 
 
 def nodelist():

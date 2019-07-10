@@ -148,5 +148,70 @@ class EnumerationPin(FCobjPin):
         return data
 
 
+class Array():
+    pass
+
+import nodeeditor.store as store
+
+
+class ArrayPin(FCobjPin):
+    """doc string for FloatFCobjPin"""
+    def __init__(self, name, parent, direction, **kwargs):
+        say("create pin",name,parent.getName())
+        super(ArrayPin, self).__init__(name, parent, direction, **kwargs)
+#        self.values=["tic","tac","toe"]
+ #       self.setDefaultValue([4,5,6,8])
+  #      FreeCAD.pin=self
+
+
+
+
+    @staticmethod
+    def IsValuePin():
+        return True
+
+    @staticmethod
+    def supportedDataTypes():
+        return ('ArrayPin',None)
+
+    @staticmethod
+    def color():
+        return (150, 150, 150, 255)
+
+    @staticmethod
+    def pinDataTypeHint():
+        return 'ArrayPin', None
+
+    @staticmethod
+    def internalDataStructure():
+        return Array
+
+    @staticmethod
+    def processData(data):
+        #say("FCobj Pin Processing send data!:",data,data.__class__.__name__)
+        #return FCobjPin.internalDataStructure()(data)
+        return data
+
+    def getArray(self):
+        #say("getArray methode")
+        arrin=self.getData()
+        #say("got key:",arrin)
+        if arrin <> None:
+            s=store.store().get(arrin)
+            return s
+        else:
+            return None
+
+    def setArray(self,array):
+        #if self.hasConnections():
+        #say("to store ",array)
+        #say("key",str(self.uid))
+        store.store().add(str(self.uid),array)
+        self.setData(str(self.uid))
+
+
+
+
+
 def nodelist():
-    return [EnumerationPin,ShapePin,FCobjPin]
+    return [EnumerationPin,ShapePin,FCobjPin,ArrayPin]
