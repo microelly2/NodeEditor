@@ -233,6 +233,23 @@ class FreeCAD_Toy(NodeBase):
 class FreeCadNodeBase(NodeBase):
 	'''common methods for FreeCAD integration'''
 
+	def __init__(self, name="FreeCADNode"):
+
+		super(FreeCadNodeBase, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.shapeout = self.createOutputPin('Shape', 'FCobjPin')
+
+		self.objname = self.createInputPin("objectname", 'StringPin')
+
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
+		self.randomize = self.createInputPin("randomize", 'BoolPin')
+
+		self.objname.setData(name)
+
+
 
 	def getDatalist(self,pinnames):
 		namelist=pinnames.split()
@@ -285,13 +302,6 @@ class FreeCAD_Box( FreeCadNodeBase):
 	def __init__(self, name="MyBox"):
 
 		super(FreeCAD_Box, self).__init__(name)
-		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-		self.part = self.createOutputPin('Part', 'FCobjPin')
-		self.shapeout = self.createOutputPin('Shape', 'FCobjPin')
-		self.objname = self.createInputPin("objectname", 'StringPin')
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.randomize = self.createInputPin("randomize", 'BoolPin')
 
 		self.length = self.createInputPin("length", 'FloatPin')
 		self.width = self.createInputPin("width", 'FloatPin')
@@ -339,14 +349,6 @@ class FreeCAD_Cone(FreeCadNodeBase):
 	def __init__(self, name="MyCone"):
 
 		super(FreeCAD_Cone, self).__init__(name)
-		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-		self.part = self.createOutputPin('Part', 'FCobjPin')
-		self.shapeout = self.createOutputPin('Shape', 'FCobjPin')
-
-
-		self.objname = self.createInputPin("objectname", 'StringPin')
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
 
 		self.radius1 = self.createInputPin("radius1", 'FloatPin')
 		self.radius2 = self.createInputPin("radius2", 'FloatPin')
@@ -355,7 +357,6 @@ class FreeCAD_Cone(FreeCadNodeBase):
 		self.direction = self.createInputPin("direction", 'VectorPin')
 		self.angle = self.createInputPin("angle", 'FloatPin')
 
-		self.objname.setData(name)
 
 		say("call init",self)
 		self.setDatalist("radius1 radius2 height position direction angle",
@@ -386,6 +387,110 @@ class FreeCAD_Cone(FreeCadNodeBase):
 			self.postCompute(cc)
 
 
+class FreeCAD_Sphere(FreeCadNodeBase):
+	'''erzeuge einer Part.Kurgel'''
+
+	def __init__(self, name="MySphere"):
+
+		super(FreeCAD_Sphere, self).__init__(name)
+
+		self.radius = self.createInputPin("radius", 'FloatPin')
+		self.position = self.createInputPin("position", 'VectorPin')
+		self.direction = self.createInputPin("direction", 'VectorPin')
+		self.angle1 = self.createInputPin("angle1", 'FloatPin')
+		self.angle2 = self.createInputPin("angle2", 'FloatPin')
+		self.angle3 = self.createInputPin("angle3", 'FloatPin')
+
+		self.setDatalist("radius position direction angle1 angle2 angle3",
+			[10,FreeCAD.Vector(0,0,0),FreeCAD.Vector(1,0,0),-90,90,360])
+
+		self.radius.recomputeNode=True
+		self.angle1.recomputeNode=True
+		self.angle2.recomputeNode=True
+		self.angle3.recomputeNode=True
+
+	def compute(self, *args, **kwargs):
+
+		shape=self.applyPins(Part.makeSphere,"radius position direction angle1 angle2 angle3")
+
+		if self.shapeout.hasConnections():
+			store.store().add(str(self.shapeout.uid),shape)
+			self.shapeout.setData(str(self.shapeout.uid))
+			self.postCompute()
+
+		if self.shapeOnly.getData():
+			self.postCompute()
+		else:
+			cc=self.getObject()
+			cc.Label=self.objname.getData()
+			cc.Shape=shape
+			self.postCompute(cc)
+
+
+class FreeCAD_Quadrangle(FreeCadNodeBase):
+	'''erzeuge einer BSpline Flaeche'''
+
+	def __init__(self, name="MyQuadrangle"):
+
+		super(FreeCAD_Quadrangle, self).__init__(name)
+
+		self.vA = self.createInputPin("vecA", 'VectorPin')
+		self.vB = self.createInputPin("vecB", 'VectorPin')
+		self.vC = self.createInputPin("vecC", 'VectorPin')
+		self.vD = self.createInputPin("vecD", 'VectorPin')
+
+		self.setDatalist("vecA vecB vecC vecD",	[
+						FreeCAD.Vector(0,0,0),
+						FreeCAD.Vector(100,0,0),
+						FreeCAD.Vector(100,200,40),
+						FreeCAD.Vector(0,200,40),
+					])
+
+		self.vA.recomputeNode=True
+		self.vB.recomputeNode=True
+		self.vC.recomputeNode=True
+		self.vD.recomputeNode=True
+
+		self.Called=False
+
+
+	def compute(self, *args, **kwargs):
+
+
+		# recursion stopper
+		if self.Called:
+			return
+
+		self.Called=True
+		vA=self.vA.getData()
+		vB=self.vB.getData()
+		vC=self.vC.getData()
+		vD=self.vD.getData()
+		
+		w=Part.BSplineSurface()
+		w.buildFromPolesMultsKnots([[vA,vB],[vD,vC]],[2,2],[2,2],[0,1],[0,1],False,False,1,1)
+		shape=w.toShape()
+
+		if self.shapeout.hasConnections():
+			store.store().add(str(self.shapeout.uid),shape)
+			self.shapeout.setData(str(self.shapeout.uid))
+			self.postCompute()
+
+		if self.shapeOnly.getData():
+			self.postCompute()
+		else:
+			cc=self.getObject()
+			cc.Label=self.objname.getData()
+			cc.Shape=shape
+			self.postCompute(cc)
+
+		self.Called=False
+
+
+
+
+
+
 
 
 class FreeCAD_Bar(FreeCadNodeBase):
@@ -394,15 +499,9 @@ class FreeCAD_Bar(FreeCadNodeBase):
 	def __init__(self, name="Fusion"):
 
 		super(FreeCAD_Bar, self).__init__(name)
-		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-		self.part = self.createOutputPin('Part', 'FCobjPin')
-		self.shapeout = self.createOutputPin('Shape', 'FCobjPin')
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
 		self.part1 = self.createInputPin('Part_in1', 'FCobjPin')
 		self.part2 = self.createInputPin('Part_in2', 'FCobjPin')
-		self.objname = self.createInputPin("objectname", 'StringPin')
 
 		self.mode = self.createInputPin('mode', 'EnumerationPin')
 		self.mode.values=["fuse","cut","common"]
@@ -478,4 +577,10 @@ class FreeCAD_Foo(NodeBase):
 
 
 def nodelist():
-	return [FreeCAD_Foo,FreeCAD_Toy,FreeCAD_Bar,FreeCAD_Object,FreeCAD_Box,FreeCAD_Cone]
+	return [FreeCAD_Foo,FreeCAD_Toy,FreeCAD_Bar,FreeCAD_Object,
+		FreeCAD_Box,
+		FreeCAD_Cone,
+		FreeCAD_Sphere,
+		FreeCAD_Quadrangle,
+
+		]

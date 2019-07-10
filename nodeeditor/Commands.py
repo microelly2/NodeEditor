@@ -294,7 +294,22 @@ def scene_D(instance):
 	t2.compute()
 
 
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Sphere","Kugel")
+	t2.setPosition(-0,-150)
+	#t2.setData("shapeOnly",True)
+	gg.addNode(t2)
 
+
+def scene_D(instance):
+
+	clearGraph()
+	a=pfwrap.getGraphManager()
+	gg=a.getAllGraphs()[0]
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Quadrangle","Viereck")
+	t2.setPosition(-0,-150)
+	#t2.setData("shapeOnly",True)
+	gg.addNode(t2)
 
 
 
