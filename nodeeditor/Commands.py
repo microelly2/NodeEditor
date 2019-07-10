@@ -262,19 +262,36 @@ def scene_C(instance):
 
 
 
+
 def scene_D(instance):
 
 	clearGraph()
 	a=pfwrap.getGraphManager()
 	gg=a.getAllGraphs()[0]
 
-	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","Boxxy")
-	t.setPosition(-200,-200)
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","Quader")
+	t.setPosition(-100,-200)
+	t.setData("shapeOnly",True)
 	gg.addNode(t)
 
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Cone","Kegel")
+	t2.setPosition(-100,50)
+	t2.setData("shapeOnly",True)
+	gg.addNode(t2)
 
+	tf = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Bar","Boolean")
+	tf.setPosition(150,0)
+	tf.setData("shapeOnly",True)
+	gg.addNode(tf)
 
+	connection = pfwrap.connect(t,'outExec', tf,'inExec')
+	connection = pfwrap.connect(t2,'outExec', tf,'inExec')
 
+	connection = pfwrap.connect(t,'Shape', tf,'Part_in1')
+	connection = pfwrap.connect(t2,'Shape', tf,'Part_in2')
+
+	t.compute()
+	t2.compute()
 
 
 
@@ -441,6 +458,7 @@ def test_DD():
 	a=pfwrap.getGraphManager()
 	gg=a.getAllGraphs()[0]
 	
+	say("reload to refresh the UI ...")
 
 	tempd=instance.getTempDirectory()
 	fpath=tempd+'/_refreshguiswap.json'

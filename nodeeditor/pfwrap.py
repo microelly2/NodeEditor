@@ -47,7 +47,7 @@ def getInstance():
 
 	t=instance.windowTitle()
 	if not t.startswith("FreeCAD NodeEditor"):
-		instance.setWindowTitle("FreeCAD NodeEditor v0.03 @ "+instance.windowTitle())
+		instance.setWindowTitle("FreeCAD NodeEditor v0.04 @ "+instance.windowTitle())
 		instance.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
 
 	FreeCAD.PF=instance
@@ -90,7 +90,9 @@ def createFunction(packageName,libName,functionName):
 def createNode(packageName,nodeClass,nodeName):
 	packages = GET_PACKAGES()
 	classNodes = packages[packageName].GetNodeClasses()
+	say("huhuhu")
 	node = classNodes[nodeClass](nodeName)
+	say("hahah")
 	return node
 
 

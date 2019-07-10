@@ -228,43 +228,30 @@ class FreeCAD_Toy(NodeBase):
 		say ("Ende exec for ---",self.getName())
 
 
-def getDatalist(node,pinnames):
-	namelist=pinnames.split()
-	ll=[node.getPinN(a).getData() for a in namelist]
-	return ll
 
-def applyPins(node,ff,zz):
-	zz2=getDatalist(node,zz)
-	return ff(*zz2)
+	
+class FreeCadNodeBase(NodeBase):
+	'''common methods for FreeCAD integration'''
 
 
+	def getDatalist(self,pinnames):
+		namelist=pinnames.split()
+		ll=[self.getPinN(a).getData() for a in namelist]
+		return ll
 
-class FreeCAD_Box(NodeBase):
-	'''erzeuge einer Part.Box'''
+	def applyPins(self,ff,zz):
+		zz2=self.getDatalist(zz)
+		return ff(*zz2)
 
-	def __init__(self, name="MyToy"):
+	def setDatalist(self,pinnames,values):
+		namelist=pinnames.split()
+		say("set pinlist")
+		for a,v in zip(namelist,values):
+			say(a,v)
+			self.getPinN(a).setData(v)
 
-		super(FreeCAD_Box, self).__init__(name)
-		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-		self.part = self.createOutputPin('Part', 'FCobjPin')
-		self.objname = self.createInputPin("objectname", 'StringPin')
-		self.randomize = self.createInputPin("randomize", 'BoolPin')
-		self.length = self.createInputPin("length", 'FloatPin')
-		self.width = self.createInputPin("width", 'FloatPin')
-		self.height = self.createInputPin("height", 'FloatPin')
-		self.position = self.createInputPin("position", 'VectorPin')
-		self.direction = self.createInputPin("direction", 'VectorPin')
-
-		name="MyBox"
-		self.objname.setData(name)
-		self.length.setData(10)
-		self.width.setData(20)
-		self.height.setData(30)
-		self.position.setData(FreeCAD.Vector(10,20,30))
-		self.direction.setData(FreeCAD.Vector(0,0,1))
-
-	def compute(self, *args, **kwargs):
+	def getObject(self):
+		'''get the FreeCAD object'''
 
 		yid="ID_"+str(self.uid)
 		yid=yid.replace('-','_')
@@ -272,35 +259,147 @@ class FreeCAD_Box(NodeBase):
 		cc=FreeCAD.ActiveDocument.getObject(yid)
 		if cc == None:
 			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
+		return cc
 
-		cc.Label=self.objname.getData()
-
-		import Part
-		shape=applyPins(self,Part.makeBox,"length width height position direction")
-
-		cc.Shape=shape
+	def postCompute(self,fcobj=None):
 
 		if self.part.hasConnections():
 			say("sende an Part")
-			if cc == None:
+			if fcobj == None:
 				self.part.setData(None)
 			else:
-				self.part.setData(cc.Name)
+				self.part.setData(fcobj.Name)
 		self.outExec.call()
-		import FreeCADGui
-		FreeCADGui.SendMsgToActiveView("ViewFit")
-		
+#		import FreeCADGui
+#		FreeCADGui.SendMsgToActiveView("ViewFit")
 
 
 
-class FreeCAD_Bar(NodeBase):
+
+
+
+
+class FreeCAD_Box( FreeCadNodeBase):
+	'''erzeuge einer Part.Box'''
+
+	def __init__(self, name="MyBox"):
+
+		super(FreeCAD_Box, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.shapeout = self.createOutputPin('Shape', 'FCobjPin')
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
+		self.randomize = self.createInputPin("randomize", 'BoolPin')
+
+		self.length = self.createInputPin("length", 'FloatPin')
+		self.width = self.createInputPin("width", 'FloatPin')
+		self.height = self.createInputPin("height", 'FloatPin')
+		self.position = self.createInputPin("position", 'VectorPin')
+		self.direction = self.createInputPin("direction", 'VectorPin')
+
+		self.objname.setData(name)
+
+		self.setDatalist("length width height position direction",
+			[10,20,30,FreeCAD.Vector(0,0,0),FreeCAD.Vector(1,0,0)])
+
+		self.length.recomputeNode=True
+		self.width.recomputeNode=True
+		self.height.recomputeNode=True
+
+	def compute(self, *args, **kwargs):
+
+		shape=self.applyPins(Part.makeBox,"length width height position direction")
+
+		if self.shapeout.hasConnections():
+			store.store().add(str(self.shapeout.uid),shape)
+			self.shapeout.setData(str(self.shapeout.uid))
+
+		if self.shapeOnly.getData():
+			self.postCompute()
+		else:
+			cc=self.getObject()
+			cc.Label=self.objname.getData()
+			cc.Shape=shape
+			self.postCompute(cc)
+
+
+
+
+
+
+
+
+
+
+class FreeCAD_Cone(FreeCadNodeBase):
+	'''erzeuge einer Part.Kegel'''
+
+	def __init__(self, name="MyCone"):
+
+		super(FreeCAD_Cone, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.shapeout = self.createOutputPin('Shape', 'FCobjPin')
+
+
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
+
+		self.radius1 = self.createInputPin("radius1", 'FloatPin')
+		self.radius2 = self.createInputPin("radius2", 'FloatPin')
+		self.height = self.createInputPin("height", 'FloatPin')
+		self.position = self.createInputPin("position", 'VectorPin')
+		self.direction = self.createInputPin("direction", 'VectorPin')
+		self.angle = self.createInputPin("angle", 'FloatPin')
+
+		self.objname.setData(name)
+
+		say("call init",self)
+		self.setDatalist("radius1 radius2 height position direction angle",
+			[10,20,30,FreeCAD.Vector(0,0,0),FreeCAD.Vector(1,0,0),360])
+
+		self.radius1.recomputeNode=True
+		self.radius2.recomputeNode=True
+		self.height.recomputeNode=True
+
+	def compute(self, *args, **kwargs):
+
+		shape=self.applyPins(Part.makeCone,"radius1 radius2 height position direction angle")
+#		say("compute",self.getName())
+
+
+		if self.shapeout.hasConnections():
+			#say("add to store shape",shape,self.shapeout.uid)
+			store.store().add(str(self.shapeout.uid),shape)
+			self.shapeout.setData(str(self.shapeout.uid))
+			self.postCompute()
+
+		if self.shapeOnly.getData():
+			self.postCompute()
+		else:
+			cc=self.getObject()
+			cc.Label=self.objname.getData()
+			cc.Shape=shape
+			self.postCompute(cc)
+
+
+
+
+class FreeCAD_Bar(FreeCadNodeBase):
 	'''boolean ops of two parts example'''
+
 	def __init__(self, name="Fusion"):
 
 		super(FreeCAD_Bar, self).__init__(name)
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.shapeout = self.createOutputPin('Shape', 'FCobjPin')
+
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
 		self.part1 = self.createInputPin('Part_in1', 'FCobjPin')
 		self.part2 = self.createInputPin('Part_in2', 'FCobjPin')
 		self.objname = self.createInputPin("objectname", 'StringPin')
@@ -315,46 +414,44 @@ class FreeCAD_Bar(NodeBase):
 
 	def compute(self, *args, **kwargs):
 
-		say ("in compute",self.getName(),"objname is",self.objname.getData())
+#		say ("in compute",self.getName(),"objname is",self.objname.getData())
 
-		yid="ID_"+str(self.uid)
-		yid=yid.replace('-','_')
-		say(str(self.uid).replace('-','_'))
-
-		cc=FreeCAD.ActiveDocument.getObject(yid)
-		if cc == None:
-			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
-			say("created",cc.Name,yid)
-
-		cc.Label=self.objname.getData()
-
-		import Part
-
-		say("getData:",self.part1.getData(),self.part1.getData().__class__)
-		say("!",self.part1,self.part1.__class__)
 
 		part1=self.part1.getData()
-		if part1 <> None:
-			part1=FreeCAD.ActiveDocument.getObject(part1)
-
 		part2=self.part2.getData()
-		if part2 <> None:
-			part2=FreeCAD.ActiveDocument.getObject(part2)
-
-		if part1 <> None and part2 <> None:
-			say("parts 1 2")
-			say(part1.Name)
-			say(part2.Name)
-			mode=self.mode.getData()
-			if mode == 'common':
-				shape=part1.Shape.common(part2.Shape)
-			elif mode == 'cut':
-				shape=part1.Shape.cut(part2.Shape)
-			else:
-				shape=part1.Shape.fuse(part2.Shape)
-			cc.Shape=shape
-		else:
+		if part1 == None or part2 == None: 
+			say("part12 is None, abort")
 			return
+
+
+		s1=store.store().get(part1)
+		if not s1.__class__.__name__ =='Solid':
+			part1=FreeCAD.ActiveDocument.getObject(part1)
+			s1=part1.Shape
+
+		s2=store.store().get(part2)
+		if not s2.__class__.__name__ =='Solid':
+			part2=FreeCAD.ActiveDocument.getObject(part2)
+			s2=part2.Shape
+
+		mode=self.mode.getData()
+		if mode == 'common':
+			shape=s1.common(s2)
+		elif mode == 'cut':
+			shape=s1.cut(s2)
+		else:
+			shape=s1.fuse(s2)
+
+
+		if self.shapeOnly.getData():
+			self.postCompute()
+		else:
+			cc=self.getObject()
+			cc.Label=self.objname.getData()
+			cc.Shape=shape
+			self.postCompute(cc)
+
+
 
 		if self.part.hasConnections():
 			say("sende an Part")
@@ -362,11 +459,12 @@ class FreeCAD_Bar(NodeBase):
 				self.part.setData(None)
 			else:
 				self.part.setData(cc.Name)
-		say("Volume",cc.Shape.Volume)
-		self.volume.setData(cc.Shape.Volume)
-		say ("data set to output object is done, exex...")
+
+		say("Volume for {0}: {1:.2f}".format(self.getName(),shape.Volume))
+		self.volume.setData(shape.Volume)
+#		say ("data set to output object is done, exex...")
 		self.outExec.call()
-		say ("Ende exec for ---",self.getName())
+#		say ("Ende exec for ---",self.getName())
 
 
 
@@ -380,4 +478,4 @@ class FreeCAD_Foo(NodeBase):
 
 
 def nodelist():
-	return [FreeCAD_Foo,FreeCAD_Toy,FreeCAD_Bar,FreeCAD_Object,FreeCAD_Box]
+	return [FreeCAD_Foo,FreeCAD_Toy,FreeCAD_Bar,FreeCAD_Object,FreeCAD_Box,FreeCAD_Cone]
