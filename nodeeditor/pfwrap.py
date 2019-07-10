@@ -64,7 +64,7 @@ def getInstance():
 		NodeBase,
 		GraphManager
 	)
-	print ("create instance")
+	sayl("create instance")
 	return instance
 
 from PyFlow import(
@@ -90,9 +90,7 @@ def createFunction(packageName,libName,functionName):
 def createNode(packageName,nodeClass,nodeName):
 	packages = GET_PACKAGES()
 	classNodes = packages[packageName].GetNodeClasses()
-	say("huhuhu")
 	node = classNodes[nodeClass](nodeName)
-	say("hahah")
 	return node
 
 

@@ -47,8 +47,8 @@ try: # define the FreeCAD say methods
 		''' print message with traceback''' 
 		s='; '.join([str(a) for a in args])
 		l=len(inspect.stack())
-		FreeCAD.Console.PrintWarning(str([inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2]]))
-		FreeCAD.Console.PrintWarning("\n"+str(s)+"\n")
+		FreeCAD.Console.PrintWarning(str(s)+" "+str([inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2]]))
+
 
 except:
 
@@ -74,8 +74,7 @@ except:
 		''' print message with traceback''' 
 		s='; '.join([str(a) for a in args])
 		l=len(inspect.stack())
-		print (inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2])
-		print(str(s))
+		print (str(s),inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2])
 
 
 def errorDialog(msg):
@@ -151,10 +150,6 @@ def sayk(*args):
 	with open("/tmp/say_log.txt", "a") as myfile:
 		myfile.write("\n"+aa+" "+ s+ "\n")
 		myfile.write(inspect.stack()[1][3]+" @ "+inspect.stack()[1][1]+" line: "+str(inspect.stack()[1][2]))
-
-	
-
-say("SAY executed")
 
 
 '''

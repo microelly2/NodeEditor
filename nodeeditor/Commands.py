@@ -182,9 +182,10 @@ def scene_B(instance):
 	fpo2.setData('objectname', 'Box001')
 	fpo2.setPosition(300,-100)
 	gg.addNode(fpo2)
-	connection = pfwrap.connect(fpo,'Object', fpo2,'ObjectA')
-	connection = pfwrap.connect(fpo,'Shape_out', fpo2,'Shape_in')
+	#connection = pfwrap.connect(fpo,'Object', fpo2,'ObjectA')
+	#connection = pfwrap.connect(fpo,'Shape_out', fpo2,'Shape_in')
 	connection = pfwrap.connect(fpo,'outExec', fpo2,'inExec')
+	connection = pfwrap.connect(fpo,'Array_out', fpo2,'Array_in')
 	connection = pfwrap.connect(fpo2,'outExec', printNode,'inExec')
 	connection = pfwrap.connect(fpo2,'Object', printNode,'entity')
 
@@ -303,17 +304,30 @@ def scene_D(instance):
 def scene_D(instance):
 
 	clearGraph()
-	a=pfwrap.getGraphManager()
-	gg=a.getAllGraphs()[0]
+	#a=pfwrap.getGraphManager()
+	#gg=a.getAllGraphs()[0]
 
-	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Quadrangle","Viereck")
-	t2.setPosition(-0,-150)
-	#t2.setData("shapeOnly",True)
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","AAA")
+	t2.setPosition(-300,-150)
 	gg.addNode(t2)
 
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","BBB")
+	t3.setPosition(-100,0)
+	gg.addNode(t3)
 
+	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","CCC")
+	t4.setPosition(100,150)
+	gg.addNode(t4)
 
+	connection = pfwrap.connect(t2,'Array_out', t3,'Array_in')
+	connection = pfwrap.chainExec(t2,t3)
 
+	connection = pfwrap.connect(t3,'Array_out', t4,'Array_in')
+	connection = pfwrap.chainExec(t3,t4)
+	t2.compute()
 
 
 
@@ -487,6 +501,7 @@ def test_DD():
 		FreeCAD.data=data
 		instance.loadFromData(data, fpath)
 
+	sayl("!reload finished")
 
 
 def test_CC():
