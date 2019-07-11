@@ -189,6 +189,7 @@ if FreeCAD.GuiUp:
 	current=[]
 	_current=[]
 
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'shutdown',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_AA',icon="/../icons/AA")]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_BB',icon="/../icons/BB")]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_CC',icon="/../icons/CC")]
@@ -203,6 +204,9 @@ if FreeCAD.GuiUp:
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load Graph',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'clear Graph',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load File',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'unload modules',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'PyFlowtoDockWidget',icon=None)]
+
 
 	toolbars = [
 				['Tools', tools],

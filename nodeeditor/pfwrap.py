@@ -3,13 +3,9 @@
 import os
 os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
 import Qt
-print (Qt)
-print (Qt.IsPyQt4)
 
 from PyFlow.Core.Common import *
 from nodeeditor.say import *
-
-
 import FreeCAD
 
 

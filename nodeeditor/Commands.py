@@ -8,10 +8,11 @@
 #-------------------------------------------------
 
 import os
+import sys
+import json
+
 os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
 import Qt
-#print (Qt)
-#print ("is pyqt4:",Qt.IsPyQt4)
 
 from PyFlow.Core.Common import *
 from nodeeditor.say import *
@@ -22,18 +23,10 @@ from Qt import QtCore
 from Qt import QtGui
 from Qt.QtWidgets import *
 
-import os
-import sys
-import subprocess
-import json
-from time import clock
-import pkgutil
-import uuid
 
 import PyFlowGraph
-reload (PyFlowGraph)
-from PyFlowGraph import PyFlowGraph
 
+from PyFlowGraph import PyFlowGraph
 
 from PyFlow import(
 	INITIALIZE,
@@ -50,22 +43,15 @@ from PyFlow.Core import(
 import pfwrap
 reload (pfwrap)
 
-# the dummy methods for the workbench
-def test_BB():
-	FreeCAD.Console.PrintMessage("\ntest_B\n")
 
-def test_AA():
-	FreeCAD.Console.PrintMessage("\ntest_A\n")
-
-
-def XXreset():
+def unloadmodules():
+	''' prepare some modules for reload'''
 	try:
 		FreeCAd.t.hide()
 	except:
 		pass
 
 	if 10:
-		import sys
 		sms=sys.modules.keys()
 		for m in sms:
 
@@ -78,19 +64,38 @@ def XXreset():
 
 def T1():
 	''' test Qt environment'''
-	import Qt
-	say(Qt)
-	say(["PyQt4",Qt.IsPyQt4])
-	say(["PySide",Qt.IsPySide])
-	say(Qt)
-	QtCore=Qt.QtCore
-	say(QtCore)
+	say("Qt is " +str(Qt))
+	say(["Flags in Qt: PyQt4",Qt.IsPyQt4,"PySide",Qt.IsPySide])
 
 
-def scene_A(instance):
-	a=pfwrap.getGraphManager()
+def refresh_gui():
 
-	gg=a.getAllGraphs()[0]
+	hidePyFlow()
+	tempd=pfwrap.getInstance().getTempDirectory()
+	fpath=tempd+'/_refreshguiswap.json'
+
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+	saveData = gg.serialize()
+
+	with open(fpath, 'w') as f:
+		json.dump(saveData, f, indent=4)
+
+	with open(fpath, 'r') as f:
+		data = json.load(f)
+		FreeCAD.data=data
+		pfwrap.getInstance().loadFromData(data, fpath)
+
+	pfwrap.getInstance().show()
+	clearLogger()
+	FreeCADGui.activeDocument().activeView().viewIsometric()
+	FreeCADGui.SendMsgToActiveView("ViewFit")
+
+
+def scene_A():
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
 	makeInt=pfwrap.createFunction('PyFlowBase',"DefaultLib","makeInt")
 	makeInt.setData('i', 5)
@@ -154,15 +159,16 @@ def scene_A(instance):
 	connection = pfwrap.connect(tim,'OUT',fp,'inExec')
 	connection = pfwrap.connect(fa,'out', fp,'Placement_Base')
 
-def scene_B(instance):
+def scene_B():
+
+	instance=pfwrap.getInstance()
 	clearGraph()
-	a=pfwrap.getGraphManager()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
 	box=FreeCAD.ActiveDocument.addObject("Part::Box","Box")
 	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
 	sphere=FreeCAD.ActiveDocument.addObject("Part::Sphere","Sphere")
 
-	gg=a.getAllGraphs()[0]
 
 	printNode = pfwrap.createNode('PyFlowBase',"consoleOutput","printer")
 	printNode.setPosition(500,-0)
@@ -215,13 +221,11 @@ def scene_B(instance):
 	connection = pfwrap.connect(tim,'OUT', fp,'inExec')
 
 
+def scene_C():
 
-
-def scene_C(instance):
-
+	instance=pfwrap.getInstance()
 	clearGraph()
-	a=pfwrap.getGraphManager()
-	gg=a.getAllGraphs()[0]
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Toy","Toy")
 	t.setPosition(-200,-200)
@@ -257,18 +261,12 @@ def scene_C(instance):
 	#connection = pfwrap.connect(s,'2', t2,'inExec')
 
 
+def scene_D():
 
-
-
-
-
-
-
-def scene_D(instance):
-
+	instance=pfwrap.getInstance()
 	clearGraph()
-	a=pfwrap.getGraphManager()
-	gg=a.getAllGraphs()[0]
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
 
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","Quader")
 	t.setPosition(-100,-200)
@@ -301,15 +299,13 @@ def scene_D(instance):
 	gg.addNode(t3)
 	t3.compute()
 
-	import FreeCADGui
 	FreeCADGui.SendMsgToActiveView("ViewFit")
 
 
-def scene_D2(instance):
+def scene_E(instance):
 	'''test numpy array flow'''
 
 	clearGraph()
-
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
 	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","PPP")
@@ -339,190 +335,33 @@ def scene_D2(instance):
 
 def test_AA():
 
-	instance=pfwrap.getInstance()
-	say(instance)
-	instance.show()
-
-	a=pfwrap.getGraphManager()
-
-	from PyFlow import(
-		INITIALIZE,
-		GET_PACKAGES
-	)
-
-
-	from PyFlow.Core import(
-		GraphBase,
-		PinBase,
-		NodeBase,
-		GraphManager
-	)
-
-	scene_A(instance)
-	#scene_B(instance)
-	#scene_C(instance)
-
-	#refresh gui ...
-	a=pfwrap.getGraphManager()
-	gg=a.getAllGraphs()[0]
-	
-
-	tempd=instance.getTempDirectory()
-	fpath=tempd+'/_refreshguiswap.json'
-	saveData = gg.serialize()
-
-	with open(fpath, 'w') as f:
-		json.dump(saveData, f, indent=4)
-
-	with open(fpath, 'r') as f:
-		data = json.load(f)
-		FreeCAD.data=data
-		instance.loadFromData(data, fpath)
+	scene_A()
+	refresh_gui()
 
 def test_BB():
 
-	instance=pfwrap.getInstance()
-	say(instance)
-	instance.show()
+	scene_B()
+	refresh_gui()
 
-	a=pfwrap.getGraphManager()
-
-	from PyFlow import(
-		INITIALIZE,
-		GET_PACKAGES
-	)
-
-
-	from PyFlow.Core import(
-		GraphBase,
-		PinBase,
-		NodeBase,
-		GraphManager
-	)
-
-	#scene_A(instance)
-	scene_B(instance)
-	#scene_C(instance)
-
-	#refresh gui ...
-	a=pfwrap.getGraphManager()
-	gg=a.getAllGraphs()[0]
-	
-
-	tempd=instance.getTempDirectory()
-	fpath=tempd+'/_refreshguiswap.json'
-	saveData = gg.serialize()
-
-	with open(fpath, 'w') as f:
-		json.dump(saveData, f, indent=4)
-
-	with open(fpath, 'r') as f:
-		data = json.load(f)
-		FreeCAD.data=data
-		instance.loadFromData(data, fpath)
 
 def test_CC():
 
-	instance=pfwrap.getInstance()
-	say(instance)
-	instance.show()
-
-	a=pfwrap.getGraphManager()
-
-	from PyFlow import(
-		INITIALIZE,
-		GET_PACKAGES
-	)
-
-
-	from PyFlow.Core import(
-		GraphBase,
-		PinBase,
-		NodeBase,
-		GraphManager
-	)
-
-	#scene_A(instance)
-	#scene_B(instance)
-	scene_C(instance)
-
-	#refresh gui ...
-	a=pfwrap.getGraphManager()
-	gg=a.getAllGraphs()[0]
-	
-
-	tempd=instance.getTempDirectory()
-	fpath=tempd+'/_refreshguiswap.json'
-	saveData = gg.serialize()
-
-	with open(fpath, 'w') as f:
-		json.dump(saveData, f, indent=4)
-
-	with open(fpath, 'r') as f:
-		data = json.load(f)
-		FreeCAD.data=data
-		instance.loadFromData(data, fpath)
+	scene_C()
+	refresh_gui()
 
 
 def test_DD():
 
-	instance=pfwrap.getInstance()
-	say(instance)
-	instance.show()
+	scene_D()
+	refresh_gui()
 
-	a=pfwrap.getGraphManager()
-
-	from PyFlow import(
-		INITIALIZE,
-		GET_PACKAGES
-	)
-
-
-	from PyFlow.Core import(
-		GraphBase,
-		PinBase,
-		NodeBase,
-		GraphManager
-	)
-
-	#scene_A(instance)
-	#scene_B(instance)
-	scene_D(instance)
-
-	#refresh gui ...
-	a=pfwrap.getGraphManager()
-	gg=a.getAllGraphs()[0]
-	
-	say("reload to refresh the UI ...")
-
-	tempd=instance.getTempDirectory()
-	fpath=tempd+'/_refreshguiswap.json'
-	saveData = gg.serialize()
-
-	with open(fpath, 'w') as f:
-		json.dump(saveData, f, indent=4)
-
-	with open(fpath, 'r') as f:
-		data = json.load(f)
-		FreeCAD.data=data
-		instance.loadFromData(data, fpath)
-
-	sayl("!reload finished")
-
-
-def test_CC():
-	#import nodeeditior
-	mm=pfwrap.getGraphManager()
-	for n in mm.getAllNodes():
-		print n.getName()
-		if n.getName() =='Boxxy':
-			FreeCAD.n=n
 
 
 def reset():
 	'''file laden und graph anzeigen testcase'''
-	showPyFlow()
-	import FreeCAD
+
+	instance=pfwrap.getInstance()
+	clearGraph()
 	FreeCAD.open(u"/home/thomas/aa.FCStd")
 	loadGraph()
 
@@ -599,7 +438,7 @@ class MyDockWidget(QDockWidget):
 
 
 
-def T2():
+def PyFlowtoDockWidget():
 	# erzeugen PyFlow Fenster
 	test_AA()
 	# erzeuge eigenes Fesnter und uebernehme die Daten
@@ -607,12 +446,12 @@ def T2():
 	a.show()
 	FreeCAD.a=a
 
-def save_and_laod_json_file_test():
+def save_and_load_json_file_test():
 	pfwrap.getInstance().load('/home/thomas/Schreibtisch/aa2.json')
 	pfwrap.getInstance().save(False,'/home/thomas/Schreibtisch/aa2.json')
 
 
-def T3():
+def shutdown():
 	'''fast stop of freecad test environ'''
 	try:
 		FreeCAD.closeDocument("Unnamed")
@@ -668,35 +507,18 @@ def saveGraph():
 
 
 def loadFile():
-	#showPyFlow()
+
 	pfwrap.getInstance().hide()
 	hidePyFlow()
 	FreeCAD.open(u"/home/thomas/graph.FCStd")
+	clearGraph()
 	loadGraph()
 
 
-def T2():
-	instance=pfwrap.getInstance()
-	t=instance.getTempDirectory()
-	say(t)
-
-def T2():
-	import store
-	reload (store)
-	if 0:
-		store.store().addid(T2)
-		store.store().addid(T3)
-		store.store().addid(loadFile)
-	store.store().add(id(store),store)
-	store.store().add(id(store),store)
-	v=pfwrap
-	j="pyflpw"
-	store.store().add(j,v)
-	store.store().list()
 
 
 
-def T2():
+def clearLogger():
 	'''logger clear'''
 	instance=pfwrap.getInstance()
 	for t in instance._tools:
