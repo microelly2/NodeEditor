@@ -333,6 +333,19 @@ def scene_E(instance):
 	connection = pfwrap.chainExec(t3,t4)
 	t2.compute()
 
+def scene_A():
+	'''test point listnumpy array flow'''
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon","MyPolygon")
+	t3.setPosition(-100,0)
+	gg.addNode(t3)
+	t3.compute()
+
 
 
 def test_AA():
