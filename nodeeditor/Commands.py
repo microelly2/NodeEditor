@@ -71,14 +71,16 @@ def T1():
 def refresh_gui():
 
 	hidePyFlow()
-	tempd=pfwrap.getInstance().getTempDirectory()
-	fpath=tempd+'/_refreshguiswap.json'
+#	tempd=pfwrap.getInstance().getTempDirectory()
 
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 	saveData = gg.serialize()
 
-	with open(fpath, 'w') as f:
-		json.dump(saveData, f, indent=4)
+	import tempfile
+	f = tempfile.NamedTemporaryFile(delete=False)
+	fpath= f.name
+	json.dump(saveData, f, indent=4)
+	f.close()
 
 	with open(fpath, 'r') as f:
 		data = json.load(f)
@@ -360,9 +362,12 @@ def test_DD():
 def reset():
 	'''file laden und graph anzeigen testcase'''
 
+	if 'aa' not in FreeCAD.listDocuments().keys():
+		FreeCAD.open(u"/home/thomas/aa.FCStd")
+	FreeCAD.setActiveDocument("aa")
+
 	instance=pfwrap.getInstance()
 	clearGraph()
-	FreeCAD.open(u"/home/thomas/aa.FCStd")
 	loadGraph()
 
 class MyDockWidget(QDockWidget):
@@ -439,6 +444,7 @@ class MyDockWidget(QDockWidget):
 
 
 def PyFlowtoDockWidget():
+
 	# erzeugen PyFlow Fenster
 	test_AA()
 	# erzeuge eigenes Fesnter und uebernehme die Daten
@@ -449,6 +455,14 @@ def PyFlowtoDockWidget():
 def save_and_load_json_file_test():
 	pfwrap.getInstance().load('/home/thomas/Schreibtisch/aa2.json')
 	pfwrap.getInstance().save(False,'/home/thomas/Schreibtisch/aa2.json')
+
+def T2():
+	#FreeCAD.PF.hide()
+	#FreeCAD.PF.deleteLater() # geth nicht wegen logger
+	#del(FreeCAD.PF)
+	pfwrap.getInstance().hide()
+	pfwrap.getInstance().show()
+
 
 
 def shutdown():
@@ -508,9 +522,11 @@ def saveGraph():
 
 def loadFile():
 
-	pfwrap.getInstance().hide()
+	
 	hidePyFlow()
-	FreeCAD.open(u"/home/thomas/graph.FCStd")
+	if 'graph' not in FreeCAD.listDocuments().keys():
+		FreeCAD.open(u"/home/thomas/graph.FCStd")
+	FreeCAD.setActiveDocument("graph")
 	clearGraph()
 	loadGraph()
 

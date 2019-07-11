@@ -25,7 +25,7 @@ from PyFlow.Core import(
 def deleteInstance():
 	FreeCAD.PF.hide()
 	#FreeCAD.PF.deleteLater() # geth nicht wegen logger
-	del(FreeCAD.PF)
+	#del(FreeCAD.PF)
 
 
 
@@ -43,7 +43,7 @@ def getInstance():
 
 	t=instance.windowTitle()
 	if not t.startswith("FreeCAD NodeEditor"):
-		instance.setWindowTitle("FreeCAD NodeEditor v0.04 @ "+instance.windowTitle())
+		instance.setWindowTitle("FreeCAD NodeEditor v0.05 @ "+instance.windowTitle())
 		instance.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
 
 	FreeCAD.PF=instance
