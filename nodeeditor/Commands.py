@@ -272,43 +272,49 @@ def scene_D(instance):
 
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","Quader")
 	t.setPosition(-100,-200)
-	t.setData("shapeOnly",True)
+	#t.setData("shapeOnly",True)
 	gg.addNode(t)
 
 	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Cone","Kegel")
 	t2.setPosition(-100,50)
-	t2.setData("shapeOnly",True)
+	#t2.setData("shapeOnly",True)
 	gg.addNode(t2)
 
-	tf = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Bar","Boolean")
+	tf = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Bar","MyBooleanOP")
 	tf.setPosition(150,0)
-	tf.setData("shapeOnly",True)
+	#tf.setData("shapeOnly",True)
 	gg.addNode(tf)
 
 	connection = pfwrap.connect(t,'outExec', tf,'inExec')
 	connection = pfwrap.connect(t2,'outExec', tf,'inExec')
 
-	connection = pfwrap.connect(t,'Shape', tf,'Part_in1')
-	connection = pfwrap.connect(t2,'Shape', tf,'Part_in2')
+	connection = pfwrap.connect(t,'Part', tf,'Part_in1')
+	connection = pfwrap.connect(t2,'Part', tf,'Part_in2')
 
 	t.compute()
 	t2.compute()
 
 
-	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Sphere","Kugel")
-	t2.setPosition(-0,-150)
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Sphere","Kugel")
+	t3.setPosition(-0,-150)
 	#t2.setData("shapeOnly",True)
-	gg.addNode(t2)
+	gg.addNode(t3)
+	t3.compute()
+
+	import FreeCADGui
+	FreeCADGui.SendMsgToActiveView("ViewFit")
 
 
-def scene_D(instance):
+def scene_D2(instance):
+	'''test numpy array flow'''
 
 	clearGraph()
-	#a=pfwrap.getGraphManager()
-	#gg=a.getAllGraphs()[0]
 
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","PPP")
+	t2.setPosition(-00,-150)
+	gg.addNode(t2)
 
 	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","AAA")
 	t2.setPosition(-300,-150)
