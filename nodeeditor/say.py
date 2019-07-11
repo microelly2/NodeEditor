@@ -47,7 +47,7 @@ try: # define the FreeCAD say methods
 		''' print message with traceback''' 
 		s='; '.join([str(a) for a in args])
 		l=len(inspect.stack())
-		FreeCAD.Console.PrintWarning(str(s)+" "+str([inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2]]))
+		FreeCAD.Console.PrintWarning(str(s)+" "+str(inspect.stack()[1][3]+" @ ..."+inspect.stack()[1][1][-68:]+" li: "+str(inspect.stack()[1][2]))+"\n")
 
 
 except:
