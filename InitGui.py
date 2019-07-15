@@ -206,6 +206,7 @@ if FreeCAD.GuiUp:
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load File',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'unload modules',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'PyFlowtoDockWidget',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'create Object With All Properties',icon=None)]
 
 
 	toolbars = [

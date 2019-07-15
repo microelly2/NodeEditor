@@ -4,17 +4,22 @@ from PyFlow.UI.Canvas.UICommon import NodeActionButtonInfo
 
 
 class UIFreeCAD_ObjectNode(UINodeBase):
-    def __init__(self, raw_node):
-        super(UIFreeCAD_ObjectNode, self).__init__(raw_node)
-        actionAddOut = self._menu.addAction("Node Action X34")
-#        actionAddOut.setData(NodeActionButtonInfo('../icons/EE.svg'))
-        actionAddOut.setToolTip("Adds output execution pin")
-        actionAddOut.triggered.connect(self.onAddOutPin)
+	def __init__(self, raw_node):
+		super(UIFreeCAD_ObjectNode, self).__init__(raw_node)
+		actionAddOut = self._menu.addAction("create Pins for Properties of the FreeCAD object")
+#		actionAddOut.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+		actionAddOut.setToolTip("Adds property pins")
+		actionAddOut.triggered.connect(self.onAddPins)
 
-    def onAddOutPin(self):
-        print ("Action done")
+	def onAddPins(self):
+		rawPins=self._rawNode.createPins(self)
+		for rawPin in rawPins:
+			uiPin = self._createUIPinWrapper(rawPin)
+			uiPin.setDisplayName("{0}".format(rawPin.name))
+		return 1
 
 
-    @property
-    def name(self):
-        return self._rawNode.name +"@FreeCAD"
+
+	@property
+	def name(self):
+		return self._rawNode.name 

@@ -269,39 +269,28 @@ def scene_D():
 	clearGraph()
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
-
-	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","Quader")
+	FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
+	FreeCAD.ActiveDocument.addObject("Part::Torus","Torus")
+	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
+	
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","Cone")
 	t.setPosition(-100,-200)
 	#t.setData("shapeOnly",True)
 	gg.addNode(t)
+#	t.compute()
 
-	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Cone","Kegel")
-	t2.setPosition(-100,50)
-	#t2.setData("shapeOnly",True)
-	gg.addNode(t2)
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","Torus")
+	t.setPosition(-0,-0)
+	#t.setData("shapeOnly",True)
+	gg.addNode(t)
+#	t.compute()
 
-	tf = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Bar","MyBooleanOP")
-	tf.setPosition(150,0)
-	#tf.setData("shapeOnly",True)
-	gg.addNode(tf)
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","Box")
+	t.setPosition(-100,100)
+	#t.setData("shapeOnly",True)
+	gg.addNode(t)
+#	t.compute()
 
-	connection = pfwrap.connect(t,'outExec', tf,'inExec')
-	connection = pfwrap.connect(t2,'outExec', tf,'inExec')
-
-	connection = pfwrap.connect(t,'Part', tf,'Part_in1')
-	connection = pfwrap.connect(t2,'Part', tf,'Part_in2')
-
-	t.compute()
-	t2.compute()
-
-
-	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Sphere","Kugel")
-	t3.setPosition(-0,-150)
-	#t2.setData("shapeOnly",True)
-	gg.addNode(t3)
-	t3.compute()
-
-	FreeCADGui.SendMsgToActiveView("ViewFit")
 
 
 def scene_E(instance):
@@ -544,7 +533,8 @@ def loadFile():
 	loadGraph()
 
 
-
+def T3():
+	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
 
 
 def clearLogger():
@@ -555,4 +545,60 @@ def clearLogger():
 			say(t)
 			t.clearView()
 			t.hide()
+
+
+
+
+class ViewProvider:
+	def __init__(self, obj):
+		obj.Proxy = self
+
+def createObjectWithAllProperties(): 
+	obj=FreeCAD.ActiveDocument.addObject("Part::FeaturePython","allProps")
+	for p in obj.supportedProperties():
+		pn=str(p).replace('Part::Property','a')
+		pn=str(p).replace('App::Property','a')
+		obj.addProperty(p,pn)
+		print ("obj.addProperty('{}','{}')".format(p,pn))
+
+	ViewProvider(obj.ViewObject)
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+	
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","allProps")
+	t.setPosition(-100,-200)
+	#t.setData("shapeOnly",True)
+	gg.addNode(t)
+
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Console","Console")
+	t.setPosition(-200,200)
+	#t.setData("shapeOnly",True)
+	gg.addNode(t)
+
+
+	fb = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	gg.addNode(fb)
+	fb.setPosition(-300,0)
+	fb.setData('X', 1)
+	fb.setData('Y', 2)
+	fb2 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	gg.addNode(fb2)
+
+	arr = pfwrap.createNode('PyFlowBase',"makeArray","VecArray")
+
+	gg.addNode(arr)
+
+	connection = pfwrap.connect(fb,'out',arr,'data')
+	connection = pfwrap.connect(fb2,'out',arr,'data')
+	connection = pfwrap.connect(arr,'out',t,'entity')
+
+	pol = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Polygon")
+	gg.addNode(pol)
+
+	refresh_gui()
+
 

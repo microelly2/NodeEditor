@@ -58,7 +58,9 @@ from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import FreeCAD_Polygon
 def createUINode(raw_instance):
 
     if isinstance(raw_instance, FreeCAD_Object):
+        print("ERZEugen GUO")
         return UIFreeCAD_ObjectNode(raw_instance)
+
     if isinstance(raw_instance, FreeCAD_Polygon):
         return UIFreeCAD_PolygonNode(raw_instance)
 
