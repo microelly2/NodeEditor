@@ -9,6 +9,7 @@ import Part
 
 import nodeeditor.store as store
 import numpy as np
+import random
 
 
 
@@ -310,7 +311,7 @@ class FreeCadNodeBase(NodeBase):
 
 		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin',group="config")
 		self.randomize = self.createInputPin("randomize", 'BoolPin',group="config")
-
+		self.shapeOnly.recomputeNode=True 
 		self.objname.setData(name)
 
 	@timer 
@@ -361,8 +362,21 @@ class FreeCadNodeBase(NodeBase):
 		yid=yid.replace('-','_')
 
 		cc=FreeCAD.ActiveDocument.getObject(yid)
+
+		if self.shapeOnly.getData():
+			if cc:
+				say("delete object")
+				FreeCAD.ActiveDocument.removeObject(cc.Name)
+			return None
+
+
 		if cc == None:
 			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
+			cc.ViewObject.Transparency=80
+			cc.ViewObject.LineColor=(1.,0.,0.)
+			cc.ViewObject.PointColor=(1.,1.,0.)
+			r=random.random()
+			cc.ViewObject.ShapeColor=(0.,0.2+0.8*r,1.0-0.8*r)
 		return cc
 
 	def postCompute(self,fcobj=None):
@@ -686,8 +700,9 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 		# recursion stopper
 		if self.Called:
 			return
-
-		self.Called=True
+		sayl()
+		# mit zeitstemple aktivieren
+		#self.Called=True
 		
 		pts=self.points.getData()
 		if len(pts)<2:
@@ -701,14 +716,16 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 				self.postCompute()
 
 			if self.shapeOnly.getData():
+				cc=self.getObject()
 				self.postCompute()
 			else:
 				cc=self.getObject()
-				cc.Label=self.objname.getData()
-				cc.Shape=shape
-				self.postCompute(cc)
+				if cc <> None:
+					cc.Label=self.objname.getData()
+					cc.Shape=shape
+					self.postCompute(cc)
 
-		self.Called=False
+		#self.Called=False
 
 
 class FreeCAD_Boolean(FreeCadNodeBase):
@@ -996,6 +1013,31 @@ class FreeCAD_Bar(FreeCadNodeBase):
 	def __init__(self, name="Fusion"):
 
 		super(FreeCAD_Bar, self).__init__(name)
+		self.part = self.createInputPin('Part_in', 'FCobjPin')
+		self.outArray = self.createOutputPin('Points', 'VectorPin', structure=PinStructure.Array)
+		self.createOutputPin('Faces', 'ShapeListPin')
+		self.createOutputPin('Edges', 'ShapeListPin')
+
+		self.pinsk={
+				'Volume':'FloatPin',
+				'Area':'FloatPin',
+				'Length':'FloatPin',
+				'BoundBox': None,
+				'CenterOfMass':'VectorPin',
+#				#'Edges','Faces','Vertexes','Compounds','Wires','Shells',
+#				#'PrincipalProperties','StaticMoments',
+				'Mass':'FloatPin',
+				'ShapeType':'StringPin',
+#				
+		}
+
+		say(self.pinsk)
+		for p in self.pinsk.keys():
+			if self.pinsk[p] <> None:
+				say(p,self.pinsk[p])
+				self.createOutputPin(p, self.pinsk[p])
+
+
 
 	def compute(self, *args, **kwargs):
 
@@ -1003,7 +1045,7 @@ class FreeCAD_Bar(FreeCadNodeBase):
 
 		import nodeeditor.dev
 		reload (nodeeditor.dev)
-		return  nodeeditor.dev.run_Bar_compute(self,*args, **kwargs)
+		nodeeditor.dev.run_Bar_compute(self,*args, **kwargs)
 
 		self.outExec.call()
 
@@ -1015,6 +1057,9 @@ class FreeCAD_Foo(FreeCadNodeBase):
 
 	def __init__(self, name="Fusion"):
 		super(FreeCAD_Foo, self).__init__(name)
+		p=self.createInputPin('Shapes', 'ShapeListPin')
+		p=self.createInputPin('index', 'IntPin')
+		p.recomputeNode=True
 
 
 	def compute(self, *args, **kwargs):
@@ -1023,10 +1068,34 @@ class FreeCAD_Foo(FreeCadNodeBase):
 
 		import nodeeditor.dev
 		reload (nodeeditor.dev)
-		return  nodeeditor.dev.run_Foo_compute(self,*args, **kwargs)
+		nodeeditor.dev.run_Foo_compute(self,*args, **kwargs)
 
 		self.outExec.call()
 
+
+class FreeCAD_Plot(NodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_Plot, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.xpin=self.createInputPin('x', 'FloatPin', structure=PinStructure.Array)
+		self.ypin=self.createInputPin('y', 'FloatPin', structure=PinStructure.Array)
+
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_Plot_compute(self,*args, **kwargs)
+
+		self.outExec.call()
 
 
 
@@ -1049,5 +1118,7 @@ def nodelist():
 				FreeCAD_Console,
 				FreeCAD_VectorArray,
 				FreeCAD_Boolean,
-				FreeCAD_BSpline
+				FreeCAD_BSpline,
+				FreeCAD_Plot,
+				
 		]

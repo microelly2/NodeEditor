@@ -395,6 +395,84 @@ def scene_A():
 	gg.addNode(t3)
 	t3.compute()
 
+def scene_A():
+	'''test point listnumpy array flow'''
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","MyBox")
+	t2.setPosition(-100,0)
+	gg.addNode(t2)
+
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Bar","MyPartExplorer")
+	t3.setPosition(100,0)
+	gg.addNode(t3)
+	connection = pfwrap.connect(t2,'Part', t3,'Part_in')
+
+	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","MyIndex")
+	t4.setData("shapeOnly",True)
+	t4.setPosition(0,-200)
+	gg.addNode(t4)
+
+	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Plot","MyPlot")
+	t4.setPosition(100,-200)
+	gg.addNode(t4)
+
+
+	t2.compute()
+	t3.compute()
+	t4.compute()
+
+def scene_A():
+	'''test point listnumpy array flow'''
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+
+	makeInt=pfwrap.createFunction('PyFlowBase',"DefaultLib","makeInt")
+	makeInt.setData('i', 50)
+	gg.addNode(makeInt)
+
+	v = pfwrap.createFunction('PyFlowFreeCAD',"Vector","zip")
+	gg.addNode(v)
+	
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","randomList")
+	gg.addNode(v1)
+	connection = pfwrap.connect(v1,'out', v,'x')
+	connection = pfwrap.connect(makeInt,'out', v1,'size')
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","randomList")
+	gg.addNode(v1)
+	connection = pfwrap.connect(v1,'out', v,'y')
+	connection = pfwrap.connect(makeInt,'out', v1,'size')
+
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","randomList")
+	gg.addNode(v1)
+	connection = pfwrap.connect(v1,'out', v,'z')
+	connection = pfwrap.connect(makeInt,'out', v1,'size')
+
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Console","Console")
+	t.setPosition(-200,200)
+	#t.setData("shapeOnly",True)
+	gg.addNode(t)
+	connection = pfwrap.connect(v,'out', t,'entity')
+
+	t.compute()
+	
+	
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Polygon")
+	#t.setPosition(-200,200)
+	gg.addNode(t)
+	connection = pfwrap.connect(v,'out', t,'points')
+	
 
 
 def test_AA():

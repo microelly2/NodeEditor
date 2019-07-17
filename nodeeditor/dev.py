@@ -221,3 +221,108 @@ def run_VectorArray_compute(self,*args, **kwargs):
 	self.outExec.call()
 
 
+import nodeeditor.store as store
+
+def run_Bar_compute(self,*args, **kwargs):
+
+
+	sayl()
+	part=self.getData("Part_in")
+	say(part)
+	cc=FreeCAD.ActiveDocument.getObject(part)
+	say(cc,cc.Label)
+	shape=cc.Shape
+	for n in self.pinsk.keys():
+		v=getattr(shape,n)
+		say(n,v)
+		if self.pinsk[n] <> None:
+			self.setData(n,v)
+	if 0:
+		ls=shape.writeInventor().split('\n')
+		for l in ls:say(l)
+
+
+	points=[v.Point for v in getattr(shape,'Vertexes')]
+	say(points)
+	self.setData('Points',points)
+
+	pin=self.getPinN("Edges")
+	say("Edges pin",pin,pin.uid)
+	store.store().add(str(pin.uid),shape.Edges)
+	self.setData("Edges",str(pin.uid))
+	pin=self.getPinN("Faces")
+	say("Faces pin",pin,pin.uid)
+	store.store().add(str(pin.uid),shape.Faces)
+	self.setData("Faces",str(pin.uid))
+
+	# probe lesen
+	# store.store().list()
+	eid=self.getData("Edges")#[0]
+	say("Eid",eid)
+	eds=store.store().get(str(eid))
+	say("Edges",eds)
+	say(FreeCAD.STORE[eid])
+#	Part.show(Part.Compound(eds[:4]))
+
+	fid=self.getData("Faces")
+	fas=store.store().get(str(fid))
+#	Part.show(Part.Compound(fas[1:3]))
+#	Part.show(fas[0])
+	
+
+def run_Foo_compute(self,*args, **kwargs):
+
+
+	sayl()
+	eid=self.getData("Shapes")#[0]
+	say("Eid",eid)
+	eds=store.store().get(str(eid))
+	say("Shapes",eds)
+	try:
+		shape=eds[self.getData('index')]
+	except:
+		shape=Part.Shape()
+	say("Shape ",shape)
+
+	cc=self.getObject()
+	if cc <> None:
+		cc.Label=self.objname.getData()
+		cc.Shape=shape
+		cc.ViewObject.LineWidth=8
+		cc.ViewObject.LineColor=(1.,1.,0.)
+		cc.ViewObject.PointSize=8
+		cc.ViewObject.Transparency=0
+
+	self.outExec.call()
+ 
+
+def run_Plot_compute(self,*args, **kwargs):
+
+	import matplotlib.pyplot as plt
+
+	#plt.figure(4)
+	plt.close()
+	plt.title(self.getName())
+
+	x=self.xpin.getData()
+	y=self.ypin.getData()
+
+	say(x)
+	say(y)
+	say(len(x),len(y))
+	
+
+	if len(y) <>0:
+		N=len(y)
+		if len(x)<>len(y):
+			x = np.linspace(0, 10, N, endpoint=True)
+		else:
+			x=np.array(x)
+
+		y=np.array(y)
+
+		plt.plot(x, y, 'o')
+		plt.plot(x, y , '-')
+		plt.show()
+
+
