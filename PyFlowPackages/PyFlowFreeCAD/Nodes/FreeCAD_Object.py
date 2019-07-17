@@ -806,8 +806,72 @@ class FreeCAD_Array(FreeCadNodeBase):
 		self.postCompute()
 
 class FreeCAD_Foo(FreeCadNodeBase):
+	'''Bspline Surface'''
+
 	def __init__(self, name="Fusion"):
+
 		super(FreeCAD_Foo, self).__init__(name)
+		self.arrayData = self.createInputPin('poles', 'AnyPin', structure=PinStructure.Array, constraint="1")
+		self.arrayData.enableOptions(PinOptions.AllowMultipleConnections)
+		self.arrayData.disableOptions(PinOptions.SupportsOnlyArrays)
+
+
+
+	@timer 
+	def compute(self, *args, **kwargs):
+
+		say("")
+		say ("in compute",self.getName(),"objname is",self.objname.getData())
+		dat=self.arrayData.getData()
+		dat=np.array(dat)
+		say("dat shape",dat.shape)
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		return  nodeeditor.dev.run_foo_compute(self,*args, **kwargs)
+
+
+class FreeCAD_VectorArray(FreeCadNodeBase):
+	'''Array of Vectors Surface'''
+
+	def __init__(self, name="Fusion"):
+
+		super(FreeCAD_VectorArray, self).__init__(name)
+#		self.arrayData = self.createInputPin('poles', 'AnyPin', structure=PinStructure.Array, constraint="1")
+#		self.arrayData.enableOptions(PinOptions.AllowMultipleConnections)
+#		self.arrayData.disableOptions(PinOptions.SupportsOnlyArrays)
+
+		self.createInputPin("vecA", 'VectorPin',FreeCAD.Vector(20,0,0))
+		self.createInputPin("vecB", 'VectorPin',FreeCAD.Vector(0,10,0))
+		self.createInputPin("vecC", 'VectorPin')
+		self.createInputPin("vecBase", 'VectorPin')
+		self.createInputPin("countA", 'IntPin',5)
+		self.createInputPin("countB", 'IntPin',8)
+		self.createInputPin("countC", 'IntPin',1)
+		self.createInputPin("randomX", 'FloatPin',5)
+		self.createInputPin("randomY", 'FloatPin',5)
+		self.createInputPin("randomZ", 'FloatPin',5)
+		self.createInputPin("degreeA", 'IntPin',3)
+		self.createInputPin("degreeB", 'IntPin',3)
+
+		self.outArray = self.createOutputPin('out', 'AnyPin', [[],[]], structure=PinStructure.Array)
+		self.outArray.enableOptions(PinOptions.AllowAny)
+
+
+		self.result = self.createOutputPin('result', 'BoolPin')
+
+	@timer 
+	def compute(self, *args, **kwargs):
+
+		say ("in compute",self.getName(),"objname is",self.objname.getData())
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		return  nodeeditor.dev.run_VectorArray_compute(self,*args, **kwargs)
+
+
+
+
 
 
 
@@ -818,6 +882,8 @@ class FreeCAD_Object(FreeCadNodeBase):
 		self.Show = self.createInputPin('Store_to_FC', 'ExecPin', None, self.store,)
 		for i in range(7):
 			self.createOutputPin('dummy', 'ExecPin')
+		
+
 
 	def compute(self, *args, **kwargs):
 
@@ -834,6 +900,8 @@ class FreeCAD_Object(FreeCadNodeBase):
 		self.fob=obj
 		self.store()
 		self.outExec.call()
+
+
 
 	def reload(self, *args, **kwargs):
 		print "reload from FreeCADobject and refresh data" 
@@ -908,14 +976,18 @@ class FreeCAD_Console(NodeBase):
 
 
 def nodelist():
-	return [FreeCAD_Foo,FreeCAD_Toy,FreeCAD_Bar,FreeCAD_Object,
-		FreeCAD_Box,
-		FreeCAD_Cone,
-		FreeCAD_Sphere,
-		FreeCAD_Quadrangle,
-		FreeCAD_Polygon,
-		FreeCAD_Polygon2,
-		FreeCAD_Array,
-		FreeCAD_Console,
-
+	return [
+				FreeCAD_Foo,
+				FreeCAD_Toy,
+				FreeCAD_Bar,
+				FreeCAD_Object,
+				FreeCAD_Box,
+				FreeCAD_Cone,
+				FreeCAD_Sphere,
+				FreeCAD_Quadrangle,
+				FreeCAD_Polygon,
+				FreeCAD_Polygon2,
+				FreeCAD_Array,
+				FreeCAD_Console,
+				FreeCAD_VectorArray,
 		]

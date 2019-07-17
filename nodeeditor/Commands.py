@@ -273,23 +273,83 @@ def scene_D():
 	FreeCAD.ActiveDocument.addObject("Part::Torus","Torus")
 	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
 	
-	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","Cone")
+	say("huhu")
+	t = pfwrap.createNode('PyFlowBase',"imageDisplay","ImageXX")
 	t.setPosition(-100,-200)
+	t.entity.setData('/home/thomas/Bilder/freeka.png')
+	t.compute()
 	#t.setData("shapeOnly",True)
 	gg.addNode(t)
-#	t.compute()
 
-	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","Torus")
-	t.setPosition(-0,-0)
-	#t.setData("shapeOnly",True)
-	gg.addNode(t)
-#	t.compute()
 
-	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","Box")
-	t.setPosition(-100,100)
+
+def scene_D():
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	gg.addNode(v1)
+
+	v2 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v2.setData('X', 10)
+	v2.setData('Y', 0)
+	gg.addNode(v2)
+
+	v3 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v3.setData('X', 0)
+	v3.setData('Y', 10)
+	gg.addNode(v3)
+
+	v4 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v4.setData('X', 10)
+	v4.setData('Y', 10)
+	gg.addNode(v4)
+
+	ar = pfwrap.createNode('PyFlowBase',"makeArray","VecArray")
+	gg.addNode(ar)
+	connection = pfwrap.connect(v1,'out',ar,'data')
+	connection = pfwrap.connect(v2,'out',ar,'data')
+
+	ar2 = pfwrap.createNode('PyFlowBase',"makeArray","VecArray")
+	gg.addNode(ar2)
+	connection = pfwrap.connect(v3,'out',ar2,'data')
+	connection = pfwrap.connect(v4,'out',ar2,'data')
+
+	ar3 = pfwrap.createNode('PyFlowBase',"makeArray","VecArray")
+	gg.addNode(ar3)
+	ar3.setData('preserveLists',True)
+	connection = pfwrap.connect(ar,'out',ar3,'data')
+	connection = pfwrap.connect(ar2,'out',ar3,'data')
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","aBSplineSurface")
+	t2.setPosition(-300,-150)
+	gg.addNode(t2)
+	connection = pfwrap.connect(ar3,'out',t2,'poles')
+
+
+def scene_Da():
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+	ta = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_VectorArray","aVectorArray")
+	ta.setPosition(-200,00)
+	gg.addNode(ta)
+
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Console","Console")
+	t.setPosition(00,00)
 	#t.setData("shapeOnly",True)
 	gg.addNode(t)
-#	t.compute()
+	connection = pfwrap.connect(ta,'out',t,'entity')
+
+	tim = pfwrap.createNode('PyFlowBase',"timer","MyTimer")
+	tim.setPosition(-300,-100)
+	gg.addNode(tim)
+	connection = pfwrap.connect(tim,'OUT', ta,'inExec')
 
 
 

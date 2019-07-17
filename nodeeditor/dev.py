@@ -138,3 +138,86 @@ def runraw(self):
 	return pins
 
 
+import numpy as np
+import Part
+
+def run_foo_compute(self,*args, **kwargs):
+	# compute fuer FreeCAD_Foo.compute
+	dat=self.arrayData.getData()
+	dat=np.array(dat)
+	say(dat)
+	sf=Part.BSplineSurface()
+	sf.buildFromPolesMultsKnots(dat,[2,2],[2,2],[0,1],[0,1],False,False,1,1)
+	shape=sf.toShape()
+	cc=self.getObject()
+	cc.Label=self.objname.getData()
+	cc.Shape=shape
+
+
+import random
+
+
+def run_VectorArray_compute(self,*args, **kwargs):
+	
+	countA=self.getData("countA")
+	countB=self.getData("countB")
+	countC=self.getData("countC")
+	vO=self.getData("vecBase")
+	vA=self.getData("vecA")
+	
+	vB=self.getData("vecB")
+	vC=self.getData("vecC")
+	rx=self.getData("randomX")
+	ry=self.getData("randomY")
+	rz=self.getData("randomZ")
+	
+	
+	degA=self.getData("degreeA")
+	degB=self.getData("degreeB")
+	if countA<degA+1:
+		degA=countA-1
+	if countB<degB+1:
+		degB=countB-1
+
+	points=[vO+vA*a+vB*b+vC*c+FreeCAD.Vector((0.5-random.random())*rx,(0.5-random.random())*ry,(0.5-random.random())*rz) 
+		for a in range(countA) for b in range(countB) for c in range(countC)]
+
+	if countC != 1:
+		sayexc("not implemented")
+		return
+
+	if degA==0 or degB==0:
+		col = []
+		poles=np.array(points).reshape(countA,countB,3)
+		for ps in poles:
+			ps=[FreeCAD.Vector(p) for p in ps]
+			col += [Part.makePolygon(ps)]
+		for ps in poles.swapaxes(0,1):
+			ps=[FreeCAD.Vector(p) for p in ps]
+			col += [Part.makePolygon(ps)]
+
+		shape=Part.makeCompound(col)
+
+
+	else:
+
+		poles=np.array(points).reshape(countA,countB,3)
+
+		multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+		multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
+		knotA=range(len(multA))
+		knotB=range(len(multB))
+
+		sf=Part.BSplineSurface()
+		sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,False,degA,degB)
+		shape=sf.toShape()
+
+
+	self.setData('out',poles)
+
+	cc=self.getObject()
+	cc.Label=self.objname.getData()
+	cc.Shape=shape
+	self.outExec.call()
+
+
