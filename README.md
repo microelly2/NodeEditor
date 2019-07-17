@@ -5,10 +5,18 @@ A Node editor for FreeCAD using PyFLow
 ![v0.0.3 screenshot](https://user-images.githubusercontent.com/4140247/60964703-fd265580-a2e1-11e9-906b-7dd91a754785.png)
 
 ## Screencasts
-v0.0.5  https://youtu.be/g5ZAEO5CPWQ
-v0.0.4  https://youtu.be/XaBEMbWZxAM
-v0.0.3  https://youtu.be/9B2AxDQQDeg  
-v0.0.1  https://youtu.be/39VoYv0OTNU  
+
+### v0.0.6
+
+	- https://youtu.be/fCelpH6e7Xc generator for vector array, grids and bspline surfaces
+	- https://youtu.be/H2B6_yldrj8 from  vectors to vectorlist to vectorarray to surface
+	- https://youtu.be/w5iJYJGBAQE from vectors to vectorlist to polygon
+	- https://youtu.be/g5ZAEO5CPWQ polygon with input pins for vectors 
+
+
+	- v0.0.4  https://youtu.be/XaBEMbWZxAM
+	- v0.0.3  https://youtu.be/9B2AxDQQDeg  
+	- v0.0.1  https://youtu.be/39VoYv0OTNU  
 
 ## Requirements
 PyFlow (from my fork): https://github.com/microelly2/PyFlow  
