@@ -42,11 +42,14 @@ def onChanged_example(self,*args, **kwargs):
 	self.owningNode().reshape()
 
 
-class FreeCAD_ObjectXXX(NodeBase):
+class FreeCAD_StorePins(NodeBase):
+	'''
+	testnode for store-pins
+	'''
 
 	def __init__(self, name):
 
-		super(FreeCAD_ObjectXXX, self).__init__(name)
+		super(FreeCAD__StorePins, self).__init__(name)
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.show = self.createInputPin('Show', 'ExecPin', None, self.show)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -513,7 +516,10 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 
 
 class FreeCAD_Quadrangle(FreeCadNodeBase):
-	'''erzeuge einer BSpline Flaeche'''
+	'''
+	erzeuge einer BSpline Flaeche degree 1
+	by 4 points
+	'''
 
 	def __init__(self, name="MyQuadrangle"):
 
@@ -580,7 +586,11 @@ from PyFlow.Packages.PyFlowBase.Nodes import FLOW_CONTROL_COLOR
 
 
 class FreeCAD_Polygon(FreeCadNodeBase):
-	'''erzeuge eines Streckenzugs'''
+	'''
+	erzeuge eines Streckenzugs
+	for each point there is an input pin,
+	input pins can be added frm context menue
+	'''
 
 	def __init__(self, name="MyQuadrangle"):
 
@@ -653,7 +663,10 @@ class FreeCAD_Polygon(FreeCadNodeBase):
 
 
 class FreeCAD_Polygon2(FreeCadNodeBase):
-	'''erzeuge eines Streckenzugs'''
+	'''
+	erzeuge eines Streckenzugs
+	input pin for a list of vectors
+	'''
 
 	def __init__(self, name="MyQuadrangle"):
 
@@ -696,16 +709,6 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 				self.postCompute(cc)
 
 		self.Called=False
-
-
-class FreeCAD_Bar(FreeCadNodeBase):
-
-	def __init__(self, name="Fusion"):
-
-		super(FreeCAD_Bar, self).__init__(name)
-
-
-
 
 
 class FreeCAD_Boolean(FreeCadNodeBase):
@@ -815,12 +818,13 @@ class FreeCAD_Array(FreeCadNodeBase):
 
 		self.postCompute()
 
-class FreeCAD_Foo(FreeCadNodeBase):
+
+class FreeCAD_BSpline(FreeCadNodeBase):
 	'''Bspline Surface'''
 
 	def __init__(self, name="Fusion"):
 
-		super(FreeCAD_Foo, self).__init__(name)
+		super(FreeCAD_BSpline, self).__init__(name)
 		self.arrayData = self.createInputPin('poles', 'AnyPin', structure=PinStructure.Array, constraint="1")
 		self.arrayData.enableOptions(PinOptions.AllowMultipleConnections)
 		self.arrayData.disableOptions(PinOptions.SupportsOnlyArrays)
@@ -962,6 +966,9 @@ class FreeCAD_Object(FreeCadNodeBase):
 
 
 class FreeCAD_Console(NodeBase):
+	'''
+	write to FreeCAD.Console
+	'''
 	def __init__(self, name="Fusion"):
 		super(FreeCAD_Console, self).__init__(name)
 
@@ -978,6 +985,47 @@ class FreeCAD_Console(NodeBase):
 		FreeCAD.Console.PrintMessage("%s: %s\n"%(self.name,self.entity.getData()))
 		self.outExec.call()
 
+#################
+
+
+class FreeCAD_Bar(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+
+		super(FreeCAD_Bar, self).__init__(name)
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		return  nodeeditor.dev.run_Bar_compute(self,*args, **kwargs)
+
+		self.outExec.call()
+
+
+class FreeCAD_Foo(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_Foo, self).__init__(name)
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		return  nodeeditor.dev.run_Foo_compute(self,*args, **kwargs)
+
+		self.outExec.call()
 
 
 
@@ -1001,4 +1049,5 @@ def nodelist():
 				FreeCAD_Console,
 				FreeCAD_VectorArray,
 				FreeCAD_Boolean,
+				FreeCAD_BSpline
 		]
