@@ -323,7 +323,7 @@ def scene_D():
 	connection = pfwrap.connect(ar,'out',ar3,'data')
 	connection = pfwrap.connect(ar2,'out',ar3,'data')
 
-	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","aBSplineSurface")
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_BSpline","aBSplineSurface")
 	t2.setPosition(-300,-150)
 	gg.addNode(t2)
 	connection = pfwrap.connect(ar3,'out',t2,'poles')
@@ -363,15 +363,15 @@ def scene_E(instance):
 	t2.setPosition(-00,-150)
 	gg.addNode(t2)
 
-	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","AAA")
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Array","AAA")
 	t2.setPosition(-300,-150)
 	gg.addNode(t2)
 
-	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","BBB")
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Array","BBB")
 	t3.setPosition(-100,0)
 	gg.addNode(t3)
 
-	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","CCC")
+	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Array","CCC")
 	t4.setPosition(100,150)
 	gg.addNode(t4)
 
