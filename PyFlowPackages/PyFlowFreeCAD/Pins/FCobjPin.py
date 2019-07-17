@@ -90,6 +90,43 @@ class ShapePin(FCobjPin):
     def processData(data):
         return data
 
+
+
+class ShapeListId():
+    pass
+
+class ShapeListPin(FCobjPin):
+    """doc string for FloatFCobjPin"""
+    def __init__(self, name, parent, direction, **kwargs):
+        say("create pin",name,parent.getName())
+        super(ShapeListPin, self).__init__(name, parent, direction, **kwargs)
+        self.setDefaultValue(None)
+
+    @staticmethod
+    def IsValuePin():
+        return True
+
+    @staticmethod
+    def supportedDataTypes():
+        return ('ShapeListPin',None)
+
+    @staticmethod
+    def color():
+        return (200, 100, 100, 255)
+
+    @staticmethod
+    def pinDataTypeHint():
+        return 'ShapeListPin', None
+
+    @staticmethod
+    def internalDataStructure():
+        return ShapeListId
+
+    @staticmethod
+    def processData(data):
+        return data
+
+
 class EnumSelection():
     pass
 
@@ -182,4 +219,4 @@ class ArrayPin(FCobjPin):
 
 
 def nodelist():
-    return [EnumerationPin,ShapePin,FCobjPin,ArrayPin]
+    return [EnumerationPin,ShapePin,ShapeListPin,FCobjPin,ArrayPin]
