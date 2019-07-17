@@ -698,17 +698,22 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 		self.Called=False
 
 
-
-
-
-
-
 class FreeCAD_Bar(FreeCadNodeBase):
-	'''boolean ops of two parts example'''
 
 	def __init__(self, name="Fusion"):
 
 		super(FreeCAD_Bar, self).__init__(name)
+
+
+
+
+
+class FreeCAD_Boolean(FreeCadNodeBase):
+	'''boolean ops of two parts example'''
+
+	def __init__(self, name="Fusion"):
+
+		super(FreeCAD_Boolean, self).__init__(name)
 
 		self.part1 = self.createInputPin('Part_in1', 'FCobjPin')
 		self.part2 = self.createInputPin('Part_in2', 'FCobjPin')
@@ -784,6 +789,11 @@ class FreeCAD_Bar(FreeCadNodeBase):
 
 
 class FreeCAD_Array(FreeCadNodeBase):
+	'''
+	test node for large arrays
+	
+	
+	'''
 	def __init__(self, name="Fusion"):
 		super(FreeCAD_Array, self).__init__(name)
 		self.Arr_in = self.createInputPin('Array_in', 'ArrayPin')
@@ -990,4 +1000,5 @@ def nodelist():
 				FreeCAD_Array,
 				FreeCAD_Console,
 				FreeCAD_VectorArray,
+				FreeCAD_Boolean,
 		]

@@ -237,7 +237,7 @@ def scene_C():
 	t2.setPosition(-200,00)
 	gg.addNode(t2)
 
-	tf = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Bar","Boolean")
+	tf = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Boolean","Boolean")
 	tf.setPosition(100,-200)
 	gg.addNode(tf)
 
