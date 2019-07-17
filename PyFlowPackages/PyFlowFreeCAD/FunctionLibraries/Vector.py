@@ -4,10 +4,11 @@ from FreeCAD import Vector as MVector
 #from nodeeditor.wrapper import MVector # as Vector
 
 import numpy as np
+from nodeeditor.say import *
 
 class Array(object):
-	def __init__(self,dat=[]):
-		self.dat=np.array(dat)
+    def __init__(self,dat=[]):
+        self.dat=np.array(dat)
 
 from PyFlow.Core import(
     FunctionLibraryBase,
@@ -70,4 +71,41 @@ class Vector(FunctionLibraryBase):
     def vecSubstract(a=('VectorPin', MVector()), b=('VectorPin', MVector())):
         '''substracts vector a and b'''
         return a - b
+
+#-------------numpy lib starts here -------------------------
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [], {'constraint': '1'}), meta={'Category': 'numpy', 'Keywords': ['list','interval']})
+    def linSpace(start=('FloatPin',0.),stop=('FloatPin',10), num=('IntPin', 50)):
+        """create a linear Space"""
+
+        x1 = np.linspace(start, stop, num, endpoint=True)
+        return list(x1)
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy', 'Keywords': ['list','random']})
+    def randomList(size=('IntPin', 10)):
+        """create a random list"""
+        
+        x1 = np.random.random(size)
+        return list(x1)
+
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('VectorPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy', 'Keywords': ['list','random']})
+    def zip(x=('AnyPin', [0]),y=('AnyPin', [1]),z=('AnyPin', [2])) :
+        """combine """
+        
+        res=np.array([x,y,z]).swapaxes(0,1)
+        points=[FreeCAD.Vector(list(a)) for a in res]    
+        return points
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy', 'Keywords': ['list','scale','multiply']})
+    def scale(data=('AnyPin', [0]),factor=('FloatPin', 1.)) :
+        """multiply datalist with factor """
+        
+        return list(np.array(data)*factor)
+
+
 
