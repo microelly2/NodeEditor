@@ -62,7 +62,7 @@ def unloadmodules():
 	return
 
 
-def T1():
+def QtEnvironment():
 	''' test Qt environment'''
 	say("Qt is " +str(Qt))
 	say(["Flags in Qt: PyQt4",Qt.IsPyQt4,"PySide",Qt.IsPySide])
@@ -93,7 +93,7 @@ def refresh_gui():
 	FreeCADGui.SendMsgToActiveView("ViewFit")
 
 
-def scene_A():
+def VectorRotationPlacement():
 
 	instance=pfwrap.getInstance()
 	clearGraph()
@@ -161,7 +161,7 @@ def scene_A():
 	connection = pfwrap.connect(tim,'OUT',fp,'inExec')
 	connection = pfwrap.connect(fa,'out', fp,'Placement_Base')
 
-def scene_B():
+def PlacerFreeCAD_ObjectandArraypins():
 
 	instance=pfwrap.getInstance()
 	clearGraph()
@@ -223,7 +223,7 @@ def scene_B():
 	connection = pfwrap.connect(tim,'OUT', fp,'inExec')
 
 
-def scene_C():
+def FusionoftwoToynodes():
 
 	instance=pfwrap.getInstance()
 	clearGraph()
@@ -263,7 +263,7 @@ def scene_C():
 	#connection = pfwrap.connect(s,'2', t2,'inExec')
 
 
-def scene_D():
+def ConeTorusBoxandImagenode():
 
 	instance=pfwrap.getInstance()
 	clearGraph()
@@ -273,7 +273,6 @@ def scene_D():
 	FreeCAD.ActiveDocument.addObject("Part::Torus","Torus")
 	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
 	
-	say("huhu")
 	t = pfwrap.createNode('PyFlowBase',"imageDisplay","ImageXX")
 	t.setPosition(-100,-200)
 	t.entity.setData('/home/thomas/Bilder/freeka.png')
@@ -281,9 +280,10 @@ def scene_D():
 	#t.setData("shapeOnly",True)
 	gg.addNode(t)
 
+	refresh_gui()
 
 
-def scene_D():
+def arrayofarrayforsurface():
 
 	instance=pfwrap.getInstance()
 	clearGraph()
@@ -328,8 +328,9 @@ def scene_D():
 	gg.addNode(t2)
 	connection = pfwrap.connect(ar3,'out',t2,'poles')
 
+	refresh_gui()
 
-def scene_Da():
+def createaVectorArraytoplay():
 
 	instance=pfwrap.getInstance()
 	clearGraph()
@@ -351,7 +352,7 @@ def scene_Da():
 	gg.addNode(tim)
 	connection = pfwrap.connect(tim,'OUT', ta,'inExec')
 
-
+	refresh_gui()
 
 def scene_E(instance):
 	'''test numpy array flow'''
@@ -382,7 +383,9 @@ def scene_E(instance):
 	connection = pfwrap.chainExec(t3,t4)
 	t2.compute()
 
-def scene_A():
+	refresh_gui()
+
+def PolygonandPolygon2():
 	'''test point listnumpy array flow'''
 
 	instance=pfwrap.getInstance()
@@ -391,7 +394,11 @@ def scene_A():
 
 
 	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon","MyPolygon")
-	t3.setPosition(-100,0)
+	t3.setPosition(-200,0)
+	gg.addNode(t3)
+	t3.compute()
+
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","MyPolygon2")
 	gg.addNode(t3)
 	t3.compute()
 
@@ -481,7 +488,11 @@ def createPolygonFromCoordinateListswithnumpy():
 	refresh_gui()
 
 
-def test_BB():
+def drawadoublesinuscurve():
+	'''
+	x=a*sin(b*z+c)
+	y=a'*sin(b'*z+c')
+	'''
 
 	instance=pfwrap.getInstance()
 	clearGraph()
@@ -512,7 +523,6 @@ def test_BB():
 	s.setData("b",5)
 
 
-
 	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","linSpace")
 	gg.addNode(v1)
 	#connection = pfwrap.connect(v1,'out', v,'x')
@@ -534,28 +544,6 @@ def test_BB():
 
 	refresh_gui()
 
-
-
-def test_AA():
-
-	PartExplorerSubshapeIndexandPlot()
-
-def test_xBB():
-
-	scene_B()
-	refresh_gui()
-
-
-def test_CC():
-
-	scene_C()
-	refresh_gui()
-
-
-def test_DD():
-
-	scene_D()
-	refresh_gui()
 
 
 
@@ -656,12 +644,6 @@ def save_and_load_json_file_test():
 	pfwrap.getInstance().load('/home/thomas/Schreibtisch/aa2.json')
 	pfwrap.getInstance().save(False,'/home/thomas/Schreibtisch/aa2.json')
 
-def T2():
-	#FreeCAD.PF.hide()
-	#FreeCAD.PF.deleteLater() # geth nicht wegen logger
-	#del(FreeCAD.PF)
-	pfwrap.getInstance().hide()
-	pfwrap.getInstance().show()
 
 
 
@@ -731,8 +713,6 @@ def loadFile():
 	loadGraph()
 
 
-def T3():
-	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
 
 
 def clearLogger():
@@ -796,6 +776,42 @@ def createObjectWithAllProperties():
 
 	pol = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Polygon")
 	gg.addNode(pol)
+
+	refresh_gui()
+
+#--------------------------------------------------------
+
+# some methods for fast testing T1,T2,T3
+
+def T1():
+	pass
+
+def T2():
+	pass
+
+def T3():
+	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
+
+
+
+# the 4 main icons for new ideas
+
+
+def test_AA():
+
+	PartExplorerSubshapeIndexandPlot()
+
+def test_BB():
+
+	refresh_gui()
+
+
+def test_CC():
+
+	refresh_gui()
+
+
+def test_DD():
 
 	refresh_gui()
 

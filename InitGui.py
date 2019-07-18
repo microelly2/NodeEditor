@@ -205,13 +205,24 @@ if FreeCAD.GuiUp:
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'clear Graph',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load File',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'unload modules',icon=None)]
-	current += [c3bI(["nodeeditor"], always, 'Commands', 'PyFlowtoDockWidget',icon=None)]
+	_current += [c3bI(["nodeeditor"], always, 'Commands', 'PyFlowtoDockWidget',icon=None)]
 
 	#test scenes
 	_current += [c3bI(["scenes"], always, 'Commands', 'create Polygon From Coordinate Lists with numpy',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'create Object With All Properties',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'PartExplorer SubshapeIndex and Plot',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'draw a double sinus curve',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'create a VectorArray to play',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'array of array for surface',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'Cone Torus Box and Imagenode',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'Fusion of two Toy nodes',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'Placer FreeCAD_Object and Array pins',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'Vector Rotation Placement',icon=None)]
 
+	_current += [c3bI(["scenes"], always, 'Commands', 'PolygonandPolygon2',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'QtEnvironment',icon=None)]
+#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
+#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 
 
 

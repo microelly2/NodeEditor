@@ -72,6 +72,8 @@ class Vector(FunctionLibraryBase):
         '''substracts vector a and b'''
         return a - b
 
+
+
 #-------------numpy lib starts here -------------------------
 
     @staticmethod
