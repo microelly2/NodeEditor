@@ -206,7 +206,13 @@ if FreeCAD.GuiUp:
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load File',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'unload modules',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'PyFlowtoDockWidget',icon=None)]
-	current += [c3bI(["nodeeditor"], always, 'Commands', 'create Object With All Properties',icon=None)]
+
+	#test scenes
+	_current += [c3bI(["scenes"], always, 'Commands', 'create Polygon From Coordinate Lists with numpy',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'create Object With All Properties',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'PartExplorer SubshapeIndex and Plot',icon=None)]
+
+
 
 
 	toolbars = [

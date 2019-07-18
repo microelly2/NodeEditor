@@ -225,10 +225,17 @@ import nodeeditor.store as store
 
 def run_Bar_compute(self,*args, **kwargs):
 
+	sayl()
+
+def run_PartExplorer_compute(self,*args, **kwargs):
+
 
 	sayl()
 	part=self.getData("Part_in")
 	say(part)
+	if part == None:
+		return
+
 	cc=FreeCAD.ActiveDocument.getObject(part)
 	say(cc,cc.Label)
 	shape=cc.Shape
@@ -241,45 +248,58 @@ def run_Bar_compute(self,*args, **kwargs):
 		ls=shape.writeInventor().split('\n')
 		for l in ls:say(l)
 
-
 	points=[v.Point for v in getattr(shape,'Vertexes')]
 	say(points)
 	self.setData('Points',points)
 
 	pin=self.getPinN("Edges")
-	say("Edges pin",pin,pin.uid)
-	store.store().add(str(pin.uid),shape.Edges)
-	self.setData("Edges",str(pin.uid))
+	ekeys=[]
+	for i,e in enumerate(shape.Edges):
+		k=str(pin.uid)+"__"+str(i)
+		store.store().add(k,e)
+		ekeys += [k]
+	self.setData("Edges",ekeys)
+
 	pin=self.getPinN("Faces")
-	say("Faces pin",pin,pin.uid)
-	store.store().add(str(pin.uid),shape.Faces)
-	self.setData("Faces",str(pin.uid))
+	fkeys=[]
+	for i,e in enumerate(shape.Faces):
+		k=str(pin.uid)+"__"+str(i)
+		store.store().add(k,e)
+		fkeys += [k]
+	self.setData("Faces",fkeys)
 
-	# probe lesen
-	# store.store().list()
-	eid=self.getData("Edges")#[0]
-	say("Eid",eid)
-	eds=store.store().get(str(eid))
-	say("Edges",eds)
-	say(FreeCAD.STORE[eid])
-#	Part.show(Part.Compound(eds[:4]))
+	if 0: # probe lesen
+		# store.store().list()
+		eids=self.getData("Edges")
+		eds=[]
+		for eid in eids:
+			eds += [store.store().get(eid)]
+		Part.show(Part.Compound(eds[:-1]))
 
-	fid=self.getData("Faces")
-	fas=store.store().get(str(fid))
-#	Part.show(Part.Compound(fas[1:3]))
-#	Part.show(fas[0])
-	
+		fids=self.getData("Faces")
+		fds=[]
+		for fid in fids:
+			fds += [store.store().get(fid)]
+		Part.show(Part.Compound(fds[:4]))
 
 def run_Foo_compute(self,*args, **kwargs):
 
 
 	sayl()
-	eid=self.getData("Shapes")#[0]
-	say("Eid",eid)
-	eds=store.store().get(str(eid))
-	say("Shapes",eds)
+
+
+def run_ShapeIndex_compute(self,*args, **kwargs):
+
+
+	sayl()
+	eids=self.getData("Shapes")#[0]
+	say("Eid",eids)
+	subshapes=[]
+	for eid in eids:
+		subshapes += [ store.store().get(str(eid))]
+	say("Shapes",subshapes)
 	try:
-		shape=eds[self.getData('index')]
+		shape=subshapes[self.getData('index')]
 	except:
 		shape=Part.Shape()
 	say("Shape ",shape)

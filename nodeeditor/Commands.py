@@ -395,8 +395,7 @@ def scene_A():
 	gg.addNode(t3)
 	t3.compute()
 
-def scene_A():
-	'''test point listnumpy array flow'''
+def PartExplorerSubshapeIndexandPlot():
 
 	instance=pfwrap.getInstance()
 	clearGraph()
@@ -404,30 +403,39 @@ def scene_A():
 
 
 	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","MyBox")
-	t2.setPosition(-100,0)
+	t2.setPosition(-200,0)
 	gg.addNode(t2)
 
-	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Bar","MyPartExplorer")
-	t3.setPosition(100,0)
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_PartExplorer","MyPartExplorer")
+	t3.setPosition(00,0)
 	gg.addNode(t3)
-	connection = pfwrap.connect(t2,'Part', t3,'Part_in')
+	t2.compute()
+	t3.compute()
+	#connection = pfwrap.connect(t2,'Part', t3,'Part_in')
 
-	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Foo","MyIndex")
+	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_ShapeIndex","MyIndex")
 	t4.setData("shapeOnly",True)
-	t4.setPosition(0,-200)
+	t4.setPosition(200,0)
 	gg.addNode(t4)
 
 	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Plot","MyPlot")
-	t4.setPosition(100,-200)
+	t4.setPosition(00,-200)
 	gg.addNode(t4)
-
 
 	t2.compute()
 	t3.compute()
 	t4.compute()
 
-def scene_A():
-	'''test point listnumpy array flow'''
+	refresh_gui()
+
+
+def createPolygonFromCoordinateListswithnumpy():
+	'''
+	create Polygon from CoordinateLists	with numpy
+	create 3 random lists
+	zip them to a vector list
+	create a polygon 
+	'''
 
 	instance=pfwrap.getInstance()
 	clearGraph()
@@ -440,7 +448,6 @@ def scene_A():
 
 	v = pfwrap.createFunction('PyFlowFreeCAD',"Vector","zip")
 	gg.addNode(v)
-	
 
 	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","randomList")
 	gg.addNode(v1)
@@ -452,33 +459,28 @@ def scene_A():
 	connection = pfwrap.connect(v1,'out', v,'y')
 	connection = pfwrap.connect(makeInt,'out', v1,'size')
 
-
 	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","randomList")
 	gg.addNode(v1)
 	connection = pfwrap.connect(v1,'out', v,'z')
 	connection = pfwrap.connect(makeInt,'out', v1,'size')
 
-
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Console","Console")
 	t.setPosition(-200,200)
-	#t.setData("shapeOnly",True)
 	gg.addNode(t)
 	connection = pfwrap.connect(v,'out', t,'entity')
-
 	t.compute()
-	
-	
+
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Polygon")
-	#t.setPosition(-200,200)
 	gg.addNode(t)
 	connection = pfwrap.connect(v,'out', t,'points')
-	
+
+	refresh_gui()
+
 
 
 def test_AA():
 
-	scene_A()
-	refresh_gui()
+	PartExplorerSubshapeIndexandPlot()
 
 def test_BB():
 

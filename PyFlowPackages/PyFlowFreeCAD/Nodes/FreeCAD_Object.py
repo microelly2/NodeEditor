@@ -1002,6 +1002,75 @@ class FreeCAD_Console(NodeBase):
 		FreeCAD.Console.PrintMessage("%s: %s\n"%(self.name,self.entity.getData()))
 		self.outExec.call()
 
+class FreeCAD_PartExplorer(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+
+		super(FreeCAD_PartExplorer, self).__init__(name)
+		self.part = self.createInputPin('Part_in', 'FCobjPin')
+		self.outArray = self.createOutputPin('Points', 'VectorPin', structure=PinStructure.Array)
+		self.createOutputPin('Faces', 'ShapeListPin')
+		self.createOutputPin('Edges', 'ShapeListPin')
+
+		self.pinsk={
+				'Volume':'FloatPin',
+				'Area':'FloatPin',
+				'Length':'FloatPin',
+				'BoundBox': None,
+				'CenterOfMass':'VectorPin',
+#				#'Edges','Faces','Vertexes','Compounds','Wires','Shells',
+#				#'PrincipalProperties','StaticMoments',
+				'Mass':'FloatPin',
+				'ShapeType':'StringPin',
+#				
+		}
+
+		say(self.pinsk)
+		for p in self.pinsk.keys():
+			if self.pinsk[p] <> None:
+				say(p,self.pinsk[p])
+				self.createOutputPin(p, self.pinsk[p])
+
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_PartExplorer_compute(self,*args, **kwargs)
+
+		self.outExec.call()
+
+
+
+
+class FreeCAD_ShapeIndex(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_ShapeIndex, self).__init__(name)
+		p=self.createInputPin('Shapes', 'ShapeListPin')
+		p=self.createInputPin('index', 'IntPin')
+		p.recomputeNode=True
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_ShapeIndex_compute(self,*args, **kwargs)
+
+		self.outExec.call()
+
 #################
 
 
@@ -1120,5 +1189,7 @@ def nodelist():
 				FreeCAD_Boolean,
 				FreeCAD_BSpline,
 				FreeCAD_Plot,
+				FreeCAD_ShapeIndex,
+				FreeCAD_PartExplorer,
 				
 		]
