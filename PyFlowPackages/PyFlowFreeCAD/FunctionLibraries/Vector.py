@@ -86,7 +86,7 @@ class Vector(FunctionLibraryBase):
 
     @staticmethod
     @IMPLEMENT_NODE(returns=('AnyPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy', 'Keywords': ['list','random']})
-    def randomList(size=('IntPin', 10)):
+    def randomList(size=('IntPin', 50)):
         """create a random list"""
         
         x1 = np.random.random(size)
@@ -173,3 +173,34 @@ class Vector(FunctionLibraryBase):
 Unwrap radian phase p by changing absolute jumps greater than discont to their 2*pi complement along the given axis."""
         
         return list(np.unwrap(np.array(radians)))
+
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy', 'Keywords': ['list','scale','multiply']})
+    def interp_lin(x=('AnyPin', [0,0.5,1.,1.5]),xp=('AnyPin', [0,1,2]),yp=('AnyPin', [0.,2.,0.]),) :
+        """One-dimensional linear interpolation.
+
+Returns the one-dimensional piecewise linear interpolant to a function with given discrete data points (xp, fp), evaluated at x."""
+        
+        return list(np.interp(x,xp,yp))
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy', 'Keywords': ['list','scale','multiply']})
+    def add(x=('AnyPin', [0,1]),y=('AnyPin', [0,2])) :
+        """"""
+        
+        return list(np.array(x)+np.array(y))
+
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy', 'Keywords': ['list','scale','multiply']})
+    def interp_cubic(x=('AnyPin', [0,0.5,1.,1.5]),xp=('AnyPin', [0,1,2]),yp=('AnyPin', [0.,2.,0.]),) :
+        """Interpolate a 1-D function.
+
+x and y are arrays of values used to approximate some function f: y = f(x). This class returns a function whose call method uses interpolation to find the value of new points."""
+        from scipy import interpolate
+        f = interpolate.interp1d(xp, yp,kind='cubic')
+        y = f(np.array(x)) 
+        
+        return list(y)
+

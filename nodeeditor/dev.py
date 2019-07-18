@@ -347,15 +347,22 @@ def run_Plot_compute(self,*args, **kwargs):
 
 	import matplotlib.pyplot as plt
 
-	#plt.figure(4)
-	plt.close()
+	if self.f2.getData():
+		plt.figure(2)
+
+	elif self.f3.getData():
+		plt.figure(3)
+	else:
+		plt.figure(1)
+
+#	plt.close()
 	plt.title(self.getName())
 
 	x=self.xpin.getData()
 	y=self.ypin.getData()
 
-	say(x)
-	say(y)
+	#say(x)
+	#say(y)
 	say(len(x),len(y))
 	
 
@@ -368,8 +375,23 @@ def run_Plot_compute(self,*args, **kwargs):
 
 		y=np.array(y)
 
-		plt.plot(x, y, 'o')
-		plt.plot(x, y , '-')
-		plt.show()
+		if not self.f3.getData():
+			plt.plot(x, y, 'bx')
+		plt.plot(x, y , 'b-')
+	
+	
+	x2=self.xpin2.getData()
+	y2=self.ypin2.getData()
+	say (len(x2),len(y2))
+	if x2 <> None and y2 <> None:
+		x2=np.array(x2)
+		y2=np.array(y2)
+		if self.f3.getData():
+			plt.plot(x2, y2 , 'r-')
+		else:
+			plt.plot(x2, y2, 'ro')
+
+
+	plt.show()
 
 

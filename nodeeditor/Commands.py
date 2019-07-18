@@ -784,6 +784,10 @@ def createObjectWithAllProperties():
 # some methods for fast testing T1,T2,T3
 
 def T1():
+	FreeCAD.open(u"/home/thomas/aa.FCStd")
+	FreeCAD.setActiveDocument("aa")
+	FreeCAD.ActiveDocument=FreeCAD.getDocument("aa")
+	FreeCADGui.ActiveDocument=FreeCADGui.getDocument("aa")
 	pass
 
 def T2():

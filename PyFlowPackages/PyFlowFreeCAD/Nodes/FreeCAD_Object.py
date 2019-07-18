@@ -1182,7 +1182,10 @@ class FreeCAD_Plot(NodeBase):
 		self.xpin=self.createInputPin('x', 'FloatPin', structure=PinStructure.Array)
 		self.ypin=self.createInputPin('y', 'FloatPin', structure=PinStructure.Array)
 
-
+		self.xpin2=self.createInputPin('x2', 'FloatPin', structure=PinStructure.Array)
+		self.ypin2=self.createInputPin('y2', 'FloatPin', structure=PinStructure.Array)
+		self.f2=self.createInputPin('Figure2', 'BoolPin')
+		self.f3=self.createInputPin('Figure3', 'BoolPin')
 
 	def compute(self, *args, **kwargs):
 
