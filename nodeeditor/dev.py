@@ -313,7 +313,34 @@ def run_ShapeIndex_compute(self,*args, **kwargs):
 		cc.ViewObject.PointSize=8
 		cc.ViewObject.Transparency=0
 
+	self.setData("Shape",eids[self.getData('index')])
+
 	self.outExec.call()
+
+def run_Compound_compute(self,*args, **kwargs):
+
+	sayl()
+
+# geht nicht -- bug??
+#	eids=self.getData("Shapes")
+
+	eids=self.getPinN("Shapes").getData()
+
+	say("Compound Shape Ids",eids)
+	subshapes=[]
+	for eid in eids:
+		subshapes += [ store.store().get(str(eid))]
+	say("Compound Shapes:",subshapes)
+	shape=Part.Compound(subshapes)
+
+	cc=self.getObject()
+	if cc <> None:
+		cc.Label=self.objname.getData()
+		cc.Shape=shape
+		cc.ViewObject.LineWidth=8
+		cc.ViewObject.LineColor=(1.,1.,0.)
+		cc.ViewObject.PointSize=8
+		cc.ViewObject.Transparency=0
  
 
 def run_Plot_compute(self,*args, **kwargs):

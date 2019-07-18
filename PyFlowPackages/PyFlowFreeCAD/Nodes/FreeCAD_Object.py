@@ -1056,7 +1056,7 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 
 	def __init__(self, name="Fusion"):
 		super(FreeCAD_ShapeIndex, self).__init__(name)
-		p=self.createInputPin('Shapes', 'ShapeListPin')
+		p=self.createInputPin('Shapes', 'AnyPin')
 		p=self.createInputPin('index', 'IntPin')
 		p.recomputeNode=True
 
@@ -1070,6 +1070,34 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 		nodeeditor.dev.run_ShapeIndex_compute(self,*args, **kwargs)
 
 		self.outExec.call()
+
+
+class FreeCAD_Compound(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_Compound, self).__init__(name)
+		p=self.createInputPin('Shapes', 'AnyPin', structure=PinStructure.Array)
+		p=self.createInputPin('XXindex', 'IntPin')
+		p.recomputeNode=True
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_Compound_compute(self,*args, **kwargs)
+
+		self.outExec.call()
+
+
+
+
+
 
 #################
 
@@ -1191,5 +1219,6 @@ def nodelist():
 				FreeCAD_Plot,
 				FreeCAD_ShapeIndex,
 				FreeCAD_PartExplorer,
+				FreeCAD_Compound,
 				
 		]

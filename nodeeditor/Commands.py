@@ -411,7 +411,7 @@ def PartExplorerSubshapeIndexandPlot():
 	gg.addNode(t3)
 	t2.compute()
 	t3.compute()
-	#connection = pfwrap.connect(t2,'Part', t3,'Part_in')
+	connection = pfwrap.connect(t2,'Part', t3,'Part_in')
 
 	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_ShapeIndex","MyIndex")
 	t4.setData("shapeOnly",True)
@@ -425,6 +425,10 @@ def PartExplorerSubshapeIndexandPlot():
 	t2.compute()
 	t3.compute()
 	t4.compute()
+
+	t5 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Compound","MyCompound")
+	t5.setPosition(-200,-200)
+	gg.addNode(t5)
 
 	refresh_gui()
 
