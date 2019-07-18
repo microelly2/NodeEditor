@@ -107,5 +107,17 @@ class Vector(FunctionLibraryBase):
         
         return list(np.array(data)*factor)
 
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy', 'Keywords': ['list','scale','multiply']})
+    def linearTrafo(data=('AnyPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 0.)) :
+        """a*x + b """
+        
+        return list(np.array(data)*a +b)
 
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy', 'Keywords': ['list','scale','multiply']})
+    def sin(data=('AnyPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 1.),c=('FloatPin', 1.)) :
+        """a*sin(b*x+c)"""
+        
+        return list(a*np.sin(np.array(data)*b +c))
 

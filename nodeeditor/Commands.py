@@ -471,7 +471,61 @@ def createPolygonFromCoordinateListswithnumpy():
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Console","Console")
 	t.setPosition(-200,200)
 	gg.addNode(t)
-	connection = pfwrap.connect(v,'out', t,'entity')
+#	connection = pfwrap.connect(v,'out', t,'entity')
+	t.compute()
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Polygon")
+	gg.addNode(t)
+	connection = pfwrap.connect(v,'out', t,'points')
+
+	refresh_gui()
+
+
+def test_BB():
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+
+	makeInt=pfwrap.createFunction('PyFlowBase',"DefaultLib","makeInt")
+	makeInt.setData('i', 50)
+	gg.addNode(makeInt)
+
+	v = pfwrap.createFunction('PyFlowFreeCAD',"Vector","zip")
+	gg.addNode(v)
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","linSpace")
+	gg.addNode(v1)
+	connection = pfwrap.connect(v1,'out', v,'z')
+	connection = pfwrap.connect(makeInt,'out', v1,'num')
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","linSpace")
+	gg.addNode(v1)
+#	connection = pfwrap.connect(v1,'out', v,'y')
+	connection = pfwrap.connect(makeInt,'out', v1,'num')
+
+	s = pfwrap.createFunction('PyFlowFreeCAD',"Vector","sin")
+	gg.addNode(s)
+	connection = pfwrap.connect(v1,'out', s,'data')
+	connection = pfwrap.connect(s,'out', v,'y')
+	s.setData("b",5)
+
+
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","linSpace")
+	gg.addNode(v1)
+	#connection = pfwrap.connect(v1,'out', v,'x')
+	connection = pfwrap.connect(makeInt,'out', v1,'num')
+
+	s = pfwrap.createFunction('PyFlowFreeCAD',"Vector","sin")
+	gg.addNode(s)
+	connection = pfwrap.connect(v1,'out', s,'data')
+	connection = pfwrap.connect(s,'out', v,'x')
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Console","Console")
+	t.setPosition(-200,200)
+	gg.addNode(t)
 	t.compute()
 
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Polygon")
@@ -486,7 +540,7 @@ def test_AA():
 
 	PartExplorerSubshapeIndexandPlot()
 
-def test_BB():
+def test_xBB():
 
 	scene_B()
 	refresh_gui()
