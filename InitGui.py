@@ -202,6 +202,10 @@ if FreeCAD.GuiUp:
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'show PyFlow',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'save Graph',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load Graph',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'save All',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'load All',icon=None)]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'load All 2',icon=None)]
+
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'clear Graph',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load File',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'unload modules',icon=None)]
@@ -221,6 +225,7 @@ if FreeCAD.GuiUp:
 
 	_current += [c3bI(["scenes"], always, 'Commands', 'PolygonandPolygon2',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'QtEnvironment',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'crossbeam example',icon=None)]
 #	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 #	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 
@@ -251,6 +256,16 @@ class PyFlow ( Workbench ):
 
 	def Initialize(self):
 
+		try: # some methods from curve wb
+			import ZebraTool
+			import ParametricComb
+			import GeomInfo
+		except: pass
+
+		cmds= ['ZebraTool','GeomInfo']
+
+		self.appendMenu("Tools", cmds)
+		self.appendToolbar("Tools", cmds)
 		# create menues
 		menues = {}
 		ml = []

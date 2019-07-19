@@ -145,9 +145,33 @@ def run_foo_compute(self,*args, **kwargs):
 	# compute fuer FreeCAD_Foo.compute
 	dat=self.arrayData.getData()
 	dat=np.array(dat)
+	sayl()
 	say(dat)
+	sayl()
 	sf=Part.BSplineSurface()
-	sf.buildFromPolesMultsKnots(dat,[2,2],[2,2],[0,1],[0,1],False,False,1,1)
+
+	degA=1
+	degB=2
+	
+	poles=np.array(dat)
+	say(poles)
+	(countA,countB,_)=poles.shape
+	say("Shape",poles.shape)
+	degB=min(countB-1,3,self.getPinN("maxDegreeU").getData())
+	degA=min(countA-1,3,self.getPinN("maxDegreeV").getData())
+	say(degA,degB)
+
+	multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+	multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
+	knotA=range(len(multA))
+	knotB=range(len(multB))
+
+	sf=Part.BSplineSurface()
+	sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,False,degA,degB)
+	shape=sf.toShape()
+
+	
+#	sf.buildFromPolesMultsKnots(dat,[2,2],[2,2],[0,1],[0,1],False,False,1,1)
 	shape=sf.toShape()
 	cc=self.getObject()
 	cc.Label=self.objname.getData()

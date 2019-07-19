@@ -783,14 +783,23 @@ def createObjectWithAllProperties():
 
 # some methods for fast testing T1,T2,T3
 
-def T1():
-	FreeCAD.open(u"/home/thomas/aa.FCStd")
-	FreeCAD.setActiveDocument("aa")
-	FreeCAD.ActiveDocument=FreeCAD.getDocument("aa")
-	FreeCADGui.ActiveDocument=FreeCADGui.getDocument("aa")
+fn='bb'
+def loadAll():
+	showPyFlow()
+	try: 
+		FreeCAD.getDocument(fn)
+	except:
+		FreeCAD.open(u"/home/thomas/{}.FCStd".format(fn))
+	
+	FreeCAD.setActiveDocument(fn)
+	FreeCAD.ActiveDocument=FreeCAD.getDocument(fn)
+	FreeCADGui.ActiveDocument=FreeCADGui.getDocument(fn)
+	loadGraph()
 	pass
 
-def T2():
+def saveAll():
+	saveGraph()
+	FreeCAD.ActiveDocument.saveAs(u"/home/thomas/{}.FCStd".format(fn))
 	pass
 
 def T3():
@@ -816,6 +825,281 @@ def test_CC():
 
 
 def test_DD():
+	crossbeamexample()
+
+
+def crossbeamexample():
+	'''
+	# see https://forum.freecadweb.org/viewtopic.php?f=8&t=37817
+	'''
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Console","Console")
+	t.setPosition(-200,200)
+	#t.setData("shapeOnly",True)
+	gg.addNode(t)
+
+
+	# 1.rib
+	v = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v.setPosition(400,0)
+	gg.addNode(v)
+
+	v2= pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v2.setData('Y', 20)
+	v2.setPosition(400,100*2)
+	gg.addNode(v2)
+
+	v3 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v3.setData('Y', 50)
+	v3.setPosition(400,200*2)
+	gg.addNode(v3)
+
+	ar = pfwrap.createNode('PyFlowBase',"makeArray","VecArray_rib_1")
+	gg.addNode(ar)
+	connection = pfwrap.connect(v,'out',ar,'data')
+	connection = pfwrap.connect(v2,'out',ar,'data')
+	connection = pfwrap.connect(v3,'out',ar,'data')
+
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Rib_1")
+	gg.addNode(t3)
+	t3.setPosition(1700,-200)
+	connection = pfwrap.connect(ar,'out',t3,'points')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(510,25*2)
+	j.setData('m',1)
+	gg.addNode(j)
+	connection = pfwrap.connect(v,'out',j,'a')
+	connection = pfwrap.connect(v2,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(520,75*2)
+	j.setData('m',9)
+	gg.addNode(j)
+	connection = pfwrap.connect(v,'out',j,'a')
+	connection = pfwrap.connect(v2,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(510,125*2)
+	j.setData('m',1)
+	gg.addNode(j)
+	connection = pfwrap.connect(v2,'out',j,'a')
+	connection = pfwrap.connect(v3,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(520,175*2)
+	j.setData('m',9)
+	gg.addNode(j)
+	connection = pfwrap.connect(v2,'out',j,'a')
+	connection = pfwrap.connect(v3,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	rib1=ar
+	t3.compute()
+
+	# 2.rib
+	v = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v.setData('X', 20)
+	v.setData('Z', 20)
+	v.setPosition(600,0)
+	gg.addNode(v)
+
+	v2= pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v2.setData('X', 40)
+	v2.setData('Y', 20)
+	v2.setData('Z', 40)
+	v2.setPosition(600,100*2)
+	gg.addNode(v2)
+
+	v3 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v3.setData('X', 40)
+	v3.setData('Y', 50)
+	v3.setData('Z', 40)
+	v3.setPosition(600,200*2)
+	gg.addNode(v3)
+
+	ar = pfwrap.createNode('PyFlowBase',"makeArray","VecArray_rib_4")
+	gg.addNode(ar)
+	connection = pfwrap.connect(v,'out',ar,'data')
+	connection = pfwrap.connect(v2,'out',ar,'data')
+	connection = pfwrap.connect(v3,'out',ar,'data')
+
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Rib_4")
+	gg.addNode(t3)
+	t3.setPosition(1700,0)
+	connection = pfwrap.connect(ar,'out',t3,'points')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(710,25*2)
+	j.setData('m',1)
+	gg.addNode(j)
+	connection = pfwrap.connect(v,'out',j,'a')
+	connection = pfwrap.connect(v2,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(720,75*2)
+	j.setData('m',9)
+	gg.addNode(j)
+	connection = pfwrap.connect(v,'out',j,'a')
+	connection = pfwrap.connect(v2,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(720,125*2)
+	j.setData('m',1)
+	gg.addNode(j)
+	connection = pfwrap.connect(v2,'out',j,'a')
+	connection = pfwrap.connect(v3,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(710,175*2)
+	j.setData('m',9)
+	gg.addNode(j)
+	connection = pfwrap.connect(v2,'out',j,'a')
+	connection = pfwrap.connect(v3,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	t3.compute()
+	rib4=ar
+
+
+
+	# 7.rib
+	v = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v.setData('X', 140)
+	v.setData('Z', 20)
+	v.setPosition(800,0)
+	gg.addNode(v)
+
+	v2= pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v2.setData('X', 140)
+	v2.setData('Y', 20)
+	v2.setData('Z', 40)
+	v2.setPosition(800,100*2)
+	gg.addNode(v2)
+
+	v3 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","vecCreate")
+	v3.setData('X', 140)
+	v3.setData('Y', 50)
+	v3.setData('Z', 40)
+	v3.setPosition(800,200*2)
+	gg.addNode(v3)
+
+	ar = pfwrap.createNode('PyFlowBase',"makeArray","VecArray_rib_7")
+	gg.addNode(ar)
+
+	connection = pfwrap.connect(v,'out',ar,'data')
+	connection = pfwrap.connect(v2,'out',ar,'data')
+	connection = pfwrap.connect(v3,'out',ar,'data')
+
+	t3 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Rib_7")
+	t3.setPosition(1700,400)
+	gg.addNode(t3)
+	connection = pfwrap.connect(ar,'out',t3,'points')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(920,25*2)
+	j.setData('m',1)
+	gg.addNode(j)
+	connection = pfwrap.connect(v,'out',j,'a')
+	connection = pfwrap.connect(v2,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(910,75*2)
+	j.setData('m',9)
+	gg.addNode(j)
+	connection = pfwrap.connect(v,'out',j,'a')
+	connection = pfwrap.connect(v2,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(920,125*2)
+	j.setData('m',1)
+	gg.addNode(j)
+	connection = pfwrap.connect(v2,'out',j,'a')
+	connection = pfwrap.connect(v3,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	j = pfwrap.createFunction('PyFlowFreeCAD',"Vector","between")
+	j.setPosition(910,175*2)
+	j.setData('m',9)
+	gg.addNode(j)
+	connection = pfwrap.connect(v2,'out',j,'a')
+	connection = pfwrap.connect(v3,'out',j,'b')
+	connection = pfwrap.connect(j,'out',ar,'data')
+
+	t3.compute()
+	rib7=ar
+
+
+
+
+
+	arf = pfwrap.createNode('PyFlowBase',"makeArray","RibArray")
+	arf.setPosition(1800,250)
+	arf.setData('preserveLists',True)
+	gg.addNode(arf)
+	rib1.setPosition(1200,10*5)
+	rib4.setPosition(1200,40*5)
+	rib7.setPosition(1200,70*5)
+	connection = pfwrap.connect(rib1,'out',arf,'data')
+	connection = pfwrap.connect(rib4,'out',arf,'data')
+	connection = pfwrap.connect(rib7,'out',arf,'data')
+
+
+	rib2 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","betweenList")
+	rib2.setPosition(1400,20*5)
+	rib2.setData('m',1)
+	gg.addNode(rib2)
+	connection = pfwrap.connect(rib1,'out',rib2,'a')
+	connection = pfwrap.connect(rib4,'out',rib2,'b')
+	connection = pfwrap.connect(rib2,'out',arf,'data')
+
+	rib3 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","betweenList")
+	rib3.setPosition(1500,30*5)
+	rib3.setData('m',9)
+	gg.addNode(rib3)
+	connection = pfwrap.connect(rib1,'out',rib3,'a')
+	connection = pfwrap.connect(rib4,'out',rib3,'b')
+	connection = pfwrap.connect(rib3,'out',arf,'data')
+
+	rib5 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","betweenList")
+	rib5.setPosition(1400,50*5)
+	rib5.setData('m',1)
+	gg.addNode(rib5)
+	connection = pfwrap.connect(rib4,'out',rib5,'a')
+	connection = pfwrap.connect(rib7,'out',rib5,'b')
+	connection = pfwrap.connect(rib5,'out',arf,'data')
+
+	rib6 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","betweenList")
+	rib6.setPosition(1500,60*5)
+	rib6.setData('m',9)
+	gg.addNode(rib6)
+	connection = pfwrap.connect(rib4,'out',rib6,'a')
+	connection = pfwrap.connect(rib7,'out',rib6,'b')
+	connection = pfwrap.connect(rib6,'out',arf,'data')
+
+
+	bs = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_BSpline","aBSplineSurface")
+	gg.addNode(bs)
+	bs.setPosition(2000,250)
+	connection = pfwrap.connect(arf,'out',bs,'poles')
+	bs.compute()
+
+
+
+
+
 
 	refresh_gui()
 

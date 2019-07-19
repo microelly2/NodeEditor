@@ -375,6 +375,7 @@ class FreeCadNodeBase(NodeBase):
 			cc.ViewObject.Transparency=80
 			cc.ViewObject.LineColor=(1.,0.,0.)
 			cc.ViewObject.PointColor=(1.,1.,0.)
+			cc.ViewObject.PointSize=10
 			r=random.random()
 			cc.ViewObject.ShapeColor=(0.,0.2+0.8*r,1.0-0.8*r)
 		return cc
@@ -843,6 +844,8 @@ class FreeCAD_BSpline(FreeCadNodeBase):
 
 		super(FreeCAD_BSpline, self).__init__(name)
 		self.arrayData = self.createInputPin('poles', 'AnyPin', structure=PinStructure.Array, constraint="1")
+		self.createInputPin('maxDegreeU', 'IntPin', 3)
+		self.createInputPin('maxDegreeV', 'IntPin', 3)
 		self.arrayData.enableOptions(PinOptions.AllowMultipleConnections)
 		self.arrayData.disableOptions(PinOptions.SupportsOnlyArrays)
 

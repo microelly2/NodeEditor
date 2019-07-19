@@ -72,6 +72,33 @@ class Vector(FunctionLibraryBase):
         '''substracts vector a and b'''
         return a - b
 
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('VectorPin', MVector()), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector', '-']})
+    def between(a=('VectorPin', MVector()), b=('VectorPin', MVector()),m=('IntPin',5)):
+        '''between vector a and b'''
+        
+        return a *0.1*(10-m)+b*m*0.1
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', []), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector', '-']})
+    def betweenList(a=('AnyPin', [],{'constraint': '1', 
+                "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), 
+        b=('AnyPin', [],{'constraint': '1', 
+                "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), 
+        m=('IntPin',5)):
+        '''between list a and b'''
+        rc=[av *0.1*(10-m)+bv*m*0.1 for av,bv in zip(a,b)]
+        return rc
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', []), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector', '-']})
+    def move(a=('AnyPin', [],{'constraint': '1', 
+                "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), 
+        v=('VectorPin', MVector())):
+        ''''''
+        rc=[MVector(av)+v for av in a]
+        return rc
+
 
 
 #-------------numpy lib starts here -------------------------
