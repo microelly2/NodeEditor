@@ -1075,6 +1075,105 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 		self.outExec.call()
 
 
+
+class FreeCAD_Face(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_Face, self).__init__(name)
+		p=self.createInputPin('sourceObject', 'StringPin')
+		p=self.createInputPin('index', 'IntPin')
+		p.recomputeNode=True
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_Face_compute(self,*args, **kwargs)
+
+		self.outExec.call()
+
+class FreeCAD_Edge(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_Edge, self).__init__(name)
+		p=self.createInputPin('sourceObject', 'StringPin')
+		p=self.createInputPin('index', 'IntPin')
+		p.recomputeNode=True
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_Edge_compute(self,*args, **kwargs)
+
+		self.outExec.call()
+
+
+class FreeCAD_Parallelprojection(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_Parallelprojection, self).__init__(name)
+		p=self.createInputPin('face', 'AnyPin')
+		p=self.createInputPin('edge', 'AnyPin')
+		p=self.createInputPin('direction', 'VectorPin',FreeCAD.Vector(0,0,1))
+		p.recomputeNode=True
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_projection_compute(self,*args, **kwargs)
+
+		self.outExec.call()
+
+class FreeCAD_UVprojection(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_UVprojection, self).__init__(name)
+		p=self.createInputPin('face', 'AnyPin')
+		p=self.createInputPin('edge', 'AnyPin')
+		#p=self.createInputPin('direction', 'VectorPin',FreeCAD.Vector(0,0,1))
+		p=self.createInputPin('pointCount', 'IntPin',20)
+		p=self.createInputPin('inverse', 'BoolPin')
+		p=self.createInputPin('Extrusion', 'BoolPin')
+		p=self.createInputPin('ExtrusionUp', 'FloatPin',100)
+		p=self.createInputPin('ExtrusionDown', 'FloatPin',50)
+		p.recomputeNode=True
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_uv_projection_compute(self,*args, **kwargs)
+
+		self.outExec.call()
+
+
+
 class FreeCAD_Compound(FreeCadNodeBase):
 	'''
 	dummy for tests
@@ -1226,5 +1325,8 @@ def nodelist():
 				FreeCAD_ShapeIndex,
 				FreeCAD_PartExplorer,
 				FreeCAD_Compound,
-				
+				FreeCAD_Edge,
+				FreeCAD_Face,
+				FreeCAD_Parallelprojection,
+				FreeCAD_UVprojection,
 		]

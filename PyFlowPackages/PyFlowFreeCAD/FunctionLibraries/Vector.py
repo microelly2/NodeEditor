@@ -5,6 +5,7 @@ from FreeCAD import Vector as MVector
 
 import numpy as np
 from nodeeditor.say import *
+import nodeeditor.store as store
 
 class Array(object):
     def __init__(self,dat=[]):

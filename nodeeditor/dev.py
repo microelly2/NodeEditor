@@ -314,7 +314,6 @@ def run_Foo_compute(self,*args, **kwargs):
 
 def run_ShapeIndex_compute(self,*args, **kwargs):
 
-
 	sayl()
 	eids=self.getData("Shapes")#[0]
 	say("Eid",eids)
@@ -419,3 +418,141 @@ def run_Plot_compute(self,*args, **kwargs):
 	plt.show()
 
 
+
+def run_projection_compute(self,*args, **kwargs):
+
+	sayl()
+	f=FreeCAD.ActiveDocument.BePlane.Shape.Face1
+	w=FreeCAD.ActiveDocument.Sketch.Shape.Edge1
+	f=store.store().get(self.getPinN('face').getData())
+	say("Face",f)
+	e=store.store().get(self.getPinN('edge').getData())
+	say("Edge",e)
+
+	store.store().list()
+	d=self.getPinN('direction').getData()
+	say("direction",d)
+	shape=f.makeParallelProjection(e,d)
+	cc=self.getObject()
+	if cc <> None:
+		cc.Label=self.objname.getData()
+		cc.Shape=shape
+		#cc.ViewObject.LineWidth=8
+		cc.ViewObject.LineColor=(1.,1.,0.)
+
+
+
+
+
+def run_uv_projection_compute(self,*args, **kwargs):
+
+#	f=FreeCAD.ActiveDocument.BePlane.Shape.Face1
+#	if 0:
+#		w=FreeCAD.ActiveDocument.Sketch.Shape.Edge1
+#		closed=False
+#	else:
+#		w=FreeCAD.ActiveDocument.Sketch001.Shape.Edge1
+#		closed=True
+
+	f=store.store().get(self.getPinN('face').getData())
+	say("Face",f)
+	w=store.store().get(self.getPinN('edge').getData())
+	say("Edge",w)
+	closed=True
+
+
+
+	sf=f.Surface
+
+	pointcount=max(self.getPinN('pointCount').getData(),4)
+	pts=w.discretize(pointcount)
+
+
+	bs2d = Part.Geom2d.BSplineCurve2d()
+	if closed:
+		pts2da=[sf.parameter(p) for p in pts[1:]]
+	else:
+		pts2da=[sf.parameter(p) for p in pts]
+
+	pts2d=[FreeCAD.Base.Vector2d(p[0],p[1]) for p in pts2da]
+	bs2d.buildFromPolesMultsKnots(pts2d,[1]*(len(pts2d)+1),range(len(pts2d)+1),True,1)
+	e1 = bs2d.toShape(sf)
+
+	sp=FreeCAD.ActiveDocument.getObject("_Spline")
+	if sp==None:
+		sp=FreeCAD.ActiveDocument.addObject("Part::Spline","_Spline")
+	sp.Shape=e1
+
+	face=f
+	edges=e1.Edges
+	ee=edges[0]
+	splita=[(ee,face)]
+	r=Part.makeSplitShape(face, splita)
+
+	ee.reverse()
+	splitb=[(ee,face)]
+	r2=Part.makeSplitShape(face, splitb)
+	
+	try: 
+		rc=r2[0][0]
+		rc=r[0][0]
+	except: return
+
+
+	cc=self.getObject()
+	if cc <> None:
+		cc.Label=self.objname.getData()
+#		cc.Shape=shape
+
+	sp=cc
+
+	if self.getPinN('inverse').getData():
+		sp.Shape=r2[0][0]
+	else:
+		sp.Shape=r[0][0]
+
+	if self.getPinN('Extrusion').getData():
+		f = FreeCAD.getDocument('project').getObject('MyExtrude')
+		if f == None:
+			f = FreeCAD.getDocument('project').addObject('Part::Extrusion', 'MyExtrude')
+
+		f.Base = sp
+		f.DirMode = "Custom"
+		f.Dir = FreeCAD.Vector(0.000000000000000, 0.000000000000000, 1.000000000000000)
+		f.LengthFwd = self.getPinN('ExtrusionUp').getData()
+		f.LengthRev = self.getPinN('ExtrusionDown').getData()
+		f.Solid = True
+		FreeCAD.activeDocument().recompute()
+ 
+
+
+
+
+
+def run_Face_compute(self,*args, **kwargs):
+
+	sayl()
+	objn=self.getPinN('sourceObject').getData()
+	obj=FreeCAD.ActiveDocument.getObject(objn)
+	say("object",obj)
+	face=obj.Shape.Faces[self.getPinN('index').getData()]
+
+	pin=self.getPinN('Shape')
+	k=str(pin.uid)
+	pin.setData(k)
+	store.store().add(k,face)
+	self.outExec.call()
+
+def run_Edge_compute(self,*args, **kwargs):
+
+	sayl()
+	objn=self.getPinN('sourceObject').getData()
+	obj=FreeCAD.ActiveDocument.getObject(objn)
+	say("object",obj)
+	edge=obj.Shape.Edges[self.getPinN('index').getData()]
+
+	pin=self.getPinN('Shape')
+	k=str(pin.uid)
+	pin.setData(k)
+	store.store().add(k,edge)
+	self.outExec.call()
