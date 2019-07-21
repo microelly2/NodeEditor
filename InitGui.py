@@ -226,9 +226,9 @@ if FreeCAD.GuiUp:
 	_current += [c3bI(["scenes"], always, 'Commands', 'PolygonandPolygon2',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'QtEnvironment',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'crossbeam example',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'play with FreeCAD_Array',icon=None)]
 #	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 #	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
-
 
 
 	toolbars = [

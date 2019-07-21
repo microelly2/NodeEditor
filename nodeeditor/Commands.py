@@ -354,7 +354,7 @@ def createaVectorArraytoplay():
 
 	refresh_gui()
 
-def scene_E(instance):
+def playwithFreeCAD_Array(instance):
 	'''test numpy array flow'''
 
 	clearGraph()
@@ -779,57 +779,8 @@ def createObjectWithAllProperties():
 
 	refresh_gui()
 
-#--------------------------------------------------------
-
-# some methods for fast testing T1,T2,T3
-
-fn='bb'
-fn='project'
-fn='compb'
-
-def loadAll():
-	showPyFlow()
-	try: 
-		FreeCAD.getDocument(fn)
-	except:
-		FreeCAD.open(u"/home/thomas/{}.FCStd".format(fn))
-	
-	FreeCAD.setActiveDocument(fn)
-	FreeCAD.ActiveDocument=FreeCAD.getDocument(fn)
-	FreeCADGui.ActiveDocument=FreeCADGui.getDocument(fn)
-	loadGraph()
-	pass
-
-def saveAll():
-	saveGraph()
-	FreeCAD.ActiveDocument.saveAs(u"/home/thomas/{}.FCStd".format(fn))
-	pass
-
-def T3():
-	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
-	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
 
 
-
-# the 4 main icons for new ideas
-
-
-def test_AA():
-
-	PartExplorerSubshapeIndexandPlot()
-
-def test_BB():
-
-	refresh_gui()
-
-
-def test_CC():
-
-	refresh_gui()
-
-
-def test_DD():
-	crossbeamexample()
 
 
 def crossbeamexample():
@@ -1100,11 +1051,66 @@ def crossbeamexample():
 	connection = pfwrap.connect(arf,'out',bs,'poles')
 	bs.compute()
 
+	refresh_gui()
 
 
+#---------------------------------------------------
+# the 4 main icons for new ideas
 
 
+def test_AA():
+
+	PartExplorerSubshapeIndexandPlot()
+
+def test_BB():
 
 	refresh_gui()
 
+
+def test_CC():
+
+	refresh_gui()
+
+
+def test_DD():
+	crossbeamexample()
+
+
+
+#--------------------------------------------------------
+
+# some methods for fast testing T1,T2,T3
+
+fn='bb'
+fn='project'
+fn='compb'
+
+def loadAll():
+	showPyFlow()
+	try: 
+		FreeCAD.getDocument(fn)
+	except:
+		FreeCAD.open(u"/home/thomas/{}.FCStd".format(fn))
+	
+	FreeCAD.setActiveDocument(fn)
+	FreeCAD.ActiveDocument=FreeCAD.getDocument(fn)
+	FreeCADGui.ActiveDocument=FreeCADGui.getDocument(fn)
+	loadGraph()
+	pass
+
+def saveAll():
+	saveGraph()
+	FreeCAD.ActiveDocument.saveAs(u"/home/thomas/{}.FCStd".format(fn))
+	pass
+
+def T1():
+	pass
+
+def T2():
+	pass
+
+
+def T3():
+	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
+	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
 
