@@ -1576,11 +1576,23 @@ class FreeCAD_Edge(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
-		sayl()
 
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_Edge_compute(self,*args, **kwargs)
+#		import nodeeditor.dev
+#		reload (nodeeditor.dev)
+#		nodeeditor.dev.run_Edge_compute(self,*args, **kwargs)
+#	def run_Edge_compute(self,*args, **kwargs):
+
+		sayl()
+		objn=self.getPinN('sourceObject').getData()
+		obj=FreeCAD.ActiveDocument.getObject(objn)
+		edge=obj.Shape.Edges[self.getPinN('index').getData()]
+
+		pin=self.getPinN('Shape')
+		k=str(pin.uid)
+		pin.setData(k)
+		store.store().add(k,edge)
+		self.outExec.call()
+
 
 		self.outExec.call()
 
@@ -1618,20 +1630,47 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
-#		import nodeeditor.dev
-#		reload (nodeeditor.dev)
-#		nodeeditor.dev.run_projection_compute(self,*args, **kwargs)
-#	def run_Edge_compute(self,*args, **kwargs):
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_projection_compute(self,*args, **kwargs)
+		self.outExec.call()
 
-		sayl()
-		objn=self.getPinN('sourceObject').getData()
-		obj=FreeCAD.ActiveDocument.getObject(objn)
-		edge=obj.Shape.Edges[self.getPinN('index').getData()]
+class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
 
-		pin=self.getPinN('Shape')
-		k=str(pin.uid)
-		pin.setData(k)
-		store.store().add(k,edge)
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_Perspectiveprojection, self).__init__(name)
+
+
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
+
+		self.trace = self.createInputPin('trace', 'BoolPin')
+		self.randomize = self.createInputPin("randomize", 'BoolPin')
+
+		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.objname.setData(name)
+
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
+		self.shapeOnly.recomputeNode=True 
+
+		p=self.createInputPin('face', 'AnyPin')
+		p=self.createInputPin('edge', 'AnyPin')
+		p=self.createInputPin('center', 'VectorPin',FreeCAD.Vector(0,0,1000))
+		p.recomputeNode=True
+
+
+	def compute(self, *args, **kwargs):
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_projection2_compute(self,*args, **kwargs)
 		self.outExec.call()
 
 
@@ -1976,6 +2015,7 @@ def nodelist():
 				FreeCAD_Edge,
 				FreeCAD_Face,
 				FreeCAD_Parallelprojection,
+				FreeCAD_Perspectiveprojection,
 				FreeCAD_UVprojection,
 				FreeCAD_Part,
 				FreeCAD_PinsTest,

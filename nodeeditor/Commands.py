@@ -354,7 +354,7 @@ def createaVectorArraytoplay():
 
 	refresh_gui()
 
-def playwithFreeCAD_Array(instance):
+def playwithFreeCAD_Array():
 	'''test numpy array flow'''
 
 	clearGraph()
