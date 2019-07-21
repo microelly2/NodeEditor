@@ -252,47 +252,6 @@ def run_ShapeIndex_compute(self,*args, **kwargs):
 	sayl()
 
 
-def run_Compound_compute(self,*args, **kwargs):
-
-	sayl()
-
-# geht nicht -- bug??
-#	eids=self.getData("Shapes")
-
-
-	p=self.getPinN("Shapes")
-	outArray = []
-#	ySortedPins = sorted(p.affected_by, key=lambda pin: pin.owningNode().y)
-#	say(ySortedPins)
-
-	for i in p.affected_by:
-		#outArray.append(i.getData())
-		#say 
-		v=store.store().get(str(i.getData()))
-	#	say(v, v.__class__.__name__)
-		outArray += [v]
-	#say(outArray)
-	subshapes=outArray
-
-	say("Compound Shapes:",subshapes)
-	shape=Part.Compound(subshapes)
-
-	cc=self.getObject()
-	if cc <> None:
-		cc.Label=self.objname.getData()
-		cc.Shape=shape
-		cc.ViewObject.LineWidth=8
-		cc.ViewObject.LineColor=(1.,1.,0.)
-		cc.ViewObject.PointSize=8
-		cc.ViewObject.Transparency=0
- 
-	self.setPinObject("Shape",shape)
-
-	sayl("vor outExec.call")
-	self.outExec.call()
-	sayl()
-
-
 def run_Part_compute(self,*args, **kwargs):
 
 	pass
@@ -443,20 +402,3 @@ def run_uv_projection_compute(self,*args, **kwargs):
 	#see without extra part >>> s.Face1.extrude(FreeCAD.Vector(0,1,1))
 	#<Solid object at 0x660e520>
 
-
-
-
-
-def run_Edge_compute(self,*args, **kwargs):
-
-	sayl()
-	objn=self.getPinN('sourceObject').getData()
-	obj=FreeCAD.ActiveDocument.getObject(objn)
-	say("object",obj)
-	edge=obj.Shape.Edges[self.getPinN('index').getData()]
-
-	pin=self.getPinN('Shape')
-	k=str(pin.uid)
-	pin.setData(k)
-	store.store().add(k,edge)
-	self.outExec.call()

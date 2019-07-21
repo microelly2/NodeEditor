@@ -1709,13 +1709,41 @@ class FreeCAD_Compound(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
+
+#		import nodeeditor.dev
+#		reload (nodeeditor.dev)
+#		nodeeditor.dev.run_Compound_compute(self,*args, **kwargs)
+#	def run_Compound_compute(self,*args, **kwargs):
+
 		sayl()
 
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_Compound_compute(self,*args, **kwargs)
+	# geht nicht -- bug??
+	#	eids=self.getData("Shapes")
 
+
+		p=self.getPinN("Shapes")
+		outArray = []
+
+		for i in p.affected_by:
+			v=store.store().get(str(i.getData()))
+			outArray += [v]
+		subshapes=outArray
+
+		say("Compound Shapes:",subshapes)
+		shape=Part.Compound(subshapes)
+
+		cc=self.getObject()
+		if cc <> None:
+			cc.Label=self.objname.getData()
+			cc.Shape=shape
+			cc.ViewObject.LineWidth=8
+			cc.ViewObject.LineColor=(1.,1.,0.)
+			cc.ViewObject.PointSize=8
+			cc.ViewObject.Transparency=0
+ 
+		self.setPinObject("Shape",shape)
 		self.outExec.call()
+
 
 
 
