@@ -1519,13 +1519,22 @@ class FreeCAD_Face(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
+#		import nodeeditor.dev
+#		reload (nodeeditor.dev)
+#		nodeeditor.dev.run_Face_compute(self,*args, **kwargs)
+#	def run_Face_compute(self,*args, **kwargs):
+
 		sayl()
+		objn=self.getPinN('sourceObject').getData()
+		obj=FreeCAD.ActiveDocument.getObject(objn)
+		face=obj.Shape.Faces[self.getPinN('index').getData()]
 
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_Face_compute(self,*args, **kwargs)
-
+		pin=self.getPinN('Shape')
+		k=str(pin.uid)
+		pin.setData(k)
+		store.store().add(k,face)
 		self.outExec.call()
+
 
 class FreeCAD_Edge(FreeCadNodeBase):
 	'''
@@ -1601,13 +1610,22 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
+#		import nodeeditor.dev
+#		reload (nodeeditor.dev)
+#		nodeeditor.dev.run_projection_compute(self,*args, **kwargs)
+#	def run_Edge_compute(self,*args, **kwargs):
+
 		sayl()
+		objn=self.getPinN('sourceObject').getData()
+		obj=FreeCAD.ActiveDocument.getObject(objn)
+		edge=obj.Shape.Edges[self.getPinN('index').getData()]
 
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_projection_compute(self,*args, **kwargs)
-
+		pin=self.getPinN('Shape')
+		k=str(pin.uid)
+		pin.setData(k)
+		store.store().add(k,edge)
 		self.outExec.call()
+
 
 class FreeCAD_UVprojection(FreeCadNodeBase):
 	'''

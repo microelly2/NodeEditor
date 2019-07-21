@@ -447,22 +447,6 @@ def run_uv_projection_compute(self,*args, **kwargs):
 
 
 
-def run_Face_compute(self,*args, **kwargs):
-
-	sayl()
-	objn=self.getPinN('sourceObject').getData()
-	obj=FreeCAD.ActiveDocument.getObject(objn)
-	say("object",obj,obj.Label,obj.Name)
-	say(self.getPinN('index').getData())
-	say("-----------",obj.Shape.Faces)
-	face=obj.Shape.Faces[self.getPinN('index').getData()]
-
-	pin=self.getPinN('Shape')
-	k=str(pin.uid)
-	pin.setData(k)
-	store.store().add(k,face)
-	self.outExec.call()
-
 def run_Edge_compute(self,*args, **kwargs):
 
 	sayl()
