@@ -1377,11 +1377,66 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 
 		sayl()
 
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_PartExplorer_compute(self,*args, **kwargs)
+#		import nodeeditor.dev
+#		reload (nodeeditor.dev)
+#		nodeeditor.dev.run_PartExplorer_compute(self,*args, **kwargs)
+
+#	def run_PartExplorer_compute(self,*args, **kwargs):
+
+		sayl()
+		part=self.getData("Part_in")
+
+		if part == None:
+			return
+
+		cc=FreeCAD.ActiveDocument.getObject(part)
+		say(cc,cc.Label)
+		shape=cc.Shape
+		for n in self.pinsk.keys():
+			v=getattr(shape,n)
+			if self.pinsk[n] <> None:
+				self.setData(n,v)
+		if 0:
+			ls=shape.writeInventor().split('\n')
+			for l in ls:say(l)
+
+		points=[v.Point for v in getattr(shape,'Vertexes')]
+		self.setData('Points',points)
+		self.setPinObjects("Edges",shape.Edges)
+		self.setPinObjects("Faces",shape.Faces)
+
+		# testweise lesen
+		if 0:
+			edges=self.getPinObjects("Edges")
+			Part.show(Part.Compound(edges[:-1]))
+
+			edges=self.getPinObjects("Faces")
+			Part.show(Part.Compound(edges[:4]))
+
+		# output of the pins 
+		for t in self.getOrderedPins():
+			if t.__class__.__name__ in ['ShapeListPin']:
+				say("{} has {} items ({})".format(t.getName(),len(t.getData()),t.__class__.__name__))
+			else:
+				say("{} = {} ({})".format(t.getName(),t.getData(),t.__class__.__name__))
+
+			if len(t.affects):
+				for tt in t.affects:
+					if not tt.getName().startswith(self.getName()):
+						if tt.__class__.__name__ in ['AnyPin']:
+							say("----> {} (has {} items) ({})".format(tt.getName(),len(tt.getData()),tt.__class__.__name__))
+						else:
+							say("----> {} = {} ({})".format(tt.getName(),tt.getData(),tt.__class__.__name__))
+						FreeCAD.tt=tt
+						# say(tt.linkedTo[0])
+						a=FreeCAD.tt.linkedTo[0]['rhsNodeName']
+						say("call owning------------------",tt.owningNode().getName())
+						
+						#start the follower node 
+						#tt.owningNode().compute()
 
 		self.outExec.call()
+
 
 
 
@@ -1825,7 +1880,6 @@ class FreeCAD_Plot(NodeBase):
 
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-		self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
 		self.trace = self.createInputPin('trace', 'BoolPin')
 		self.randomize = self.createInputPin("randomize", 'BoolPin')

@@ -141,41 +141,6 @@ def runraw(self):
 import numpy as np
 import Part
 
-def run_foo_compute(self,*args, **kwargs):
-	# compute fuer FreeCAD_Foo.compute
-	dat=self.arrayData.getData()
-	dat=np.array(dat)
-	sayl()
-	say(dat)
-	sayl()
-	sf=Part.BSplineSurface()
-
-	degA=1
-	degB=2
-	
-	poles=np.array(dat)
-	say(poles)
-	(countA,countB,_)=poles.shape
-	say("Shape",poles.shape)
-	degB=min(countB-1,3,self.getPinN("maxDegreeU").getData())
-	degA=min(countA-1,3,self.getPinN("maxDegreeV").getData())
-	say(degA,degB)
-
-	multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-	multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
-	knotA=range(len(multA))
-	knotB=range(len(multB))
-
-	sf=Part.BSplineSurface()
-	sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,False,degA,degB)
-	shape=sf.toShape()
-
-	
-#	sf.buildFromPolesMultsKnots(dat,[2,2],[2,2],[0,1],[0,1],False,False,1,1)
-	shape=sf.toShape()
-	cc=self.getObject()
-	cc.Label=self.objname.getData()
-	cc.Shape=shape
 
 
 import random
@@ -251,86 +216,10 @@ def run_Bar_compute(self,*args, **kwargs):
 
 	sayl()
 
-def XgetObjects(self,pinName):
-	return [store.store().get(eid) for eid in self.getData(pinName)]
 
-def XsetObjects(self,pinName,objects):
-	pin=self.getPinN(pinName)
-	ekeys=[]
-	for i,e in enumerate(objects):
-		k=str(pin.uid)+"__"+str(i)
-		store.store().add(k,e)
-		ekeys += [k]
-	self.setData(pinName,ekeys)
-
-
-def run_PartExplorer_compute(self,*args, **kwargs):
-
-
-	sayl()
-	part=self.getData("Part_in")
-	say(part)
-	if part == None:
-		return
-
-	cc=FreeCAD.ActiveDocument.getObject(part)
-	say(cc,cc.Label)
-	shape=cc.Shape
-	for n in self.pinsk.keys():
-		v=getattr(shape,n)
-		#say(n,v)
-		if self.pinsk[n] <> None:
-			self.setData(n,v)
-	if 0:
-		ls=shape.writeInventor().split('\n')
-		for l in ls:say(l)
-
-	points=[v.Point for v in getattr(shape,'Vertexes')]
-	self.setData('Points',points)
-
-	say("set pins for Edges amnd Faces")
-	self.setPinObjects("Edges",shape.Edges)
-	self.setPinObjects("Faces",shape.Faces)
-
-	# testweise lesen
-	if 0:
-		edges=self.getPinObjects("Edges")
-		Part.show(Part.Compound(edges[:-1]))
-
-		edges=self.getPinObjects("Faces")
-		Part.show(Part.Compound(edges[:4]))
-
-#-----------------------
-	for t in self.getOrderedPins():
-		if t.__class__.__name__ in ['ShapeListPin']:
-			say("{} has {} items ({})".format(t.getName(),len(t.getData()),t.__class__.__name__))
-		else:
-			say("{} = {} ({})".format(t.getName(),t.getData(),t.__class__.__name__))
-
-		if len(t.affects):
-			for tt in t.affects:
-				if not tt.getName().startswith(self.getName()):
-					if tt.__class__.__name__ in ['AnyPin']:
-						say("----> {} (has {} items) ({})".format(tt.getName(),len(tt.getData()),tt.__class__.__name__))
-					else:
-						say("----> {} = {} ({})".format(tt.getName(),tt.getData(),tt.__class__.__name__))
-					FreeCAD.tt=tt
-					# say(tt.linkedTo[0])
-					a=FreeCAD.tt.linkedTo[0]['rhsNodeName']
-					say("call owning------------------",tt.owningNode().getName())
-					
-					#tt.owningNode().compute()
-
-#-----------------------
-
-	sayl("vor outExec.call")
-	self.outExec.call()
-	sayl()
 
 
 def run_Foo_compute(self,*args, **kwargs):
-
-
 	sayl()
 
 
