@@ -1098,9 +1098,35 @@ class FreeCAD_BSpline(FreeCadNodeBase):
 	@timer 
 	def compute(self, *args, **kwargs):
 
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		return  nodeeditor.dev.run_foo_compute(self,*args, **kwargs)
+#		import nodeeditor.dev
+#		reload (nodeeditor.dev)
+#		return  nodeeditor.dev.run_foo_compute(self,*args, **kwargs)
+#	def run_foo_compute(self,*args, **kwargs):
+
+		dat=self.arrayData.getData()
+		dat=np.array(dat)
+		sf=Part.BSplineSurface()
+
+		poles=np.array(dat)
+		say(poles)
+		(countA,countB,_)=poles.shape
+		degB=min(countB-1,3,self.getPinN("maxDegreeU").getData())
+		degA=min(countA-1,3,self.getPinN("maxDegreeV").getData())
+
+		multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+		multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
+		knotA=range(len(multA))
+		knotB=range(len(multB))
+
+		sf=Part.BSplineSurface()
+		sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,False,degA,degB)
+		shape=sf.toShape()
+
+		shape=sf.toShape()
+		cc=self.getObject()
+		cc.Label=self.objname.getData()
+		cc.Shape=shape
+
 
 
 class FreeCAD_VectorArray(FreeCadNodeBase):
