@@ -2,6 +2,8 @@ import FreeCAD
 from PyFlow.Core.Common import *
 from PyFlow import CreateRawPin
 from nodeeditor.say import *
+import nodeeditor.store as store
+
 
 
 
@@ -210,10 +212,8 @@ def run_VectorArray_compute(self,*args, **kwargs):
 	self.outExec.call()
 
 
-import nodeeditor.store as store
 
 def run_Bar_compute(self,*args, **kwargs):
-
 	sayl()
 
 
@@ -378,21 +378,9 @@ def run_projection_compute(self,*args, **kwargs):
 
 def run_uv_projection_compute(self,*args, **kwargs):
 
-#	f=FreeCAD.ActiveDocument.BePlane.Shape.Face1
-#	if 0:
-#		w=FreeCAD.ActiveDocument.Sketch.Shape.Edge1
-#		closed=False
-#	else:
-#		w=FreeCAD.ActiveDocument.Sketch001.Shape.Edge1
-#		closed=True
-
 	f=store.store().get(self.getPinN('face').getData())
-	say("Face",f)
 	w=store.store().get(self.getPinN('edge').getData())
-	say("Edge",w)
 	closed=True
-
-
 
 	sf=f.Surface
 
@@ -424,24 +412,20 @@ def run_uv_projection_compute(self,*args, **kwargs):
 	ee.reverse()
 	splitb=[(ee,face)]
 	r2=Part.makeSplitShape(face, splitb)
-	
+
 	try: 
 		rc=r2[0][0]
 		rc=r[0][0]
 	except: return
 
-
 	cc=self.getObject()
 	if cc <> None:
 		cc.Label=self.objname.getData()
-#		cc.Shape=shape
-
-	sp=cc
 
 	if self.getPinN('inverse').getData():
-		sp.Shape=r2[0][0]
+		cc.Shape=r2[0][0]
 	else:
-		sp.Shape=r[0][0]
+		cc.Shape=r[0][0]
 
 	if self.getPinN('Extrusion').getData():
 		f = FreeCAD.getDocument('project').getObject('MyExtrude')
@@ -456,7 +440,7 @@ def run_uv_projection_compute(self,*args, **kwargs):
 		f.Solid = True
 		FreeCAD.activeDocument().recompute()
  
-	#see >>> s.Face1.extrude(FreeCAD.Vector(0,1,1))
+	#see without extra part >>> s.Face1.extrude(FreeCAD.Vector(0,1,1))
 	#<Solid object at 0x660e520>
 
 
