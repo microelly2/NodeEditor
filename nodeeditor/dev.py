@@ -251,6 +251,19 @@ def run_Bar_compute(self,*args, **kwargs):
 
 	sayl()
 
+def XgetObjects(self,pinName):
+	return [store.store().get(eid) for eid in self.getData(pinName)]
+
+def XsetObjects(self,pinName,objects):
+	pin=self.getPinN(pinName)
+	ekeys=[]
+	for i,e in enumerate(objects):
+		k=str(pin.uid)+"__"+str(i)
+		store.store().add(k,e)
+		ekeys += [k]
+	self.setData(pinName,ekeys)
+
+
 def run_PartExplorer_compute(self,*args, **kwargs):
 
 
@@ -265,7 +278,7 @@ def run_PartExplorer_compute(self,*args, **kwargs):
 	shape=cc.Shape
 	for n in self.pinsk.keys():
 		v=getattr(shape,n)
-		say(n,v)
+		#say(n,v)
 		if self.pinsk[n] <> None:
 			self.setData(n,v)
 	if 0:
@@ -273,38 +286,47 @@ def run_PartExplorer_compute(self,*args, **kwargs):
 		for l in ls:say(l)
 
 	points=[v.Point for v in getattr(shape,'Vertexes')]
-	say(points)
 	self.setData('Points',points)
 
-	pin=self.getPinN("Edges")
-	ekeys=[]
-	for i,e in enumerate(shape.Edges):
-		k=str(pin.uid)+"__"+str(i)
-		store.store().add(k,e)
-		ekeys += [k]
-	self.setData("Edges",ekeys)
+	say("set pins for Edges amnd Faces")
+	self.setPinObjects("Edges",shape.Edges)
+	self.setPinObjects("Faces",shape.Faces)
 
-	pin=self.getPinN("Faces")
-	fkeys=[]
-	for i,e in enumerate(shape.Faces):
-		k=str(pin.uid)+"__"+str(i)
-		store.store().add(k,e)
-		fkeys += [k]
-	self.setData("Faces",fkeys)
+	# testweise lesen
+	if 0:
+		edges=self.getPinObjects("Edges")
+		Part.show(Part.Compound(edges[:-1]))
 
-	if 0: # probe lesen
-		# store.store().list()
-		eids=self.getData("Edges")
-		eds=[]
-		for eid in eids:
-			eds += [store.store().get(eid)]
-		Part.show(Part.Compound(eds[:-1]))
+		edges=self.getPinObjects("Faces")
+		Part.show(Part.Compound(edges[:4]))
 
-		fids=self.getData("Faces")
-		fds=[]
-		for fid in fids:
-			fds += [store.store().get(fid)]
-		Part.show(Part.Compound(fds[:4]))
+#-----------------------
+	for t in self.getOrderedPins():
+		if t.__class__.__name__ in ['ShapeListPin']:
+			say("{} has {} items ({})".format(t.getName(),len(t.getData()),t.__class__.__name__))
+		else:
+			say("{} = {} ({})".format(t.getName(),t.getData(),t.__class__.__name__))
+
+		if len(t.affects):
+			for tt in t.affects:
+				if not tt.getName().startswith(self.getName()):
+					if tt.__class__.__name__ in ['AnyPin']:
+						say("----> {} (has {} items) ({})".format(tt.getName(),len(tt.getData()),tt.__class__.__name__))
+					else:
+						say("----> {} = {} ({})".format(tt.getName(),tt.getData(),tt.__class__.__name__))
+					FreeCAD.tt=tt
+					# say(tt.linkedTo[0])
+					a=FreeCAD.tt.linkedTo[0]['rhsNodeName']
+					say("call owning------------------",tt.owningNode().getName())
+					
+					#tt.owningNode().compute()
+
+#-----------------------
+
+	sayl("vor outExec.call")
+	self.outExec.call()
+	sayl()
+
 
 def run_Foo_compute(self,*args, **kwargs):
 
@@ -315,30 +337,31 @@ def run_Foo_compute(self,*args, **kwargs):
 def run_ShapeIndex_compute(self,*args, **kwargs):
 
 	sayl()
-	eids=self.getData("Shapes")#[0]
-	say("Eid",eids)
-	subshapes=[]
-	for eid in eids:
-		subshapes += [ store.store().get(str(eid))]
-	say("Shapes",subshapes)
+	subshapes=self.getPinObjects("Shapes")
+#	say("Shapes",subshapes)
+
 	try:
 		shape=subshapes[self.getData('index')]
 	except:
 		shape=Part.Shape()
-	say("Shape ",shape)
+#	say("Shape ",shape)
 
-	cc=self.getObject()
-	if cc <> None:
-		cc.Label=self.objname.getData()
-		cc.Shape=shape
-		cc.ViewObject.LineWidth=8
-		cc.ViewObject.LineColor=(1.,1.,0.)
-		cc.ViewObject.PointSize=8
-		cc.ViewObject.Transparency=0
+	if 0:
+		cc=self.getObject()
+		if cc <> None:
+			cc.Label=self.objname.getData()
+			cc.Shape=shape
+			cc.ViewObject.LineWidth=8
+			cc.ViewObject.LineColor=(1.,1.,0.)
+			cc.ViewObject.PointSize=8
+			cc.ViewObject.Transparency=0
 
-	self.setData("Shape",eids[self.getData('index')])
-
+	self.setPinObject("Shape",subshapes[self.getData('index')])
+	#self.outExec.call()
+	sayl("vor outExec.call")
 	self.outExec.call()
+	sayl()
+
 
 def run_Compound_compute(self,*args, **kwargs):
 
@@ -347,12 +370,21 @@ def run_Compound_compute(self,*args, **kwargs):
 # geht nicht -- bug??
 #	eids=self.getData("Shapes")
 
-	eids=self.getPinN("Shapes").getData()
 
-	say("Compound Shape Ids",eids)
-	subshapes=[]
-	for eid in eids:
-		subshapes += [ store.store().get(str(eid))]
+	p=self.getPinN("Shapes")
+	outArray = []
+#	ySortedPins = sorted(p.affected_by, key=lambda pin: pin.owningNode().y)
+#	say(ySortedPins)
+
+	for i in p.affected_by:
+		#outArray.append(i.getData())
+		#say 
+		v=store.store().get(str(i.getData()))
+	#	say(v, v.__class__.__name__)
+		outArray += [v]
+	#say(outArray)
+	subshapes=outArray
+
 	say("Compound Shapes:",subshapes)
 	shape=Part.Compound(subshapes)
 
@@ -365,6 +397,17 @@ def run_Compound_compute(self,*args, **kwargs):
 		cc.ViewObject.PointSize=8
 		cc.ViewObject.Transparency=0
  
+	self.setPinObject("Shape",shape)
+
+	sayl("vor outExec.call")
+	self.outExec.call()
+	sayl()
+
+
+def run_Part_compute(self,*args, **kwargs):
+
+	pass
+
 
 def run_Plot_compute(self,*args, **kwargs):
 
@@ -524,6 +567,8 @@ def run_uv_projection_compute(self,*args, **kwargs):
 		f.Solid = True
 		FreeCAD.activeDocument().recompute()
  
+	#see >>> s.Face1.extrude(FreeCAD.Vector(0,1,1))
+	#<Solid object at 0x660e520>
 
 
 
@@ -534,7 +579,9 @@ def run_Face_compute(self,*args, **kwargs):
 	sayl()
 	objn=self.getPinN('sourceObject').getData()
 	obj=FreeCAD.ActiveDocument.getObject(objn)
-	say("object",obj)
+	say("object",obj,obj.Label,obj.Name)
+	say(self.getPinN('index').getData())
+	say("-----------",obj.Shape.Faces)
 	face=obj.Shape.Faces[self.getPinN('index').getData()]
 
 	pin=self.getPinN('Shape')

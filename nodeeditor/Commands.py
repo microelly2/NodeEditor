@@ -421,13 +421,13 @@ def PartExplorerSubshapeIndexandPlot():
 	connection = pfwrap.connect(t2,'Part', t3,'Part_in')
 
 	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_ShapeIndex","MyIndex")
-	t4.setData("shapeOnly",True)
+	#t4.setData("shapeOnly",True)
 	t4.setPosition(200,0)
 	gg.addNode(t4)
 
 	t4 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Plot","MyPlot")
 	t4.setPosition(00,-200)
-	gg.addNode(t4)
+	#gg.addNode(t4)
 
 	t2.compute()
 	t3.compute()
@@ -784,6 +784,9 @@ def createObjectWithAllProperties():
 # some methods for fast testing T1,T2,T3
 
 fn='bb'
+fn='project'
+fn='compb'
+
 def loadAll():
 	showPyFlow()
 	try: 
@@ -804,6 +807,7 @@ def saveAll():
 
 def T3():
 	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
+	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
 
 
 

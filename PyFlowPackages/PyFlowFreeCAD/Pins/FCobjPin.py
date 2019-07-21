@@ -29,7 +29,7 @@ class FCobjPin(PinBase):
 
     @staticmethod
     def color():
-        return (150, 0, 0, 255)
+        return (150, 150, 250, 255)
 
     @staticmethod
     def pinDataTypeHint():
@@ -60,6 +60,8 @@ class ShapeId():
     pass
 
 class ShapePin(FCobjPin):
+#class ShapePin(PinBase):
+
     """doc string for FloatFCobjPin"""
     def __init__(self, name, parent, direction, **kwargs):
         say("create pin",name,parent.getName())
@@ -72,11 +74,11 @@ class ShapePin(FCobjPin):
 
     @staticmethod
     def supportedDataTypes():
-        return ('ShapePin',None)
+        return ('ShapePin',)
 
     @staticmethod
     def color():
-        return (150, 0, 0, 255)
+        return (250, 50, 50, 255)
 
     @staticmethod
     def pinDataTypeHint():
@@ -112,7 +114,7 @@ class ShapeListPin(FCobjPin):
 
     @staticmethod
     def color():
-        return (200, 100, 100, 255)
+        return (100, 200, 100, 255)
 
     @staticmethod
     def pinDataTypeHint():
