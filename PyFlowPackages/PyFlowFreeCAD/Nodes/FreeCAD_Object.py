@@ -1477,13 +1477,21 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
+#		import nodeeditor.dev
+#		reload (nodeeditor.dev)
+#		nodeeditor.dev.run_ShapeIndex_compute(self,*args, **kwargs)
+#	def run_ShapeIndex_compute(self,*args, **kwargs):
+
 		sayl()
+		subshapes=self.getPinObjects("Shapes")
 
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_ShapeIndex_compute(self,*args, **kwargs)
+		try:
+			shape=subshapes[self.getData('index')]
+		except:
+			shape=Part.Shape()
 
-		#self.outExec.call()
+		self.setPinObject("Shape",subshapes[self.getData('index')])
+		self.outExec.call()
 
 
 

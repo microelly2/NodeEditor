@@ -217,44 +217,11 @@ def run_Bar_compute(self,*args, **kwargs):
 	sayl()
 
 
-
-
 def run_Foo_compute(self,*args, **kwargs):
 	sayl()
 
 
-def run_ShapeIndex_compute(self,*args, **kwargs):
 
-	sayl()
-	subshapes=self.getPinObjects("Shapes")
-#	say("Shapes",subshapes)
-
-	try:
-		shape=subshapes[self.getData('index')]
-	except:
-		shape=Part.Shape()
-#	say("Shape ",shape)
-
-	if 0:
-		cc=self.getObject()
-		if cc <> None:
-			cc.Label=self.objname.getData()
-			cc.Shape=shape
-			cc.ViewObject.LineWidth=8
-			cc.ViewObject.LineColor=(1.,1.,0.)
-			cc.ViewObject.PointSize=8
-			cc.ViewObject.Transparency=0
-
-	self.setPinObject("Shape",subshapes[self.getData('index')])
-	#self.outExec.call()
-	sayl("vor outExec.call")
-	self.outExec.call()
-	sayl()
-
-
-def run_Part_compute(self,*args, **kwargs):
-
-	pass
 
 
 def run_Plot_compute(self,*args, **kwargs):
