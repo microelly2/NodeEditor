@@ -1,11 +1,14 @@
+import numpy as np
+import random
+
 import FreeCAD 
+import Part
+
 from PyFlow.Core.Common import *
 from PyFlow import CreateRawPin
+
 from nodeeditor.say import *
 import nodeeditor.store as store
-
-
-
 
 
 def runraw(self):
@@ -140,13 +143,6 @@ def runraw(self):
 	return pins
 
 
-import numpy as np
-import Part
-
-
-
-import random
-
 
 def run_VectorArray_compute(self,*args, **kwargs):
 	
@@ -212,13 +208,6 @@ def run_VectorArray_compute(self,*args, **kwargs):
 	self.outExec.call()
 
 
-
-def run_Bar_compute(self,*args, **kwargs):
-	sayl()
-
-
-def run_Foo_compute(self,*args, **kwargs):
-	sayl()
 
 
 
@@ -299,9 +288,6 @@ def run_projection_compute(self,*args, **kwargs):
 		cc.ViewObject.LineColor=(1.,1.,0.)
 
 
-
-
-
 def run_uv_projection_compute(self,*args, **kwargs):
 
 	f=store.store().get(self.getPinN('face').getData())
@@ -368,4 +354,12 @@ def run_uv_projection_compute(self,*args, **kwargs):
  
 	#see without extra part >>> s.Face1.extrude(FreeCAD.Vector(0,1,1))
 	#<Solid object at 0x660e520>
+
+
+def run_Bar_compute(self,*args, **kwargs):
+	sayl()
+
+
+def run_Foo_compute(self,*args, **kwargs):
+	sayl()
 

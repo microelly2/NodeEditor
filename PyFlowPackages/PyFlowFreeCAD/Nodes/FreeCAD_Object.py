@@ -1790,79 +1790,7 @@ class FreeCAD_Part(FreeCadNodeBase):
 
 
 
-
-
-
-
-#################
-
-
-class FreeCAD_Bar(FreeCadNodeBase):
-	'''
-	dummy for tests
-	'''
-
-	def __init__(self, name="Fusion"):
-
-		super(FreeCAD_Bar, self).__init__(name)
-
-
-		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-		self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
-
-		self.trace = self.createInputPin('trace', 'BoolPin')
-		self.randomize = self.createInputPin("randomize", 'BoolPin')
-
-		self.part = self.createOutputPin('Part', 'FCobjPin')
-		self.shapeout = self.createOutputPin('Shape', 'ShapePin')
-
-		self.objname = self.createInputPin("objectname", 'StringPin')
-		self.objname.setData(name)
-
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
-
-
-		self.part = self.createInputPin('Part_in', 'FCobjPin')
-		self.outArray = self.createOutputPin('Points', 'VectorPin', structure=PinStructure.Array)
-		self.createOutputPin('Faces', 'ShapeListPin')
-		self.createOutputPin('Edges', 'ShapeListPin')
-
-		self.pinsk={
-				'Volume':'FloatPin',
-				'Area':'FloatPin',
-				'Length':'FloatPin',
-				'BoundBox': None,
-				'CenterOfMass':'VectorPin',
-#				#'Edges','Faces','Vertexes','Compounds','Wires','Shells',
-#				#'PrincipalProperties','StaticMoments',
-				'Mass':'FloatPin',
-				'ShapeType':'StringPin',
-#				
-		}
-
-		say(self.pinsk)
-		for p in self.pinsk.keys():
-			if self.pinsk[p] <> None:
-				say(p,self.pinsk[p])
-				self.createOutputPin(p, self.pinsk[p])
-
-
-
-	def compute(self, *args, **kwargs):
-
-		sayl()
-
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_Bar_compute(self,*args, **kwargs)
-
-		self.outExec.call()
-
-
-
-class FreeCAD_Foo(FreeCadNodeBase):
+class FreeCAD_PinsTest(FreeCadNodeBase):
 	'''
 	pins testcase: what is possible 
 	'''
@@ -1872,7 +1800,7 @@ class FreeCAD_Foo(FreeCadNodeBase):
 		return "creates different pins for testing connections"
 
 	def __init__(self, name="Fusion"):
-		super(FreeCAD_Foo, self).__init__(name,False,False)
+		super(FreeCAD_PinsTest, self).__init__(name,False,False)
 
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -1967,6 +1895,58 @@ class FreeCAD_Plot(NodeBase):
 
 		self.outExec.call()
 
+#------------------------------------------------------------------
+
+
+
+
+class FreeCAD_Bar(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	def __init__(self, name="Fusion"):
+
+		super(FreeCAD_Bar, self).__init__(name)
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_bar_compute(self,*args, **kwargs)
+		self.outExec.call()
+
+
+
+
+
+
+class FreeCAD_Foo(FreeCadNodeBase):
+	'''
+	dummy for tests
+	'''
+
+	@staticmethod
+	def description():
+		return "a dummy for tests"
+
+	def __init__(self, name="Fusion"):
+		super(FreeCAD_Foo, self).__init__(name,False,False)
+
+
+
+	def compute(self, *args, **kwargs):
+
+		sayl()
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_foo_compute(self,*args, **kwargs)
+		self.outExec.call()
+
+
+
 
 
 
@@ -1998,4 +1978,5 @@ def nodelist():
 				FreeCAD_Parallelprojection,
 				FreeCAD_UVprojection,
 				FreeCAD_Part,
+				FreeCAD_PinsTest,
 		]
