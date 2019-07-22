@@ -363,3 +363,18 @@ def run_Bar_compute(self,*args, **kwargs):
 def run_Foo_compute(self,*args, **kwargs):
 	sayl()
 
+import nodeeditor.pfwrap
+
+
+def run_enum(self):
+	say("process the rawPin data ")
+	say("rawPin is",self.pin._rawPin)
+	say("values ...")
+	for v in self.pin._rawPin.values:
+		say(v)
+
+
+
+def f4(self):
+	say("FreeCAD Ui Node runs f4")
+	say("nothing to do, done")

@@ -54,6 +54,11 @@ class EnumerationInputWidget(InputWidgetSingle):
         except:
             ix=0
         self.le.setCurrentIndex(ix)
+        sayl("call dev.run_enum")
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        nodeeditor.dev.run_enum(self)
+
 
 
 class Array(object):

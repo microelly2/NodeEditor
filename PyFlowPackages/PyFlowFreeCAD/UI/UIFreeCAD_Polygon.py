@@ -3,7 +3,9 @@ from PyFlow.UI.Canvas.UINodeBase import UINodeBase
 from PyFlow.UI.Canvas.UICommon import NodeActionButtonInfo
 
 
-class UIFreeCAD_PolygonNode(UINodeBase):
+from PyFlow.Packages.PyFlowFreeCAD.UI.UIFreeCAD_NodeBase import FreeCADUINodeBase
+
+class UIFreeCAD_PolygonNode(FreeCADUINodeBase):
 	def __init__(self, raw_node):
 		super(UIFreeCAD_PolygonNode, self).__init__(raw_node)
 		actionAddOut = self._menu.addAction("Add out pin")
