@@ -18,6 +18,180 @@ from PyFlow.Packages.PyFlowBase.Nodes import FLOW_CONTROL_COLOR
 import nodeeditor.store as store
 from nodeeditor.say import *
 
+def timer(func):
+	"""Print the runtime of the decorated function"""
+	@functools.wraps(func)
+	def wrapper_timer(*args, **kwargs):
+
+		try :
+				is_method   = inspect.getargspec(func)[0][0] == 'self'
+		except :
+				is_method   = False
+
+		if is_method :
+				name    = '{}.{}.{}'.format(func.__module__, args[0].__class__.__name__, func.__name__)
+		else :
+				name    = '{}.{}'.format(fn.__module__, func.__name__)
+
+		sayW("call '{}'".format(name))
+		start_time = time.time()
+		value = func(*args, **kwargs)
+		end_time = time.time()
+		run_time = end_time - start_time    # 3
+		sayW("Finished method '{0}' in {1:.4f} secs".format(func.__name__,run_time))
+		return value
+	return wrapper_timer
+
+
+
+class FreeCadNodeBase(NodeBase):
+	'''common methods for FreeCAD integration'''
+
+	def __init__(self, name="FreeCADNode",partenv=True,testenv=False):
+
+		super(FreeCadNodeBase, self).__init__(name)
+
+
+	def initpins(self,name):
+
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
+
+		self.trace = self.createInputPin('trace', 'BoolPin')
+		self.randomize = self.createInputPin("randomize", 'BoolPin')
+
+		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.objname.setData(name)
+
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
+		self.shapeOnly.recomputeNode=True 
+
+
+	@timer 
+	def show(self,*args, **kwargs):
+		sayl()
+		#say("self:",self)
+		say("Content of {}:".format(self.getName()))
+		#say("list all pins !! siehe FreeCAD.ref")
+		ll=len(self.getName())
+		for t in self.getOrderedPins():
+			say("{} = {} ({})".format(t.getName()[ll+1:],t.getData(),t.__class__.__name__))
+			if len(t.affected_by):
+				for tt in t.affected_by:
+					if not tt.getName().startswith(self.getName()):
+						say("<---- {} = {} ({})".format(tt.getName(),tt.getData(),tt.__class__.__name__))
+
+			if len(t.affects):
+				for tt in t.affects:
+					if not tt.getName().startswith(self.getName()):
+						say("----> {} = {} ({})".format(tt.getName(),tt.getData(),tt.__class__.__name__))
+  
+
+			n=t.__class__.__name__
+			# spezialausgaben fuer objekte
+			if n == 'ArrayPin':
+				say(t.getArray())
+			if n == 'FCobjPin':
+				obj=t.getObject()
+				if obj <> None :
+					try:
+						say("object: {} ({})".format(obj.Label,obj.Name))
+					except:
+						say(obj)
+				
+		FreeCAD.ref=self
+		
+
+
+
+	def getDatalist(self,pinnames):
+		namelist=pinnames.split()
+		ll=[self.getPinN(a).getData() for a in namelist]
+		return ll
+
+	def applyPins(self,ff,zz):
+		zz2=self.getDatalist(zz)
+		return ff(*zz2)
+
+	def setDatalist(self,pinnames,values):
+		namelist=pinnames.split()
+		sayl("--set pinlist for {}".format(self.getName()))
+		for a,v in zip(namelist,values):
+			say(a,v)
+			self.getPinN(a).setData(v)
+
+	def getObject(self):
+		'''get the FreeCAD object'''
+
+		yid="ID_"+str(self.uid)
+		yid=yid.replace('-','_')
+
+		cc=FreeCAD.ActiveDocument.getObject(yid)
+
+		try:
+			if self.shapeOnly.getData():
+				if cc:
+					say("delete object")
+					FreeCAD.ActiveDocument.removeObject(cc.Name)
+				return None
+		except: pass
+
+		if cc == None:
+			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
+			cc.ViewObject.Transparency=80
+			cc.ViewObject.LineColor=(1.,0.,0.)
+			cc.ViewObject.PointColor=(1.,1.,0.)
+			cc.ViewObject.PointSize=10
+			r=random.random()
+			cc.ViewObject.ShapeColor=(0.,0.2+0.8*r,1.0-0.8*r)
+		return cc
+
+	def postCompute(self,fcobj=None):
+
+		if self.part.hasConnections():
+			say("sende an Part")
+			if fcobj == None:
+				self.part.setData(None)
+			else:
+				self.part.setData(fcobj.Name)
+		self.outExec.call()
+		try:
+			if self.trace.getData():
+				self.show()
+		except:
+			pass
+
+	#method to write/read the objectpins
+	def getPinObject(self,pinName):
+		return store.store().get(self.getData(pinName))
+
+
+	def getPinObjects(self,pinName):
+		return [store.store().get(eid) for eid in self.getData(pinName)]
+
+	def setPinObjects(self,pinName,objects):
+		pin=self.getPinN(pinName)
+		ekeys=[]
+		for i,e in enumerate(objects):
+			k=str(pin.uid)+"__"+str(i)
+			store.store().add(k,e)
+			ekeys += [k]
+		self.setData(pinName,ekeys)
+
+	def setPinObject(self,pinName,obj):
+		pin=self.getPinN(pinName)
+		k=str(pin.uid)
+		store.store().add(k,obj)
+		pin.setData(k)
+
+
+
+
+
 
 # exmaple shape
 def createShape(a):
@@ -239,7 +413,7 @@ class FreeCAD_StorePins(NodeBase):
 
 
 
-class FreeCAD_Toy(NodeBase):
+class FreeCAD_Toy(FreeCadNodeBase):
 	'''erzeuge eine zufallsBox'''
 
 	def __init__(self, name="MyToy"):
@@ -303,175 +477,6 @@ class FreeCAD_Toy(NodeBase):
 		self.outExec.call()
 		say ("Ende exec for ---",self.getName())
 
-
-def timer(func):
-	"""Print the runtime of the decorated function"""
-	@functools.wraps(func)
-	def wrapper_timer(*args, **kwargs):
-
-		try :
-				is_method   = inspect.getargspec(func)[0][0] == 'self'
-		except :
-				is_method   = False
-
-		if is_method :
-				name    = '{}.{}.{}'.format(func.__module__, args[0].__class__.__name__, func.__name__)
-		else :
-				name    = '{}.{}'.format(fn.__module__, func.__name__)
-
-		sayW("call '{}'".format(name))
-		start_time = time.time()
-		value = func(*args, **kwargs)
-		end_time = time.time()
-		run_time = end_time - start_time    # 3
-		sayW("Finished method '{0}' in {1:.4f} secs".format(func.__name__,run_time))
-		return value
-	return wrapper_timer
-
-
-class FreeCadNodeBase(NodeBase):
-	'''common methods for FreeCAD integration'''
-
-	def __init__(self, name="FreeCADNode",partenv=True,testenv=False):
-
-		super(FreeCadNodeBase, self).__init__(name)
-
-
-	def initpins(self,name):
-
-		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-		self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
-
-		self.trace = self.createInputPin('trace', 'BoolPin')
-		self.randomize = self.createInputPin("randomize", 'BoolPin')
-
-		self.part = self.createOutputPin('Part', 'FCobjPin')
-		self.shapeout = self.createOutputPin('Shape', 'ShapePin')
-
-		self.objname = self.createInputPin("objectname", 'StringPin')
-		self.objname.setData(name)
-
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
-
-
-	@timer 
-	def show(self,*args, **kwargs):
-		sayl()
-		#say("self:",self)
-		say("Content of {}:".format(self.getName()))
-		#say("list all pins !! siehe FreeCAD.ref")
-		ll=len(self.getName())
-		for t in self.getOrderedPins():
-			say("{} = {} ({})".format(t.getName()[ll+1:],t.getData(),t.__class__.__name__))
-			if len(t.affected_by):
-				for tt in t.affected_by:
-					if not tt.getName().startswith(self.getName()):
-						say("<---- {} = {} ({})".format(tt.getName(),tt.getData(),tt.__class__.__name__))
-
-			if len(t.affects):
-				for tt in t.affects:
-					if not tt.getName().startswith(self.getName()):
-						say("----> {} = {} ({})".format(tt.getName(),tt.getData(),tt.__class__.__name__))
-  
-
-			n=t.__class__.__name__
-			# spezialausgaben fuer objekte
-			if n == 'ArrayPin':
-				say(t.getArray())
-			if n == 'FCobjPin':
-				obj=t.getObject()
-				if obj <> None :
-					try:
-						say("object: {} ({})".format(obj.Label,obj.Name))
-					except:
-						say(obj)
-				
-		FreeCAD.ref=self
-		
-
-
-
-	def getDatalist(self,pinnames):
-		namelist=pinnames.split()
-		ll=[self.getPinN(a).getData() for a in namelist]
-		return ll
-
-	def applyPins(self,ff,zz):
-		zz2=self.getDatalist(zz)
-		return ff(*zz2)
-
-	def setDatalist(self,pinnames,values):
-		namelist=pinnames.split()
-		sayl("--set pinlist for {}".format(self.getName()))
-		for a,v in zip(namelist,values):
-			say(a,v)
-			self.getPinN(a).setData(v)
-
-	def getObject(self):
-		'''get the FreeCAD object'''
-
-		yid="ID_"+str(self.uid)
-		yid=yid.replace('-','_')
-
-		cc=FreeCAD.ActiveDocument.getObject(yid)
-
-		try:
-			if self.shapeOnly.getData():
-				if cc:
-					say("delete object")
-					FreeCAD.ActiveDocument.removeObject(cc.Name)
-				return None
-		except: pass
-
-		if cc == None:
-			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
-			cc.ViewObject.Transparency=80
-			cc.ViewObject.LineColor=(1.,0.,0.)
-			cc.ViewObject.PointColor=(1.,1.,0.)
-			cc.ViewObject.PointSize=10
-			r=random.random()
-			cc.ViewObject.ShapeColor=(0.,0.2+0.8*r,1.0-0.8*r)
-		return cc
-
-	def postCompute(self,fcobj=None):
-
-		if self.part.hasConnections():
-			say("sende an Part")
-			if fcobj == None:
-				self.part.setData(None)
-			else:
-				self.part.setData(fcobj.Name)
-		self.outExec.call()
-		try:
-			if self.trace.getData():
-				self.show()
-		except:
-			pass
-
-	#method to write/read the objectpins
-	def getPinObject(self,pinName):
-		return store.store().get(self.getData(pinName))
-
-
-	def getPinObjects(self,pinName):
-		return [store.store().get(eid) for eid in self.getData(pinName)]
-
-	def setPinObjects(self,pinName,objects):
-		pin=self.getPinN(pinName)
-		ekeys=[]
-		for i,e in enumerate(objects):
-			k=str(pin.uid)+"__"+str(i)
-			store.store().add(k,e)
-			ekeys += [k]
-		self.setData(pinName,ekeys)
-
-	def setPinObject(self,pinName,obj):
-		pin=self.getPinN(pinName)
-		k=str(pin.uid)
-		store.store().add(k,obj)
-		pin.setData(k)
 
 
 
@@ -1281,7 +1286,7 @@ class FreeCAD_Object(FreeCadNodeBase):
 		say("pins created")
 
 
-class FreeCAD_Console(NodeBase):
+class FreeCAD_Console(FreeCadNodeBase):
 	'''
 	write to FreeCAD.Console
 	'''
