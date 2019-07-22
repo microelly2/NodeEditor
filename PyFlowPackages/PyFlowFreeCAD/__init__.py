@@ -30,11 +30,13 @@ for n in nodelist():
 from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Vector import Vector
 from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Rotation import Rotation
 from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Placement import Placement
+from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Numpy import Numpy
 
 _FOO_LIBS = {
     Vector.__name__: Vector(PACKAGE_NAME),
     Rotation.__name__: Rotation(PACKAGE_NAME),
     Placement.__name__: Placement(PACKAGE_NAME),
+	Numpy.__name__: Numpy(PACKAGE_NAME),
 }
 
 
