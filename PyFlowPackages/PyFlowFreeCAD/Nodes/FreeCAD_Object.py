@@ -154,7 +154,7 @@ class FreeCadNodeBase(NodeBase):
 	def postCompute(self,fcobj=None):
 
 		if self.part.hasConnections():
-			say("sende an Part")
+			say("send a Part")
 			if fcobj == None:
 				self.part.setData(None)
 			else:
@@ -195,7 +195,7 @@ class FreeCadNodeBase(NodeBase):
 
 
 
-# exmaple shape
+# example shape
 def createShape(a):
 
 	pa=FreeCAD.Vector(0,0,0)
@@ -408,9 +408,9 @@ class FreeCAD_StorePins(NodeBase):
 				store.store().add(str(self.shapeout.uid),s.Shape)
 				self.shapeout.setData(self.shapeout.uid)
 
-		say ("data set to output object is done, exex...")
+		say ("data set to output object is done, exec...")
 		self.outExec.call()
-		say ("Ende exec for ---",self.getName())
+		say ("End exec for ---",self.getName())
 
 
 
@@ -472,14 +472,14 @@ class FreeCAD_Toy(FreeCadNodeBase):
 		cc.Shape=shape
 
 		if self.part.hasConnections():
-			say("sende an Part")
+			say("send a Part")
 			if cc == None:
 				self.part.setData(None)
 			else:
 				self.part.setData(cc.Name)
-		say ("data set to output object is done, exex...")
+		say ("data set to output object is done, exec...")
 		self.outExec.call()
-		say ("Ende exec for ---",self.getName())
+		say ("End exec for ---",self.getName())
 
 	@staticmethod
 	def description():
@@ -775,7 +775,7 @@ class FreeCAD_Polygon(FreeCadNodeBase):
 	'''
 	erzeuge eines Streckenzugs
 	for each point there is an input pin,
-	input pins can be added frm context menue
+	input pins can be added from context menu
 	'''
 
 	def __init__(self, name="MyQuadrangle"):
@@ -1012,7 +1012,7 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 
 
 		if self.part.hasConnections():
-			say("sende an Part")
+			say("send a Part")
 			if cc == None:
 				self.part.setData(None)
 			else:
@@ -1020,9 +1020,9 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 
 		say("Volume for {0}: {1:.2f}".format(self.getName(),shape.Volume))
 		self.volume.setData(shape.Volume)
-#       say ("data set to output object is done, exex...")
+#       say ("data set to output object is done, exec...")
 		self.outExec.call()
-#       say ("Ende exec for ---",self.getName())
+#       say ("End exec for ---",self.getName())
 
 
 

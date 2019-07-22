@@ -674,7 +674,7 @@ def showPyFlow():
 
 
 def thinoutGraph():
-	'''test clean up graph: delet half of the nodes'''
+	'''test clean up graph: delete half of the nodes'''
 	instance=pfwrap.getInstance()
 	gg=instance.graphManager.get().getAllGraphs()[0]
 	for i,n in enumerate(gg.getNodes()):

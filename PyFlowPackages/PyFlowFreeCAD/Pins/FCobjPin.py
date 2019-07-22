@@ -200,7 +200,7 @@ class ArrayPin(FCobjPin):
         return data
 
     def getArray(self):
-        #say("getArray methode")
+        #say("getArray method")
         arrin=self.getData()
         #say("got key:",arrin)
         if arrin <> None:

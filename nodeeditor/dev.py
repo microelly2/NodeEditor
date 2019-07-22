@@ -56,7 +56,7 @@ def runraw(self):
 
 
 		if p in ipm.keys():
-			#print "IGNORE '{}' - exists aready".format(p)
+			#print "IGNORE '{}' - exists already".format(p)
 			continue
 
 		cn=a.__class__.__name__
@@ -95,7 +95,7 @@ def runraw(self):
 			pintyp="IntPin"
 		elif  cn=="Placement":
 			pintyp="PlacementPin"
-		elif  cn=="Roation":
+		elif  cn=="Rotation":
 			pintyp="RotationPin"
 		
 
