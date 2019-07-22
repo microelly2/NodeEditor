@@ -47,6 +47,7 @@ def timer(func):
 class FreeCadNodeBase(NodeBase):
 	'''common methods for FreeCAD integration'''
 
+
 	def __init__(self, name="FreeCADNode",partenv=True,testenv=False):
 
 		super(FreeCadNodeBase, self).__init__(name)
@@ -187,6 +188,7 @@ class FreeCadNodeBase(NodeBase):
 		k=str(pin.uid)
 		store.store().add(k,obj)
 		pin.setData(k)
+
 
 
 
@@ -416,6 +418,8 @@ class FreeCAD_StorePins(NodeBase):
 class FreeCAD_Toy(FreeCadNodeBase):
 	'''erzeuge eine zufallsBox'''
 
+
+
 	def __init__(self, name="MyToy"):
 
 		super(FreeCAD_Toy, self).__init__(name)
@@ -477,6 +481,9 @@ class FreeCAD_Toy(FreeCadNodeBase):
 		self.outExec.call()
 		say ("Ende exec for ---",self.getName())
 
+	@staticmethod
+	def description():
+		return FreeCAD_Toy.__doc__
 
 
 
@@ -541,6 +548,10 @@ class FreeCAD_Box( FreeCadNodeBase):
 
 		self.setPinObject("Shape",shape)
 		# self.setPinObject("Part",cc)
+
+	@staticmethod
+	def description():
+		return FreeCAD_Box.__doc__
 
 
 
@@ -610,6 +621,11 @@ class FreeCAD_Cone(FreeCadNodeBase):
 			cc.Shape=shape
 			self.postCompute(cc)
 
+	@staticmethod
+	def description():
+		return FreeCAD_Cone.__doc__
+
+
 
 class FreeCAD_Sphere(FreeCadNodeBase):
 	'''erzeuge einer Part.Kurgel'''
@@ -666,6 +682,11 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 			cc.Label=self.objname.getData()
 			cc.Shape=shape
 			self.postCompute(cc)
+
+	@staticmethod
+	def description():
+		return FreeCAD_Sphere.__doc__
+
 
 
 class FreeCAD_Quadrangle(FreeCadNodeBase):
