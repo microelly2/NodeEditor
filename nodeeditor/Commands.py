@@ -1107,6 +1107,30 @@ def T1():
 	pass
 
 def T2():
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","MyBox")
+	t2.setPosition(-200,-100)
+	t2.setData("shapeOnly",True)
+	t2.compute()
+	gg.addNode(t2)
+
+
+	rib = pfwrap.createFunction('PyFlowFreeCAD',"Vector","workspace")
+	rib.setPosition(-100,0)
+	gg.addNode(rib)
+	
+	rib5 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","view3D")
+	rib5.setPosition(100,0)
+	gg.addNode(rib5)
+	connection = pfwrap.connect(t2,'Shape',rib5,'Shape')
+	pfwrap.chainExec(t2,rib5)
+
+	connection = pfwrap.connect(rib,'out',rib5,'Workspace')
+	refresh_gui()
 	pass
 
 

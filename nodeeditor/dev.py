@@ -378,3 +378,34 @@ def run_enum(self):
 def f4(self):
 	say("FreeCAD Ui Node runs f4")
 	say("nothing to do, done")
+
+import random
+
+def run_view3d(name,shape,workspace,mode,wireframe,transparency):
+	import nodeeditor.store
+	print(name,shape,workspace)
+	l=FreeCAD.listDocuments()
+	if workspace in l.keys():
+		w=l[workspace]
+	else:
+		w=FreeCAD.newDocument(workspace)
+
+	say(w)
+	s=store.store().get(shape)
+	say(s)
+
+
+	f=w.getObject(name)
+	if f == None:
+		f = w.addObject('Part::Feature', name)
+	if s <> None:
+		f.Shape=s
+
+	if not wireframe:
+		f.ViewObject.DisplayMode = "Flat Lines"
+		f.ViewObject.ShapeColor = (random.random(),random.random(),1.)
+	else:
+		f.ViewObject.DisplayMode = "Wireframe"
+		f.ViewObject.LineColor = (random.random(),random.random(),1.)
+
+	f.ViewObject.Transparency = transparency

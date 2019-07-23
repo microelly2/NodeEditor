@@ -533,6 +533,7 @@ class FreeCAD_Box( FreeCadNodeBase):
 	def compute(self, *args, **kwargs):
 
 		shape=self.applyPins(Part.makeBox,"length width height position direction")
+		say("shape is ",shape)
 
 #		if self.shapeout.hasConnections():
 #			store.store().add(str(self.shapeout.uid),shape)
@@ -547,6 +548,7 @@ class FreeCAD_Box( FreeCadNodeBase):
 			self.postCompute(cc)
 
 		self.setPinObject("Shape",shape)
+		self.show()
 		# self.setPinObject("Part",cc)
 
 	@staticmethod

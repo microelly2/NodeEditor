@@ -42,3 +42,38 @@ class FreeCADUINodeBase(UINodeBase):
 
 	def f4(self):
 		sayl()
+
+
+class FreeCADUIFunctionBase(UINodeBase):
+
+
+	def __init__(self,*args,**kargs):
+		super(FreeCADUIFunctionBase, self).__init__(*args, **kargs)
+		self.addActions()
+
+	def addActions(self):
+		say("add the FreeCAD special actions")
+
+		say("!con",RESOURCES_DIR + "/pin.svg")
+
+		actionAddOut2 = self._menu.addAction("show node")
+
+		actionAddOut2.setData(NodeActionButtonInfo(RESOURCES_DIR + "/show.svg"))
+		actionAddOut2.setToolTip("tipp for pins")
+		actionAddOut2.triggered.connect(self.f2)
+
+
+		actionAddOut3 = self._menu.addAction("compute node")
+		actionAddOut3.setData(NodeActionButtonInfo(RESOURCES_DIR + "/compute.svg"))
+		actionAddOut3.setToolTip("tipp for moda")
+		actionAddOut3.triggered.connect(self.f3)
+
+
+
+
+	def f3(self):
+		self._rawNode.compute()
+
+	def f2(self):
+		sayl()
+		say(self._rawNode)
