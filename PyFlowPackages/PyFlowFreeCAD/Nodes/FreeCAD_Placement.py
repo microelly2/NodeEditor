@@ -77,7 +77,7 @@ class FreeCAD_Placement(NodeBase):
 
 	@staticmethod
 	def category():
-		return 'DefaultLib'
+		return 'Placement'
 
 	@staticmethod
 	def keywords():

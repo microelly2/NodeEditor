@@ -485,6 +485,15 @@ class FreeCAD_Toy(FreeCadNodeBase):
 	def description():
 		return FreeCAD_Toy.__doc__
 
+	@staticmethod
+	def category():
+		return 'Development'
+
+	@staticmethod
+	def keywords():
+		return ['Box','Part']
+
+
 
 
 
@@ -554,6 +563,14 @@ class FreeCAD_Box( FreeCadNodeBase):
 	@staticmethod
 	def description():
 		return FreeCAD_Box.__doc__
+
+	@staticmethod
+	def category():
+		return 'Primitive'
+
+	@staticmethod
+	def keywords():
+		return ['Box','Part']
 
 
 
@@ -627,6 +644,14 @@ class FreeCAD_Cone(FreeCadNodeBase):
 	def description():
 		return FreeCAD_Cone.__doc__
 
+	@staticmethod
+	def category():
+		return 'Primitive'
+
+	@staticmethod
+	def keywords():
+		return ['Sphere','Part']
+
 
 
 class FreeCAD_Sphere(FreeCadNodeBase):
@@ -688,6 +713,14 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 	@staticmethod
 	def description():
 		return FreeCAD_Sphere.__doc__
+
+	@staticmethod
+	def category():
+		return 'Primitive'
+
+	@staticmethod
+	def keywords():
+		return ['Sphere','Part']
 
 
 
@@ -770,6 +803,17 @@ class FreeCAD_Quadrangle(FreeCadNodeBase):
 
 		self.Called=False
 
+	@staticmethod
+	def description():
+		return FreeCAD_Quadrangle.__doc__
+
+	@staticmethod
+	def category():
+		return 'Primitive'
+
+	@staticmethod
+	def keywords():
+		return ['BSpline','Surface','Part']
 
 
 
@@ -866,6 +910,19 @@ class FreeCAD_Polygon(FreeCadNodeBase):
 
 		self.Called=False
 
+	@staticmethod
+	def description():
+		return FreeCAD_Polygon.__doc__
+
+	@staticmethod
+	def category():
+		return 'Primitive'
+
+	@staticmethod
+	def keywords():
+		return ['Pointlist','Polygon','Part']
+
+
 
 class FreeCAD_Polygon2(FreeCadNodeBase):
 	'''
@@ -934,6 +991,19 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 					self.postCompute(cc)
 
 		#self.Called=False
+
+	@staticmethod
+	def description():
+		return FreeCAD_Polygon2.__doc__
+
+	@staticmethod
+	def category():
+		return 'Primitive'
+
+	@staticmethod
+	def keywords():
+		return ['Pointlist','Polygon','Part']
+
 
 
 class FreeCAD_Boolean(FreeCadNodeBase):
@@ -1027,6 +1097,18 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 #       say ("Ende exec for ---",self.getName())
 
 
+	@staticmethod
+	def description():
+		return FreeCAD_Boolean.__doc__
+
+	@staticmethod
+	def category():
+		return 'Combination'
+
+	@staticmethod
+	def keywords():
+		return ['Fusion','Cut','Common','Part']
+
 
 
 
@@ -1083,6 +1165,19 @@ class FreeCAD_Array(FreeCadNodeBase):
 		self.Arr_out.setArray(varr)
 
 		self.postCompute()
+
+	@staticmethod
+	def description():
+		return FreeCAD_Array.__doc__
+
+	@staticmethod
+	def category():
+		return 'Experimental'
+
+	@staticmethod
+	def keywords():
+		return []
+
 
 
 class FreeCAD_BSpline(FreeCadNodeBase):
@@ -1155,6 +1250,98 @@ class FreeCAD_BSpline(FreeCadNodeBase):
 		cc.Label=self.objname.getData()
 		cc.Shape=shape
 
+	@staticmethod
+	def description():
+		return FreeCAD_BSpline.__doc__
+
+	@staticmethod
+	def category():
+		return 'Primitive'
+
+	@staticmethod
+	def keywords():
+		return ['BSpline','Surface','Part']
+
+
+class FreeCAD_BSplineCurve(FreeCadNodeBase):
+	'''Bspline Surface'''
+
+	@staticmethod
+	def description():
+		return '''create a default bspline surface from poles and degrees'''
+
+
+	def __init__(self, name="Fusion"):
+
+		super(FreeCAD_BSplineCurve, self).__init__(name)
+
+
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
+
+		self.trace = self.createInputPin('trace', 'BoolPin')
+		self.randomize = self.createInputPin("randomize", 'BoolPin')
+
+		self.part = self.createOutputPin('Part', 'FCobjPin')
+		self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.objname.setData(name)
+
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
+		self.shapeOnly.recomputeNode=True 
+
+
+		self.arrayData = self.createInputPin('poles', 'AnyPin', structure=PinStructure.Array, constraint="1")
+		self.createInputPin('maxDegree', 'IntPin', 3)
+
+		self.arrayData.enableOptions(PinOptions.AllowMultipleConnections)
+		self.arrayData.disableOptions(PinOptions.SupportsOnlyArrays)
+
+
+
+	@timer 
+	def compute(self, *args, **kwargs):
+
+#		import nodeeditor.dev
+#		reload (nodeeditor.dev)
+#		return  nodeeditor.dev.run_foo_compute(self,*args, **kwargs)
+#	def run_foo_compute(self,*args, **kwargs):
+
+		dat=self.arrayData.getData()
+		dat=np.array(dat)
+		sf=Part.BSplineCurve()
+
+		poles=np.array(dat)
+		say(poles)
+		(countA,_)=poles.shape
+		degA=min(countA-1,3,self.getPinN("maxDegree").getData())
+
+		multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+		knotA=range(len(multA))
+
+		sf=Part.BSplineCurve()
+		sf.buildFromPolesMultsKnots(poles,multA,knotA,FalsedegA)
+		shape=sf.toShape()
+
+		shape=sf.toShape()
+		cc=self.getObject()
+		cc.Label=self.objname.getData()
+		cc.Shape=shape
+
+	@staticmethod
+	def description():
+		return FreeCAD_BSpline.__doc__
+
+	@staticmethod
+	def category():
+		return 'Primitive'
+
+	@staticmethod
+	def keywords():
+		return ['BSpline','Curve','Part']
+
 
 
 class FreeCAD_VectorArray(FreeCadNodeBase):
@@ -1209,12 +1396,27 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
 		return  nodeeditor.dev.run_VectorArray_compute(self,*args, **kwargs)
 
 
+	@staticmethod
+	def description():
+		return FreeCAD_VectorArray.__doc__
+
+	@staticmethod
+	def category():
+		return 'Generator'
+
+	@staticmethod
+	def keywords():
+		return ['BSpline','Array','Surface','Grid','Part']
 
 
 
 
 
 class FreeCAD_Object(FreeCadNodeBase):
+	'''
+	load and sae objects in FreeCAD document
+	'''
+
 	def __init__(self, name="Fusion"):
 		super(FreeCAD_Object, self).__init__(name)
 
@@ -1309,6 +1511,20 @@ class FreeCAD_Object(FreeCadNodeBase):
 		say("pins created")
 
 
+	@staticmethod
+	def description():
+		return FreeCAD_Object.__doc__
+
+	@staticmethod
+	def category():
+		return 'Information'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
+
 class FreeCAD_Console(FreeCadNodeBase):
 	'''
 	write to FreeCAD.Console
@@ -1345,6 +1561,20 @@ class FreeCAD_Console(FreeCadNodeBase):
 
 		FreeCAD.Console.PrintMessage("%s: %s\n"%(self.name,self.entity.getData()))
 		self.outExec.call()
+
+	@staticmethod
+	def description():
+		return FreeCAD_Console.__doc__
+
+	@staticmethod
+	def category():
+		return 'Information'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
 
 class FreeCAD_PartExplorer(FreeCadNodeBase):
 	'''
@@ -1465,6 +1695,19 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 
 		self.outExec.call()
 
+	@staticmethod
+	def description():
+		return FreeCAD_PartExplorer.__doc__
+
+	@staticmethod
+	def category():
+		return 'Information'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
 
 
 
@@ -1521,6 +1764,19 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 		self.setPinObject("Shape",subshapes[self.getData('index')])
 		self.outExec.call()
 
+	@staticmethod
+	def description():
+		return FreeCAD_ShapeIndex.__doc__
+
+	@staticmethod
+	def category():
+		return 'Details'
+
+	@staticmethod
+	def keywords():
+		return ['Shape','Edge','Face','Part']
+
+
 
 
 class FreeCAD_Face(FreeCadNodeBase):
@@ -1570,6 +1826,19 @@ class FreeCAD_Face(FreeCadNodeBase):
 		pin.setData(k)
 		store.store().add(k,face)
 		self.outExec.call()
+
+	@staticmethod
+	def description():
+		return FreeCAD_Face.__doc__
+
+	@staticmethod
+	def category():
+		return 'Details'
+
+	@staticmethod
+	def keywords():
+		return ['Shape','Part']
+
 
 
 class FreeCAD_Edge(FreeCadNodeBase):
@@ -1624,6 +1893,19 @@ class FreeCAD_Edge(FreeCadNodeBase):
 
 		self.outExec.call()
 
+	@staticmethod
+	def description():
+		return FreeCAD_Edge.__doc__
+
+	@staticmethod
+	def category():
+		return 'Details'
+
+	@staticmethod
+	def keywords():
+		return ['Shape']
+
+
 
 class FreeCAD_Parallelprojection(FreeCadNodeBase):
 	'''
@@ -1663,6 +1945,19 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
 		nodeeditor.dev.run_projection_compute(self,*args, **kwargs)
 		self.outExec.call()
 
+	@staticmethod
+	def description():
+		return FreeCAD_Parallelprojection.__doc__
+
+	@staticmethod
+	def category():
+		return 'Projection'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
 class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
 	'''
 	dummy for tests
@@ -1700,6 +1995,18 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
 		reload (nodeeditor.dev)
 		nodeeditor.dev.run_projection2_compute(self,*args, **kwargs)
 		self.outExec.call()
+
+	@staticmethod
+	def description():
+		return FreeCAD_Perspectiveprojection.__doc__
+
+	@staticmethod
+	def category():
+		return 'Projection'
+
+	@staticmethod
+	def keywords():
+		return []
 
 
 class FreeCAD_UVprojection(FreeCadNodeBase):
@@ -1748,6 +2055,18 @@ class FreeCAD_UVprojection(FreeCadNodeBase):
 
 		self.outExec.call()
 
+
+	@staticmethod
+	def description():
+		return FreeCAD_UVprojection.__doc__
+
+	@staticmethod
+	def category():
+		return 'Projection'
+
+	@staticmethod
+	def keywords():
+		return []
 
 
 class FreeCAD_Compound(FreeCadNodeBase):
@@ -1820,11 +2139,24 @@ class FreeCAD_Compound(FreeCadNodeBase):
 		self.outExec.call()
 
 
+	@staticmethod
+	def description():
+		return FreeCAD_Compound.__doc__
+
+	@staticmethod
+	def category():
+		return 'Combination'
+
+	@staticmethod
+	def keywords():
+		return ['Group:','Part']
+
+
 
 
 class FreeCAD_Part(FreeCadNodeBase):
 	'''
-	Part.show(aShape)
+	Part.show(aShape) see node view3D
 	'''
 
 	@staticmethod
@@ -1854,6 +2186,19 @@ class FreeCAD_Part(FreeCadNodeBase):
 		cc.Label=self.objname.getData()
 		cc.Shape=shape
 		self.outExec.call()
+
+	@staticmethod
+	def description():
+		return FreeCAD_Plot.__doc__
+
+	@staticmethod
+	def category():
+		return 'Document'
+
+	@staticmethod
+	def keywords():
+		return ['Shape','3View3D']
+
 
 
 
@@ -1918,6 +2263,19 @@ class FreeCAD_PinsTest(FreeCadNodeBase):
 		self.outExec.call()
 
 
+	@staticmethod
+	def description():
+		return FreeCAD_PinsTest.__doc__
+
+	@staticmethod
+	def category():
+		return 'Development'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
 class FreeCAD_Plot(NodeBase):
 	'''
 	dummy for tests
@@ -1962,6 +2320,19 @@ class FreeCAD_Plot(NodeBase):
 
 		self.outExec.call()
 
+
+	@staticmethod
+	def description():
+		return FreeCAD_Plot.__doc__
+
+	@staticmethod
+	def category():
+		return 'Information'
+
+	@staticmethod
+	def keywords():
+		return []
+
 #------------------------------------------------------------------
 
 
@@ -1984,6 +2355,18 @@ class FreeCAD_Bar(FreeCadNodeBase):
 		reload (nodeeditor.dev)
 		nodeeditor.dev.run_bar_compute(self,*args, **kwargs)
 		self.outExec.call()
+
+	@staticmethod
+	def description():
+		return FreeCAD_Bar.__doc__
+
+	@staticmethod
+	def category():
+		return 'Development'
+
+	@staticmethod
+	def keywords():
+		return []
 
 
 
@@ -2012,6 +2395,17 @@ class FreeCAD_Foo(FreeCadNodeBase):
 		nodeeditor.dev.run_foo_compute(self,*args, **kwargs)
 		self.outExec.call()
 
+	@staticmethod
+	def description():
+		return FreeCAD_Foo.__doc__
+
+	@staticmethod
+	def category():
+		return 'Development'
+
+	@staticmethod
+	def keywords():
+		return []
 
 
 
