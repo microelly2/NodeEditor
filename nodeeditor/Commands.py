@@ -1104,12 +1104,17 @@ def saveAll():
 	pass
 
 def T1():
+	createObjectWithAllProperties()
 	pass
 
 def T2():
 	instance=pfwrap.getInstance()
 	clearGraph()
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+	tim = pfwrap.createNode('PyFlowBase',"timer","MyTimer")
+	tim.setPosition(200,-200)
+	gg.addNode(tim)
 
 
 	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","MyBox")
@@ -1138,3 +1143,25 @@ def T3():
 	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
 	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
 
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+	rib = pfwrap.createFunction('PyFlowFreeCAD',"Vector","workspace")
+	rib.setPosition(-100,0)
+	gg.addNode(rib)
+	
+	rib5 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","view3D")
+	rib5.setPosition(100,0)
+	gg.addNode(rib5)
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","MyBox")
+	t2.setPosition(-200,-100)
+	t2.setData("shapeOnly",True)
+	t2.compute()
+	gg.addNode(t2)
+
+
+
+
+	refresh_gui()

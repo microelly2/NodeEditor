@@ -78,7 +78,20 @@ class FreeCadNodeBase(NodeBase):
 		#say("self:",self)
 		say("Content of {}:".format(self.getName()))
 		#say("list all pins !! siehe FreeCAD.ref")
+		FreeCAD.tt=self
 		ll=len(self.getName())
+		#say("self.getOrderedPins()")
+		#say( self.getOrderedPins())
+		
+		k=self.orderedInputs.values()
+		say(k)
+		for t in k:
+			say(t)
+			say(t.getFullName(),t.getData())
+		sayl()
+		FreeCAD.ref=self
+		return
+		
 		for t in self.getOrderedPins():
 			say("{} = {} ({})".format(t.getName()[ll+1:],t.getData(),t.__class__.__name__))
 			if len(t.affected_by):
@@ -557,7 +570,7 @@ class FreeCAD_Box( FreeCadNodeBase):
 			self.postCompute(cc)
 
 		self.setPinObject("Shape",shape)
-		self.show()
+		#self.show()
 		# self.setPinObject("Part",cc)
 
 	@staticmethod
@@ -1451,6 +1464,7 @@ class FreeCAD_Object(FreeCadNodeBase):
 		say ("in compute",self.getName(),"objname is",self.objname.getData())
 		nl=len(self.getName())
 		pps=self.getOrderedPins()
+		say(pps)
 		for p in pps:
 			try:
 				print (str(p.getName()[nl+1:]),p.getData())

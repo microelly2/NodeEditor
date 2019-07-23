@@ -1,6 +1,7 @@
 
 #import PyFlow.Packages.PyFlowFreeCAD.UI.UIFreeCAD_ObjectNode
 
+
 from PyFlow.Packages.PyFlowFreeCAD.UI.UIFreeCAD_ObjectNode import UIFreeCAD_ObjectNode
 from PyFlow.Packages.PyFlowFreeCAD.UI.UIFreeCAD_Polygon import UIFreeCAD_PolygonNode
 
@@ -12,7 +13,11 @@ from PyFlow.Packages.PyFlowFreeCAD.UI.UIFreeCAD_NodeBase import FreeCADUIFunctio
 from PyFlow.UI.Canvas.UINodeBase import UINodeBase
 
 import FreeCAD
+from nodeeditor.say import *
+
 def createUINode(raw_instance):
+    sayl("UINODE factory")
+    say(raw_instance)
 
     if isinstance(raw_instance, FreeCAD_Object):
         return UIFreeCAD_ObjectNode(raw_instance)
