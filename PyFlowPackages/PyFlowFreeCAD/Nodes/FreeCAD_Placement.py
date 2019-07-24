@@ -9,7 +9,7 @@ import Part
 
 
 
-# exmaple shape
+# example shape
 def createShape(a):
 
 	pa=FreeCAD.Vector(0,0,0)
