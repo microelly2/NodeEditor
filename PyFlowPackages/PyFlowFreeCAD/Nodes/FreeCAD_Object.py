@@ -314,6 +314,7 @@ class FreeCAD_StorePins(NodeBase):
 		return "change Placement of the FreeCAD object"
 
 	def compute(self, *args, **kwargs):
+		# muss ueberarbeitet werden #+#
 
 		say ("in compute",self.getName(),"objname is",self.vobjname.getData())
 		say("#----------------------------------------############################")
@@ -465,19 +466,13 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
-		say ("in compute",self.getName(),"objname is",self.objname.getData())
-
 		yid="ID_"+str(self.uid)
 		yid=yid.replace('-','_')
 		say(str(self.uid).replace('-','_'))
 
 		cc=FreeCAD.ActiveDocument.getObject(yid)
-
 		if cc == None:
 			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
-
-			say("created",cc.Name,yid)
-
 		cc.Label=self.objname.getData()
 
 
@@ -492,13 +487,8 @@ class FreeCAD_Toy(FreeCadNodeBase):
 			else:
 				self.part.setData(cc.Name)
 
-		say ("data set to output object is done, exec...")
-
-
 		self.setPinObject("Shape",shape)
-
 		self.outExec.call()
-		say ("End exec for ---",self.getName())
 
 	@staticmethod
 	def description():
@@ -561,11 +551,6 @@ class FreeCAD_Box( FreeCadNodeBase):
 	def compute(self, *args, **kwargs):
 
 		shape=self.applyPins(Part.makeBox,"length width height position direction")
-		say("shape is ",shape)
-
-#		if self.shapeout.hasConnections():
-#			store.store().add(str(self.shapeout.uid),shape)
-#			self.shapeout.setData(str(self.shapeout.uid))
 
 		if self.shapeOnly.getData():
 			self.postCompute()
@@ -575,10 +560,7 @@ class FreeCAD_Box( FreeCadNodeBase):
 			cc.Shape=shape
 			self.postCompute(cc)
 
-
 		self.setPinObject("Shape",shape)
-		#self.show()
-		# self.setPinObject("Part",cc)
 
 	@staticmethod
 	def description():
@@ -643,13 +625,10 @@ class FreeCAD_Cone(FreeCadNodeBase):
 	def compute(self, *args, **kwargs):
 
 		shape=self.applyPins(Part.makeCone,"radius1 radius2 height position direction angle")
-#       say("compute",self.getName())
 
+		self.setPinObject("Shape",shape)
 
 		if self.shapeout.hasConnections():
-			#say("add to store shape",shape,self.shapeout.uid)
-			store.store().add(str(self.shapeout.uid),shape)
-			self.shapeout.setData(str(self.shapeout.uid))
 			self.postCompute()
 
 		if self.shapeOnly.getData():
@@ -717,10 +696,7 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 
 		shape=self.applyPins(Part.makeSphere,"radius position direction angle1 angle2 angle3")
 
-#		if self.shapeout.hasConnections():
-#			store.store().add(str(self.shapeout.uid),shape)
-#			self.shapeout.setData(str(self.shapeout.uid))
-#			self.postCompute()
+		self.setPinObject("Shape",shape)
 
 		if self.shapeOnly.getData():
 			self.postCompute()
@@ -729,7 +705,6 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 			cc.Label=self.objname.getData()
 			cc.Shape=shape
 			self.postCompute(cc)
-		self.setPinObject('Shape',shape)
 
 	@staticmethod
 	def description():
@@ -809,9 +784,9 @@ class FreeCAD_Quadrangle(FreeCadNodeBase):
 		w.buildFromPolesMultsKnots([[vA,vB],[vD,vC]],[2,2],[2,2],[0,1],[0,1],False,False,1,1)
 		shape=w.toShape()
 
+		self.setPinObject("Shape",shape)
+		
 		if self.shapeout.hasConnections():
-			store.store().add(str(self.shapeout.uid),shape)
-			self.shapeout.setData(str(self.shapeout.uid))
 			self.postCompute()
 
 		if self.shapeOnly.getData():
@@ -916,9 +891,9 @@ class FreeCAD_Polygon(FreeCadNodeBase):
 		
 		shape=Part.makePolygon(pts)
 
+		self.setPinObject("Shape",shape)
+		
 		if self.shapeout.hasConnections():
-			store.store().add(str(self.shapeout.uid),shape)
-			self.shapeout.setData(str(self.shapeout.uid))
 			self.postCompute()
 
 		if self.shapeOnly.getData():
@@ -996,9 +971,9 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 		else:
 			shape=Part.makePolygon(pts)
 
+			self.setPinObject("Shape",shape)
+
 			if self.shapeout.hasConnections():
-				store.store().add(str(self.shapeout.uid),shape)
-				self.shapeout.setData(str(self.shapeout.uid))
 				self.postCompute()
 
 			if self.shapeOnly.getData():
@@ -1087,7 +1062,6 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 				say("part12 is None, abort")
 				return
 
-
 			s1=store.store().get(part1)
 			if not s1.__class__.__name__ =='Solid':
 				part1=FreeCAD.ActiveDocument.getObject(part1)
@@ -1127,9 +1101,7 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 
 		say("Volume for {0}: {1:.2f}".format(self.getName(),shape.Volume))
 		self.volume.setData(shape.Volume)
-#       say ("data set to output object is done, exec...")
 		self.outExec.call()
-#       say ("End exec for ---",self.getName())
 
 
 	@staticmethod
@@ -1449,7 +1421,7 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
 
 class FreeCAD_Object(FreeCadNodeBase):
 	'''
-	load and sae objects in FreeCAD document
+	load and save objects in FreeCAD document
 	'''
 
 	def __init__(self, name="Fusion"):
@@ -1473,11 +1445,11 @@ class FreeCAD_Object(FreeCadNodeBase):
 		self.shapeOnly.recomputeNode=True 
 
 
-		self.Show = self.createInputPin('Reload_from_FC', 'ExecPin', None, self.reload,)
+		self.Show = self.createInputPin('Reload_from_FC', 'ExecPin', None, self.reload)
 		self.Show = self.createInputPin('Store_to_FC', 'ExecPin', None, self.store,)
 		for i in range(7):
 			self.createOutputPin('dummy', 'ExecPin')
-		
+
 
 
 	def compute(self, *args, **kwargs):
@@ -1847,20 +1819,18 @@ class FreeCAD_Face(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
-#		import nodeeditor.dev
-#		reload (nodeeditor.dev)
-#		nodeeditor.dev.run_Face_compute(self,*args, **kwargs)
-#	def run_Face_compute(self,*args, **kwargs):
-
 		sayl()
 		objn=self.getPinN('sourceObject').getData()
 		obj=FreeCAD.ActiveDocument.getObject(objn)
 		face=obj.Shape.Faces[self.getPinN('index').getData()]
 
-		pin=self.getPinN('Shape')
-		k=str(pin.uid)
-		pin.setData(k)
-		store.store().add(k,face)
+		#pin=self.getPinN('Shape')
+		#k=str(pin.uid)
+		#pin.setData(k)
+		#store.store().add(k,face)
+
+		self.setPinObject('Shape',face)
+
 		self.outExec.call()
 
 	@staticmethod
@@ -1909,24 +1879,11 @@ class FreeCAD_Edge(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
-
-#		import nodeeditor.dev
-#		reload (nodeeditor.dev)
-#		nodeeditor.dev.run_Edge_compute(self,*args, **kwargs)
-#	def run_Edge_compute(self,*args, **kwargs):
-
-		sayl()
 		objn=self.getPinN('sourceObject').getData()
 		obj=FreeCAD.ActiveDocument.getObject(objn)
 		edge=obj.Shape.Edges[self.getPinN('index').getData()]
 
-		pin=self.getPinN('Shape')
-		k=str(pin.uid)
-		pin.setData(k)
-		store.store().add(k,edge)
-		self.outExec.call()
-
-
+		self.setPinObject("Shape",shape)
 		self.outExec.call()
 
 	@staticmethod
@@ -2083,12 +2040,9 @@ class FreeCAD_UVprojection(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
-		sayl()
-
 		import nodeeditor.dev
 		reload (nodeeditor.dev)
 		nodeeditor.dev.run_uv_projection_compute(self,*args, **kwargs)
-
 		self.outExec.call()
 
 
@@ -2140,25 +2094,21 @@ class FreeCAD_Compound(FreeCadNodeBase):
 
 	def compute(self, *args, **kwargs):
 
-
-#		import nodeeditor.dev
-#		reload (nodeeditor.dev)
-#		nodeeditor.dev.run_Compound_compute(self,*args, **kwargs)
-#	def run_Compound_compute(self,*args, **kwargs):
-
 		sayl()
 
-	# geht nicht -- bug??
-	#	eids=self.getData("Shapes")
+		# geht nicht -- bug??
+		#	eids=self.getData("Shapes")
 
 
-		p=self.getPinN("Shapes")
-		outArray = []
+#		p=self.getPinN("Shapes")
+#		outArray = []
+#		self.getPinObjects("Shape")
+#		for i in p.affected_by:
+#			v=store.store().get(str(i.getData()))
+#			outArray += [v]
+#		subshapes=outArray
 
-		for i in p.affected_by:
-			v=store.store().get(str(i.getData()))
-			outArray += [v]
-		subshapes=outArray
+		subshapes=self.getPinObjects("Shape")
 
 		say("Compound Shapes:",subshapes)
 		shape=Part.Compound(subshapes)
