@@ -360,23 +360,23 @@ class ArrayInputWidget(InputWidgetRaw):
 
 
 
-def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WIDGET_VARIANT):
+def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WIDGET_VARIANT,  **kwds):
     '''
     factory method
     '''
     
     if dataType == 'VectorPin':
-        return VectorInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+        return VectorInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'RotationPin':
-        return RotationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+        return RotationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'PlacementPin':
-        return PlacementInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+        return PlacementInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'ArrayPin':
-        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'FCobjPin':
-        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'ShapePin':
-        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'EnumerationPin':
-        return EnumerationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue)
+        return EnumerationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     return None
