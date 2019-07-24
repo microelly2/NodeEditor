@@ -42,6 +42,7 @@ class FreeCADUINodeBase(UINodeBase):
 
 	def f4(self):
 		sayl()
+		self._rawNode.refresh()
 
 
 class FreeCADUIFunctionBase(UINodeBase):

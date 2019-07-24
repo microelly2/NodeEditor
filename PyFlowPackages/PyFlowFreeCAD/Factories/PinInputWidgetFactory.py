@@ -365,8 +365,6 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     factory method
     '''
     
-    sayl("getInputWidget")
-    say(dataType)
     if dataType == 'VectorPin':
         return VectorInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'RotationPin':

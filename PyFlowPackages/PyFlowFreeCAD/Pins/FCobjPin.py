@@ -17,7 +17,11 @@ class FCobjPin(PinBase):
         self.setDefaultValue(None)
 
     def __repr__(self):
-        return "[{0}:{1}: Data:{2}]".format(self.dataType, self.getName(),  self.currentData())
+
+        return "[{0}:{1}: Data:{2}]".format(self.dataType, self.name,  self.currentData())
+
+    def getName(self):
+        return "self.name NIP"
 
     @staticmethod
     def IsValuePin():
@@ -41,8 +45,6 @@ class FCobjPin(PinBase):
 
     @staticmethod
     def processData(data):
-        #say("FCobj Pin Processing send data!:",data,data.__class__.__name__)
-        #return FCobjPin.internalDataStructure()(data)
         return data
 
 
@@ -64,8 +66,8 @@ class ShapePin(FCobjPin):
 
     """doc string for FloatFCobjPin"""
     def __init__(self, name, parent, direction, **kwargs):
-        say("create pin",name,parent.getName())
-        super(ShapePin, self).__init__(name, parent, direction, **kwargs)
+        say("create pin",name,parent.getName(),direction)
+        super(ShapePin, self).__init__(name, parent, direction)
         self.setDefaultValue(None)
 
     @staticmethod
@@ -210,9 +212,6 @@ class ArrayPin(FCobjPin):
             return None
 
     def setArray(self,array):
-        #if self.hasConnections():
-        #say("to store ",array)
-        #say("key",str(self.uid))
         store.store().add(str(self.uid),array)
         self.setData(str(self.uid))
 

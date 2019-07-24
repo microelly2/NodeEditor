@@ -1140,28 +1140,164 @@ def T2():
 
 
 def T3():
-	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
+	
+	FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
 	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
 
 	instance=pfwrap.getInstance()
 	clearGraph()
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
-	rib = pfwrap.createFunction('PyFlowFreeCAD',"Vector","workspace")
-	rib.setPosition(-100,0)
-	gg.addNode(rib)
+	if 0:
+		rib = pfwrap.createFunction('PyFlowFreeCAD',"Vector","workspace")
+		rib.setPosition(-100,0)
+		gg.addNode(rib)
+		
+		rib5 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","view3D")
+		rib5.setPosition(100,0)
+		gg.addNode(rib5)
+
+		t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","MyBox")
+		t2.setPosition(-200,-100)
+		t2.setData("shapeOnly",True)
+		t2.compute()
+		gg.addNode(t2)
+
+
+	# erzeuge für alle Nodes ein Objekt und lasse es laufen compute()
 	
+	
+	from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
+	x=0
+	y=0
+	for n in nodelist():
+		say(n.__name__)
+		name=n.__name__
+		node=pfwrap.createNode('PyFlowFreeCAD',name,name)
+		node.setPosition(x,y)
+		gg.addNode(node)
+		x+=200
+		if x>7000:
+			x=00
+			y+= 600
+
+	refresh_gui()
+
+
+
+from PyFlow.Core.Common import *
+from PyFlow import CreateRawPin
+
+
+def test_DD():
+
+	FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
+	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
+	FreeCAD.activeDocument().recompute()
+	FreeCADGui.Selection.clearSelection()
+	if 10:
+		FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.Box,['Face1'])
+		FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.Box,['Face2'])
+		FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.Box,['Face3'])
+		FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.Box,['Face4'])
+	else:
+		FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.Cone,['Face1'])
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+
 	rib5 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","view3D")
 	rib5.setPosition(100,0)
 	gg.addNode(rib5)
 
-	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","MyBox")
-	t2.setPosition(-200,-100)
-	t2.setData("shapeOnly",True)
+
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Ref","Ref_Box",b="das ist B")
 	t2.compute()
 	gg.addNode(t2)
 
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_LOD","myLOD")
+	rib5.setPosition(100,200)
+	t2.compute()
+	gg.addNode(t2)
 
-
-
+	#connection = pfwrap.connect(t2,'Shape',rib5,'Shape')
 	refresh_gui()
+
+
+
+def test_CC():
+
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+	if 0:
+		FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
+		FreeCAD.ActiveDocument.addObject("Part::Box","Box")
+		FreeCAD.ActiveDocument.addObject("Part::Sphere","Sphere")
+		FreeCAD.activeDocument().recompute()
+
+		FreeCADGui.Selection.clearSelection()
+		FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.Box,['Face1'])
+		FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.Box,['Face2'])
+		FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.Box,['Face3'])
+		FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.Box,['Face4'])
+
+		t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Ref","Ref")
+		t2.compute()
+		gg.addNode(t2)
+
+
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Box","MyBox")
+	t2.setPosition(-200,0)
+	t2.setData("shapeOnly",True)
+	gg.addNode(t2)
+
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Sphere","MySphere")
+	t2.setPosition(-200,0)
+	t2.setData("shapeOnly",True)
+	gg.addNode(t2)
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Cone","MyCone")
+	t2.setPosition(-200,0)
+	t2.setData("shapeOnly",True)
+	gg.addNode(t2)
+	
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Toy","MyToy")
+	t2.setPosition(-200,0)
+	#t2.setData("shapeOnly",True)
+	gg.addNode(t2)
+	
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Boolean","Bool")
+	t2.setPosition(-200,0)
+	#t2.setData("shapeOnly",True)
+	gg.addNode(t2)
+
+	rib5 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","view3D")
+	rib5.setPosition(100,0)
+	rib5.setData("Workspace","LOD_DEMO")
+	gg.addNode(rib5)
+
+
+
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_LOD","myLOD")
+	t2.setPosition(100,200)
+	
+	t2.compute()
+	gg.addNode(t2)
+
+	connection = pfwrap.connect(t2,'Shape',rib5,'Shape')
+	
+	refresh_gui()
+
+
+
+
+

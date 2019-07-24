@@ -83,10 +83,10 @@ def createFunction(packageName,libName,functionName):
 	return fun
 
 
-def createNode(packageName,nodeClass,nodeName):
+def createNode(packageName,nodeClass,nodeName,**kvargs):
 	packages = GET_PACKAGES()
 	classNodes = packages[packageName].GetNodeClasses()
-	node = classNodes[nodeClass](nodeName)
+	node = classNodes[nodeClass](nodeName,**kvargs)
 	return node
 
 

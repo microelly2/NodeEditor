@@ -116,7 +116,7 @@ class Vector(FunctionLibraryBase):
 
     @staticmethod
     @IMPLEMENT_NODE(returns=('StringPin', None, ), nodeType=NodeTypes.Callable, meta={'Category': 'Document', 'Keywords': []})
-    def view3D(name=('StringPin', None,),Shape=('ShapePin',None),Workspace=('StringPin', None,),
+    def view3D(name=('StringPin', 'view3d',),Shape=('ShapePin',None),Workspace=('StringPin', '',),
         mode=('IntPin',0),wireframe=('BoolPin',False),transparency=('IntPin',50), temp=('BoolPin', True),):
 
         import nodeeditor.dev

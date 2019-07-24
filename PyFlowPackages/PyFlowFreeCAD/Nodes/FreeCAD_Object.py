@@ -6,6 +6,7 @@ import inspect
 
 from FreeCAD import Vector
 import FreeCAD
+import FreeCADGui
 import Part
 
 
@@ -48,7 +49,7 @@ class FreeCadNodeBase(NodeBase):
 	'''common methods for FreeCAD integration'''
 
 
-	def __init__(self, name="FreeCADNode",partenv=True,testenv=False):
+	def __init__(self, name="FreeCADNode",**kvargs):
 
 		super(FreeCadNodeBase, self).__init__(name)
 
@@ -490,6 +491,9 @@ class FreeCAD_Toy(FreeCadNodeBase):
 				self.part.setData(None)
 			else:
 				self.part.setData(cc.Name)
+		
+		self.setPinObject("Shape",shape)
+
 		say ("data set to output object is done, exex...")
 		self.outExec.call()
 		say ("Ende exec for ---",self.getName())
@@ -568,6 +572,7 @@ class FreeCAD_Box( FreeCadNodeBase):
 			cc.Label=self.objname.getData()
 			cc.Shape=shape
 			self.postCompute(cc)
+
 
 		self.setPinObject("Shape",shape)
 		#self.show()
@@ -710,10 +715,10 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 
 		shape=self.applyPins(Part.makeSphere,"radius position direction angle1 angle2 angle3")
 
-		if self.shapeout.hasConnections():
-			store.store().add(str(self.shapeout.uid),shape)
-			self.shapeout.setData(str(self.shapeout.uid))
-			self.postCompute()
+#		if self.shapeout.hasConnections():
+#			store.store().add(str(self.shapeout.uid),shape)
+#			self.shapeout.setData(str(self.shapeout.uid))
+#			self.postCompute()
 
 		if self.shapeOnly.getData():
 			self.postCompute()
@@ -722,6 +727,7 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 			cc.Label=self.objname.getData()
 			cc.Shape=shape
 			self.postCompute(cc)
+		self.setPinObject('Shape',shape)
 
 	@staticmethod
 	def description():
@@ -1046,6 +1052,9 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 		self.part1 = self.createInputPin('Part_in1', 'FCobjPin')
 		self.part2 = self.createInputPin('Part_in2', 'FCobjPin')
 
+		self.shape1 = self.createInputPin('Shape_in1', 'ShapePin')
+		self.shape2 = self.createInputPin('Shape_in2', 'ShapePin')
+
 		self.mode = self.createInputPin('mode', 'EnumerationPin')
 		self.mode.values=["fuse","cut","common"]
 		self.mode.setData("fuse")
@@ -1059,23 +1068,33 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 
 #       say ("in compute",self.getName(),"objname is",self.objname.getData())
 
+		shape1=self.shape1.getData()
+		shape2=self.shape2.getData()
 
-		part1=self.part1.getData()
-		part2=self.part2.getData()
-		if part1 == None or part2 == None: 
-			say("part12 is None, abort")
-			return
+		s1=store.store().get(shape1)
+		s2=store.store().get(shape2)
+		
+		if s1 <> None and s2 <>None:
+			# arbeite mit shapes
+			pass
+
+		else:
+			part1=self.part1.getData()
+			part2=self.part2.getData()
+			if part1 == None or part2 == None: 
+				say("part12 is None, abort")
+				return
 
 
-		s1=store.store().get(part1)
-		if not s1.__class__.__name__ =='Solid':
-			part1=FreeCAD.ActiveDocument.getObject(part1)
-			s1=part1.Shape
+			s1=store.store().get(part1)
+			if not s1.__class__.__name__ =='Solid':
+				part1=FreeCAD.ActiveDocument.getObject(part1)
+				s1=part1.Shape
 
-		s2=store.store().get(part2)
-		if not s2.__class__.__name__ =='Solid':
-			part2=FreeCAD.ActiveDocument.getObject(part2)
-			s2=part2.Shape
+			s2=store.store().get(part2)
+			if not s2.__class__.__name__ =='Solid':
+				part2=FreeCAD.ActiveDocument.getObject(part2)
+				s2=part2.Shape
 
 		mode=self.mode.getData()
 		if mode == 'common':
@@ -1094,6 +1113,7 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 			cc.Shape=shape
 			self.postCompute(cc)
 
+		self.setPinObject('Shape',shape)
 
 
 		if self.part.hasConnections():
@@ -2108,7 +2128,8 @@ class FreeCAD_Compound(FreeCadNodeBase):
 		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
 		self.shapeOnly.recomputeNode=True 
 
-		p=self.createInputPin('Shapes', 'AnyPin', None,  allowedPins=["ShapePin", "FCobjPin"]) 
+		p=self.createInputPin('Shapes', 'AnyPin', None,  supportedPinDataTypes=["ShapePin", "FCobjPin"]) 
+
 		p.enableOptions(PinOptions.AllowMultipleConnections)
 		p.disableOptions(PinOptions.SupportsOnlyArrays)
 
@@ -2259,9 +2280,9 @@ class FreeCAD_PinsTest(FreeCadNodeBase):
 			p=self.createOutputPin(pn+"_out_array", pn+'Pin', structure=PinStructure.Array)
 #			p=self.createOutputPin(pn+"_out_dict", pn+'Pin', structure=PinStructure.Dict)
 			
-		self.createInputPin("yyy","AnyPin", None,  allowedPins=["FloatPin", "IntPin"])
+		self.createInputPin("yyy","AnyPin", None,  supportedPinDataTypes=["FloatPin", "IntPin"])
 
-		self.createInputPin("Shape_or_Rotation","AnyPin", None,  allowedPins=["ShapePin", "RotationPin"])
+		self.createInputPin("Shape_or_Rotation","AnyPin", None,  supportedPinDataTypes=["ShapePin", "RotationPin"])
 
 
 
@@ -2424,6 +2445,108 @@ class FreeCAD_Foo(FreeCadNodeBase):
 
 
 
+class FreeCAD_Ref(FreeCadNodeBase):
+	'''
+	a reference to the shape or subobjects of a FreeCAD part
+	select a part or some subobjects oof the same object. than a node with pins for all
+	these selected details is created
+	'''
+
+	def __init__(self, name="Fusion",**kvargs):
+		try:
+			s=FreeCADGui.Selection.getSelection()[0]
+			name="REF_"+s.Name
+		except:
+			name="REF_None"
+
+
+		super(FreeCAD_Ref, self).__init__(name)
+		self.inExec = self.createInputPin('Reload Shapes', 'ExecPin', None, self.compute)
+		self.inExec = self.createInputPin('Adapt Selection', 'ExecPin', None, self.refresh)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.objname.setData(name)
+
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_ref_init(self, **kvargs)
+
+	def refresh(self, *args, **kwargs):
+		'''reasign to a new gui selection'''
+		sayl()
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_ref_refresh(self,*args, **kwargs)
+		self.outExec.call()
+
+	def compute(self, *args, **kwargs):
+		'''update shape-links'''
+		sayl()
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_ref_compute(self,*args, **kwargs)
+		self.outExec.call()
+
+
+	@staticmethod
+	def description():
+		return FreeCAD_Ref.__doc__
+
+	@staticmethod
+	def category():
+		return 'Document'
+
+	@staticmethod
+	def keywords():
+		return ['Part','Shape','Edge','Selection']
+
+
+
+class FreeCAD_LOD(FreeCadNodeBase):
+	'''
+	Level of Detail switch
+	'''
+
+	def __init__(self, name="LOD",**kvargs):
+
+
+		super(FreeCAD_LOD, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+		self.lod = self.createInputPin('LOD', 'IntPin')
+		self.lod.recomputeNode=True 
+		self.createInputPin('ShapeLOD_1', 'ShapePin')
+		self.createInputPin('ShapeLOD_2', 'ShapePin')
+		self.createInputPin('ShapeLOD_3', 'ShapePin')
+		self.createOutputPin('Shape', 'ShapePin')
+
+
+
+	def compute(self, *args, **kwargs):
+		'''update shape-links'''
+		sayl()
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_lod_compute(self,*args, **kwargs)
+		self.outExec.call()
+
+
+	@staticmethod
+	def description():
+		return FreeCAD_Ref.__doc__
+
+	@staticmethod
+	def category():
+		return 'Document'
+
+	@staticmethod
+	def keywords():
+		return ['Part','Shape','Edge','Selection']
+
+
+
 
 
 
@@ -2455,4 +2578,6 @@ def nodelist():
 				FreeCAD_UVprojection,
 				FreeCAD_Part,
 				FreeCAD_PinsTest,
+				FreeCAD_Ref,
+				FreeCAD_LOD,
 		]

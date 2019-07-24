@@ -381,25 +381,34 @@ def f4(self):
 
 import random
 
+
+
 def run_view3d(name,shape,workspace,mode,wireframe,transparency):
 	import nodeeditor.store
-	print(name,shape,workspace)
+	sayl()
 	l=FreeCAD.listDocuments()
-	if workspace in l.keys():
-		w=l[workspace]
+	if workspace=='' or workspace=='None':
+		w=l['Unnamed']
 	else:
-		w=FreeCAD.newDocument(workspace)
+		if workspace in l.keys():
+			w=l[workspace]
+		else:
+			w=FreeCAD.newDocument(workspace)
 
-	say(w)
+			#Std_CascadeWindows
+			FreeCADGui.runCommand("Std_ViewDimetric")
+			FreeCADGui.runCommand("Std_ViewFitAll")
+			FreeCADGui.runCommand("Std_TileWindows")
+
 	s=store.store().get(shape)
-	say(s)
-
 
 	f=w.getObject(name)
 	if f == None:
 		f = w.addObject('Part::Feature', name)
 	if s <> None:
 		f.Shape=s
+
+	w.recompute()
 
 	if not wireframe:
 		f.ViewObject.DisplayMode = "Flat Lines"
@@ -409,3 +418,101 @@ def run_view3d(name,shape,workspace,mode,wireframe,transparency):
 		f.ViewObject.LineColor = (random.random(),random.random(),1.)
 
 	f.ViewObject.Transparency = transparency
+
+
+import FreeCADGui
+
+def run_ref_compute(self,*args, **kwargs):
+	sayl()
+	pins=self.getOrderedPins()
+	objname=self.getPinN("objectname").getData()
+	say(objname)
+
+	obj=FreeCAD.activeDocument().getObject(objname)
+	for p in pins:
+		if not p.isExec():
+			if p.name == "Shape":
+				self.setPinObject(p.name,obj.Shape)
+			elif p.name <> "objectname":
+				subob =getattr(obj.Shape,p.name)
+				self.setPinObject(p.name,subob)
+	sayl()
+
+
+def run_ref_refresh(self,*args, **kwargs):
+	sayl()
+	sels=FreeCADGui.Selection.getSelection()
+	say("sels",sels)
+	subsels=FreeCADGui.Selection.getSelectionEx()
+	say("sunsels",subsels)
+	subsels=FreeCADGui.Selection.getSelectionEx()
+	pins=self.getOrderedPins()
+
+	for p in pins:
+		say(p)
+		if not p.isExec():
+			p.kill()
+
+	for s in subsels:
+		subscreated=False
+		objname=s.ObjectName
+		for name,subob in zip(s.SubElementNames,s.SubObjects):
+			say("create output pins",objname,name,subob)
+			subscreated=True
+			pinname=name
+			pintyp="ShapePin"
+			p2 = CreateRawPin(pinname,self, pintyp, PinDirection.Output)
+			try:
+				uiPin = self.getWrapper()._createUIPinWrapper(p2)
+				uiPin.setDisplayName("{}".format(p2.name))
+			except:
+				pass
+
+			self.setPinObject(pinname,subob)
+
+		if not subscreated:
+			subob=sels[0].Shape
+			say("create output pins",objname,"Shape",subob)
+			pinname="Shape"
+			pintyp="ShapePin"
+			p2 = CreateRawPin(pinname,self, pintyp, PinDirection.Output)
+			self.setPinObject(pinname,subob)
+			FreeCAD.node=self
+			try:
+				uiPin = self.getWrapper()._createUIPinWrapper(p2)
+				uiPin.setDisplayName("{0}".format(p2.name))
+			except:
+				pass
+
+	try:
+		wr=self.getWrapper()
+		newName = wr.canvasRef().graphManager.getUniqNodeName("Ref_"+objname)
+		wr.setHeaderHtml(newName)
+	except:
+		pass
+	self.ObjectName=s.ObjectName
+	self.SubElementNames=s.SubElementNames
+
+	self.objname = self.createInputPin("objectname", 'StringPin')
+	self.objname.setData(s.ObjectName)
+	try:
+		uiPin = self.getWrapper()._createUIPinWrapper(self.objname)
+		uiPin.setDisplayName("{}".format(self.objname.name))
+	except:
+		pass
+
+	self.outExec.call()
+
+
+def run_ref_init(self, **kvargs):
+
+	self.refresh()
+
+
+
+
+def run_lod_compute(self,*args, **kwargs):
+	lod=self.getData('LOD')
+	say(lod)
+	if lod in [1,2,3]:
+		self.setData('Shape',self.getData('ShapeLOD_'+str(lod)))
