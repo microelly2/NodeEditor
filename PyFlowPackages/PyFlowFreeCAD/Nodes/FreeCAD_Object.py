@@ -2512,7 +2512,6 @@ class FreeCAD_LOD(FreeCadNodeBase):
 
 	def __init__(self, name="LOD",**kvargs):
 
-
 		super(FreeCAD_LOD, self).__init__(name)
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -2525,15 +2524,13 @@ class FreeCAD_LOD(FreeCadNodeBase):
 		self.createOutputPin('Shape', 'ShapePin')
 
 
-
 	def compute(self, *args, **kwargs):
 		'''update shape-links'''
-		sayl()
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_lod_compute(self,*args, **kwargs)
+		lod=self.getData('LOD')
+		if lod in [1,2,3]:
+			self.setData('Shape',self.getData('ShapeLOD_'+str(lod)))
+		else say("lod out of range")
 		self.outExec.call()
-
 
 	@staticmethod
 	def description():

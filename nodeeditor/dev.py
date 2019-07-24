@@ -2,6 +2,7 @@ import numpy as np
 import random
 
 import FreeCAD 
+import nodeeditor.store
 import Part
 
 from PyFlow.Core.Common import *
@@ -9,6 +10,8 @@ from PyFlow import CreateRawPin
 
 from nodeeditor.say import *
 import nodeeditor.store as store
+import nodeeditor.store
+import nodeeditor.pfwrap
 
 
 def runraw(self):
@@ -363,7 +366,6 @@ def run_Bar_compute(self,*args, **kwargs):
 def run_Foo_compute(self,*args, **kwargs):
 	sayl()
 
-import nodeeditor.pfwrap
 
 
 def run_enum(self):
@@ -379,12 +381,10 @@ def f4(self):
 	say("FreeCAD Ui Node runs f4")
 	say("nothing to do, done")
 
-import random
 
 
 
 def run_view3d(name,shape,workspace,mode,wireframe,transparency):
-	import nodeeditor.store
 	sayl()
 	l=FreeCAD.listDocuments()
 	if workspace=='' or workspace=='None':
@@ -511,8 +511,3 @@ def run_ref_init(self, **kvargs):
 
 
 
-def run_lod_compute(self,*args, **kwargs):
-	lod=self.getData('LOD')
-	say(lod)
-	if lod in [1,2,3]:
-		self.setData('Shape',self.getData('ShapeLOD_'+str(lod)))
