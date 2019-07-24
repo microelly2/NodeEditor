@@ -480,7 +480,7 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
 		cc.Label=self.objname.getData()
 
-		
+
 		f=30 if self.randomize.getData() else 0
 		shape=Part.makeBox(10+f*random.random(),10+f*random.random(),10+f*random.random())
 		cc.Shape=shape
@@ -494,7 +494,7 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
 		say ("data set to output object is done, exec...")
 
-		
+
 		self.setPinObject("Shape",shape)
 
 		self.outExec.call()
@@ -2469,27 +2469,81 @@ class FreeCAD_Ref(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
+		self.refresh()
 
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_ref_init(self, **kvargs)
 
 	def refresh(self, *args, **kwargs):
-		'''reasign to a new gui selection'''
-		sayl()
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_ref_refresh(self,*args, **kwargs)
+		'''reasign to a new gui selection: create new pins '''
+
+		sels=FreeCADGui.Selection.getSelection()
+		subsels=FreeCADGui.Selection.getSelectionEx()
+		pins=self.getOrderedPins()
+
+		#clean up
+		for p in pins:
+			if not p.isExec():
+				p.kill()
+
+		# pins for sub shapes
+		for s in subsels:
+			subscreated=False
+			objname=s.ObjectName
+			for name,subob in zip(s.SubElementNames,s.SubObjects):
+				subscreated=True
+				pinname=name
+				pintyp="ShapePin"
+				p2 = CreateRawPin(pinname,self, pintyp, PinDirection.Output)
+				try:
+					uiPin = self.getWrapper()._createUIPinWrapper(p2)
+					uiPin.setDisplayName("{}".format(p2.name))
+				except:
+					pass
+
+				self.setPinObject(pinname,subob)
+
+			# if no subshapes selected, create shape pin
+			if not subscreated:
+				subob=sels[0].Shape
+				pinname="Shape"
+				pintyp="ShapePin"
+				p2 = CreateRawPin(pinname,self, pintyp, PinDirection.Output)
+				self.setPinObject(pinname,subob)
+				try:
+					uiPin = self.getWrapper()._createUIPinWrapper(p2)
+					uiPin.setDisplayName("{0}".format(p2.name))
+				except:
+					pass
+
+		# remember objectname
+		self.objname = self.createInputPin("objectname", 'StringPin')
+		self.objname.setData(s.ObjectName)
+
+		try:
+			wr=self.getWrapper()
+			newName = wr.canvasRef().graphManager.getUniqNodeName("Ref_"+objname)
+			wr.setHeaderHtml(newName)
+			uiPin = self.getWrapper()._createUIPinWrapper(self.objname)
+			uiPin.setDisplayName("{}".format(self.objname.name))
+		except:
+			pass
+
 		self.outExec.call()
+
 
 	def compute(self, *args, **kwargs):
 		'''update shape-links'''
-		sayl()
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_ref_compute(self,*args, **kwargs)
-		self.outExec.call()
 
+		pins=self.getOrderedPins()
+		objname=self.getPinN("objectname").getData()
+
+		obj=FreeCAD.activeDocument().getObject(objname)
+		for p in pins:
+			if not p.isExec():
+				if p.name == "Shape":
+					self.setPinObject(p.name,obj.Shape)
+				elif p.name <> "objectname":
+					subob =getattr(obj.Shape,p.name)
+					self.setPinObject(p.name,subob)
 
 	@staticmethod
 	def description():
@@ -2529,7 +2583,8 @@ class FreeCAD_LOD(FreeCadNodeBase):
 		lod=self.getData('LOD')
 		if lod in [1,2,3]:
 			self.setData('Shape',self.getData('ShapeLOD_'+str(lod)))
-		else say("lod out of range")
+		else: 
+			say("lod out of range")
 		self.outExec.call()
 
 	@staticmethod
