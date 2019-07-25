@@ -54,6 +54,13 @@ class FreeCadNodeBase(NodeBase):
 		super(FreeCadNodeBase, self).__init__(name)
 
 
+	def compute(self, *args, **kwargs):
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		a=eval("nodeeditor.dev.run_{}(self)".format(self.__class__.__name__))
+
+
+
 	def initpins(self,name):
 
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1383,7 +1390,7 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', False)
 		self.shapeOnly.recomputeNode=True
 
 		self.createInputPin("vecA", 'VectorPin',FreeCAD.Vector(20,0,0))
@@ -2097,6 +2104,7 @@ class FreeCAD_Compound(FreeCadNodeBase):
 		self.shapeOnly.recomputeNode=True
 
 		p=self.createInputPin('Shapes', 'AnyPin', None,  supportedPinDataTypes=["ShapePin", "FCobjPin"])
+		p=self.createInputPin('ShapeList', 'ShapeListPin', [])
 
 		p.enableOptions(PinOptions.AllowMultipleConnections)
 		p.disableOptions(PinOptions.SupportsOnlyArrays)
@@ -2120,7 +2128,14 @@ class FreeCAD_Compound(FreeCadNodeBase):
 #			outArray += [v]
 #		subshapes=outArray
 
-		subshapes=self.getPinObjects("Shape")
+		try:
+			subshapes=self.getPinObjects("Shape")
+		except:
+			subshapes=[]
+		try:
+			subshapes += self.getPinObjects("ShapeList")
+		except:
+			pass
 
 		say("Compound Shapes:",subshapes)
 		shape=Part.Compound(subshapes)
@@ -2337,39 +2352,6 @@ class FreeCAD_Plot(NodeBase):
 
 
 
-class FreeCAD_Bar(FreeCadNodeBase):
-	'''
-	dummy for tests
-	'''
-
-	def __init__(self, name="Fusion"):
-
-		super(FreeCAD_Bar, self).__init__(name)
-
-
-	def compute(self, *args, **kwargs):
-
-		sayl()
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		nodeeditor.dev.run_bar_compute(self,*args, **kwargs)
-		self.outExec.call()
-
-	@staticmethod
-	def description():
-		return FreeCAD_Bar.__doc__
-
-	@staticmethod
-	def category():
-		return 'Development'
-
-	@staticmethod
-	def keywords():
-		return []
-
-
-
-
 
 
 class FreeCAD_Foo(FreeCadNodeBase):
@@ -2564,7 +2546,7 @@ class FreeCAD_LOD(FreeCadNodeBase):
 
 class FreeCAD_view3D(FreeCadNodeBase):
 	'''
-	create an instance 
+	create an instance
 	'''
 
 	def __init__(self, name="LOD",**kvargs):
@@ -2597,7 +2579,7 @@ class FreeCAD_view3D(FreeCadNodeBase):
 
 	@staticmethod
 	def description():
-		return FreeCAD_Ref.__doc__
+		return FreeCAD_view3D.__doc__
 
 	@staticmethod
 	def category():
@@ -2607,20 +2589,10 @@ class FreeCAD_view3D(FreeCadNodeBase):
 	def keywords():
 		return ['Part','Shape','Edge','Selection']
 
-'''
 
-	@staticmethod
-	@IMPLEMENT_NODE(returns=('StringPin', None, ), nodeType=NodeTypes.Callable, meta={'Category': 'Document', 'Keywords': []})
-	def view3D(name=('StringPin', 'view3d',),Shape=('ShapePin',None),Workspace=('StringPin', '',),
-		mode=('IntPin',0),wireframe=('BoolPin',False),transparency=('IntPin',50), temp=('BoolPin', True),):
 
-		import nodeeditor.dev
-		reload (nodeeditor.dev)
-		return  nodeeditor.dev.run_view3d(name,Shape,Workspace,mode,wireframe,transparency)
 
-		say("create 3d view for ",name,Shape,Workspace,mode)
-		return (name)
-'''
+
 
 
 
@@ -2629,7 +2601,7 @@ def nodelist():
 	return [
 				FreeCAD_Foo,
 				FreeCAD_Toy,
-				FreeCAD_Bar,
+#				FreeCAD_Bar,
 				FreeCAD_Object,
 				FreeCAD_Box,
 				FreeCAD_Cone,

@@ -37,6 +37,10 @@ class FreeCADUINodeBase(UINodeBase):
 		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
 		actionAddOut4.triggered.connect(self.visualize)
 
+		actionAddOut4 = self._menu.addAction("delete node")
+		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+		actionAddOut4.triggered.connect(self.deleteNode)
+
 
 	def f2(self):
 		self._rawNode.show()
@@ -54,6 +58,8 @@ class FreeCADUINodeBase(UINodeBase):
 		reload (nodeeditor.dev)
 		return  nodeeditor.dev.run_visualize(self)
 
+	def deleteNode(self):
+		self._rawNode.kill()
 
 
 

@@ -206,8 +206,12 @@ def run_VectorArray_compute(self,*args, **kwargs):
 	self.setData('out',poles)
 
 	cc=self.getObject()
-	cc.Label=self.objname.getData()
+	try:
+		cc.Label=self.objname.getData()
+	except:
+		pass
 	cc.Shape=shape
+	self.setPinObject('Shape',shape)
 	self.outExec.call()
 
 
@@ -456,7 +460,120 @@ def run_visualize(self,*args, **kwargs):
 
 
 
+def run_FreeCAD_Tripod(self,*args, **kwargs):
+	sayl()
+	f=self.getPinObject('Shape')
+	if f.__class__.__name__  == 'Shape':
+		f=f.Face1
+	#if f.__class__.__name__  == 'Face':
+	
+	sf=f.Surface
+
+	[umin,umax,vmin,vmax]=f.ParameterRange
+	say(umin,umax,vmin,vmax)
+	u,v=self.getData("u"),self.getData("v")
+	
+	say(f)
+	uu=umin+(umax-umin)*0.1*u
+	vv=vmin+(vmax-vmin)*0.1*v
+	pos=sf.value(uu,vv)
+	self.setData('position',pos)
+	
+	if self.getData('curvatureMode'): 
+		# curvature
+		t1,t2=sf.curvatureDirections(uu,vv)
+
+
+	else: # tangents
+		t1,t2=sf.tangent(uu,vv)
+#		t1=t1.normalize()
+#		t2=t2.normalize()
+
+	if self.getData('directionNormale'): 
+			n=t1.cross(t2).normalize()
+	else: 
+			n=t2.cross(t1).normalize()
+
+	
+	if self.getData('display'):
+		obj=self.getObject()
+		shape=Part.makePolygon([pos,pos+t1*10,pos+t2*5,pos,pos+n*5],
+						)
+		obj.Shape=shape
+
+
+	self.outExec.call()
 
 
 
+def run_FreeCAD_uIso(self,*args, **kwargs):
+
+	f=self.getPinObject('Face')
+	if f.__class__.__name__  == 'Shape':
+		f=f.Face1
+	sf=f.Surface
+
+	[umin,umax,vmin,vmax]=f.ParameterRange
+	u=self.getData("u")
+
+	uu=umin+(umax-umin)*0.1*u
+	c=sf.uIso(uu)
+	self.setPinObject('Edge',c.toShape())
+
+	if self.getData('display'):
+		obj=self.getObject()
+		obj.Shape=c.toShape()
+
+	self.outExec.call()
+
+
+def run_FreeCAD_vIso(self,*args, **kwargs):
+
+	f=self.getPinObject('Face')
+	if f.__class__.__name__  == 'Shape':
+		f=f.Face1
+	sf=f.Surface
+
+	[umin,umax,vmin,vmax]=f.ParameterRange
+	v=self.getData("v")
+
+	vv=vmin+(vmax-vmin)*0.1*v
+	c=sf.vIso(vv)
+	self.setPinObject('Edge',c.toShape())
+
+	if self.getData('display'):
+		obj=self.getObject()
+		obj.Shape=c.toShape()
+
+	self.outExec.call()
+
+def run_FreeCAD_uvGrid(self,*args, **kwargs):
+
+	f=self.getPinObject('Face')
+	if f.__class__.__name__  == 'Shape':
+		f=f.Face1
+	sf=f.Surface
+
+	[umin,umax,vmin,vmax]=f.ParameterRange
+	uc=self.getData("uCount")
+	vc=self.getData("vCount")
+	
+	us=[]
+	for u in range(uc+1):
+		uu=umin+(umax-umin)*u/uc
+		c=sf.uIso(uu).toShape()
+		us += [c]
+
+	vs=[]
+	for v in range(vc+1):
+		vv=vmin+(vmax-vmin)*v/vc
+		c=sf.vIso(vv).toShape()
+		vs += [c]
+
+	if self.getData('display'):
+		obj=self.getObject()
+		obj.Shape=Part.Compound(us+vs)
+
+	self.setPinObjects('uEdges',us)
+	self.setPinObjects('vEdges',vs)
 

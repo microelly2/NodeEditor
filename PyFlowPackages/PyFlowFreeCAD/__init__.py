@@ -51,6 +51,10 @@ from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
 for n in nodelist():
 	_NODES[ n.__name__]=n
 
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
+for n in nodelist():
+	_NODES[ n.__name__]=n
+
 
 # tools
 
