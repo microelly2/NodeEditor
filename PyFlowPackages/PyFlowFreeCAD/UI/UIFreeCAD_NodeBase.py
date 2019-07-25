@@ -33,6 +33,10 @@ class FreeCADUINodeBase(UINodeBase):
 		actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
 		actionAddOut4.triggered.connect(self.f4)
 
+		actionAddOut4 = self._menu.addAction("visualize")
+		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+		actionAddOut4.triggered.connect(self.visualize)
+
 
 	def f2(self):
 		self._rawNode.show()
@@ -43,6 +47,15 @@ class FreeCADUINodeBase(UINodeBase):
 	def f4(self):
 		sayl()
 		self._rawNode.refresh()
+
+	def visualize(self):
+		sayl()
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		return  nodeeditor.dev.run_visualize(self)
+
+
+
 
 
 class FreeCADUIFunctionBase(UINodeBase):

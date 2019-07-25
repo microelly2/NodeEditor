@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-import FreeCAD 
+import FreeCAD
 import nodeeditor.store
 import Part
 
@@ -11,7 +11,7 @@ from PyFlow import CreateRawPin
 from nodeeditor.say import *
 import nodeeditor.store as store
 import nodeeditor.store
-import nodeeditor.pfwrap
+import nodeeditor.pfwrap as pfwrap
 
 
 def runraw(self):
@@ -29,7 +29,7 @@ def runraw(self):
 		for p in ps:
 			print p
 
-	
+
 	pins=[]
 	ipm=self.namePinInputsMap
 
@@ -69,7 +69,7 @@ def runraw(self):
 			continue
 #		print("################",cn,p,a)
 		if cn=="list" and p.endswith('List'):
-			
+
 			r2=p.replace('List','Pin')
 			r=r2[1:]
 #			say("--------------",p,r,r2)
@@ -100,16 +100,16 @@ def runraw(self):
 			pintyp="PlacementPin"
 		elif  cn=="Rotation":
 			pintyp="RotationPin"
-		
+
 
 		elif cn=='list' or cn == 'dict' or cn=='tuple' or cn=='set':
-			# zu tun 
+			# zu tun
 			continue
 		elif cn=='Material'  or cn=='Shape' or cn=='Matrix' :
-			# zu tun 
+			# zu tun
 			continue
 		elif cn=='NoneType' :
-			# zu tun 
+			# zu tun
 			continue
 
 
@@ -121,7 +121,7 @@ def runraw(self):
 
 		pinname=p
 		pinval=a
-		
+
 #		say("create pin for ",pintyp,pinname,pinval)
 		p1 = CreateRawPin(pinname,self, pintyp, PinDirection.Input)
 		p2 = CreateRawPin(pinname+"_out",self, pintyp, PinDirection.Output)
@@ -131,7 +131,7 @@ def runraw(self):
 		p1.setData(pinval)
 		p2.setData(pinval)
 		say("created:",p1)
-  
+
 		pins  += [p1,p2]
 
 
@@ -148,20 +148,20 @@ def runraw(self):
 
 
 def run_VectorArray_compute(self,*args, **kwargs):
-	
+
 	countA=self.getData("countA")
 	countB=self.getData("countB")
 	countC=self.getData("countC")
 	vO=self.getData("vecBase")
 	vA=self.getData("vecA")
-	
+
 	vB=self.getData("vecB")
 	vC=self.getData("vecC")
 	rx=self.getData("randomX")
 	ry=self.getData("randomY")
 	rz=self.getData("randomZ")
-	
-	
+
+
 	degA=self.getData("degreeA")
 	degB=self.getData("degreeB")
 	if countA<degA+1:
@@ -169,7 +169,7 @@ def run_VectorArray_compute(self,*args, **kwargs):
 	if countB<degB+1:
 		degB=countB-1
 
-	points=[vO+vA*a+vB*b+vC*c+FreeCAD.Vector((0.5-random.random())*rx,(0.5-random.random())*ry,(0.5-random.random())*rz) 
+	points=[vO+vA*a+vB*b+vC*c+FreeCAD.Vector((0.5-random.random())*rx,(0.5-random.random())*ry,(0.5-random.random())*rz)
 		for a in range(countA) for b in range(countB) for c in range(countC)]
 
 	if countC != 1:
@@ -237,7 +237,7 @@ def run_Plot_compute(self,*args, **kwargs):
 	#say(x)
 	#say(y)
 	say(len(x),len(y))
-	
+
 
 	if len(y) <>0:
 		N=len(y)
@@ -251,8 +251,8 @@ def run_Plot_compute(self,*args, **kwargs):
 		if not self.f3.getData():
 			plt.plot(x, y, 'bx')
 		plt.plot(x, y , 'b-')
-	
-	
+
+
 	x2=self.xpin2.getData()
 	y2=self.ypin2.getData()
 	say (len(x2),len(y2))
@@ -328,7 +328,7 @@ def run_uv_projection_compute(self,*args, **kwargs):
 	splitb=[(ee,face)]
 	r2=Part.makeSplitShape(face, splitb)
 
-	try: 
+	try:
 		rc=r2[0][0]
 		rc=r[0][0]
 	except: return
@@ -354,7 +354,7 @@ def run_uv_projection_compute(self,*args, **kwargs):
 		f.LengthRev = self.getPinN('ExtrusionDown').getData()
 		f.Solid = True
 		FreeCAD.activeDocument().recompute()
- 
+
 	#see without extra part >>> s.Face1.extrude(FreeCAD.Vector(0,1,1))
 	#<Solid object at 0x660e520>
 
@@ -381,10 +381,13 @@ def f4(self):
 	say("FreeCAD Ui Node runs f4")
 	say("nothing to do, done")
 
+import FreeCADGui
 
-
-def run_view3d(name,shape,workspace,mode,wireframe,transparency):
+def run_view3d(self,name,shape,workspace,mode,wireframe,transparency):
 	sayl()
+	
+	shape=self.getPinObject('Shape')
+	s=shape
 	l=FreeCAD.listDocuments()
 	if workspace=='' or workspace=='None':
 		w=l['Unnamed']
@@ -399,13 +402,14 @@ def run_view3d(name,shape,workspace,mode,wireframe,transparency):
 			FreeCADGui.runCommand("Std_ViewFitAll")
 			FreeCADGui.runCommand("Std_TileWindows")
 
-	s=store.store().get(shape)
+	#s=store.store().get(shape)
 
 	f=w.getObject(name)
 	if f == None:
 		f = w.addObject('Part::Feature', name)
 	if s <> None:
 		f.Shape=s
+	say("shape",s)
 
 	w.recompute()
 
@@ -417,6 +421,40 @@ def run_view3d(name,shape,workspace,mode,wireframe,transparency):
 		f.ViewObject.LineColor = (random.random(),random.random(),1.)
 
 	f.ViewObject.Transparency = transparency
+
+
+
+
+from PyFlow.Packages.PyFlowBase.Factories.UINodeFactory import createUINode
+
+
+def run_foo_compute(self,*args, **kwargs):
+	pass
+
+
+def run_visualize(self,*args, **kwargs):
+	say(self._rawNode)
+	say("create vid3d object in graph")
+	gg=self.graph()
+	x,y=-150,-100
+	nodeClass='FreeCAD_view3D'
+	#t3 = pfwrap.createNode('PyFlowFreeCAD',nodeClass,"MyPolygon")
+	#t3.setPosition(x,y)
+	#gg.addNode(t3)
+	#uinode=createUINode(t3)
+	#say(uinode)
+	aa=self.canvasRef().spawnNode(nodeClass, x, y)
+	say(aa.__class__)
+	say("connect Shape withj vie3d.shape ...")
+	FreeCAD.aa=aa
+	pfwrap.connect(self._rawNode,'Shape',aa._rawNode,'Shape')
+	sayl()
+
+	pfwrap.connect(self._rawNode,'outExec',aa._rawNode,'inExec')
+	aa._rawNode.setData('name','View_'+self._rawNode.name)
+
+
+
 
 
 

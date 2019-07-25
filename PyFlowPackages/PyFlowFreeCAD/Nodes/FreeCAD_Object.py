@@ -64,16 +64,16 @@ class FreeCadNodeBase(NodeBase):
 		self.randomize = self.createInputPin("randomize", 'BoolPin')
 
 		self.part = self.createOutputPin('Part', 'FCobjPin')
-		self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+		self.shapeout = self.createOutputPin('Shape', 'ShapePin','True')
 
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 
-	@timer 
+	@timer
 	def show(self,*args, **kwargs):
 		sayl()
 		#say("self:",self)
@@ -83,16 +83,23 @@ class FreeCadNodeBase(NodeBase):
 		ll=len(self.getName())
 		#say("self.getOrderedPins()")
 		#say( self.getOrderedPins())
-		
+
 		k=self.orderedInputs.values()
-		say(k)
+		say("INPINS")
 		for t in k:
 			say(t)
 			say(t.getFullName(),t.getData())
 		sayl()
+		k=self.orderedOutputs.values()
+		say("OUTPINS")
+		for t in k:
+			say(t)
+			say(t.getFullName(),t.getData())
+		sayl()
+
 		FreeCAD.ref=self
 		return
-		
+
 		for t in self.getOrderedPins():
 			say("{} = {} ({})".format(t.getName()[ll+1:],t.getData(),t.__class__.__name__))
 			if len(t.affected_by):
@@ -104,7 +111,7 @@ class FreeCadNodeBase(NodeBase):
 				for tt in t.affects:
 					if not tt.getName().startswith(self.getName()):
 						say("----> {} = {} ({})".format(tt.getName(),tt.getData(),tt.__class__.__name__))
-  
+
 
 			n=t.__class__.__name__
 			# spezialausgaben fuer objekte
@@ -117,9 +124,9 @@ class FreeCadNodeBase(NodeBase):
 						say("object: {} ({})".format(obj.Label,obj.Name))
 					except:
 						say(obj)
-				
+
 		FreeCAD.ref=self
-		
+
 
 
 
@@ -262,8 +269,8 @@ class FreeCAD_StorePins(NodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.show = self.createInputPin('Show', 'ExecPin', None, self.show)
@@ -288,7 +295,7 @@ class FreeCAD_StorePins(NodeBase):
 
 	def show(self,*args, **kwargs):
 		sayl("list all pins")
-		
+
 
 	def getObject(self,*args):
 		say("getobject")
@@ -338,11 +345,11 @@ class FreeCAD_StorePins(NodeBase):
 
 		say ("get shapein")
 		shapein=self.shapein.getData()
-		
+
 		if shapein <> None:
 			say("shapein",shapein)
 			s=store.store().get(shapein)
-			
+
 			#
 			say("s:::::::",s)
 			if s <>  None:
@@ -367,7 +374,7 @@ class FreeCAD_StorePins(NodeBase):
 			c = None
 		else:
 			c=FreeCAD.ActiveDocument.getObject(self.obja.getData())
-			
+
 
 
 		# if this is not possible fall back to the given name for the obj
@@ -394,7 +401,7 @@ class FreeCAD_StorePins(NodeBase):
 		if shapein <> None:
 			say("shapein",shapein)
 			s=store.store().get(shapein)
-			
+
 			#
 			say("s:::::::",s)
 			if s <>  None:
@@ -453,8 +460,8 @@ class FreeCAD_Toy(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -473,6 +480,7 @@ class FreeCAD_Toy(FreeCadNodeBase):
 		cc=FreeCAD.ActiveDocument.getObject(yid)
 		if cc == None:
 			cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
+			FreeCAD.activeDocument().recompute()
 		cc.Label=self.objname.getData()
 
 
@@ -486,6 +494,10 @@ class FreeCAD_Toy(FreeCadNodeBase):
 				self.part.setData(None)
 			else:
 				self.part.setData(cc.Name)
+
+		sayl()
+		say(self.getPinN("Shape"))
+		say(shape)
 
 		self.setPinObject("Shape",shape)
 		self.outExec.call()
@@ -529,8 +541,8 @@ class FreeCAD_Box( FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.length = self.createInputPin("length", 'FloatPin')
 		self.width = self.createInputPin("width", 'FloatPin')
@@ -603,8 +615,8 @@ class FreeCAD_Cone(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.radius1 = self.createInputPin("radius1", 'FloatPin')
 		self.radius2 = self.createInputPin("radius2", 'FloatPin')
@@ -673,8 +685,8 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 
 		self.radius = self.createInputPin("radius", 'FloatPin')
@@ -744,8 +756,8 @@ class FreeCAD_Quadrangle(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.vA = self.createInputPin("vecA", 'VectorPin')
 		self.vB = self.createInputPin("vecB", 'VectorPin')
@@ -779,13 +791,13 @@ class FreeCAD_Quadrangle(FreeCadNodeBase):
 		vB=self.vB.getData()
 		vC=self.vC.getData()
 		vD=self.vD.getData()
-		
+
 		w=Part.BSplineSurface()
 		w.buildFromPolesMultsKnots([[vA,vB],[vD,vC]],[2,2],[2,2],[0,1],[0,1],False,False,1,1)
 		shape=w.toShape()
 
 		self.setPinObject("Shape",shape)
-		
+
 		if self.shapeout.hasConnections():
 			self.postCompute()
 
@@ -838,8 +850,8 @@ class FreeCAD_Polygon(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.vA = self.createInputPin("Vec1", 'VectorPin')
 		self.vB = self.createInputPin("Vec2", 'VectorPin')
@@ -867,10 +879,10 @@ class FreeCAD_Polygon(FreeCadNodeBase):
 		p.setData(last+last-prev)
 		self.count += 1
 		pps=self.getOrderedPins()
-		
+
 		return p
 
-	@timer 
+	@timer
 	def compute(self, *args, **kwargs):
 
 		# recursion stopper
@@ -878,7 +890,7 @@ class FreeCAD_Polygon(FreeCadNodeBase):
 			return
 
 		self.Called=True
-		
+
 		pts=[]
 
 		for t in self.getOrderedPins():
@@ -887,12 +899,12 @@ class FreeCAD_Polygon(FreeCadNodeBase):
 			if d.__class__.__name__ =='Vector':
 				#if pts[-1] <> d:
 					pts += [d]
-	
-		
+
+
 		shape=Part.makePolygon(pts)
 
 		self.setPinObject("Shape",shape)
-		
+
 		if self.shapeout.hasConnections():
 			self.postCompute()
 
@@ -944,8 +956,8 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.points = self.createInputPin('points', 'VectorPin',[], structure=PinStructure.Multi)
 		self.points.setData([FreeCAD.Vector(0,0,0),FreeCAD.Vector(10,0,0)])
@@ -955,7 +967,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 		self.count=2
 
 
-	@timer 
+	@timer
 	def compute(self, *args, **kwargs):
 
 		# recursion stopper
@@ -964,7 +976,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 		sayl()
 		# mit zeitstemple aktivieren
 		#self.Called=True
-		
+
 		pts=self.points.getData()
 		if len(pts)<2:
 			sayW("zu wenig points")
@@ -1023,8 +1035,8 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.part1 = self.createInputPin('Part_in1', 'FCobjPin')
 		self.part2 = self.createInputPin('Part_in2', 'FCobjPin')
@@ -1050,7 +1062,7 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 
 		s1=store.store().get(shape1)
 		s2=store.store().get(shape2)
-		
+
 		if s1 <> None and s2 <>None:
 			# arbeite mit shapes
 			pass
@@ -1058,7 +1070,7 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 		else:
 			part1=self.part1.getData()
 			part2=self.part2.getData()
-			if part1 == None or part2 == None: 
+			if part1 == None or part2 == None:
 				say("part12 is None, abort")
 				return
 
@@ -1125,8 +1137,8 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 class FreeCAD_Array(FreeCadNodeBase):
 	'''
 	test node for large arrays
-	
-	
+
+
 	'''
 
 	@staticmethod
@@ -1150,8 +1162,8 @@ class FreeCAD_Array(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 
 		self.Arr_in = self.createInputPin('Array_in', 'ArrayPin')
@@ -1213,8 +1225,8 @@ class FreeCAD_BSpline(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 
 		self.arrayData = self.createInputPin('poles', 'AnyPin', structure=PinStructure.Array, constraint="1")
@@ -1225,7 +1237,7 @@ class FreeCAD_BSpline(FreeCadNodeBase):
 
 
 
-	@timer 
+	@timer
 	def compute(self, *args, **kwargs):
 
 #		import nodeeditor.dev
@@ -1296,8 +1308,8 @@ class FreeCAD_BSplineCurve(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 
 		self.arrayData = self.createInputPin('poles', 'AnyPin', structure=PinStructure.Array, constraint="1")
@@ -1308,7 +1320,7 @@ class FreeCAD_BSplineCurve(FreeCadNodeBase):
 
 
 
-	@timer 
+	@timer
 	def compute(self, *args, **kwargs):
 
 #		import nodeeditor.dev
@@ -1371,8 +1383,8 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.createInputPin("vecA", 'VectorPin',FreeCAD.Vector(20,0,0))
 		self.createInputPin("vecB", 'VectorPin',FreeCAD.Vector(0,10,0))
@@ -1393,7 +1405,7 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
 
 		self.result = self.createOutputPin('result', 'BoolPin')
 
-	@timer 
+	@timer
 	def compute(self, *args, **kwargs):
 
 		say ("in compute",self.getName(),"objname is",self.objname.getData())
@@ -1441,8 +1453,8 @@ class FreeCAD_Object(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 
 		self.Show = self.createInputPin('Reload_from_FC', 'ExecPin', None, self.reload)
@@ -1472,12 +1484,12 @@ class FreeCAD_Object(FreeCadNodeBase):
 
 
 	def reload(self, *args, **kwargs):
-		print "reload from FreeCADobject and refresh data" 
+		print "reload from FreeCADobject and refresh data"
 
 	def store(self, *args, **kwargs):
 
 		print ("store  data to  FreeCAD object and to the output pins" )
-		
+
 		data={}
 		pps=self.getOrderedPins()
 		for p in pps:
@@ -1496,7 +1508,7 @@ class FreeCAD_Object(FreeCadNodeBase):
 				pn=n.split('_')[1]
 				if pn=="Object": # hack for names FreeCAD_Object #+#
 					pn=n.split('_')[2]
-				
+
 				vn=p.getData()
 
 				try:
@@ -1554,8 +1566,8 @@ class FreeCAD_Console(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -1607,8 +1619,8 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.part = self.createInputPin('Part_in', 'FCobjPin')
 		self.outArray = self.createOutputPin('Points', 'VectorPin', structure=PinStructure.Array)
@@ -1625,7 +1637,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 #				#'PrincipalProperties','StaticMoments',
 				'Mass':'FloatPin',
 				'ShapeType':'StringPin',
-#				
+#
 		}
 
 		say(self.pinsk)
@@ -1679,7 +1691,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 			edges=self.getPinObjects("Faces")
 			Part.show(Part.Compound(edges[:4]))
 
-		# output of the pins 
+		# output of the pins
 		for t in self.getOrderedPins():
 			if t.__class__.__name__ in ['ShapeListPin']:
 				say("{} has {} items ({})".format(t.getName(),len(t.getData()),t.__class__.__name__))
@@ -1697,8 +1709,8 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 						# say(tt.linkedTo[0])
 						a=FreeCAD.tt.linkedTo[0]['rhsNodeName']
 						say("call owning------------------",tt.owningNode().getName())
-						
-						#start the follower node 
+
+						#start the follower node
 						#tt.owningNode().compute()
 
 		self.outExec.call()
@@ -1727,7 +1739,7 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 
 
 	def __init__(self, name="Fusion"):
-		super(FreeCAD_ShapeIndex, self).__init__(name,False,False)
+		super(FreeCAD_ShapeIndex, self).__init__(name)
 
 
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1743,8 +1755,8 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		p=self.createInputPin('Shapes', 'AnyPin')
 		p.recomputeNode=True
@@ -1809,8 +1821,8 @@ class FreeCAD_Face(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		p=self.createInputPin('sourceObject', 'StringPin')
 		p=self.createInputPin('index', 'IntPin')
@@ -1869,8 +1881,8 @@ class FreeCAD_Edge(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		p=self.createInputPin('sourceObject', 'StringPin')
 		p=self.createInputPin('index', 'IntPin')
@@ -1922,8 +1934,8 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		p=self.createInputPin('face', 'AnyPin')
 		p=self.createInputPin('edge', 'AnyPin')
@@ -1973,8 +1985,8 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		p=self.createInputPin('face', 'AnyPin')
 		p=self.createInputPin('edge', 'AnyPin')
@@ -2024,8 +2036,8 @@ class FreeCAD_UVprojection(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		p=self.createInputPin('face', 'AnyPin')
 		p=self.createInputPin('edge', 'AnyPin')
@@ -2081,10 +2093,10 @@ class FreeCAD_Compound(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
-		p=self.createInputPin('Shapes', 'AnyPin', None,  supportedPinDataTypes=["ShapePin", "FCobjPin"]) 
+		p=self.createInputPin('Shapes', 'AnyPin', None,  supportedPinDataTypes=["ShapePin", "FCobjPin"])
 
 		p.enableOptions(PinOptions.AllowMultipleConnections)
 		p.disableOptions(PinOptions.SupportsOnlyArrays)
@@ -2121,7 +2133,7 @@ class FreeCAD_Compound(FreeCadNodeBase):
 			cc.ViewObject.LineColor=(1.,1.,0.)
 			cc.ViewObject.PointSize=8
 			cc.ViewObject.Transparency=0
- 
+
 		self.setPinObject("Shape",shape)
 		self.outExec.call()
 
@@ -2159,7 +2171,7 @@ class FreeCAD_Part(FreeCadNodeBase):
 
 		self.part = self.createOutputPin('Part', 'FCobjPin')
 		self.shapein = self.createInputPin('Shape', 'ShapePin')
-		self.shapein.recomputeNode=True 
+		self.shapein.recomputeNode=True
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
@@ -2191,7 +2203,7 @@ class FreeCAD_Part(FreeCadNodeBase):
 
 class FreeCAD_PinsTest(FreeCadNodeBase):
 	'''
-	pins testcase: what is possible 
+	pins testcase: what is possible
 	'''
 
 	@staticmethod
@@ -2199,7 +2211,7 @@ class FreeCAD_PinsTest(FreeCadNodeBase):
 		return "creates different pins for testing connections"
 
 	def __init__(self, name="Fusion"):
-		super(FreeCAD_PinsTest, self).__init__(name,False,False)
+		super(FreeCAD_PinsTest, self).__init__(name)
 
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -2214,24 +2226,24 @@ class FreeCAD_PinsTest(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 
 		for pn in  'Any Vector Rotation Enumeration Shape ShapeList FCobj Array Float Int String Bool'.split(' '):
 			p=self.createInputPin(pn+"_in", pn+'Pin')
 			p=self.createOutputPin(pn+"_out", pn+'Pin')
 			p=self.createInputPin(pn+"_in_array", pn+'Pin', structure=PinStructure.Array)
-			
-			# gleiche pins einzeln oder als liste 
+
+			# gleiche pins einzeln oder als liste
 			p.enableOptions(PinOptions.AllowMultipleConnections)
-			p.disableOptions(PinOptions.SupportsOnlyArrays)	
+			p.disableOptions(PinOptions.SupportsOnlyArrays)
 
 #			p=self.createInputPin(pn+"_in_dict", pn+'Pin', structure=PinStructure.Dict)
 #			p=self.createInputPin(pn+"_in_mult", pn+'Pin', structure=PinStructure.Multi)
 			p=self.createOutputPin(pn+"_out_array", pn+'Pin', structure=PinStructure.Array)
 #			p=self.createOutputPin(pn+"_out_dict", pn+'Pin', structure=PinStructure.Dict)
-			
+
 		self.createInputPin("yyy","AnyPin", None,  supportedPinDataTypes=["FloatPin", "IntPin"])
 
 		self.createInputPin("Shape_or_Rotation","AnyPin", None,  supportedPinDataTypes=["ShapePin", "RotationPin"])
@@ -2284,8 +2296,8 @@ class FreeCAD_Plot(NodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin')
-		self.shapeOnly.recomputeNode=True 
+		self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+		self.shapeOnly.recomputeNode=True
 
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -2370,7 +2382,7 @@ class FreeCAD_Foo(FreeCadNodeBase):
 		return "a dummy for tests"
 
 	def __init__(self, name="Fusion"):
-		super(FreeCAD_Foo, self).__init__(name,False,False)
+		super(FreeCAD_Foo, self).__init__(name)
 
 
 
@@ -2380,7 +2392,6 @@ class FreeCAD_Foo(FreeCadNodeBase):
 		import nodeeditor.dev
 		reload (nodeeditor.dev)
 		nodeeditor.dev.run_foo_compute(self,*args, **kwargs)
-		self.outExec.call()
 
 	@staticmethod
 	def description():
@@ -2521,7 +2532,7 @@ class FreeCAD_LOD(FreeCadNodeBase):
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
 		self.lod = self.createInputPin('LOD', 'IntPin')
-		self.lod.recomputeNode=True 
+		self.lod.recomputeNode=True
 		self.createInputPin('ShapeLOD_1', 'ShapePin')
 		self.createInputPin('ShapeLOD_2', 'ShapePin')
 		self.createInputPin('ShapeLOD_3', 'ShapePin')
@@ -2533,7 +2544,7 @@ class FreeCAD_LOD(FreeCadNodeBase):
 		lod=self.getData('LOD')
 		if lod in [1,2,3]:
 			self.setData('Shape',self.getData('ShapeLOD_'+str(lod)))
-		else: 
+		else:
 			say("lod out of range")
 		self.outExec.call()
 
@@ -2550,6 +2561,66 @@ class FreeCAD_LOD(FreeCadNodeBase):
 		return ['Part','Shape','Edge','Selection']
 
 
+
+class FreeCAD_view3D(FreeCadNodeBase):
+	'''
+	create an instance 
+	'''
+
+	def __init__(self, name="LOD",**kvargs):
+
+		super(FreeCAD_view3D, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+		self.createInputPin('name', 'StringPin','view3d')
+		self.createInputPin('Workspace', 'StringPin','')
+		self.createInputPin('Shape', 'ShapePin')
+
+
+
+
+	def compute(self, *args, **kwargs):
+
+		name=self.getData('name')
+		Shape=self.getPinObject('Shape')
+		workspace=self.getData('Workspace')
+		mode='1'
+		wireframe=False
+		transparency=50
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		nodeeditor.dev.run_view3d(self,name,Shape,workspace,mode,wireframe,transparency)
+
+		self.outExec.call()
+
+	@staticmethod
+	def description():
+		return FreeCAD_Ref.__doc__
+
+	@staticmethod
+	def category():
+		return 'Document'
+
+	@staticmethod
+	def keywords():
+		return ['Part','Shape','Edge','Selection']
+
+'''
+
+	@staticmethod
+	@IMPLEMENT_NODE(returns=('StringPin', None, ), nodeType=NodeTypes.Callable, meta={'Category': 'Document', 'Keywords': []})
+	def view3D(name=('StringPin', 'view3d',),Shape=('ShapePin',None),Workspace=('StringPin', '',),
+		mode=('IntPin',0),wireframe=('BoolPin',False),transparency=('IntPin',50), temp=('BoolPin', True),):
+
+		import nodeeditor.dev
+		reload (nodeeditor.dev)
+		return  nodeeditor.dev.run_view3d(name,Shape,Workspace,mode,wireframe,transparency)
+
+		say("create 3d view for ",name,Shape,Workspace,mode)
+		return (name)
+'''
 
 
 
@@ -2584,4 +2655,5 @@ def nodelist():
 				FreeCAD_PinsTest,
 				FreeCAD_Ref,
 				FreeCAD_LOD,
+				FreeCAD_view3D,
 		]

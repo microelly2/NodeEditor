@@ -114,14 +114,3 @@ class Vector(FunctionLibraryBase):
         say("workspace called")
         return (name)
 
-    @staticmethod
-    @IMPLEMENT_NODE(returns=('StringPin', None, ), nodeType=NodeTypes.Callable, meta={'Category': 'Document', 'Keywords': []})
-    def view3D(name=('StringPin', 'view3d',),Shape=('ShapePin',None),Workspace=('StringPin', '',),
-        mode=('IntPin',0),wireframe=('BoolPin',False),transparency=('IntPin',50), temp=('BoolPin', True),):
-
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        return  nodeeditor.dev.run_view3d(name,Shape,Workspace,mode,wireframe,transparency)
-
-        say("create 3d view for ",name,Shape,Workspace,mode)
-        return (name)
