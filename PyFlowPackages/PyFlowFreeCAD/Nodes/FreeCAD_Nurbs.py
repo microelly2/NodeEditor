@@ -323,6 +323,123 @@ class FreeCAD_Hull(FreeCadNodeBase):
 
 
 
+class FreeCAD_2DGeometry(FreeCadNodeBase):
+	'''
+	2d Geometry object
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(self.__class__, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.createInputPin('Shape', 'ShapePin')
+
+		a=self.createInputPin("ua", 'FloatPin', True)
+		a.recomputeNode=True
+		a=self.createInputPin("va", 'FloatPin', True)
+		a.recomputeNode=True
+		a=self.createInputPin("ub", 'FloatPin', True)
+		a.recomputeNode=True
+		a=self.createInputPin("vb", 'FloatPin', True)
+		a.recomputeNode=True
+
+		self.createOutputPin('Shape_out', 'ShapePin')
+		self.createOutputPin('geometry', 'ShapePin') #.description='edges or faces compound of the alpha hull'
+
+
+	@staticmethod
+	def description():
+		return FreeCAD_2DGeometry.__doc__
+
+	@staticmethod
+	def category():
+		return 'Development'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
+
+class FreeCAD_2DCircle(FreeCadNodeBase):
+	'''
+	2d Geometry object
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(self.__class__, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.createInputPin('Shape', 'ShapePin')
+
+		a=self.createInputPin("u", 'FloatPin', True)
+		a.recomputeNode=True
+		a=self.createInputPin("v", 'FloatPin', True)
+		a.recomputeNode=True
+		a=self.createInputPin("radius", 'FloatPin', True)
+		a.recomputeNode=True
+
+		self.createOutputPin('Shape_out', 'ShapePin')
+		self.createOutputPin('geometry', 'ShapePin') #.description='edges or faces compound of the alpha hull'
+
+
+	@staticmethod
+	def description():
+		return FreeCAD_2DCircle.__doc__
+
+	@staticmethod
+	def category():
+		return 'Development'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
+class FreeCAD_2DEllipse(FreeCadNodeBase):
+	'''
+	2d Geometry object
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(self.__class__, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.createInputPin('Shape', 'ShapePin')
+
+		a=self.createInputPin("uLocation", 'FloatPin', True)
+		a.recomputeNode=True
+		a=self.createInputPin("vLocation", 'FloatPin', True)
+		a.recomputeNode=True
+
+		a=self.createInputPin("direction", 'FloatPin', True)
+		a.recomputeNode=True
+
+		a=self.createInputPin("MajorRadius", 'FloatPin', True)
+		a.recomputeNode=True
+		a=self.createInputPin("MinorRadius", 'FloatPin', True)
+		a.recomputeNode=True
+		
+
+		self.createOutputPin('Shape_out', 'ShapePin')
+		self.createOutputPin('geometry', 'ShapePin') #.description='edges or faces compound of the alpha hull'
+
+
+	@staticmethod
+	def description():
+		return FreeCAD_2DEllipse.__doc__
+
+	@staticmethod
+	def category():
+		return 'Development'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
+
+
 
 
 
@@ -337,5 +454,8 @@ def nodelist():
 				FreeCAD_uIso, FreeCAD_vIso,
 				FreeCAD_uvGrid,
 				FreeCAD_Voronoi,
-				FreeCAD_Hull
+				FreeCAD_Hull,
+				FreeCAD_2DGeometry,
+				FreeCAD_2DCircle,
+				FreeCAD_2DEllipse,
 		]

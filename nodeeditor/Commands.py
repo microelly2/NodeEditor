@@ -1384,3 +1384,87 @@ def test_BB():
 
 	refresh_gui()
 	say("fertig")
+
+
+
+def test_BB():
+	'''
+	draw a line Geom2d.LineSegment onto a surface
+	'''
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+	try:
+		FreeCAD.open(u"/home/thomas/aa.FCStd")
+		FreeCAD.setActiveDocument("aa")
+	except:
+		pass
+
+	FreeCADGui.Selection.clearSelection()
+	FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.BePlane,['Face1'])
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Ref","Ref_Box",b="das ist B")
+	t2.compute()
+	gg.addNode(t2)
+	t2.setPosition(-200,0)
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_2DGeometry","linesegment")
+	
+	t.compute()
+	gg.addNode(t)
+	connection = pfwrap.connect(t2,'Face1', t,'Shape')
+
+
+	rib5 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_view3D","view")
+
+	rib5.setPosition(200,0)
+	rib5.setData("Workspace","aa")
+	rib5.setData("name","linesegment")
+	gg.addNode(rib5)
+	connection = pfwrap.connect(t,'Shape_out',rib5,'Shape')
+	pfwrap.chainExec(t,rib5)
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_2DCircle","circle")
+
+	t.compute()
+	gg.addNode(t)
+	connection = pfwrap.connect(t2,'Face1', t,'Shape')
+
+
+
+	rib5 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_view3D","view")
+
+	rib5.setPosition(200,0)
+	rib5.setData("Workspace","aa")
+	rib5.setData("name","circle")
+	gg.addNode(rib5)
+	connection = pfwrap.connect(t,'Shape_out',rib5,'Shape')
+	pfwrap.chainExec(t,rib5)
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_2DEllipse","circle")
+	t.setPosition(-300,-200)
+	t.compute()
+	gg.addNode(t)
+	connection = pfwrap.connect(t2,'Face1', t,'Shape')
+
+
+
+	rib5 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_view3D","view")
+
+	rib5.setPosition(200,-200)
+	rib5.setData("Workspace","aa")
+	rib5.setData("name","circle")
+	gg.addNode(rib5)
+	connection = pfwrap.connect(t,'Shape_out',rib5,'Shape')
+	pfwrap.chainExec(t,rib5)
+
+
+	refresh_gui()
+	say("fertig")

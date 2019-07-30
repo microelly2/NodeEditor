@@ -2412,7 +2412,10 @@ class FreeCAD_Ref(FreeCadNodeBase):
 		self.objname = self.createInputPin("objectname", 'StringPin')
 		self.objname.setData(name)
 
-		self.refresh()
+		try:
+			self.refresh()
+		except:
+			pass
 
 
 	def refresh(self, *args, **kwargs):

@@ -106,8 +106,7 @@ def runraw(self):
 		elif cn=='list' or cn == 'dict' or cn=='tuple' or cn=='set':
 			# zu tun
 			continue
-		elif cn=='Material'  or cn=='Shape' or cn=='Matrix' :
-			# zu tun
+		elif cn=='Material'  or cn=='Shape' or cn=='Matrix' :			# zu tun
 			continue
 		elif cn=='NoneType' :
 			# zu tun
@@ -301,6 +300,7 @@ def run_uv_projection_compute(self,*args, **kwargs):
 	f=store.store().get(self.getPinN('face').getData())
 	w=store.store().get(self.getPinN('edge').getData())
 	closed=True
+	closed=False
 
 	sf=f.Surface
 
@@ -315,7 +315,14 @@ def run_uv_projection_compute(self,*args, **kwargs):
 		pts2da=[sf.parameter(p) for p in pts]
 
 	pts2d=[FreeCAD.Base.Vector2d(p[0],p[1]) for p in pts2da]
-	bs2d.buildFromPolesMultsKnots(pts2d,[1]*(len(pts2d)+1),range(len(pts2d)+1),True,1)
+	pts2d=[FreeCAD.Base.Vector2d(p[0],p[1]) for p in pts2da[:-1]]
+	if closed:
+		bs2d.buildFromPolesMultsKnots(pts2d,[1]*(len(pts2d)+1),range(len(pts2d)+1),True,1)
+	else:
+		mults=[2]+[1]*(len(pts2d)-2)+[2]
+		knots=range(len(mults))
+		bs2d.buildFromPolesMultsKnots(pts2d,mults,knots,False,1)
+		
 	e1 = bs2d.toShape(sf)
 
 	sp=FreeCAD.ActiveDocument.getObject("_Spline")
@@ -389,7 +396,7 @@ def f4(self):
 import FreeCADGui
 
 def run_view3d(self,name,shape,workspace,mode,wireframe,transparency):
-	
+
 	#sayl()
 
 
@@ -416,7 +423,7 @@ def run_view3d(self,name,shape,workspace,mode,wireframe,transparency):
 		f = w.addObject('Part::Feature', name)
 	if s <> None:
 		f.Shape=s
-	#say("shape",s);say("name",name)
+	say("shape",s);say("name",name)
 
 	w.recompute()
 
@@ -1015,17 +1022,27 @@ def run_FreeCAD_Hull(self,*args, **kwargs):
 		# create a alpha simplex if it is small enough 
 		if max ([e.Length for e in tta+ttb+ttc+ttd])<lmax:
 			bbtime=time.time()
+			if 10:
+				wire=Part.makePolygon([a,b,c,a])
+				colf += [Part.Face(wire)]
+				wire=Part.makePolygon([a,b,d,a])
+				colf += [Part.Face(wire)]
+				wire=Part.makePolygon([a,d,c,a])
+				colf += [Part.Face(wire)]
+				wire=Part.makePolygon([d,b,c,d])
+				colf += [Part.Face(wire)]
 
-			w=Part.BSplineSurface()
-			w.buildFromPolesMultsKnots(np.array([[a,b],[a,c]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
-			colf += [w.toShape()]
-			w.buildFromPolesMultsKnots(np.array([[a,b],[a,d]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
-			colf += [w.toShape()]
-			w.buildFromPolesMultsKnots(np.array([[b,c],[b,d]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
-			colf += [w.toShape()]
-			w.buildFromPolesMultsKnots(np.array([[a,d],[a,c]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
-			colf += [w.toShape()]
-#			say("! time alpha:makefaces {}  simplex edges{}".format(time.time()-bbtime,bbtime-aatime)) 
+			else:
+				w=Part.BSplineSurface()
+				w.buildFromPolesMultsKnots(np.array([[a,b],[a,c]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
+				colf += [w.toShape()]
+				w.buildFromPolesMultsKnots(np.array([[a,b],[a,d]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
+				colf += [w.toShape()]
+				w.buildFromPolesMultsKnots(np.array([[b,c],[b,d]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
+				colf += [w.toShape()]
+				w.buildFromPolesMultsKnots(np.array([[a,d],[a,c]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
+				colf += [w.toShape()]
+			say("! time alpha:makefaces {}  simplex edges{}".format(time.time()-bbtime,bbtime-aatime)) 
 	say("time to caculate alpha:{}".format(time.time()-atime)) 
 
 
@@ -1065,3 +1082,145 @@ def run_FreeCAD_Hull(self,*args, **kwargs):
 	atime=time.time()
 	self.outExec.call()
 	say("time for call view3dNodes:{}".format(time.time()-atime)) 
+
+
+
+#---------------
+
+def cylindricprojection(self,*args, **kwargs):
+	import numpy as bp
+
+	s=App.activeDocument().ReflectLines001.Shape
+
+	eds=[]
+	for e in s.Edges:
+		pts2=[]
+		pts=e.discretize(100)
+		for p in pts:
+			h=p.y
+			arc=np.arctan2(p.x,p.z)
+			r=FreeCAD.Vector(p.x,p.z).Length
+			R=150
+			p2=FreeCAD.Vector(np.sin(arc)*R,h,np.cos(arc)*R)
+			pts2 += [p2]
+
+		Part.show(Part.makePolygon(pts2))
+
+
+def run_FreeCAD_2DGeometry(self,*args, **kwargs):
+	
+	sayl()
+	#say(self.Lock)
+	#self.Lock=0
+	import os
+	if os.path.exists('/tmp/lock'):
+		say("Abbruch")
+		return
+
+	try:
+		if time.time()-self.Lock <1.1:
+			return
+	except:
+		say("noc lock")
+	self.Lock=time.time()
+	say("running--------")
+	
+	face=self.getPinObject("Shape")
+	if face == None:
+		return
+	
+	umin,umax,vmin,vmax=face.ParameterRange
+	sf=face.Surface
+
+	ua=self.getData("ua")*0.1
+	va=self.getData("va")*0.1
+	ub=self.getData("ub")*0.1
+	vb=self.getData("vb")*0.1
+
+	ua=umin+ua*(umax-umin)
+	va=vmin+va*(vmax-vmin)
+	ub=umin+ub*(umax-umin)
+	vb=vmin+vb*(vmax-vmin)
+
+	a=FreeCAD.Base.Vector2d(ua,va)
+	b=FreeCAD.Base.Vector2d(ub,vb)
+
+	line=Part.Geom2d.Line2dSegment(a,b)
+	
+	ee = line.toShape(sf)
+	# Part.show(ee)
+	#say(ee)
+	say(ee.Length)
+	
+	self.setPinObject("geometry",line)
+	self.setPinObject("Shape_out",ee)
+
+	self.outExec.call()
+	self.Lock=0
+
+
+def run_FreeCAD_2DCircle(self,*args, **kwargs):
+
+	face=self.getPinObject("Shape")
+	if face == None:
+		return
+
+	umin,umax,vmin,vmax=face.ParameterRange
+	sf=face.Surface
+
+	u=self.getData("u")*0.1
+	v=self.getData("v")*0.1
+	r=self.getData("radius")*0.1
+
+	u=umin+u*(umax-umin)
+	v=vmin+v*(vmax-vmin)
+	r=r*(umax-umin)
+
+	a=FreeCAD.Base.Vector2d(u,v)
+
+	line=Part.Geom2d.Circle2d(a,r)
+	say(line)
+	
+	ee = line.toShape(sf)
+	
+	self.setPinObject("geometry",line)
+	self.setPinObject("Shape_out",ee)
+
+	self.outExec.call()
+
+
+def run_FreeCAD_2DEllipse(self,*args, **kwargs):
+
+	face=self.getPinObject("Shape")
+	if face == None:
+		return
+
+	umin,umax,vmin,vmax=face.ParameterRange
+	sf=face.Surface
+
+	u=self.getData("uLocation")*0.1
+	v=self.getData("vLocation")*0.1
+	#r=self.getData("radius")*0.1
+	r=4
+
+	u=umin+u*(umax-umin)
+	v=vmin+v*(vmax-vmin)
+	r=r*(umax-umin)
+
+	a=FreeCAD.Base.Vector2d(u,v)
+	xax=FreeCAD.Base.Vector2d(np.sin(self.getData("direction")*np.pi/5),np.cos(self.getData("direction")*np.pi/5))
+	#yax=FreeCAD.Base.Vector2d(self.getData("uYAxis"),self.getData("vYAxis"))
+	fig=ine=Part.Geom2d.Ellipse2d()
+	fig.MinorRadius=self.getData("MinorRadius")*0.1
+	fig.MajorRadius=self.getData("MajorRadius")*0.1
+	fig.Location=a
+	fig.XAxis=xax
+#	fig.YAxis=yax
+	
+	
+	ee = fig.toShape(sf)
+	
+	self.setPinObject("geometry",fig)
+	self.setPinObject("Shape_out",ee)
+
+	self.outExec.call()
