@@ -212,10 +212,105 @@ class FreeCAD_uvGrid(FreeCadNodeBase):
 		self.createOutputPin('uEdges', 'ShapeListPin')
 		self.createOutputPin('vEdges', 'ShapeListPin')
 
-
 	@staticmethod
 	def description():
 		return FreeCAD_uvGrid.__doc__
+
+	@staticmethod
+	def category():
+		return 'Development'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
+
+class FreeCAD_Voronoi(FreeCadNodeBase):
+	'''
+	voronoi cells, delaunay triangulation on a surface for a given set of uv points  on this surface
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(self.__class__, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.createInputPin('Face', 'ShapePin')
+#		a=self.createInputPin('uCount', 'IntPin',5)
+#		a.recomputeNode=True
+#		a=self.createInputPin('vCount', 'IntPin',5)
+#		a.recomputeNode=True
+		self.createInputPin("useLines", 'BoolPin', True)
+		a=self.createInputPin("indA", 'IntPin', True)
+		a.recomputeNode=True
+		a.setInputWidgetVariant("MyINPUTVARIANT")
+
+		a=self.createInputPin("flipArea", 'BoolPin', True)
+		a.recomputeNode=True
+		self.createInputPin("indB", 'IntPin', True)
+		self.createOutputPin('uEdges', 'ShapeListPin')
+		self.createOutputPin('vEdges', 'ShapeListPin')
+		self.createInputPin('uList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
+		self.createInputPin('vList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
+
+		self.createOutputPin('Points', 'ShapePin')
+		self.createOutputPin('convexHull', 'ShapePin')
+		self.createOutputPin('delaunayTriangles', 'ShapePin')
+		self.createOutputPin('voronoiCells', 'ShapePin')
+
+
+	@staticmethod
+	def description():
+		return FreeCAD_Voronoi.__doc__
+
+	@staticmethod
+	def category():
+		return 'Development'
+
+	@staticmethod
+	def keywords():
+		return []
+
+
+
+class FreeCAD_Hull(FreeCadNodeBase):
+	'''
+	delaynay triangulation, convex hull and alpha hull for a given set of points
+	'''
+
+	def __init__(self, name="Fusion"):
+		super(self.__class__, self).__init__(name)
+		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+		self.createInputPin('Shape', 'ShapePin')
+		self.createInputPin("singleSimplex", 'BoolPin', True)
+
+		a=self.createInputPin("simplex", 'IntPin', True)
+		a.recomputeNode=True
+		a.description="index of the displayd simplex if singleSimplex is set"
+#		a.setInputWidgetVariant("MyINPUTVARIANT")
+
+		a=self.createInputPin("showFaces", 'BoolPin', True)
+		a.recomputeNode=True
+		a.description="display alpha and convex hull by faces" 
+
+		a=self.createInputPin("alpha", 'IntPin', True)
+		a.recomputeNode=True
+
+		self.createOutputPin('uEdges', 'ShapeListPin')
+		self.createOutputPin('vEdges', 'ShapeListPin')
+		self.createInputPin('uList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
+		self.createInputPin('vList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
+		#self.createOutputPin('edges', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
+		self.createOutputPin('Points', 'ShapePin')
+		self.createOutputPin('convexHull', 'ShapePin')
+		self.createOutputPin('delaunayTriangles', 'ShapePin')
+		self.createOutputPin('alphaHull', 'ShapePin').description='edges or faces compound of the alpha hull'
+
+
+	@staticmethod
+	def description():
+		return FreeCAD_Hull.__doc__
 
 	@staticmethod
 	def category():
@@ -234,12 +329,13 @@ class FreeCAD_uvGrid(FreeCadNodeBase):
 
 
 
-
 def nodelist():
 	return [
 				FreeCAD_Bar,
 				FreeCAD_Tripod,
 				FreeCAD_YYY,
 				FreeCAD_uIso, FreeCAD_vIso,
-				FreeCAD_uvGrid
+				FreeCAD_uvGrid,
+				FreeCAD_Voronoi,
+				FreeCAD_Hull
 		]

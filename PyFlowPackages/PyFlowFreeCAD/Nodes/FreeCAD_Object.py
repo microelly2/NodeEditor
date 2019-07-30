@@ -2546,7 +2546,7 @@ class FreeCAD_LOD(FreeCadNodeBase):
 
 class FreeCAD_view3D(FreeCadNodeBase):
 	'''
-	create an instance
+	create an instance in 3D space of FreeCAD, show the shape
 	'''
 
 	def __init__(self, name="LOD",**kvargs):

@@ -457,20 +457,20 @@ def createPolygonFromCoordinateListswithnumpy():
 	makeInt.setData('i', 50)
 	gg.addNode(makeInt)
 
-	v = pfwrap.createFunction('PyFlowFreeCAD',"Vector","zip")
+	v = pfwrap.createFunction('PyFlowFreeCAD',"Numpy","zip")
 	gg.addNode(v)
 
-	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","randomList")
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Numpy","randomList")
 	gg.addNode(v1)
 	connection = pfwrap.connect(v1,'out', v,'x')
 	connection = pfwrap.connect(makeInt,'out', v1,'size')
 
-	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","randomList")
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Numpy","randomList")
 	gg.addNode(v1)
 	connection = pfwrap.connect(v1,'out', v,'y')
 	connection = pfwrap.connect(makeInt,'out', v1,'size')
 
-	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","randomList")
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Numpy","randomList")
 	gg.addNode(v1)
 	connection = pfwrap.connect(v1,'out', v,'z')
 	connection = pfwrap.connect(makeInt,'out', v1,'size')
@@ -1307,3 +1307,80 @@ def test_CC():
 
 
 
+def test_BB():
+
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Voronoi","myLOD")
+	t2.setPosition(100,200)
+	
+	t2.compute()
+	gg.addNode(t2)
+
+	refresh_gui()
+
+
+
+
+def test_BB():
+	'''
+	create Polygon from CoordinateLists	with numpy
+	create 3 random lists
+	zip them to a vector list
+	create a polygon 
+	'''
+
+	instance=pfwrap.getInstance()
+	clearGraph()
+	gg=pfwrap.getGraphManager().getAllGraphs()[0]
+
+
+	makeInt=pfwrap.createFunction('PyFlowBase',"DefaultLib","makeInt")
+	makeInt.setData('i', 50)
+	gg.addNode(makeInt)
+
+	v = pfwrap.createFunction('PyFlowFreeCAD',"Numpy","zip")
+	gg.addNode(v)
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Numpy","randomList")
+	gg.addNode(v1)
+	connection = pfwrap.connect(v1,'out', v,'x')
+	connection = pfwrap.connect(makeInt,'out', v1,'size')
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Numpy","randomList")
+	gg.addNode(v1)
+	connection = pfwrap.connect(v1,'out', v,'y')
+	connection = pfwrap.connect(makeInt,'out', v1,'size')
+
+	v1 = pfwrap.createFunction('PyFlowFreeCAD',"Numpy","randomList")
+	gg.addNode(v1)
+	connection = pfwrap.connect(v1,'out', v,'z')
+	connection = pfwrap.connect(makeInt,'out', v1,'size')
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Console","Console")
+	t.setPosition(-200,200)
+	gg.addNode(t)
+#	connection = pfwrap.connect(v,'out', t,'entity')
+	t.compute()
+
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Polygon2","Polygon")
+	gg.addNode(t)
+#	connection = pfwrap.connect(v,'out', t,'points')
+
+
+	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Voronoi","myVoronoi")
+	t2.setPosition(100,200)
+	
+	#t2.compute()
+	#gg.addNode(t2)
+
+	#t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Ref","Ref")
+	#t2.compute()
+	#gg.addNode(t2)
+
+
+	refresh_gui()
+	say("fertig")
