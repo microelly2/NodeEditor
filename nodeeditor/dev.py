@@ -3,6 +3,8 @@ import random
 import time
 
 import FreeCAD
+import FreeCADGui
+
 import nodeeditor.store
 import Part
 
@@ -426,7 +428,6 @@ def f4(self):
 	say("FreeCAD Ui Node runs f4")
 	say("nothing to do, done")
 
-import FreeCADGui
 
 def run_view3d(self,name,shape,workspace,mode,wireframe,transparency):
 
@@ -1423,6 +1424,7 @@ def run_FreeCAD_Simplex(self,*args, **kwargs):
 	k=self.getData("noise")
 
 	def rav(v):
+		'''add a random vector to a vector'''
 		return v+FreeCAD.Vector(0.5-random.random(),0.5-random.random(),0.5-random.random())*k
 
 
@@ -1476,6 +1478,7 @@ def run_FreeCAD_Tread(self,produce=False, **kwargs):
 	k=self.getData("noise")
 
 	def rav(v):
+		'''add a random vector to a vector'''
 		return v+FreeCAD.Vector(0.5-random.random(),0.5-random.random(),(0.5-random.random())*1)*k
 
 
