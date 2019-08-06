@@ -404,7 +404,11 @@ def run_view3d(self,name,shape,workspace,mode,wireframe,transparency):
 	s=shape
 	l=FreeCAD.listDocuments()
 	if workspace=='' or workspace=='None':
-		w=l['Unnamed']
+		try:
+			w=l['Unnamed']
+		except:
+			w=FreeCAD.newDocument("Unnamed")
+			FreeCADGui.runCommand("Std_TileWindows")
 	else:
 		if workspace in l.keys():
 			w=l[workspace]
@@ -504,7 +508,7 @@ def run_FreeCAD_Tripod(self,*args, **kwargs):
 	else: 
 			n=t2.cross(t1).normalize()
 
-	
+
 	if self.getData('display'):
 		obj=self.getObject()
 		shape=Part.makePolygon([pos,pos+t1*10,pos+t2*5,pos,pos+n*5],
@@ -1222,5 +1226,478 @@ def run_FreeCAD_2DEllipse(self,*args, **kwargs):
 	
 	self.setPinObject("geometry",fig)
 	self.setPinObject("Shape_out",ee)
+
+	self.outExec.call()
+
+
+def run_FreeCAD_2DArcOfEllipse(self,*args, **kwargs):
+
+	face=self.getPinObject("Shape")
+	if face == None:
+		return
+
+	umin,umax,vmin,vmax=face.ParameterRange
+	sf=face.Surface
+
+	u=self.getData("uLocation")*0.1
+	v=self.getData("vLocation")*0.1
+	#r=self.getData("radius")*0.1
+	r=4
+
+	u=umin+u*(umax-umin)
+	v=vmin+v*(vmax-vmin)
+	r=r*(umax-umin)
+
+	a=FreeCAD.Base.Vector2d(u,v)
+	xax=FreeCAD.Base.Vector2d(np.sin(self.getData("direction")*np.pi/5),np.cos(self.getData("direction")*np.pi/5))
+	#yax=FreeCAD.Base.Vector2d(self.getData("uYAxis"),self.getData("vYAxis"))
+	fig=Part.Geom2d.Ellipse2d()
+	fig.MinorRadius=self.getData("MinorRadius")*0.1
+	fig.MajorRadius=self.getData("MajorRadius")*0.1
+	fig.Location=a
+	fig.XAxis=xax
+#	fig.YAxis=yax
+
+	arca=self.getData("startAngle")
+	arcb=self.getData("endAngle")*np.pi/5
+
+	say(arca,arcb)
+	fig=Part.Geom2d.ArcOfEllipse2d(fig,arca,arcb)
+
+	ee = fig.toShape(sf)
+	
+	self.setPinObject("geometry",fig)
+	self.setPinObject("Shape_out",ee)
+
+	self.outExec.call()
+
+def run_FreeCAD_2DArcOfCircle(self,*args, **kwargs):
+
+	sayl()
+	face=self.getPinObject("Shape")
+	if face == None:
+		umin,umax,vmin,vmax=0,10,0,10
+		sf=None
+	else:
+		umin,umax,vmin,vmax=face.ParameterRange
+		sf=face.Surface
+
+	u=self.getData("uLocation")*0.1
+	v=self.getData("vLocation")*0.1
+	#r=self.getData("radius")*0.1
+	r=self.getData("MajorRadius")*0.1
+
+	u=umin+u*(umax-umin)
+	v=vmin+v*(vmax-vmin)
+	r=r*(umax-umin)
+
+	a=FreeCAD.Base.Vector2d(u,v)
+#	xax=FreeCAD.Base.Vector2d(np.sin(self.getData("direction")*np.pi/5),np.cos(self.getData("direction")*np.pi/5))
+#	#yax=FreeCAD.Base.Vector2d(self.getData("uYAxis"),self.getData("vYAxis"))
+#	fig=Part.Geom2d.Ellipse2d()
+#	fig.MinorRadius=self.getData("MinorRadius")*0.1
+#	fig.MajorRadius=self.getData("MajorRadius")*0.1
+#	fig.Location=a
+#	fig.XAxis=xax
+#	fig.YAxis=yax
+
+
+	fig=Part.Geom2d.Circle2d(a,r)
+
+	arca=self.getData("startAngle")
+	arcb=self.getData("endAngle")*np.pi/5
+
+	say(arca,arcb)
+	fig=Part.Geom2d.ArcOfCircle2d(fig,arca,arcb)
+
+	if sf== None:
+		ee = fig.toShape()
+	else:
+		ee = fig.toShape(sf)
+	
+	self.setPinObject("geometry",fig)
+	self.setPinObject("Shape_out",ee)
+
+	self.outExec.call()
+
+def run_FreeCAD_2DArcOfParabola(self,*args, **kwargs):
+
+	face=self.getPinObject("Shape")
+	if face == None:
+		return
+
+	umin,umax,vmin,vmax=face.ParameterRange
+	sf=face.Surface
+
+	u=self.getData("uLocation")*0.1
+	v=self.getData("vLocation")*0.1
+	#r=self.getData("radius")*0.1
+	r=4
+
+	u=umin+u*(umax-umin)
+	v=vmin+v*(vmax-vmin)
+	r=r*(umax-umin)
+
+	a=FreeCAD.Base.Vector2d(u,v)
+	xax=FreeCAD.Base.Vector2d(np.sin(self.getData("direction")*np.pi/5),np.cos(self.getData("direction")*np.pi/5))
+	#yax=FreeCAD.Base.Vector2d(self.getData("uYAxis"),self.getData("vYAxis"))
+	fig=Part.Geom2d.Parabola2d()
+	fig.Focal=self.getData("MinorRadius")*0.1
+	#fig.MajorRadius=self.getData("MajorRadius")*0.1
+	fig.Location=a
+	fig.XAxis=xax
+#	fig.YAxis=yax
+
+	arca=self.getData("startAngle")*np.pi/5
+	arcb=self.getData("endAngle")*np.pi/5
+
+	say(arca,arcb)
+	fig=Part.Geom2d.ArcOfParabola2d(fig,arca,arcb)
+
+	if sf <> None:
+		ee = fig.toShape(sf)
+	else:
+		ee = fig.toShape()
+	
+	self.setPinObject("geometry",fig)
+	self.setPinObject("Shape_out",ee)
+
+	self.outExec.call()
+
+ 
+ 
+
+'''
+para=Part.Parabola(App.Vector(-50.993458,78.566841,0),App.Vector(28.611713,68.414307,0),App.Vector(0,0,1))
+Part.ArcOfParabola(para,11.605501,43.939412)
+
+
+
+circ=Part.Circle(App.Vector(33.254650,124.267365,0),App.Vector(0,0,1),49.420288)
+Part.ArcOfCircle(circ,3.110107,4.361358)
+'''
+
+#--------------------------
+
+
+def run_FreeCAD_Simplex(self,*args, **kwargs):
+
+	k=self.getData("noise")
+
+	def rav(v):
+		return v+FreeCAD.Vector(0.5-random.random(),0.5-random.random(),0.5-random.random())*k
+
+
+	sayl()
+	a=self.getData("pointA")
+	b=self.getData("pointB")
+	c=self.getData("pointC")
+	d=self.getData("pointD")
+	say(a,b,c,d)
+	colf=[]
+	wire=Part.makePolygon([a,rav(b),rav(c),a])
+	colf += [Part.Face(wire)]
+	
+	wire=Part.makePolygon([a,rav(b),rav(d),a])
+	colf += [Part.Face(wire)]
+
+	wire=Part.makePolygon([a,rav(c),rav(d),a])
+	colf += [Part.Face(wire)]
+
+	wire=Part.makePolygon([c,rav(b),rav(d),c])
+	colf += [Part.Face(wire)]
+
+	#Part.show(Part.Compound(colf))
+	self.setPinObject("Compound_out",Part.Compound(colf))
+
+	for tol in range(100):
+		colf2=[c.copy() for c in colf]
+		try:
+			say ("try tolerance",tol)
+			for f in colf2:
+				f.Tolerance=tol
+			sh=Part.Shell(colf2)
+			sol=Part.Solid(sh)
+			say (sol.isValid())
+			if sol.isValid():
+				say("solid created with tol",tol)
+				#Part.show(sol)
+				#cc=self.getObject();cc.Shape=sol
+				
+				self.setPinObject("Shape_out",sol)
+				break
+		except:
+			pass
+
+	self.outExec.call()
+
+
+
+def run_FreeCAD_Tread(self,produce=False, **kwargs):
+
+	k=self.getData("noise")
+
+	def rav(v):
+		return v+FreeCAD.Vector(0.5-random.random(),0.5-random.random(),(0.5-random.random())*1)*k
+
+
+	pts=[self.getData("point_"+str(i)) for i in range(8)]
+	pol=Part.makePolygon(pts+[pts[0]])
+	f=Part.Face(pol)
+
+	v=FreeCAD.Vector(0,0,120)
+	pts2=[p+v for p in pts]
+	pol2=Part.makePolygon(pts2+[pts2[0]])
+	f2=Part.Face(pol2)
+	colf=[f,f2]
+
+	for i in range(8):
+		pol=Part.makePolygon([pts[i-1],rav(pts[i]),rav(pts2[i]),rav(pts2[i-1]),pts[i-1]])
+		f=Part.makeFilledFace(pol.Edges)
+		colf += [f]
+
+	comp=Part.Compound(colf)
+	comp.Placement.Rotation=FreeCAD.Rotation(FreeCAD.Vector(1,0,0),90)
+	self.setPinObject("Compound_out",comp)
+
+	for tol in range(60,150):
+		colf2=[c.copy() for c in colf]
+		try:
+			for f in colf2:
+				f.Tolerance=tol
+			sh=Part.Shell(colf2)
+			sol=Part.Solid(sh)
+			sol.Placement.Rotation=FreeCAD.Rotation(FreeCAD.Vector(1,0,0),90)
+			if sol.isValid():
+				say("solid created with tol",tol)
+				if produce:
+					Part.show(sol)
+				#cc=self.getObject();cc.Shape=sol
+				self.setPinObject("Shape_out",sol)
+				break
+		except:
+			pass
+
+	self.outExec.call()
+
+
+def run_FreeCAD_RefList(self,*args, **kwargs):
+
+		if 0:
+			pintyp="VectorPin"
+			pinname="Base"
+			p2 = CreateRawPin(pinname,self, pintyp, PinDirection.Input)
+			try:
+				uiPin = self.getWrapper()._createUIPinWrapper(p2)
+				uiPin.setDisplayName("{}".format(p2.name))
+			except:
+				pass
+
+
+		#clean up
+		pins=self.getOrderedPins()
+		for p in pins:
+			if not p.isExec() and p.direction <> PinDirection.Input :
+				p.kill()
+
+		name="objects"
+		pinname=name
+		pintyp="ShapeListPin"
+		p2 = CreateRawPin(pinname,self, pintyp, PinDirection.Output)
+		try:
+			uiPin = self.getWrapper()._createUIPinWrapper(p2)
+			uiPin.setDisplayName("{}".format(p2.name))
+		except:
+			pass
+
+#		self.setPinObject(pinname,subob)
+
+		ss=FreeCADGui.Selection.getSelection()
+		
+		self.setPinObjects(pinname,ss)
+		
+		# platzieren
+		
+		positions=self.getData('positions')
+		rotations=self.getData('rotations')
+		for p,r in zip(positions,rotations)[:3]:
+			print p
+			print r
+			print
+		
+		
+		objs=self.getPinObjects(pinname)
+		for obj,pos,rot in zip(objs,positions,rotations):
+			obj.Placement=FreeCAD.Placement(pos,rot)
+
+
+
+def run_FreeCAD_Discretize(self,*args, **kwargs):
+	#sayl()
+	count=self.getData("count")
+	edge=self.getPinObject("Wire")
+	say(edge)
+	pts=edge.discretize(count*10)
+	Part.show(Part.makePolygon(pts))
+	face=FreeCAD.ActiveDocument.BePlane.Shape.Face1
+	sf=face.Surface
+	r=200
+	pts2=[]
+	pts3=[]
+	for i in range(len(pts)-1):
+		p=pts[i]
+		u,v=sf.parameter(p)
+		say(u,v)
+		t=(pts[i+1]-p).normalize()
+		say(t)
+		n=sf.normal(u,v)
+		say(n)
+		u,v=sf.parameter(p+n.cross(t)*r)
+		pts2 += [sf.value(u,v)]
+		u,v=sf.parameter(p-n.cross(t)*r)
+		pts3 += [sf.value(u,v)]
+	closed=True
+	if closed:
+		Part.show(Part.makePolygon(pts2+[pts2[0]]))
+		Part.show(Part.makePolygon(pts3+[pts3[0]]))
+	else:
+		Part.show(Part.makePolygon(pts2))
+		Part.show(Part.makePolygon(pts3))
+
+
+
+def run_FreeCAD_Offset(self,produce=False, **kwargs):
+	#sayl()
+	count=self.getData("count")
+	edge=self.getPinObject("Wire")
+	say(edge)
+	pts=edge.discretize(count*10)
+	# Part.show(Part.makePolygon(pts))
+	face=self.getPinObject("Shape")
+	sf=face.Surface
+	r=self.getData("offset")*20
+	pts2=[]
+	pts3=[]
+	pts4=[]
+	pts5=[]
+	#r2=self.getData("height")*20
+	r2=100
+	
+	for i in range(len(pts)-1):
+		p=pts[i]
+		u,v=sf.parameter(p)
+		say(u,v)
+		t=(pts[i+1]-p).normalize()
+		say(t)
+		n=sf.normal(u,v)
+		say(n)
+		u,v=sf.parameter(p+n.cross(t)*r)
+		pts2 += [sf.value(u,v)]
+		u,v=sf.parameter(p-n.cross(t)*r)
+		pts3 += [sf.value(u,v)]
+		pts4 += [p+n*r2]
+		pts5 += [p-n*r2]
+	closed=True
+	closed=False
+	if closed:
+		pol2=Part.makePolygon(pts2+[pts2[0]])
+		pol3=Part.makePolygon(pts3+[pts3[0]])
+		pol4=Part.makePolygon(pts4+[pts4[0]])
+	else:
+		pol2=Part.makePolygon(pts2)
+		pol3=Part.makePolygon(pts3)
+		pol4=Part.makePolygon(pts4)
+	if produce:
+			Part.show(pol2)
+			Part.show(pol3)
+			Part.show(pol4)
+
+	sfa=Part.BSplineSurface()
+	
+	poles=np.array([pts2,pts4,pts3])
+
+	countB=len(pts2)
+	countA=3
+	degA=2
+	degB=3
+	if closed==False:
+		multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+		multA=[degA]+[1]*(countA-degA)+[degA]
+		
+		multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
+		knotA=range(len(multA))
+		knotB=range(len(multB))
+
+		sfa=Part.BSplineSurface()
+		sfa.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,True,False,degA,degB)
+	else:
+		multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+		multB=[degB]+[1]*(countB-degB)+[degB]
+		knotA=range(len(multA))
+		knotB=range(len(multB))
+
+		sfa=Part.BSplineSurface()
+		sfa.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,True,degA,degB)
+
+	if 10:
+		poles=np.array([pts2,pts4,pts3,pts5])
+		countA=4
+
+		poles=np.array([pts2,pts2,pts4,pts3,pts3])
+		countA=5
+		
+		multA=[degA]+[1]*(countA-degA)+[degA]
+		multB=[degB]+[1]*(countB-degB)+[degB]
+		multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
+		knotA=range(len(multA))
+		knotB=range(len(multB))
+
+		sfa=Part.BSplineSurface()
+		sfa.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,True,False,degA,degB)
+
+
+	Part.show(sfa.toShape())
+
+
+
+	self.setPinObject("Shape_out",Part.Compound([pol2,pol3,pol4]))
+
+	self.outExec.call()
+
+
+
+def run_FreeCAD_FillEdge(self,produce=False, **kwargs):
+	
+	edge=self.getPinObject("Wire")
+	say(edge)
+	#_=Part.makeFilledFace(Part.__sortEdges__([App.ActiveDocument.Shape004.Shape.Edge2, ]))
+	_=Part.makeFilledFace([edge])
+	Part.show(_)
+	
+
+def run_FreeCAD_Solid(self,produce=False, **kwargs):
+	
+	shapes=self.getPinObjects("Shapes")
+	say(shapes)
+	colf=shapes
+
+	for tol in range(100):
+		colf2=[c.copy() for c in colf]
+		try:
+			say ("try tolerance",tol)
+			for f in colf2:
+				f.Tolerance=tol
+			sh=Part.Shell(colf2)
+			sol=Part.Solid(sh)
+			say (sol.isValid())
+			if sol.isValid():
+				say("solid created with tol",tol)
+				Part.show(sol)
+				#cc=self.getObject();cc.Shape=sol
+				
+				self.setPinObject("Shape_out",sol)
+				break
+		except:
+			pass
 
 	self.outExec.call()

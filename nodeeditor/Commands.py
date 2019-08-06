@@ -682,7 +682,11 @@ def thinoutGraph():
 
 def clearGraph():
 	instance=pfwrap.getInstance()
-	instance.graphManager.get().clear()
+	instance.graphManager.get().clear(keepRoot=False)
+
+def clearGraph(): # bugfix clear geht nicht mit fc #+#
+	for node in pfwrap.getInstance().graphManager.get().getAllNodes():
+		node.kill()
 
 def loadGraph():
 	showPyFlow()
@@ -1327,10 +1331,7 @@ def test_BB():
 
 def test_BB():
 	'''
-	create Polygon from CoordinateLists	with numpy
-	create 3 random lists
-	zip them to a vector list
-	create a polygon 
+	create voroni data for a random list of points
 	'''
 
 	instance=pfwrap.getInstance()
@@ -1390,40 +1391,36 @@ def test_BB():
 def test_BB():
 	'''
 	draw a line Geom2d.LineSegment onto a surface
+	and than a circke and an ellipse
 	'''
 
 	instance=pfwrap.getInstance()
 	clearGraph()
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
-	try:
+	# preprocessing load the environment scene ...
+	try: # the file with the BePlane
 		FreeCAD.open(u"/home/thomas/aa.FCStd")
 		FreeCAD.setActiveDocument("aa")
 	except:
 		pass
 
+	#create a reference node for the face1 of the beplane
 	FreeCADGui.Selection.clearSelection()
 	FreeCADGui.Selection.addSelection(FreeCAD.ActiveDocument.BePlane,['Face1'])
-
-	instance=pfwrap.getInstance()
-	clearGraph()
-	gg=pfwrap.getGraphManager().getAllGraphs()[0]
-
 
 	t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Ref","Ref_Box",b="das ist B")
 	t2.compute()
 	gg.addNode(t2)
 	t2.setPosition(-200,0)
 
+	# a linesegment on th beplane
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_2DGeometry","linesegment")
-	
 	t.compute()
 	gg.addNode(t)
 	connection = pfwrap.connect(t2,'Face1', t,'Shape')
 
-
 	rib5 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_view3D","view")
-
 	rib5.setPosition(200,0)
 	rib5.setData("Workspace","aa")
 	rib5.setData("name","linesegment")
@@ -1431,16 +1428,13 @@ def test_BB():
 	connection = pfwrap.connect(t,'Shape_out',rib5,'Shape')
 	pfwrap.chainExec(t,rib5)
 
+	# a circle on the beplane
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_2DCircle","circle")
-
 	t.compute()
 	gg.addNode(t)
 	connection = pfwrap.connect(t2,'Face1', t,'Shape')
 
-
-
 	rib5 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_view3D","view")
-
 	rib5.setPosition(200,0)
 	rib5.setData("Workspace","aa")
 	rib5.setData("name","circle")
@@ -1448,16 +1442,14 @@ def test_BB():
 	connection = pfwrap.connect(t,'Shape_out',rib5,'Shape')
 	pfwrap.chainExec(t,rib5)
 
+	# an ellipse on the beplane
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_2DEllipse","circle")
 	t.setPosition(-300,-200)
 	t.compute()
 	gg.addNode(t)
 	connection = pfwrap.connect(t2,'Face1', t,'Shape')
 
-
-
 	rib5 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_view3D","view")
-
 	rib5.setPosition(200,-200)
 	rib5.setData("Workspace","aa")
 	rib5.setData("name","circle")
@@ -1466,5 +1458,24 @@ def test_BB():
 	pfwrap.chainExec(t,rib5)
 
 
+	# an arcof ellipse on the beplane
+	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_2DArcOfEllipse","arc_of")
+	t.setPosition(-300,-200)
+	t.compute()
+	gg.addNode(t)
+	connection = pfwrap.connect(t2,'Face1', t,'Shape')
+
+	rib5 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_view3D","view")
+	rib5.setPosition(200,-200)
+	rib5.setData("Workspace","aa")
+	rib5.setData("name","arc_of")
+	gg.addNode(rib5)
+	connection = pfwrap.connect(t,'Shape_out',rib5,'Shape')
+	pfwrap.chainExec(t,rib5)
+
+
+	# todo: hyperbel, parabel  ...
+	#+#
+
 	refresh_gui()
-	say("fertig")
+

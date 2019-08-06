@@ -27,6 +27,9 @@ __vers__ ="0.01"
 
 import nodeeditor
 
+os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
+import Qt
+
 
 import os
 import re

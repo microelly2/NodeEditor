@@ -88,6 +88,10 @@ class FreeCADUIFunctionBase(UINodeBase):
 		actionAddOut3.setToolTip("tipp for moda")
 		actionAddOut3.triggered.connect(self.f3)
 
+		actionAddOut4 = self._menu.addAction("delete node")
+		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+		actionAddOut4.triggered.connect(self.deleteNode)
+
 
 
 
@@ -97,3 +101,7 @@ class FreeCADUIFunctionBase(UINodeBase):
 	def f2(self):
 		sayl()
 		say(self._rawNode)
+
+	def deleteNode(self):
+		self._rawNode.kill()
+

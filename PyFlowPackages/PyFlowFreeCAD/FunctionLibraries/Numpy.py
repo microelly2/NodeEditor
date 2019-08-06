@@ -468,6 +468,22 @@ class Numpy(FunctionLibraryBase):
         x1 = np.random.random(size)
         return list(x1)
 
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|random', 'Keywords': ['list','random']})
+    def onesList(size=('IntPin', 50)):
+        """create a list of ones"""
+        
+        x1 = np.ones(size)
+        return list(x1)
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('AnyPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|random', 'Keywords': ['list','random']})
+    def zerosList(size=('IntPin', 50)):
+        """create a list of zeros"""
+        
+        x1 = np.zeros(size)
+        return list(x1)
+
 
     @staticmethod
     @IMPLEMENT_NODE(returns=('VectorPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|array', 'Keywords': ['list','random']})
@@ -477,6 +493,25 @@ class Numpy(FunctionLibraryBase):
         res=np.array([x,y,z]).swapaxes(0,1)
         points=[FreeCAD.Vector(list(a)) for a in res]    
         return points
+
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('RotationPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|array', 'Keywords': ['list','random']})
+    def zipRotation(x=('AnyPin', [0]),y=('AnyPin', [1]),z=('AnyPin', [2]),angle=('AnyPin', [2])) :
+        """combine """
+        
+        res=np.array([x,y,z]).swapaxes(0,1)
+        rots=[FreeCAD.Rotation(FreeCAD.Vector(list(a)),b) for a,b in zip(res,angle)]    
+        return rots
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('RotationPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|array', 'Keywords': ['list','random']})
+    def zipPlacement(Base=('AnyPin', []),Rotation=('AnyPin', [])) :
+        """combine """
+        
+        pms=[FreeCAD.Placement(base,rot) for base,rot in zip(Base,Rotation)]    
+        return pms
+
 
     @staticmethod
     @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
