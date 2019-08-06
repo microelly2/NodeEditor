@@ -359,12 +359,37 @@ class ArrayInputWidget(InputWidgetRaw):
         super(ArrayInputWidget, self).resizeEvent(event)
 
 
+class MyInputWidget(InputWidgetSingle):
+    """
+    String data input widget
+    """
+
+    def __init__(self, parent=None, **kwds):
+        super(MyInputWidget, self).__init__(parent=parent, **kwds)
+        self.le = QLineEdit(self)
+        self.le.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+        self.setWidget(self.le)
+        self.le.textChanged.connect(lambda val: self.dataSetCallback(val))
+        self.le.setEnabled(False)
+
+    def blockWidgetSignals(self, bLocked):
+        self.le.blockSignals(bLocked)
+
+    def setWidgetValue(self, val):
+        self.le.setText(str(val))
+
+
+
 
 def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WIDGET_VARIANT,  **kwds):
     '''
     factory method
     '''
-    
+
+    if dataType == 'IntPin':
+        say("input variant for freecad int pin ",widgetVariant)
+        if widgetVariant == "HUHU":
+            return MyInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
     if dataType == 'VectorPin':
         return VectorInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'RotationPin':

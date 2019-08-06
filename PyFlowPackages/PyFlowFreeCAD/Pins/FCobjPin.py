@@ -76,7 +76,7 @@ class ShapePin(FCobjPin):
 
     @staticmethod
     def supportedDataTypes():
-        return ('ShapePin',)
+        return ('ShapePin','FacePin','EdgePin')
 
     @staticmethod
     def color():
@@ -93,6 +93,61 @@ class ShapePin(FCobjPin):
     @staticmethod
     def processData(data):
         return data
+
+class FaceId():
+    pass
+
+class FacePin(ShapePin):
+    """doc string for FloatFCobjPin"""
+
+    def __init__(self, name, parent, direction, **kwargs):
+        say("create pin",name,parent.getName(),direction)
+        super(FacePin, self).__init__(name, parent, direction)
+        self.setDefaultValue(None)
+
+    @staticmethod
+    def supportedDataTypes():
+        return ('FacePin',)
+
+    @staticmethod
+    def color():
+        return (250, 150, 150, 255)
+
+    @staticmethod
+    def pinDataTypeHint():
+        return 'FacePin', None
+
+    @staticmethod
+    def internalDataStructure():
+        return FaceId
+
+
+class EdgeId():
+    pass
+
+class EdgePin(ShapePin):
+    """doc string for FloatFCobjPin"""
+
+    def __init__(self, name, parent, direction, **kwargs):
+        say("create pin",name,parent.getName(),direction)
+        super(EdgePin, self).__init__(name, parent, direction)
+        self.setDefaultValue(None)
+
+    @staticmethod
+    def supportedDataTypes():
+        return ('EdgePin',)
+
+    @staticmethod
+    def color():
+        return (250, 250, 150, 255)
+
+    @staticmethod
+    def pinDataTypeHint():
+        return 'EdgePin', None
+
+    @staticmethod
+    def internalDataStructure():
+        return EdgeId
 
 
 
@@ -220,4 +275,4 @@ class ArrayPin(FCobjPin):
 
 
 def nodelist():
-    return [EnumerationPin,ShapePin,ShapeListPin,FCobjPin,ArrayPin]
+    return [EnumerationPin,ShapePin,FacePin,EdgePin,ShapeListPin,FCobjPin,ArrayPin]
