@@ -31,6 +31,9 @@ os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
 import Qt
 
 
+import nodeeditor.pfwrap as pfwrap
+pfwrap.getInstance().show()
+
 import os
 import re
 global __dir__
