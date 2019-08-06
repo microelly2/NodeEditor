@@ -229,9 +229,21 @@ if FreeCAD.GuiUp:
 	_current += [c3bI(["scenes"], always, 'Commands', 'QtEnvironment',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'crossbeam example',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'play with FreeCAD_Array',icon=None)]
-#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
-#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'createBePlane',icon=None)]
 
+	_current += [c3bI(["tests"], always, 'Commands', 'create All Nodes for Tests',icon=None)]
+	_current += [c3bI(["tests"], always, 'Commands', 'run Test for All Nodes',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'view3D Ref and LOD',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'view3D Example',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'LOD Demo',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'voronoi',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'Voronoi for Pointcloud',icon=None)]
+	_current += [c3bI(["scenes"], always, 'Commands', 'Geom2d Nodes',icon=None)]
+#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
+#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
+#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
+#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
+#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 
 	toolbars = [
 				['Tools', tools],

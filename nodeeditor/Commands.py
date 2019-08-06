@@ -15,6 +15,8 @@ os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
 import Qt
 
 from PyFlow.Core.Common import *
+from PyFlow import CreateRawPin
+
 from nodeeditor.say import *
 
 import FreeCAD,FreeCADGui
@@ -553,7 +555,12 @@ def reset():
 	if 'aa' not in FreeCAD.listDocuments().keys():
 		FreeCAD.open(u"/home/thomas/aa.FCStd")
 	FreeCAD.setActiveDocument("aa")
-
+	
+	try:
+		pfwrap.deleteInstance()
+		del(FreeCAD.PF)
+	except:
+		pass
 	instance=pfwrap.getInstance()
 	clearGraph()
 	loadGraph()
@@ -687,6 +694,8 @@ def clearGraph():
 def clearGraph(): # bugfix clear geht nicht mit fc #+#
 	for node in pfwrap.getInstance().graphManager.get().getAllNodes():
 		node.kill()
+	pfwrap.deleteInstance()
+	del(FreeCAD.PF)
 
 def loadGraph():
 	showPyFlow()
@@ -1062,23 +1071,6 @@ def crossbeamexample():
 # the 4 main icons for new ideas
 
 
-def test_AA():
-
-	PartExplorerSubshapeIndexandPlot()
-
-def test_BB():
-
-	refresh_gui()
-
-
-def test_CC():
-
-	refresh_gui()
-
-
-def test_DD():
-	crossbeamexample()
-
 
 
 #--------------------------------------------------------
@@ -1107,11 +1099,8 @@ def saveAll():
 	FreeCAD.ActiveDocument.saveAs(u"/home/thomas/{}.FCStd".format(fn))
 	pass
 
-def T1():
-	createObjectWithAllProperties()
-	pass
 
-def T2():
+def view3DExample():
 	instance=pfwrap.getInstance()
 	clearGraph()
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
@@ -1181,7 +1170,7 @@ def createAllNodesforTest():
 	return nodes
 
 
-def T3():
+def runTestforAllNodes():
 	#FreeCAD.nodes=createAllNodesforTest()
 
 	instance=pfwrap.getInstance()
@@ -1197,11 +1186,9 @@ def T3():
 	sayl("done")
 
 
-from PyFlow.Core.Common import *
-from PyFlow import CreateRawPin
 
 
-def test_DD():
+def view3DRefandLOD():
 
 	FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
 	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
@@ -1220,7 +1207,7 @@ def test_DD():
 	clearGraph()
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
-	rib5 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","view3D")
+	rib5 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_view3D","view3D")
 	rib5.setPosition(100,0)
 	gg.addNode(rib5)
 
@@ -1238,7 +1225,7 @@ def test_DD():
 
 
 
-def test_CC():
+def LODDemo():
 
 
 	instance=pfwrap.getInstance()
@@ -1311,7 +1298,7 @@ def test_CC():
 
 
 
-def test_BB():
+def voronoi():
 
 
 	instance=pfwrap.getInstance()
@@ -1329,7 +1316,7 @@ def test_BB():
 
 
 
-def test_BB():
+def VoronoiforPointcloud():
 	'''
 	create voroni data for a random list of points
 	'''
@@ -1388,7 +1375,7 @@ def test_BB():
 
 
 
-def test_BB():
+def Geom2dNodes():
 	'''
 	draw a line Geom2d.LineSegment onto a surface
 	and than a circke and an ellipse
@@ -1399,11 +1386,7 @@ def test_BB():
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
 	# preprocessing load the environment scene ...
-	try: # the file with the BePlane
-		FreeCAD.open(u"/home/thomas/aa.FCStd")
-		FreeCAD.setActiveDocument("aa")
-	except:
-		pass
+	createBePlane()
 
 	#create a reference node for the face1 of the beplane
 	FreeCADGui.Selection.clearSelection()
@@ -1478,4 +1461,41 @@ def test_BB():
 	#+#
 
 	refresh_gui()
+
+
+def createBePlane():
+	import nurbswb
+	import nurbswb.berings
+	rc=nurbswb.berings.createBePlane()
+	rc.noise=4.
+	FreeCAD.activeDocument().recompute()
+	
+
+
+def T1():
+	sayl("nix")
+
+def T2()
+	sayl("nix")
+
+def T3()
+	sayl("nix3")
+
+
+def test_AA():
+
+	PartExplorerSubshapeIndexandPlot()
+
+def test_BB():
+
+	refresh_gui()
+
+
+def test_CC():
+
+	refresh_gui()
+
+
+def test_DD():
+	crossbeamexample()
 
