@@ -92,7 +92,7 @@ global _Command2
 
 class _Command2():
 
-	def __init__(self, lib=None, name=None, icon=None, command=None, modul='nodeeditor',tooltip='No Tooltip'):
+	def __init__(self, lib=None, name=None, icon=None, command=None, modul='nodeeditor',tooltip=''):
 
 
 		if lib == None:
@@ -118,6 +118,21 @@ class _Command2():
 		self.tooltip=tooltip
 
 	def GetResources(self):
+		if self.tooltip =='':
+			if self.modul != '':
+				modul = self.modul
+			else:
+				modul = self.name
+			exec("import " + modul)
+			exec("import " + self.lmod)
+			dd=eval(self.command[:-2]+".__doc__")
+			if dd <> None:
+				dd=dd.replace("\n"," ")
+				dd=dd.replace("\t"," ")
+			else:
+				dd=''
+			self.tooltip=dd
+
 		if self.icon != None:
 			return {'Pixmap': self.icon,
 					'MenuText': self.name,
@@ -128,7 +143,7 @@ class _Command2():
 			return {
 				#'Pixmap' : self.icon,
 				'MenuText': self.name,
-				'ToolTip': self.name,
+				'ToolTip': self.tooltip,
 				'CmdType': "ForEdit"  # bleibt aktiv, wenn sketch editor oder andere tasktab an ist
 			}
 
@@ -172,8 +187,8 @@ def c3bI(menu, isactive, name, text, icon='None', cmd=None, tooltip='',*info):
 		pic=re.sub(r' ', '', text)
 		icon='/../icons/'+pic+'.svg'
 
-	if tooltip=='':
-		tooltip=name
+#	if tooltip=='':
+#		tooltip=name
 	t = _Command2(name, text, icon, cmd, tooltip=tooltip,*info)
 	title = re.sub(r' ', '', text)
 	name1 = "Micro_" + title
@@ -206,7 +221,7 @@ if FreeCAD.GuiUp:
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load Graph',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'save All',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load All',icon=None)]
-	current += [c3bI(["nodeeditor"], always, 'Commands', 'load All 2',icon=None)]
+#	current += [c3bI(["nodeeditor"], always, 'Commands', 'load All 2',icon=None)]
 
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'clear Graph',icon=None)]
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'load File',icon=None)]
@@ -229,7 +244,7 @@ if FreeCAD.GuiUp:
 	_current += [c3bI(["scenes"], always, 'Commands', 'QtEnvironment',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'crossbeam example',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'play with FreeCAD_Array',icon=None)]
-	_current += [c3bI(["scenes"], always, 'Commands', 'createBePlane',icon=None)]
+	current += [c3bI(["scenes"], always, 'Commands', 'createBePlane',icon=None)]
 
 	_current += [c3bI(["tests"], always, 'Commands', 'create All Nodes for Tests',icon=None)]
 	_current += [c3bI(["tests"], always, 'Commands', 'run Test for All Nodes',icon=None)]
@@ -239,7 +254,7 @@ if FreeCAD.GuiUp:
 	_current += [c3bI(["scenes"], always, 'Commands', 'voronoi',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'Voronoi for Pointcloud',icon=None)]
 	_current += [c3bI(["scenes"], always, 'Commands', 'Geom2d Nodes',icon=None)]
-#	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
+	current += [c3bI(["scenes"], always, 'Commands', 'create some parts',icon=None)]
 #	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 #	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 #	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]

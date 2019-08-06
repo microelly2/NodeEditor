@@ -1469,18 +1469,35 @@ def Geom2dNodes():
 
 
 def createBePlane():
+	'''create an environment with a BePlane and a BeTube'''
+
 	import nurbswb
 	import nurbswb.berings
 	rc=nurbswb.berings.createBePlane()
 	rc.noise=4.
+	rc=nurbswb.berings.createBeTube()
+	rc.uSize=2000
+	rc.vSize=500
+	rc.vSegments=5
+	rc.noise=500
 	FreeCAD.activeDocument().recompute()
-	
+
+
+def createsomeparts():
+	''' default box,cone and sphere for testing'''
+
+	box=FreeCAD.ActiveDocument.addObject("Part::Box","Box")
+	box2=FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
+	sphere=FreeCAD.ActiveDocument.addObject("Part::Sphere","Sphere")
+	FreeCAD.activeDocument().recompute()
 
 
 def T1():
+	'''test method'''
 	sayl("nix")
 
 def T2():
+	'''another test'''
 	sayl("nix")
 
 def T3():
