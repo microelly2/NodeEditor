@@ -276,12 +276,41 @@ def run_Plot_compute(self,*args, **kwargs):
 def run_projection_compute(self,*args, **kwargs):
 
 	sayl()
-	f=FreeCAD.ActiveDocument.BePlane.Shape.Face1
-	w=FreeCAD.ActiveDocument.Sketch.Shape.Edge1
+#	f=FreeCAD.ActiveDocument.BePlane.Shape.Face1
+#	w=FreeCAD.ActiveDocument.Sketch.Shape.Edge1
+
 	f=store.store().get(self.getPinN('face').getData())
 	say("Face",f)
 	e=store.store().get(self.getPinN('edge').getData())
 	say("Edge",e)
+	if f== None or e == None:
+		sayW("no face or no edge connected")
+		return
+
+	store.store().list()
+	d=self.getPinN('direction').getData()
+	say("direction",d)
+	shape=f.makeParallelProjection(e,d)
+	cc=self.getObject()
+	if cc <> None:
+		cc.Label=self.objname.getData()
+		cc.Shape=shape
+		#cc.ViewObject.LineWidth=8
+		cc.ViewObject.LineColor=(1.,1.,0.)
+
+def run_perspective_projection_compute(self,*args, **kwargs):
+
+	sayl()
+#	f=FreeCAD.ActiveDocument.BePlane.Shape.Face1
+#	w=FreeCAD.ActiveDocument.Sketch.Shape.Edge1
+
+	f=store.store().get(self.getPinN('face').getData())
+	say("Face",f)
+	e=store.store().get(self.getPinN('edge').getData())
+	say("Edge",e)
+	if f== None or e == None:
+		sayW("no face or no edge connected")
+		return
 
 	store.store().list()
 	d=self.getPinN('direction').getData()
@@ -301,6 +330,10 @@ def run_uv_projection_compute(self,*args, **kwargs):
 	w=store.store().get(self.getPinN('edge').getData())
 	closed=True
 	closed=False
+
+	if f==None:
+		sayW("no face connected")
+		return
 
 	sf=f.Surface
 
@@ -648,7 +681,11 @@ def trim(xa,ya,xb,yb):
 
 def mapEdgesLines( uvedges,face):
 
+	if face == None:
+		sayW("no face")
+		return Part.Shape()
 	col=[]
+	say("face",face)
 	umin,umax,vmin,vmax=face.ParameterRange
 	sf=face.Surface
 	for edge in uvedges:
@@ -692,6 +729,10 @@ def mapEdgesCurves( edges,face):
 
 def mapPoints(pts,face):
 	'''create subface patch boundet by pts on face'''
+
+	if face == None:
+		sayW("no face")
+		return []
 
 	umin,umax,vmin,vmax=face.ParameterRange
 	sf=face.Surface
@@ -903,18 +944,15 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
 				say("zuwenig punkte")
 			else:
 				shapes=mapPoints(pts,face)
-
-				cc=FreeCAD.ActiveDocument.getObject("regionFilled")
-				if cc == None:
-					cc=FreeCAD.ActiveDocument.addObject("Part::Feature","regionFilled")
-				cc.Shape=shapes[0]
-				if self.getData('flipArea'):
-					say(shapes)
-					cc.Shape=shapes[1]
+				if len(shapes)>0:
+					cc=FreeCAD.ActiveDocument.getObject("regionFilled")
+					if cc == None:
+						cc=FreeCAD.ActiveDocument.addObject("Part::Feature","regionFilled")
+					cc.Shape=shapes[0]
+					if self.getData('flipArea'):
+						say(shapes)
+						cc.Shape=shapes[1]
 			break
-
-
-
 
 
 	from scipy.spatial import Delaunay
@@ -1675,13 +1713,28 @@ def run_FreeCAD_FillEdge(self,produce=False, **kwargs):
 	Part.show(_)
 	
 
-def run_FreeCAD_Solid(self,produce=False, **kwargs):
+def run_FreeCAD_Solid(self,bake=False, **kwargs):
 	
-	shapes=self.getPinObjects("Shapes")
+	#shapes=self.getData("Shapes")
+	#say(shapes)
+	#return
+	
+	
+	yPins = self.getPinN("Shapes").affected_by
+	outArray=[]
+	for pin in yPins:
+		k=str(pin.uid)
+		d=store.store().get(k)
+#		say(d)
+		outArray.append(d)
+	say(outArray)
+	
+	shapes=outArray
 	say(shapes)
+
 	colf=shapes
 
-	for tol in range(100):
+	for tol in range(1000):
 		colf2=[c.copy() for c in colf]
 		try:
 			say ("try tolerance",tol)
@@ -1692,7 +1745,8 @@ def run_FreeCAD_Solid(self,produce=False, **kwargs):
 			say (sol.isValid())
 			if sol.isValid():
 				say("solid created with tol",tol)
-				Part.show(sol)
+				if bake:
+					Part.show(sol)
 				#cc=self.getObject();cc.Shape=sol
 				
 				self.setPinObject("Shape_out",sol)

@@ -1134,7 +1134,7 @@ def view3DExample():
 
 
 
-def createAllNodesforTest():
+def createAllNodesforTests():
 
 	FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
 	FreeCAD.ActiveDocument.addObject("Part::Box","Box")
@@ -1176,6 +1176,7 @@ def runTestforAllNodes():
 	instance=pfwrap.getInstance()
 	FreeCAD.gg=pfwrap.getGraphManager().getAllGraphs()[0]
 	nodes=FreeCAD.gg.getNodesList()
+	errors=[]
 
 	for node in nodes:
 		try:
@@ -1183,7 +1184,11 @@ def runTestforAllNodes():
 			node.compute()
 		except:
 			sayexc(str(node))
+			errors += [str(node)]
 	sayl("done")
+	for e in errors:
+		say(e)
+	say("ERRORS:",len(errors))
 
 
 
@@ -1475,10 +1480,10 @@ def createBePlane():
 def T1():
 	sayl("nix")
 
-def T2()
+def T2():
 	sayl("nix")
 
-def T3()
+def T3():
 	sayl("nix3")
 
 

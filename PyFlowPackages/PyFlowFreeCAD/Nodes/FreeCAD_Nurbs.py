@@ -810,12 +810,15 @@ class FreeCAD_Solid(FreeCadNodeBase):
     def __init__(self, name="Fusion"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
+        self.inExec = self.createInputPin('bake', 'ExecPin', None, self.bake)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         #a=self.createInputPin("count", 'IntPin', True)
         #a=self.createInputPin("Wire", 'ShapePin', True)
-        a=self.createInputPin("Shapes", 'AnyPin', structure=PinStructure.Array)
+        a=self.createInputPin("Shapes", 'ShapePin',structure=PinStructure.Array)
+        a.enableOptions(PinOptions.AllowMultipleConnections)
+        a.disableOptions(PinOptions.SupportsOnlyArrays)
+
         #a=self.createInputPin("offset", 'FloatPin', True)
         #a=self.createInputPin("height", 'FloatPin', True)
 
@@ -838,15 +841,10 @@ class FreeCAD_Solid(FreeCadNodeBase):
 #   def produce(self,**kvargs):
 #       self.compute(produce=True)
 
-    def produce(self, *args, **kwargs):
+    def Xproduce(self, *args, **kwargs):
         import nodeeditor.dev
         reload (nodeeditor.dev)
         nodeeditor.dev.run_FreeCAD_Offset(self,produce=True)
-
-
-
-
-
 
 
 

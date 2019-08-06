@@ -60,6 +60,12 @@ class FreeCadNodeBase(NodeBase):
         a=eval("nodeeditor.dev.run_{}(self)".format(self.__class__.__name__))
 
 
+    def bake(self, *args, **kwargs):
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        a=eval("nodeeditor.dev.run_{}(self,bake=True)".format(self.__class__.__name__))
+
+
 
     def initpins(self,name):
 
@@ -200,7 +206,11 @@ class FreeCadNodeBase(NodeBase):
 
 
     def getPinObjects(self,pinName):
-        return [store.store().get(eid) for eid in self.getData(pinName)]
+        eids=self.getData(pinName)
+        if eids == None:
+            sayW("no data on pin",pinName)
+            return []
+        return [store.store().get(eid) for eid in eids]
 
     def setPinObjects(self,pinName,objects):
         pin=self.getPinN(pinName)
@@ -1253,11 +1263,16 @@ class FreeCAD_BSpline(FreeCadNodeBase):
 #   def run_foo_compute(self,*args, **kwargs):
 
         dat=self.arrayData.getData()
+        say("dat",dat)
+        if len(dat) == 0:
+            sayW("no points for poles")
+            return
         dat=np.array(dat)
         sf=Part.BSplineSurface()
 
         poles=np.array(dat)
         say(poles)
+
         (countA,countB,_)=poles.shape
         degB=min(countB-1,3,self.getPinN("maxDegreeU").getData())
         degA=min(countA-1,3,self.getPinN("maxDegreeV").getData())
@@ -1502,7 +1517,7 @@ class FreeCAD_Object(FreeCadNodeBase):
         for p in pps:
             dat=p.getData()
 #           print ("#+#+#",p.getName(),dat)
-            data[str(p.getName())+"_out"]=dat
+            data[str(p.name)+"_out"]=dat
 
 
         for p in pps:
@@ -1782,12 +1797,16 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 
         sayl()
         subshapes=self.getPinObjects("Shapes")
+        if len(subshapes) == 0:
+            sayW("no subshapes")
+            return
 
         try:
             shape=subshapes[self.getData('index')]
         except:
             shape=Part.Shape()
-
+        say(subshapes)
+        say(self.getData('index'))
         self.setPinObject("Shape",subshapes[self.getData('index')])
         self.outExec.call()
 
@@ -1841,6 +1860,10 @@ class FreeCAD_Face(FreeCadNodeBase):
         sayl()
         objn=self.getPinN('sourceObject').getData()
         obj=FreeCAD.ActiveDocument.getObject(objn)
+        if obj == None:
+            sayW("no object found with name",objn)
+            return
+
         face=obj.Shape.Faces[self.getPinN('index').getData()]
 
         #pin=self.getPinN('Shape')
@@ -1900,6 +1923,9 @@ class FreeCAD_Edge(FreeCadNodeBase):
 
         objn=self.getPinN('sourceObject').getData()
         obj=FreeCAD.ActiveDocument.getObject(objn)
+        if obj == None:
+            sayW("no object found with name",objn)
+            return
         edge=obj.Shape.Edges[self.getPinN('index').getData()]
 
         self.setPinObject("Shape",shape)
@@ -2005,7 +2031,7 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
 
         import nodeeditor.dev
         reload (nodeeditor.dev)
-        nodeeditor.dev.run_projection2_compute(self,*args, **kwargs)
+        nodeeditor.dev.run_perspective_projection_compute(self,*args, **kwargs)
         self.outExec.call()
 
     @staticmethod
@@ -2195,6 +2221,9 @@ class FreeCAD_Part(FreeCadNodeBase):
 
         shape=self.getPinObject("Shape")
         say(shape)
+        if shape == None:
+            sayW("no shape connected to pin Shape")
+            return
         cc=self.getObject()
         say(cc)
         cc.Label=self.objname.getData()
