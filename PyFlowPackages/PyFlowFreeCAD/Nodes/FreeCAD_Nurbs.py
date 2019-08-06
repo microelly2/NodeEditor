@@ -816,6 +816,7 @@ class FreeCAD_Solid(FreeCadNodeBase):
         #a=self.createInputPin("count", 'IntPin', True)
         #a=self.createInputPin("Wire", 'ShapePin', True)
         a=self.createInputPin("Shapes", 'ShapePin',structure=PinStructure.Array)
+        a=self.createInputPin("Faces", 'FacePin',structure=PinStructure.Array)
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
 

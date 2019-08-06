@@ -1842,7 +1842,7 @@ class FreeCAD_Face(FreeCadNodeBase):
         self.randomize = self.createInputPin("randomize", 'BoolPin')
 
         self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+        self.shapeout = self.createOutputPin('Shape', 'FacePin')
 
         self.objname = self.createInputPin("objectname", 'StringPin')
         self.objname.setData(name)
@@ -1906,7 +1906,7 @@ class FreeCAD_Edge(FreeCadNodeBase):
         self.randomize = self.createInputPin("randomize", 'BoolPin')
 
         self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+        self.shapeout = self.createOutputPin('Shape', 'EdgePin')
 
         self.objname = self.createInputPin("objectname", 'StringPin')
         self.objname.setData(name)
@@ -2705,6 +2705,9 @@ class FreeCAD_view3D(FreeCadNodeBase):
         self.createInputPin('name', 'StringPin','view3d')
         self.createInputPin('Workspace', 'StringPin','')
         self.createInputPin('Shape', 'ShapePin')
+        
+        a=self.createInputPin('HUHU', 'IntPin')
+        a.setInputWidgetVariant("HUHU")
 
 
 
