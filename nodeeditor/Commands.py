@@ -758,7 +758,7 @@ def createObjectWithAllProperties():
 	clearGraph()
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
-	
+
 	t = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Object","allProps")
 	t.setPosition(-100,-200)
 	#t.setData("shapeOnly",True)
@@ -1521,3 +1521,62 @@ def test_CC():
 def test_DD():
 	crossbeamexample()
 
+
+def T3():
+	packs=pfwrap.getNodesClasses()
+	# say(packs)
+	keys=packs.keys()
+	keys.sort()
+	for p in keys:
+		if p == 'PyFlowBase':
+			continue
+		pack=packs[p]
+		say("======"+p+"======")
+		classNodes = pack.GetNodeClasses()
+		cnks=classNodes.keys()
+		cnks.sort()
+		for c in cnks:
+			if c[7:] in ['PinsTest']:
+				continue 
+			try:
+				say("=====FC"+c[7:]+"=====")
+				say("/*")
+				node = classNodes[c]("nodeName")
+				say("*/")
+				# say(c,node)
+				# say("-----") # horiz linie
+				say(node.__doc__)
+				say()
+				FreeCAD.n=node
+				say("===Input Pins===")
+				for pin in node.getOrderedPins():
+					if str(pin.direction) != 'PinDirection.Input':
+						continue
+					if pin.name in ['inExec','outExec']:
+						continue
+					say("=="+pin.name+"==")
+					#say(pin.direction)
+					#say(pin.name)
+					#say()
+					say(pin.__class__.__name__)
+					if pin.description != 'NO Comments':
+						say(pin.description)
+					say()
+				say("===Output Pins===")
+				for pin in node.getOrderedPins():
+					if str(pin.direction) != 'PinDirection.Output':
+						continue
+
+					if pin.name in ['inExec','outExec']:
+						continue
+					say("=="+pin.name+"==")
+					#say(pin.direction)
+					#say(pin.name)
+					say(pin.__class__.__name__)
+					if pin.description != 'NO Comments':
+						say(pin.description)
+					say()
+					FreeCAD.pin=pin
+			except:
+				sayErr("problem for ",c)
+	# sayl("t3 done")

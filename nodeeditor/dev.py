@@ -1758,3 +1758,20 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
 			pass
 
 	self.outExec.call()
+
+
+# autum 19
+def run_FreeCAD_Destruct_BSpline(self,bake=False, **kwargs):
+	shape=self.getPinObject("Shape_in")
+	c=shape.Curve
+	say(c)
+	self.setData("knots",c.getKnots())
+	self.setData("mults",c.getMultiplicities())
+	self.setData("degree",c.Degree)
+	self.setData("poles",c.getPoles())
+	#self.setData("periodic",False)
+	say("done")
+	self.outExec.call()
+	
+
+	

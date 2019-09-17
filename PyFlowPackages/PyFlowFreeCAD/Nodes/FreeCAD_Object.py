@@ -52,9 +52,12 @@ class FreeCadNodeBase(NodeBase):
     def __init__(self, name="FreeCADNode",**kvargs):
 
         super(FreeCadNodeBase, self).__init__(name)
+        self._debug = False
 
 
     def compute(self, *args, **kwargs):
+        if self._debug:
+            say("debug on for ",self)
         import nodeeditor.dev
         reload (nodeeditor.dev)
         a=eval("nodeeditor.dev.run_{}(self)".format(self.__class__.__name__))
@@ -65,6 +68,8 @@ class FreeCadNodeBase(NodeBase):
         reload (nodeeditor.dev)
         a=eval("nodeeditor.dev.run_{}(self,bake=True)".format(self.__class__.__name__))
 
+    def refresh(self, *args, **kwargs):
+        self.compute(*args, **kwargs)
 
 
     def initpins(self,name):
@@ -2662,17 +2667,18 @@ class FreeCAD_LOD(FreeCadNodeBase):
 
         self.lod = self.createInputPin('LOD', 'IntPin')
         self.lod.recomputeNode=True
-        self.createInputPin('ShapeLOD_1', 'ShapePin')
-        self.createInputPin('ShapeLOD_2', 'ShapePin')
-        self.createInputPin('ShapeLOD_3', 'ShapePin')
-        self.createOutputPin('Shape', 'ShapePin')
+        self.lod.description="Level of detail 1, 2, 3"
+        self.createInputPin('ShapeLOD_1', 'ShapePin').description="shape for LOD 1"
+        self.createInputPin('ShapeLOD_2', 'ShapePin').description="shape for LOD 2"
+        self.createInputPin('ShapeLOD_3', 'ShapePin').description="shape for LOD 3"
+        self.createOutputPin('Shape_out', 'ShapePin')
 
 
     def compute(self, *args, **kwargs):
         '''update shape-links'''
         lod=self.getData('LOD')
         if lod in [1,2,3]:
-            self.setData('Shape',self.getData('ShapeLOD_'+str(lod)))
+            self.setData('Shape_out',self.getData('ShapeLOD_'+str(lod)))
         else:
             say("lod out of range")
         self.outExec.call()
@@ -2706,8 +2712,8 @@ class FreeCAD_view3D(FreeCadNodeBase):
         self.createInputPin('Workspace', 'StringPin','')
         self.createInputPin('Shape', 'ShapePin')
         
-        a=self.createInputPin('HUHU', 'IntPin')
-        a.setInputWidgetVariant("HUHU")
+#        a=self.createInputPin('HUHU', 'IntPin')
+#        a.setInputWidgetVariant("HUHU")
 
 
 

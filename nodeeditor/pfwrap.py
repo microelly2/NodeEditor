@@ -89,7 +89,11 @@ def createNode(packageName,nodeClass,nodeName,**kvargs):
 	node = classNodes[nodeClass](nodeName,**kvargs)
 	return node
 
-
+def getNodesClasses():
+	packages = GET_PACKAGES()
+	return packages
+#	classNodes = packages[packageName].GetNodeClasses()
+#	node = classNodes[nodeClass](nodeName,**kvargs)
 
 def connect(nodeA,pinNameA,nodeB,pinNameB):
 	return connectPins(nodeA[str(pinNameA)], nodeB[str(pinNameB)])

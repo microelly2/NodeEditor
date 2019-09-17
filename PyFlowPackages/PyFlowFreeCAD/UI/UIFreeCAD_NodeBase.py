@@ -41,6 +41,10 @@ class FreeCADUINodeBase(UINodeBase):
 		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
 		actionAddOut4.triggered.connect(self.deleteNode)
 
+		actionAddOut5 = self._menu.addAction("debug mode")
+		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+		actionAddOut5.triggered.connect(self.debug)
+
 
 	def f2(self):
 		self._rawNode.show()
@@ -61,6 +65,12 @@ class FreeCADUINodeBase(UINodeBase):
 	def deleteNode(self):
 		self._rawNode.kill()
 
+
+	def debug(self):
+		try:
+			self._rawNode._debug = not self._rawNode._debug
+		except:
+			self._rawNode._debug = True
 
 
 
@@ -92,6 +102,9 @@ class FreeCADUIFunctionBase(UINodeBase):
 		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
 		actionAddOut4.triggered.connect(self.deleteNode)
 
+		actionAddOut5 = self._menu.addAction("debug mode")
+		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+		actionAddOut5.triggered.connect(self.debug)
 
 
 
@@ -105,3 +118,8 @@ class FreeCADUIFunctionBase(UINodeBase):
 	def deleteNode(self):
 		self._rawNode.kill()
 
+	def debug(self):
+		try:
+			self._rawNode._debug = not self._rawNode._debug
+		except:
+			self._rawNode._debug = True

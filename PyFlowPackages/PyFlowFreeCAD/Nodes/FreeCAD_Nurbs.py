@@ -142,11 +142,12 @@ class FreeCAD_uIso(FreeCadNodeBase):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.createInputPin('Face', 'ShapePin')
+        self.createInputPin('Face', 'ShapePin').\
+        description="Face reference"
         a=self.createInputPin('u', 'FloatPin',5)
         a.recomputeNode=True
-        self.createInputPin("display", 'BoolPin', True)
-        self.createOutputPin('Edge', 'ShapePin')
+        self.createInputPin("display", 'BoolPin', True).description="display edge as part"
+        self.createOutputPin('Edge', 'ShapePin').description="Shape for the curve"
 
 
     @staticmethod
@@ -541,24 +542,32 @@ class FreeCAD_2DArcOfCircle(FreeCadNodeBase):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.createInputPin('Shape', 'ShapePin')
+        self.createInputPin('Shape', 'ShapePin').\
+        description="Face1 of this shape defines the uv space for the arc representation, default is the xy plane"
 
         a=self.createInputPin("uLocation", 'FloatPin', True)
         a.recomputeNode=True
+        a.description="first coordinate of the center"
         a=self.createInputPin("vLocation", 'FloatPin', True)
         a.recomputeNode=True
+        a.description="2nd coordinate of the center"
 
         a=self.createInputPin("radius", 'FloatPin', True)
         a.recomputeNode=True
+        a.description="radius of the circle"
 
         a=self.createInputPin("startAngle", 'FloatPin', True)
         a.recomputeNode=True
+        a.description="angle of the starting point of the arc"
         a=self.createInputPin("endAngle", 'FloatPin', True)
         a.recomputeNode=True
+        a.description="angle of the ending point of the arc"
         
 
-        self.createOutputPin('Shape_out', 'ShapePin')
-        self.createOutputPin('geometry', 'ShapePin') #.description='edges or faces compound of the alpha hull'
+        self.createOutputPin('Shape_out', 'ShapePin').\
+            description="the projection of the geometry onto the Face1 of Shape_in"
+        self.createOutputPin('geometry', 'ShapePin').\
+            description='2D Arc of Circle geometry object'
 
 
     @staticmethod
@@ -847,7 +856,51 @@ class FreeCAD_Solid(FreeCadNodeBase):
         reload (nodeeditor.dev)
         nodeeditor.dev.run_FreeCAD_Offset(self,produce=True)
 
+# autum 2019 ...
 
+class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
+    '''
+    provides the parameters of a bspline edge object
+    '''
+
+    def __init__(self, name="Fusion"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.shapeout = self.createInputPin('Shape_in', 'ShapePin')
+        self.shapeout.description="Shape which has exactly one edge, this edge is explored"
+
+        self.createOutputPin('poles', 'VectorPin', structure=PinStructure.Array).\
+        description="list of the poles vectors"
+        self.createOutputPin('knots', 'FloatPin',structure=PinStructure.Array).\
+        description="list of the knots"
+        self.createOutputPin('mults', 'IntPin',structure=PinStructure.Array).\
+        description="list of the multiplicities"
+        self.createOutputPin('degree', 'IntPin').\
+        description="degree of the curve"
+        
+        self.createOutputPin('periodic', 'BoolPin').\
+        description="flag, wheter the curve is periodic/closed or open"
+        
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Destruct_BSpline.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+    @staticmethod
+    def keywords():
+        return []
+
+
+
+
+# ---------
 
 
 
@@ -861,16 +914,20 @@ def nodelist():
                 FreeCAD_uvGrid,
                 FreeCAD_Voronoi,
                 FreeCAD_Hull,
+
                 FreeCAD_2DGeometry,
                 FreeCAD_2DCircle,
                 FreeCAD_2DEllipse,
                 FreeCAD_2DArcOfEllipse,
                 FreeCAD_2DArcOfParabola,
                 FreeCAD_2DArcOfCircle,
+
                 FreeCAD_Simplex,
                 FreeCAD_Tread,
                 FreeCAD_Discretize,
                 FreeCAD_Offset,
                 FreeCAD_FillEdge,
                 FreeCAD_Solid,
+                
+                FreeCAD_Destruct_BSpline,
         ]
