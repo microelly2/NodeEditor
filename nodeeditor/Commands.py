@@ -83,6 +83,7 @@ def refresh_gui():
 	fpath= f.name
 	json.dump(saveData, f, indent=4)
 	f.close()
+	say("fname",fpath)
 
 	with open(fpath, 'r') as f:
 		data = json.load(f)
@@ -703,7 +704,6 @@ def loadGraph():
 	instance.graphManager.get().clear()
 	a=PyFlowGraph()
 #	a=FreeCAD.Gui.Selection.getSelection()[0]
-
 	data=eval(a.graph)
 	instance.loadFromData(data)
 
@@ -717,7 +717,6 @@ def saveGraph():
 
 def loadFile():
 
-	
 	hidePyFlow()
 	if 'graph' not in FreeCAD.listDocuments().keys():
 		FreeCAD.open(u"/home/thomas/graph.FCStd")
@@ -1521,8 +1520,43 @@ def test_CC():
 def test_DD():
 	crossbeamexample()
 
+import FreeCADGui
+def clearReportView(name="noname"):
+	from PySide import QtGui
+	mw=FreeCADGui.getMainWindow()
+	r=mw.findChild(QtGui.QTextEdit, "Report view")
+	r.clear()
+	import time
+	now = time.ctime(int(time.time()))
+	#FreeCAD.Console.PrintWarning("Cleared Report view " +str(now)+" by " + name+"\n")
+
+def getdescription(pin):
+	if pin.description != 'NO Comments':
+		return pin.description
+	descriptions = {
+		'u':'coordiate in uv space',
+		'v':'2nd coordiate in uv space',
+		'Shape_out': 'resulting shape',
+		'Compound_out': 'resulting shape as compound',
+		'Shape_in': 'reference shape',
+		'Face_in': 'reference face',
+		'Edge_in': 'reference edge',
+		'display': 'option to create a resulting part',
+		'uCount': 'number of u Iso curves',
+		'vCount': 'number of v Iso curves',
+		'randomize': 'add some random noise to the layout',
+		
+		}
+
+
+	try:
+		return descriptions[pin.name]
+	except:
+		return ''
+
 
 def T3():
+	clearReportView()
 	packs=pfwrap.getNodesClasses()
 	# say(packs)
 	keys=packs.keys()
@@ -1538,45 +1572,99 @@ def T3():
 		for c in cnks:
 			if c[7:] in ['PinsTest']:
 				continue 
+
+			if c in [
+			'FreeCAD_2DArcOfCircle', 
+			'FreeCAD_2DArcOfEllipse', 'FreeCAD_2DArcOfParabola', 'FreeCAD_2DCircle', 'FreeCAD_2DEllipse', 'FreeCAD_2DGeometry', 
+			'FreeCAD_Array', 
+			#'FreeCAD_BSplineCurve', 
+			#'FreeCAD_BSplineSurface', 
+			'FreeCAD_Bar', 
+			'FreeCAD_Boolean', 
+			'FreeCAD_Box', 
+			'FreeCAD_Compound', 
+			'FreeCAD_Cone',
+			'FreeCAD_Console', 
+			#'FreeCAD_Destruct_BSpline', 
+			'FreeCAD_Discretize', 
+			'FreeCAD_Edge', 'FreeCAD_Face', 
+			'FreeCAD_FillEdge', 'FreeCAD_Foo', 
+			'FreeCAD_Hull', 'FreeCAD_LOD', 'FreeCAD_Object', 'FreeCAD_Offset', 
+			'FreeCAD_Parallelprojection', 'FreeCAD_Part', 'FreeCAD_PartExplorer', 
+			'FreeCAD_Perspectiveprojection', 'FreeCAD_PinsTest', 'FreeCAD_Placement', 
+			'FreeCAD_Plot', 'FreeCAD_Polygon', 'FreeCAD_Polygon2', 'FreeCAD_Quadrangle', 
+			'FreeCAD_Ref', 'FreeCAD_RefList', 'FreeCAD_ShapeIndex', 'FreeCAD_Simplex', 
+			'FreeCAD_Solid', 
+			'FreeCAD_Sphere', 
+			'FreeCAD_Toy', 'FreeCAD_Tread', 
+			'FreeCAD_Tripod', 'FreeCAD_UVprojection', 'FreeCAD_VectorArray', 
+			'FreeCAD_Voronoi', 
+			'FreeCAD_YYY', 
+			'FreeCAD_uIso', 
+			'FreeCAD_uvGrid', 
+			'FreeCAD_vIso', 
+			'FreeCAD_view3D'
+			]:
+				continue
+			
+
+
 			try:
 				say("=====FC"+c[7:]+"=====")
 				say("/*")
 				node = classNodes[c]("nodeName")
 				say("*/")
+#				if node.dok != 2: continue
+
 				# say(c,node)
 				# say("-----") # horiz linie
-				say(node.__doc__)
-				say()
+				#say(node.__doc__)
+				docs=node.__doc__
+				for s in docs.split('\n'):
+					say("  "+s.lstrip())
 				FreeCAD.n=node
-				say("===Input Pins===")
+				
+				say("===INPUT PINS===")
 				for pin in node.getOrderedPins():
 					if str(pin.direction) != 'PinDirection.Input':
 						continue
 					if pin.name in ['inExec','outExec']:
 						continue
-					say("=="+pin.name+"==")
+					say("**__"+pin.name+"__** ")
 					#say(pin.direction)
 					#say(pin.name)
 					#say()
-					say(pin.__class__.__name__)
-					if pin.description != 'NO Comments':
-						say(pin.description)
+					say("[["+pin.__class__.__name__+"]]")
+					des=getdescription(pin)
+					if des <>'':
+						say(des)
 					say()
-				say("===Output Pins===")
+				say("===OUTPUT PINS===")
 				for pin in node.getOrderedPins():
 					if str(pin.direction) != 'PinDirection.Output':
 						continue
 
 					if pin.name in ['inExec','outExec']:
 						continue
-					say("=="+pin.name+"==")
+					say("**__"+pin.name+"__** ")
 					#say(pin.direction)
 					#say(pin.name)
-					say(pin.__class__.__name__)
-					if pin.description != 'NO Comments':
-						say(pin.description)
+					say("[[" + pin.__class__.__name__ + "]]")
+					des=getdescription(pin)
+					if des <>'':
+						say(des)
+
 					say()
 					FreeCAD.pin=pin
 			except:
 				sayErr("problem for ",c)
 	# sayl("t3 done")
+
+
+def reset():
+	'''refrehs graph gui'''
+	instance=pfwrap.getInstance()
+	data = instance.graphManager.get().serialize()
+	instance.graphManager.get().clear()
+	instance.loadFromData(data)
+

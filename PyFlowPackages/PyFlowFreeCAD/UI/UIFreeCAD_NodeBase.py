@@ -21,15 +21,16 @@ class FreeCADUINodeBase(UINodeBase):
 		actionAddOut2 = self._menu.addAction("show node")
 
 		actionAddOut2.setData(NodeActionButtonInfo(RESOURCES_DIR + "/show.svg"))
-		actionAddOut2.setToolTip("tipp for pins")
+		actionAddOut2.setToolTip("show internal data of the node")
 		actionAddOut2.triggered.connect(self.f2)
 
 		actionAddOut3 = self._menu.addAction("compute node")
 		actionAddOut3.setData(NodeActionButtonInfo(RESOURCES_DIR + "/compute.svg"))
-		actionAddOut3.setToolTip("tipp for moda")
+		actionAddOut3.setToolTip("compute node")
 		actionAddOut3.triggered.connect(self.f3)
 
 		actionAddOut4 = self._menu.addAction("f4")
+		actionAddOut4.setToolTip("refresh node")
 		actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
 		actionAddOut4.triggered.connect(self.f4)
 
@@ -44,6 +45,10 @@ class FreeCADUINodeBase(UINodeBase):
 		actionAddOut5 = self._menu.addAction("debug mode")
 		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
 		actionAddOut5.triggered.connect(self.debug)
+
+		actionAddOut5 = self._menu.addAction("bake mode")
+		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+		actionAddOut5.triggered.connect(self.bake)
 
 
 	def f2(self):
@@ -72,6 +77,8 @@ class FreeCADUINodeBase(UINodeBase):
 		except:
 			self._rawNode._debug = True
 
+	def bake(self):
+		sayl("bake from gui not implemented")
 
 
 class FreeCADUIFunctionBase(UINodeBase):

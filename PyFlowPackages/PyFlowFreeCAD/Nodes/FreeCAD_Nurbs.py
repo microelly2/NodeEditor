@@ -138,16 +138,17 @@ class FreeCAD_uIso(FreeCadNodeBase):
     uIso curve on a surface
     '''
 
+    dok= 2
     def __init__(self, name="Fusion"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.createInputPin('Face', 'ShapePin').\
+        self.createInputPin('Face_in', 'ShapePin').\
         description="Face reference"
         a=self.createInputPin('u', 'FloatPin',5)
         a.recomputeNode=True
-        self.createInputPin("display", 'BoolPin', True).description="display edge as part"
-        self.createOutputPin('Edge', 'ShapePin').description="Shape for the curve"
+        self.createInputPin("display", 'BoolPin', True).description="option for display edge as part"
+        self.createOutputPin('Edge_out', 'ShapePin').description="Shape for the curve"
 
 
     @staticmethod
@@ -171,15 +172,16 @@ class FreeCAD_vIso(FreeCadNodeBase):
     vIso curve on a surface
     '''
 
+    dok = 2
     def __init__(self, name="Fusion"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.createInputPin('Face', 'ShapePin')
+        self.createInputPin('Face_in', 'ShapePin')
         a=self.createInputPin('v', 'FloatPin',5)
         a.recomputeNode=True
-        self.createInputPin("display", 'BoolPin', True)
-        self.createOutputPin('Edge', 'ShapePin')
+        self.createInputPin("display", 'BoolPin', True).description="option for display edge as part"
+        self.createOutputPin('Edge_out', 'ShapePin').description="Shape for the curve"
 
 
     @staticmethod
@@ -204,14 +206,15 @@ class FreeCAD_uvGrid(FreeCadNodeBase):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.createInputPin('Face', 'ShapePin')
+        self.createInputPin('Face_in', 'ShapePin')
         a=self.createInputPin('uCount', 'IntPin',5)
         a.recomputeNode=True
         a=self.createInputPin('vCount', 'IntPin',5)
         a.recomputeNode=True
-        self.createInputPin("display", 'BoolPin', True)
-        self.createOutputPin('uEdges', 'ShapeListPin')
-        self.createOutputPin('vEdges', 'ShapeListPin')
+#        self.createInputPin("display", 'BoolPin', True)
+        self.createOutputPin('uEdges', 'ShapeListPin').description="list of uIso curve edges"
+        self.createOutputPin('vEdges', 'ShapeListPin').description="list of vIso curve edges"
+        self.createOutputPin('Compound_out', 'ShapePin').description="all curves as compound"
 
     @staticmethod
     def description():
@@ -536,7 +539,12 @@ class FreeCAD_2DArcOfParabola(FreeCadNodeBase):
 class FreeCAD_2DArcOfCircle(FreeCadNodeBase):
     '''
     2d Geometry object - arc of a circle
+
+    an arc is created in uv space and 
+    mapped to a reference face
     '''
+
+    dok = 2
 
     def __init__(self, name="Fusion"):
         super(self.__class__, self).__init__(name)
@@ -862,7 +870,7 @@ class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
     '''
     provides the parameters of a bspline edge object
     '''
-
+    dok=2 
     def __init__(self, name="Fusion"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -883,6 +891,56 @@ class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
         self.createOutputPin('periodic', 'BoolPin').\
         description="flag, wheter the curve is periodic/closed or open"
         
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Destruct_BSpline.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+    @staticmethod
+    def keywords():
+        return []
+
+
+class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
+    '''
+    provides the parameters of a bspline surface object
+    '''
+    dok=2 
+    def __init__(self, name="Fusion"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.shapeout = self.createInputPin('Shape_in', 'ShapePin')
+        self.shapeout.description="Shape which has exactly one face, this edge is explored"
+
+
+        self.createOutputPin('poles', 'VectorPin', structure=PinStructure.Array).\
+        description="array of the poles vectors"
+        self.createOutputPin('uknots', 'FloatPin',structure=PinStructure.Array).\
+        description="list of the uknots"
+        self.createOutputPin('umults', 'IntPin',structure=PinStructure.Array).\
+        description="list of the umultiplicities"
+        self.createOutputPin('udegree', 'IntPin').\
+        description="udegree of the surface"
+        
+        self.createOutputPin('uperiodic', 'BoolPin').\
+        description="flag, wheter the faceis periodic/closed or open in u direction"
+        
+        self.createOutputPin('vknots', 'FloatPin',structure=PinStructure.Array).\
+        description="list of the vknots"
+        self.createOutputPin('vmults', 'IntPin',structure=PinStructure.Array).\
+        description="list of the umultiplicities"
+        self.createOutputPin('vdegree', 'IntPin').\
+        description="udegree of the surface"
+        
+        self.createOutputPin('vperiodic', 'BoolPin').\
+        description="flag, wheter the faceis periodic/closed or open in u direction"
 
 
     @staticmethod
@@ -930,4 +988,5 @@ def nodelist():
                 FreeCAD_Solid,
                 
                 FreeCAD_Destruct_BSpline,
+                FreeCAD_Destruct_BSplineSurface,
         ]

@@ -66,7 +66,7 @@ class ShapePin(FCobjPin):
 
     """doc string for FloatFCobjPin"""
     def __init__(self, name, parent, direction, **kwargs):
-        say("create pin",name,parent.getName(),direction)
+        #say("create pin",name,parent.getName(),direction)
         super(ShapePin, self).__init__(name, parent, direction)
         self.setDefaultValue(None)
 
@@ -101,7 +101,7 @@ class FacePin(ShapePin):
     """doc string for FloatFCobjPin"""
 
     def __init__(self, name, parent, direction, **kwargs):
-        say("create pin",name,parent.getName(),direction)
+        #say("create pin",name,parent.getName(),direction)
         super(FacePin, self).__init__(name, parent, direction)
         self.setDefaultValue(None)
 
@@ -129,7 +129,7 @@ class EdgePin(ShapePin):
     """doc string for FloatFCobjPin"""
 
     def __init__(self, name, parent, direction, **kwargs):
-        say("create pin",name,parent.getName(),direction)
+        #say("create pin",name,parent.getName(),direction)
         super(EdgePin, self).__init__(name, parent, direction)
         self.setDefaultValue(None)
 
@@ -157,7 +157,7 @@ class ShapeListId():
 class ShapeListPin(FCobjPin):
     """doc string for FloatFCobjPin"""
     def __init__(self, name, parent, direction, **kwargs):
-        say("create pin",name,parent.getName())
+        #say("create pin",name,parent.getName())
         super(ShapeListPin, self).__init__(name, parent, direction, **kwargs)
         self.setDefaultValue(None)
 
