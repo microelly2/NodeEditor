@@ -52,3 +52,71 @@ class FreeCAD_Part(FreeCadNodeBase):
         return ['Shape','3View3D']
 
 
+
+class FreeCAD_YYY(FreeCadNodeBase):
+    '''
+    position on a surface or curve
+    '''
+
+    def __init__(self, name="LOD",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('name', 'StringPin','view3d')
+        a=self.createInputPin('u', 'FloatPin',0)
+        a.recomputeNode=True
+        a=self.createInputPin('v', 'FloatPin',0)
+        a.recomputeNode=True
+        self.createInputPin('Shape', 'ShapePin')
+        self.createOutputPin('position', 'VectorPin')
+        self.createOutputPin('placement', 'PlacementPin' )
+        self.createInputPin("display", 'BoolPin', True)
+        self.createInputPin("directionNormale", 'BoolPin', False)
+        self.createInputPin("curvatureMode", 'BoolPin', True)
+        
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_YYY.__doc__
+
+    @staticmethod
+    def category():
+        return 'Document'
+
+    @staticmethod
+    def keywords():
+        return ['Surface','position','Point','uv']
+
+
+class FreeCAD_Bar(FreeCadNodeBase):
+    '''
+    dummy for tests
+    '''
+
+    def __init__(self, name="Fusion"):
+       super(self.__class__, self).__init__(name)
+#       self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+       
+       self.inExec = self.createInputPin("start", 'ExecPin', None, self.start)
+       self.inExec = self.createInputPin("stop", 'ExecPin', None, self.stop)
+       self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+       self.createOutputPin('positionApp', 'VectorPin')#.description="position of the mouse in the application window"
+       self.createOutputPin('positionWindow', 'VectorPin')
+       self.createOutputPin('Shape_out', 'ShapePin').description="Shape for illustration"
+ 
+
+    @staticmethod
+    def description():
+        return FreeCAD_Bar.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+    @staticmethod
+    def keywords():
+        return []
+
