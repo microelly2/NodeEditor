@@ -429,11 +429,17 @@ def f4(self):
     say("nothing to do, done")
 
 
-def run_view3d(self,name,shape,workspace,mode,wireframe,transparency):
+def run_FreeCAD_view3D(self, *args, **kwargs):
 
-    #sayl()
+    name=self.getData('name')
+    Shape=self.getPinObject('Shape_in')
+    workspace=self.getData('Workspace')
+    mode='1'
+    wireframe=False
+    transparency=50
+    #+#todo make the parameters to pins
 
-
+    timeA=time.time()
     shape=self.getPinObject('Shape_in')
     s=shape
     l=FreeCAD.listDocuments()
@@ -454,25 +460,23 @@ def run_view3d(self,name,shape,workspace,mode,wireframe,transparency):
             FreeCADGui.runCommand("Std_ViewFitAll")
             FreeCADGui.runCommand("Std_TileWindows")
 
-    #s=store.store().get(shape)
 
     f=w.getObject(name)
     if f == None:
         f = w.addObject('Part::Feature', name)
     if s <> None:
         f.Shape=s
-    say("shape",s);say("name",name)
-
     w.recompute()
 
-    if not wireframe:
-        f.ViewObject.DisplayMode = "Flat Lines"
-        f.ViewObject.ShapeColor = (random.random(),random.random(),1.)
-    else:
-        f.ViewObject.DisplayMode = "Wireframe"
-        f.ViewObject.LineColor = (random.random(),random.random(),1.)
+    if 0:
+        if not wireframe:
+            f.ViewObject.DisplayMode = "Flat Lines"
+            f.ViewObject.ShapeColor = (random.random(),random.random(),1.)
+        else:
+            f.ViewObject.DisplayMode = "Wireframe"
+            f.ViewObject.LineColor = (random.random(),random.random(),1.)
 
-    #f.ViewObject.Transparency = transparency
+    self.outExec.call()
 
 
 
@@ -984,7 +988,7 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
             for s in tri.simplices:
                 [a,b,c,d]=s
                 a=points[a]
-                b=points[b]
+                b=poi[b]
                 c=points[c]
                 d=points[d]
                 coll += [Part.makePolygon([a,b]),Part.makePolygon([a,c]),Part.makePolygon([a,d]),Part.makePolygon([b,c]),Part.makePolygon([b,d]),Part.makePolygon([c,d])]
@@ -1572,17 +1576,17 @@ def run_FreeCAD_RefList(self,*args, **kwargs):
         
         # platzieren
         
-        positions=self.getData('positions')
-        rotations=self.getData('rotations')
-        for p,r in zip(positions,rotations)[:3]:
-            print p
-            print r
-            print
-        
-        
-        objs=self.getPinObjects(pinname)
-        for obj,pos,rot in zip(objs,positions,rotations):
-            obj.Placement=FreeCAD.Placement(pos,rot)
+#        positions=self.getData('positions')
+#        rotations=self.getData('rotations')
+#        for p,r in zip(positions,rotations)[:3]:
+#            print p
+#            print r
+#            print
+#        
+#        
+#        objs=self.getPinObjects(pinname)
+#        for obj,pos,rot in zip(objs,positions,rotations):
+#            obj.Placement=FreeCAD.Placement(pos,rot)
 
 
 
@@ -1863,6 +1867,67 @@ def run_FreeCAD_BSplineCurve(self, *args, **kwargs):
         cc.Shape=shape
 
 
+def run_FreeCAD_Compound(self, *args, **kwargs):
+
+        #+# todo ShapesList implementieren
+#        try:
+#            subshapes=self.getPinObjects("Shapes")
+#        except:
+#            subshapes=[]
+#        try:
+#            subshapes += self.getPinObjects("ShapeList")
+#        except:
+#            pass
+
+        # get list of nodes
+        outArray = []
+        ySortedPins = sorted(self.shapes.affected_by, key=lambda pin: pin.owningNode().y)
+
+        for i in ySortedPins:
+            outArray.append(i.owningNode().getPinObject(i.name))
+        
+
+#-----------------
+
+
+        say("Compound Shapes:",outArray)
+        shape=Part.Compound(outArray)
+
+        self.setPinObject("Shape_out",shape)
+        self.outExec.call()
+
+def run_FreeCAD_Collect_Vectors(self, mode=None):
+    #say("collect",mode)
+    if mode=="reset":
+        self.points=[]
+        return
+
+
+    maxSize=self.getData("maxSize")
+    red=self.getData("reduce")
+    point = self.getData("point")
+    try:
+        if (self.points[-1]-point).Length <0.01:
+#           say("zu dicht")
+            return
+    except:
+        pass
+
+    # point.y *= -1.
+
+    self.points += [point]
+    #say(len(self.points))
+    if maxSize >0 and len(self.points)>maxSize:
+            self.points = self.points[len(self.points)-maxSize:]
+    if len(self.points)>2 and red>2:
+        pol=Part.makePolygon(self.points)
+        pointsd=pol.discretize(red)
+    else:
+        pointsd=self.points
+    self.setData("points",pointsd)
+    #say(len(self.points),len(pointsd))
+    if not self.inRefresh.hasConnections():
+        self.outExec.call()
 
 
 
@@ -1892,3 +1957,158 @@ def run_genPart(fun,*args,**kwargs):
         say("Shape gesetzt",name,shapename,shape)
     else:
         say("no shape pin found")
+
+
+def run_FreeCAD_bakery(self):
+
+    workspace=self.getData("Workspace")
+    name=self.getData("name")
+    shape=self.getPinObject('Shape_in')
+    s=shape
+
+    l=FreeCAD.listDocuments()
+    if workspace=='' or workspace=='None':
+        try:
+            w=l['Unnamed']
+        except:
+            w=FreeCAD.newDocument("Unnamed")
+            FreeCADGui.runCommand("Std_TileWindows")
+    else:
+        if workspace in l.keys():
+            w=l[workspace]
+        else:
+            w=FreeCAD.newDocument(workspace)
+
+            #Std_CascadeWindows
+            FreeCADGui.runCommand("Std_ViewDimetric")
+            FreeCADGui.runCommand("Std_ViewFitAll")
+            FreeCADGui.runCommand("Std_TileWindows")
+
+    #s=store.store().get(shape)
+
+    f=w.getObject(name)
+    #say("AB",time.time()-timeA)
+    if 1 or f == None:
+        f = w.addObject('Part::Feature', name)
+    if s <> None:
+    #    say("AC",time.time()-timeA)
+        f.Shape=s
+    #    say("AD",time.time()-timeA)
+    #say("shape",s);say("name",name)
+    #say("A",time.time()-timeA)
+    w.recompute()
+    #say("B",time.time()-timeA)
+    if 1:
+        color=(random.random(),random.random(),1.)
+        f.ViewObject.ShapeColor = color
+        f.ViewObject.LineColor = color
+        f.ViewObject.PointColor = color
+
+    #f.ViewObject.Transparency = transparency
+    self.outExec.call()
+    #say("E",time.time()-timeA)
+
+
+'''
+    Replaces this B-Spline curve by approximating a set of points.
+    The function accepts keywords as arguments.
+
+    approximate2(Points = list_of_points)
+
+    Optional arguments :
+
+    DegMin = integer (3) : Minimum degree of the curve.
+    DegMax = integer (8) : Maximum degree of the curve.
+    Tolerance = float (1e-3) : approximating tolerance.
+    Continuity = string ('C2') : Desired continuity of the curve.
+    Possible values : 'C0','G1','C1','G2','C2','C3','CN'
+
+    LengthWeight = float, CurvatureWeight = float, TorsionWeight = float
+    If one of these arguments is not null, the functions approximates the
+    points using variational smoothing algorithm, which tries to minimize
+    additional criterium:
+    LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion
+    Continuity must be C0, C1 or C2, else defaults to C2.
+
+    Parameters = list of floats : knot sequence of the approximated points.
+    This argument is only used if the weights above are all null.
+
+    ParamType = string ('Uniform','Centripetal' or 'ChordLength')
+    Parameterization type. Only used if weights and Parameters above aren't specified.
+
+    Note : Continuity of the spline defaults to C2. However, it may not be applied if
+    it conflicts with other parameters ( especially DegMax ).
+'''
+def run_FreeCAD_approximateBSpline(self):
+    shin=self.getPinObject("Shape_in")
+    shin=shin.toNurbs().Face1
+    sf=shin.Surface
+    points=self.getData("points")
+    uvs=[]
+    pts2da=[sf.parameter(p) for p in points]
+    pts2d=[]
+    for i,p in enumerate(pts2da):
+        pts2d += [FreeCAD.Base.Vector2d(p[0],p[1])]
+
+    bs2d = Part.Geom2d.BSplineCurve2d()
+    tol=max(self.getData("tolerance"),1.)
+    bs2d.approximate(pts2d,Tolerance=tol*0.001)
+    self.setPinObject("Shape_out",bs2d.toShape(sf))
+    self.outExec.call()
+
+'''
+>>> print(bs2d.interpolate.__doc__)
+
+    Replaces this B-Spline curve by interpolating a set of points.
+    The function accepts keywords as arguments.
+
+    interpolate(Points = list_of_points)
+
+    Optional arguments :
+
+    PeriodicFlag = bool (False) : Sets the curve closed or opened.
+    Tolerance = float (1e-6) : interpolating tolerance
+
+    Parameters : knot sequence of the interpolated points.
+    If not supplied, the function defaults to chord-length parameterization.
+    If PeriodicFlag == True, one extra parameter must be appended.
+
+    EndPoint Tangent constraints :
+
+    InitialTangent = vector, FinalTangent = vector
+    specify tangent vectors for starting and ending points
+    of the BSpline. Either none, or both must be specified.
+
+    Full Tangent constraints :
+
+    Tangents = list_of_vectors, TangentFlags = list_of_bools
+    Both lists must have the same length as Points list.
+    Tangents specifies the tangent vector of each point in Points list.
+    TangentFlags (bool) activates or deactivates the corresponding tangent.
+    These arguments will be ignored if EndPoint Tangents (above) are also defined.
+
+    Note : Continuity of the spline defaults to C2. However, if periodic, or tangents
+    are supplied, the continuity will drop to C1.
+
+>>> 
+'''
+def run_FreeCAD_interpolateBSpline(self):
+    shin=self.getPinObject("Shape_in")
+    shin=shin.toNurbs().Face1
+    sf=shin.Surface
+    points=self.getData("points")
+    say("interpolate for {} points".format(len(points)))
+    uvs=[]
+    pts2da=[sf.parameter(p) for p in points]
+    pts2d=[]
+    for i,p in enumerate(pts2da):
+        pts2d += [FreeCAD.Base.Vector2d(p[0],p[1])]
+
+    bs2d = Part.Geom2d.BSplineCurve2d()
+
+    tol=max(self.getData("tolerance"),1.)
+    #+# todo: problem with tolerance parameter - how to use it ?
+
+    bs2d.interpolate(pts2d,PeriodicFlag=False)
+    self.setPinObject("Shape_out",bs2d.toShape(sf))
+    self.outExec.call()

@@ -13,7 +13,7 @@ class FreeCAD_PinsTest(FreeCadNodeBase):
         return "creates different pins for testing connections"
 
     def __init__(self, name="Fusion"):
-        super(FreeCAD_PinsTest, self).__init__(name)
+        super(self.__class__, self).__init__(name)
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -93,7 +93,7 @@ class FreeCAD_Foo(FreeCadNodeBase):
         return "a dummy for tests"
 
     def __init__(self, name="Fusion"):
-        super(FreeCAD_Foo, self).__init__(name)
+        super(self.__class__, self).__init__(name)
 
 
 
@@ -125,7 +125,7 @@ class FreeCAD_StorePins(NodeBase):
 
     def __init__(self, name):
 
-        super(FreeCAD__StorePins, self).__init__(name)
+        super(self.__class__, self).__init__(name)
 
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -316,7 +316,7 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
     def __init__(self, name="MyToy"):
 
-        super(FreeCAD_Toy, self).__init__(name)
+        super(self.__class__, self).__init__(name)
 
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -404,7 +404,7 @@ class FreeCAD_Array(FreeCadNodeBase):
         return '''test node for large arrays(experimental)'''
 
     def __init__(self, name="Fusion"):
-        super(FreeCAD_Array, self).__init__(name)
+        super(self.__class__, self).__init__(name)
 
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -454,6 +454,115 @@ class FreeCAD_Array(FreeCadNodeBase):
     @staticmethod
     def keywords():
         return []
+
+
+
+
+
+class FreeCAD_Polygon(FreeCadNodeBase):
+    '''
+    erzeuge eines Streckenzugs
+    for each point there is an input pin,
+    input pins can be added from context menu
+    '''
+
+    def __init__(self, name="MyQuadrangle"):
+
+        super(self.__class__, self).__init__(name)
+
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
+
+        self.trace = self.createInputPin('trace', 'BoolPin')
+        self.randomize = self.createInputPin("randomize", 'BoolPin')
+
+        self.part = self.createOutputPin('Part', 'FCobjPin')
+        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+
+        self.objname = self.createInputPin("objectname", 'StringPin')
+        self.objname.setData(name)
+
+        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+        self.shapeOnly.recomputeNode=True
+
+        self.vA = self.createInputPin("Vec1", 'VectorPin')
+        self.vB = self.createInputPin("Vec2", 'VectorPin')
+
+        self.setDatalist("Vec1 Vec2", [
+                        FreeCAD.Vector(-1,1,3),
+                        FreeCAD.Vector(1,-1,3),
+                    ])
+
+        self.vA.recomputeNode=True
+        self.vB.recomputeNode=True
+
+        self.Called=False
+        self.count=2
+
+
+    def createPin(self, *args, **kwargs):
+        pps=self.getOrderedPins()
+        last=pps[-1].getData()
+        prev=pps[-2].getData()
+        pinName = "Vec" + str(len(self.inputs) + -5)
+        p = CreateRawPin(pinName, self, 'VectorPin', PinDirection.Input)
+        p.enableOptions(PinOptions.Dynamic)
+        p.recomputeNode=True
+        p.setData(last+last-prev)
+        self.count += 1
+        pps=self.getOrderedPins()
+
+        return p
+
+    @timer
+    def compute(self, *args, **kwargs):
+
+        # recursion stopper
+        if self.Called:
+            return
+
+        self.Called=True
+
+        pts=[]
+
+        for t in self.getOrderedPins():
+            n=t.__class__.__name__
+            d=t.getData()
+            if d.__class__.__name__ =='Vector':
+                #if pts[-1] <> d:
+                    pts += [d]
+
+
+        shape=Part.makePolygon(pts)
+
+        self.setPinObject("Shape",shape)
+
+        if self.shapeout.hasConnections():
+            self.postCompute()
+
+        if self.shapeOnly.getData():
+            self.postCompute()
+        else:
+            cc=self.getObject()
+            cc.Label=self.objname.getData()
+            cc.Shape=shape
+            self.postCompute(cc)
+
+        self.Called=False
+
+    @staticmethod
+    def description():
+        return FreeCAD_Polygon.__doc__
+
+    @staticmethod
+    def category():
+        return 'Primitive'
+
+    @staticmethod
+    def keywords():
+        return ['Pointlist','Polygon','Part']
 
 
 

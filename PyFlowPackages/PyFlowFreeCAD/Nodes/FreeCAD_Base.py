@@ -22,10 +22,11 @@ import nodeeditor.store as store
 from nodeeditor.say import *
 
 # method only for get runtime
-def Xtimer(func):
+def timer(func):
     """Print the runtime of the decorated function"""
     @functools.wraps(func)
     def wrapper_timer(*args, **kwargs):
+        log=False
 
         try :
                 is_method   = inspect.getargspec(func)[0][0] == 'self'
@@ -37,16 +38,17 @@ def Xtimer(func):
         else :
                 name    = '{}.{}'.format(fn.__module__, func.__name__)
 
-        sayW("call '{}'".format(name))
+        if log: sayW("call '{}'".format(name))
         start_time = time.time()
         value = func(*args, **kwargs)
         end_time = time.time()
         run_time = end_time - start_time    # 3
-        sayW("Finished method '{0}' in {1:.4f} secs".format(func.__name__,run_time))
+        if log: sayW("Finished method '{0}' in {1:.4f} secs".format(func.__name__,run_time))
         return value
     return wrapper_timer
 
-def timer(func):
+
+def Xtimer(func):
     """print runtime of the function and create part for shape"""
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -267,9 +269,23 @@ class FreeCadNodeBase(NodeBase):
         store.store().add(k,obj)
         pin.setData(k)
 
+    def reset(self,*args, **kwargs):
+        pass
 
+    def refresh(self,*args, **kwargs):
+        pass
 
+    def funA(self,*args, **kwargs):
+        sayl("function funA called")
+        pass
 
+    def funB(self,*args, **kwargs):
+        sayl("function funB called")
+        pass
+
+    def funC(self,*args, **kwargs):
+        sayl("function funC called")
+        pass
 
 
 

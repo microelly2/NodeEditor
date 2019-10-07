@@ -33,6 +33,7 @@ import Qt
 
 import nodeeditor.pfwrap as pfwrap
 pfwrap.getInstance().show()
+#pfwrap.getInstance().hide()
 
 import os
 import re

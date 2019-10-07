@@ -1577,15 +1577,15 @@ def T3():
 			'FreeCAD_2DArcOfCircle', 
 			'FreeCAD_2DArcOfEllipse', 'FreeCAD_2DArcOfParabola', 'FreeCAD_2DCircle', 'FreeCAD_2DEllipse', 'FreeCAD_2DGeometry', 
 			'FreeCAD_Array', 
-			#'FreeCAD_BSplineCurve', 
-			#'FreeCAD_BSplineSurface', 
+			'FreeCAD_BSplineCurve', 
+			'FreeCAD_BSplineSurface', 
 			'FreeCAD_Bar', 
 			'FreeCAD_Boolean', 
 			'FreeCAD_Box', 
 			'FreeCAD_Compound', 
 			'FreeCAD_Cone',
 			'FreeCAD_Console', 
-			#'FreeCAD_Destruct_BSpline', 
+			'FreeCAD_Destruct_BSpline', 'FreeCAD_Destruct_BSplineSurface', 'FreeCAD_Destruct_Shape', 
 			'FreeCAD_Discretize', 
 			'FreeCAD_Edge', 'FreeCAD_Face', 
 			'FreeCAD_FillEdge', 'FreeCAD_Foo', 
@@ -1593,7 +1593,8 @@ def T3():
 			'FreeCAD_Parallelprojection', 'FreeCAD_Part', 'FreeCAD_PartExplorer', 
 			'FreeCAD_Perspectiveprojection', 'FreeCAD_PinsTest', 'FreeCAD_Placement', 
 			'FreeCAD_Plot', 'FreeCAD_Polygon', 'FreeCAD_Polygon2', 'FreeCAD_Quadrangle', 
-			'FreeCAD_Ref', 'FreeCAD_RefList', 'FreeCAD_ShapeIndex', 'FreeCAD_Simplex', 
+			#'FreeCAD_Ref', 'FreeCAD_RefList', 
+			'FreeCAD_ShapeIndex', 'FreeCAD_Simplex', 
 			'FreeCAD_Solid', 
 			'FreeCAD_Sphere', 
 			'FreeCAD_Toy', 'FreeCAD_Tread', 
@@ -1603,7 +1604,7 @@ def T3():
 			'FreeCAD_uIso', 
 			'FreeCAD_uvGrid', 
 			'FreeCAD_vIso', 
-			'FreeCAD_view3D'
+			#'FreeCAD_view3D'
 			]:
 				continue
 			

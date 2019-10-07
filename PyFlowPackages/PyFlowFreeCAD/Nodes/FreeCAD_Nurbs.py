@@ -31,7 +31,7 @@ class FreeCAD_Tripod(FreeCadNodeBase):
 
     def __init__(self, name="LOD",**kvargs):
 
-        super(FreeCAD_Tripod, self).__init__(name)
+        super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
@@ -72,7 +72,7 @@ class FreeCAD_YYY(FreeCadNodeBase):
 
     def __init__(self, name="LOD",**kvargs):
 
-        super(FreeCAD_YYY, self).__init__(name)
+        superself.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
@@ -108,16 +108,82 @@ class FreeCAD_Bar(FreeCadNodeBase):
     dummy for tests
     '''
 
-#   def __init__(self, name="Fusion"):
-#       super(FreeCAD_Bar, self).__init__(name)
+    def __init__(self, name="Fusion"):
+       super(self.__class__, self).__init__(name)
+#       self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+       
+       self.inExec = self.createInputPin("start", 'ExecPin', None, self.start)
+       self.inExec = self.createInputPin("stop", 'ExecPin', None, self.stop)
+       self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+       self.createOutputPin('positionApp', 'VectorPin')#.description="position of the mouse in the application window"
+       self.createOutputPin('positionWindow', 'VectorPin')
+       self.createOutputPin('Shape_out', 'ShapePin').description="Shape for illustration"
+ 
+
+    @staticmethod
+    def description():
+        return FreeCAD_Bar.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+    @staticmethod
+    def keywords():
+        return []
+
+
+
+class FreeCAD_Mouse(FreeCadNodeBase):
+    '''
+    dummy for tests
+    '''
+
+
+    def __init__(self, name="Fausion"):
+       super(self.__class__, self).__init__(name)
+#       self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+       
+       self.inExec = self.createInputPin("start", 'ExecPin', None, self.start)
+       self.inExec = self.createInputPin("stop", 'ExecPin', None, self.stop)
+       self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+       self.selectionExec = self.createOutputPin("SelectionChanged", 'ExecPin')
+       self.createOutputPin('positionApp', 'VectorPin').description="position of the mouse in the Application window"
+       self.createOutputPin('positionWindow', 'VectorPin').description="position of the mouse in the ActiveDocument window"
+       #self.createOutputPin('Shape_out', 'ShapePin').description="Shape for illustration"
+       self.createOutputPin('positionSelection', 'VectorPin').description="position on a selected component"
+       
+       self.createOutputPin('selectedFace', 'ShapePin')
+       self.selectedFaceChanged = self.createOutputPin("selectedFaceChanged", 'ExecPin')
+       self.createInputPin("zIndex", 'IntPin')
+       
+       
+
+
+    def start(self, *args, **kwargs):
+
+        say("SS")
+        import nodeeditor.dragger
+        reload (nodeeditor.dragger)
+        nodeeditor.dragger.start(self,*args, **kwargs)
+        self.outExec.call()
+
+    def stop(self, *args, **kwargs):
+
+        say("PP")
+        import nodeeditor.dragger
+        reload (nodeeditor.dragger)
+        nodeeditor.dragger.stop(self,*args, **kwargs)
+        self.outExec.call()
+
 
 
     def compute(self, *args, **kwargs):
 
-        sayl()
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_bar_compute(self,*args, **kwargs)
+        say("--")
+        import nodeeditor.dragger
+        reload (nodeeditor.dragger)
+        nodeeditor.dragger.compute(self,*args, **kwargs)
         self.outExec.call()
 
     @staticmethod
@@ -131,6 +197,10 @@ class FreeCAD_Bar(FreeCadNodeBase):
     @staticmethod
     def keywords():
         return []
+
+
+
+
 
 
 class FreeCAD_uIso(FreeCadNodeBase):
@@ -959,13 +1029,135 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
 
 
 # ---------
+#
 
+
+class FreeCAD_Collect_Vectors(FreeCadNodeBase):
+    '''
+    collect vectors to a list
+    '''
+    dok=2 
+    def __init__(self, name="Fusion"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.inReset = self.createInputPin("reset", 'ExecPin', None, self.reset)
+        self.inReset.description="clear the list of collected points"
+        self.inRefresh = self.createInputPin("refresh", 'ExecPin', None, self.refresh)
+        self.inRefresh.description="update the outpin **points**"
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('point', 'VectorPin').\
+        description="list of collected vectors"
+        self.createInputPin("maxSize",'IntPin',100).\
+        description="maximum length of the points list, if more points are gotten older points are dropped"
+        self.createInputPin("reduce",'IntPin',0).\
+        description="create only a discretized list of the polygon with this size"
+
+        a=self.createOutputPin('points', 'VectorPin', structure=PinStructure.Array)
+        a.description="list of collected vectors"
+        
+        self.points=[]
+
+    @staticmethod
+    def description():
+        return FreeCAD_Collect_Vectors.__doc__
+
+    @staticmethod
+    def category():
+        return 'Points'
+
+    @staticmethod
+    def keywords():
+        return ['point','collect']
+
+    def reset(self,*args, **kwargs):
+        say("reset")
+        self.compute(mode="reset")
+
+    @timer
+    def reset(self, *args, **kwargs):
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        nodeeditor.dev.run_FreeCAD_Collect_Vectors(self,mode="reset")
+
+
+    def refresh(self,*args, **kwargs):
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        nodeeditor.dev.run_FreeCAD_Collect_Vectors(self,mode="refresh")
+        self.outExec.call()
+
+class FreeCAD_approximateBSpline(FreeCadNodeBase):
+    '''
+    create an approximated BSpline for **points** on face **Shape_in**
+    '''
+    dok=2 
+    def __init__(self, name="Fusion"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+      
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('points', 'VectorPin', structure=PinStructure.Array)
+        self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
+        self.tolerance.description="relative value for to,.erance"
+        self.createInputPin("Shape_in",'ShapePin')
+        #+# todo: more parameters for approximate
+        self.createOutputPin('Shape_out', 'ShapePin')
+        self.tolerance.recomputeNode=True
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_approximateBSpline.__doc__
+
+    @staticmethod
+    def category():
+        return 'BSpline'
+
+    @staticmethod
+    def keywords():
+        return ['Approximate','Curve','Nurbs','Projection']
+
+
+class FreeCAD_interpolateBSpline(FreeCadNodeBase):
+    '''
+    create an interpolated BSpline for **points** on face **Shape_in**
+    '''
+    dok=2 
+    def __init__(self, name="Fusion"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+      
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('points', 'VectorPin', structure=PinStructure.Array)
+        self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
+        self.tolerance.description="relative value for to,.erance"
+        self.createInputPin("Shape_in",'ShapePin')
+        #+# todo: more parameters for approximate
+        self.createOutputPin('Shape_out', 'ShapePin')
+        self.tolerance.recomputeNode=True
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_interpolateBSpline.__doc__
+
+    @staticmethod
+    def category():
+        return 'BSpline'
+
+    @staticmethod
+    def keywords():
+        return ['Interpolate','Curve','Nurbs','Projection']
 
 
 
 def nodelist():
     return [
                 FreeCAD_Bar,
+                FreeCAD_Mouse,
                 FreeCAD_Tripod,
                 FreeCAD_YYY,
                 FreeCAD_uIso, FreeCAD_vIso,
@@ -989,4 +1181,8 @@ def nodelist():
                 
                 FreeCAD_Destruct_BSpline,
                 FreeCAD_Destruct_BSplineSurface,
+                FreeCAD_Collect_Vectors,
+                FreeCAD_approximateBSpline,
+                FreeCAD_interpolateBSpline,
+
         ]
