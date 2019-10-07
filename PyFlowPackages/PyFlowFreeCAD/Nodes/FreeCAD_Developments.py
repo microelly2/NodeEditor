@@ -368,7 +368,7 @@ class FreeCAD_Toy(FreeCadNodeBase):
                 self.part.setData(cc.Name)
 
         sayl()
-        say(self.getPinN("Shape"))
+        say(self.getPinByName("Shape"))
         say(shape)
 
         self.setPinObject("Shape",shape)

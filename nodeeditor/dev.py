@@ -281,16 +281,16 @@ def run_projection_compute(self,*args, **kwargs):
 #   f=FreeCAD.ActiveDocument.BePlane.Shape.Face1
 #   w=FreeCAD.ActiveDocument.Sketch.Shape.Edge1
 
-    f=store.store().get(self.getPinN('face').getData())
+    f=store.store().get(self.getPinByName('face').getData())
     say("Face",f)
-    e=store.store().get(self.getPinN('edge').getData())
+    e=store.store().get(self.getPinByName('edge').getData())
     say("Edge",e)
     if f== None or e == None:
         sayW("no face or no edge connected")
         return
 
     store.store().list()
-    d=self.getPinN('direction').getData()
+    d=self.getPinByName('direction').getData()
     say("direction",d)
     shape=f.makeParallelProjection(e,d)
     cc=self.getObject()
@@ -306,16 +306,16 @@ def run_perspective_projection_compute(self,*args, **kwargs):
 #   f=FreeCAD.ActiveDocument.BePlane.Shape.Face1
 #   w=FreeCAD.ActiveDocument.Sketch.Shape.Edge1
 
-    f=store.store().get(self.getPinN('face').getData())
+    f=store.store().get(self.getPinByName('face').getData())
     say("Face",f)
-    e=store.store().get(self.getPinN('edge').getData())
+    e=store.store().get(self.getPinByName('edge').getData())
     say("Edge",e)
     if f== None or e == None:
         sayW("no face or no edge connected")
         return
 
     store.store().list()
-    d=self.getPinN('direction').getData()
+    d=self.getPinByName('direction').getData()
     say("direction",d)
     shape=f.makeParallelProjection(e,d)
     cc=self.getObject()
@@ -328,8 +328,8 @@ def run_perspective_projection_compute(self,*args, **kwargs):
 
 def run_uv_projection_compute(self,*args, **kwargs):
 
-    f=store.store().get(self.getPinN('face').getData())
-    w=store.store().get(self.getPinN('edge').getData())
+    f=store.store().get(self.getPinByName('face').getData())
+    w=store.store().get(self.getPinByName('edge').getData())
     closed=True
     closed=False
 
@@ -339,7 +339,7 @@ def run_uv_projection_compute(self,*args, **kwargs):
 
     sf=f.Surface
 
-    pointcount=max(self.getPinN('pointCount').getData(),4)
+    pointcount=max(self.getPinByName('pointCount').getData(),4)
     pts=w.discretize(pointcount)
 
 
@@ -384,12 +384,12 @@ def run_uv_projection_compute(self,*args, **kwargs):
     if cc  !=  None:
         cc.Label=self.objname.getData()
 
-    if self.getPinN('inverse').getData():
+    if self.getPinByName('inverse').getData():
         cc.Shape=r2[0][0]
     else:
         cc.Shape=r[0][0]
 
-    if self.getPinN('Extrusion').getData():
+    if self.getPinByName('Extrusion').getData():
         f = FreeCAD.getDocument('project').getObject('MyExtrude')
         if f == None:
             f = FreeCAD.getDocument('project').addObject('Part::Extrusion', 'MyExtrude')
@@ -397,8 +397,8 @@ def run_uv_projection_compute(self,*args, **kwargs):
         f.Base = sp
         f.DirMode = "Custom"
         f.Dir = FreeCAD.Vector(0.000000000000000, 0.000000000000000, 1.000000000000000)
-        f.LengthFwd = self.getPinN('ExtrusionUp').getData()
-        f.LengthRev = self.getPinN('ExtrusionDown').getData()
+        f.LengthFwd = self.getPinByName('ExtrusionUp').getData()
+        f.LengthRev = self.getPinByName('ExtrusionDown').getData()
         f.Solid = True
         FreeCAD.activeDocument().recompute()
 
@@ -1740,7 +1740,7 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
     #return
     
     
-    yPins = self.getPinN("Shapes").affected_by
+    yPins = self.getPinByName("Shapes").affected_by
     outArray=[]
     for pin in yPins:
         k=str(pin.uid)
@@ -1826,8 +1826,8 @@ def run_FreeCAD_BSpline(self, *args, **kwargs):
         say(poles)
 
         (countA,countB,_)=poles.shape
-        degB=min(countB-1,3,self.getPinN("maxDegreeU").getData())
-        degA=min(countA-1,3,self.getPinN("maxDegreeV").getData())
+        degB=min(countB-1,3,self.getPinByName("maxDegreeU").getData())
+        degA=min(countA-1,3,self.getPinByName("maxDegreeV").getData())
 
         multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
         multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
@@ -1852,7 +1852,7 @@ def run_FreeCAD_BSplineCurve(self, *args, **kwargs):
         poles=np.array(dat)
         say(poles)
         (countA,_)=poles.shape
-        degA=min(countA-1,3,self.getPinN("maxDegree").getData())
+        degA=min(countA-1,3,self.getPinByName("maxDegree").getData())
 
         multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
         knotA=range(len(multA))

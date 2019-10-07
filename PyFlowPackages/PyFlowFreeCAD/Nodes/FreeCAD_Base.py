@@ -191,7 +191,7 @@ class FreeCadNodeBase(NodeBase):
         
     def getDatalist(self,pinnames):
         namelist=pinnames.split()
-        ll=[self.getPinN(a).getData() for a in namelist]
+        ll=[self.getPinByName(a).getData() for a in namelist]
         return ll
         
     def applyPins(self,ff,zz):
@@ -203,8 +203,9 @@ class FreeCadNodeBase(NodeBase):
         sayl("--set pinlist for {}".format(self.getName()))
         for a,v in zip(namelist,values):
             say(a,v)
-            self.getPinN(a).setData(v)
-        
+            #self.getPinByName(a).setData(v)
+            self.getPinByName(a).setData(v)
+ 
     def getObject(self):
         '''get the FreeCAD object'''
         
@@ -260,7 +261,7 @@ class FreeCadNodeBase(NodeBase):
         return [store.store().get(eid) for eid in eids]
         
     def setPinObjects(self,pinName,objects):
-        pin=self.getPinN(pinName)
+        pin=self.getPinByName(pinName)
         ekeys=[]
         for i,e in enumerate(objects):
             k=str(pin.uid)+"__"+str(i)
@@ -269,7 +270,7 @@ class FreeCadNodeBase(NodeBase):
         self.setData(pinName,ekeys)
         
     def setPinObject(self,pinName,obj):
-        pin=self.getPinN(pinName)
+        pin=self.getPinByName(pinName)
         k=str(pin.uid)
         store.store().add(k,obj)
         pin.setData(k)

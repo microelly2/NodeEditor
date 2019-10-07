@@ -43,6 +43,15 @@ class FreeCAD_Box( FreeCadNodeBase):
 
         self.length = self.createInputPin("length", 'FloatPin')
         self.length.description="Lenght of the Box"
+        self.length.setInputWidgetVariant("Slider")
+
+        self.length2 = self.createInputPin("length", 'FloatPin')
+        self.length2.description="Lenght of the Box"
+        self.length2.setInputWidgetVariant("Simple2")
+
+        self.length.annotationDescriptionDict={ "A":23,"ValueRange":(10.,20.)}
+        self.length2.annotationDescriptionDict={ "A":23,"Step":2. }
+
         self.width = self.createInputPin("width", 'FloatPin')
         self.width.description="Width of the Box"
         self.height = self.createInputPin("height", 'FloatPin')
@@ -1049,14 +1058,14 @@ class FreeCAD_Face(FreeCadNodeBase):
 
     def compute(self, *args, **kwargs):
 
-        objn=self.getPinN('sourceObject').getData()
+        objn=self.getPinByName('sourceObject').getData()
         obj=FreeCAD.ActiveDocument.getObject(objn)
         if obj == None:
             sayW("no object found with name {}, use Shape_in instead".format(objn))
             shape=self.getPinObject("Shape_in")
-            edge=shape.Faces[self.getPinN('index').getData()]
+            edge=shape.Faces[self.getPinByName('index').getData()]
         else:
-            face=obj.Shape.Edges[self.getPinN('index').getData()]
+            face=obj.Shape.Edges[self.getPinByName('index').getData()]
 
         self.setPinObject("Shape_out",face)
         self.outExec.call()
@@ -1104,14 +1113,14 @@ class FreeCAD_Edge(FreeCadNodeBase):
 
     def compute(self, *args, **kwargs):
 
-        objn=self.getPinN('sourceObject').getData()
+        objn=self.getPinByName('sourceObject').getData()
         obj=FreeCAD.ActiveDocument.getObject(objn)
         if obj == None:
             sayW("no object found with name {}, use Shape_in instead".format(objn))
             shape=self.getPinObject("Shape_in")
-            edge=shape.Edges[self.getPinN('index').getData()]
+            edge=shape.Edges[self.getPinByName('index').getData()]
         else:
-            edge=obj.Shape.Edges[self.getPinN('index').getData()]
+            edge=obj.Shape.Edges[self.getPinByName('index').getData()]
 
         self.setPinObject("Shape_out",edge)
         self.outExec.call()
@@ -1159,7 +1168,7 @@ class FreeCAD_Destruct_Shape(FreeCadNodeBase):
 
     def compute(self, *args, **kwargs):
 
-        objn=self.getPinN('sourceObject').getData()
+        objn=self.getPinByName('sourceObject').getData()
         obj=FreeCAD.ActiveDocument.getObject(objn)
         if obj == None:
             sayW("no object found with name {}, use Shape_in instead".format(objn))
@@ -1572,7 +1581,7 @@ class FreeCAD_Ref(FreeCadNodeBase):
         '''update shape-links'''
 
         pins=self.getOrderedPins()
-        objname=self.getPinN("objectname").getData()
+        objname=self.getPinByName("objectname").getData()
 
         obj=FreeCAD.activeDocument().getObject(objname)
         for p in pins:
@@ -1687,7 +1696,7 @@ class FreeCAD_RefList(FreeCadNodeBase):
         '''update shape-links'''
 
         pins=self.getOrderedPins()
-        objname=self.getPinN("objectname").getData()
+        objname=self.getPinByName("objectname").getData()
 
         obj=FreeCAD.activeDocument().getObject(objname)
         for p in pins:
