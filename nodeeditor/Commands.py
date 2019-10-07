@@ -26,9 +26,9 @@ from Qt import QtGui
 from Qt.QtWidgets import *
 
 
-import PyFlowGraph
+import nodeeditor.PyFlowGraph
 
-from PyFlowGraph import PyFlowGraph
+from nodeeditor.PyFlowGraph import PyFlowGraph
 
 from PyFlow import(
 	INITIALIZE,
@@ -42,7 +42,12 @@ from PyFlow.Core import(
 	GraphManager
 )
 
-import pfwrap
+import sys
+if sys.version_info[0] !=2:
+	from importlib import reload
+
+
+import nodeeditor.pfwrap as pfwrap
 reload (pfwrap)
 
 

@@ -6,6 +6,10 @@ from nodeeditor.say import *
 import os
 RESOURCES_DIR=os.path.dirname(__file__)
 
+import sys
+if sys.version_info[0] !=2:
+	from importlib import reload
+
 class FreeCADUINodeBase(UINodeBase):
 
 

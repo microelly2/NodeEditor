@@ -21,6 +21,12 @@ from PyFlow.Packages.PyFlowBase.Nodes import FLOW_CONTROL_COLOR
 import nodeeditor.store as store
 from nodeeditor.say import *
 
+
+import sys
+if sys.version_info[0] !=2:
+	from importlib import reload
+
+
 # method only for get runtime
 def timer(func):
     """Print the runtime of the decorated function"""
@@ -73,6 +79,8 @@ def Xtimer(func):
         sayW("Finished method '{0}' in {1:.4f} secs".format(func.__name__,run_time))
         return value
     return wrapper
+
+
 
 
 class FreeCadNodeBase(NodeBase):

@@ -50,13 +50,13 @@ import nodeeditor.pfwrap as pfwrap
 pfwrap.getInstance().show()
 #pfwrap.getInstance().hide()
 
+
 import os
 import re
 global __dir__
 __dir__ = os.path.dirname(nodeeditor.__file__)
 
 import sys
-
 if sys.version_info[0] !=2:
 	from importlib import reload
 

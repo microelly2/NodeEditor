@@ -9,7 +9,6 @@ import FreeCAD
 import FreeCADGui
 import Part
 
-
 from PyFlow import CreateRawPin
 from PyFlow.Core import NodeBase
 from PyFlow.Core.NodeBase import NodePinsSuggestionsHelper
@@ -19,10 +18,11 @@ from PyFlow.Packages.PyFlowBase.Nodes import FLOW_CONTROL_COLOR
 import nodeeditor.store as store
 from nodeeditor.say import *
 
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
 
-#from FreeCAD_Base import *
-import PyFlowPackages.PyFlowFreeCAD.Nodes.FreeCAD_Base
-from PyFlowPackages.PyFlowFreeCAD.Nodes.FreeCAD_Base import FreeCadNodeBase,timer
+
+
+
 
 
 class FreeCAD_Box( FreeCadNodeBase):
@@ -691,7 +691,7 @@ class FreeCAD_Object(FreeCadNodeBase):
         say(pps)
         for p in pps:
             try:
-                print (str(p.getName()[nl+1:]),p.getData())
+                print((str(p.getName()[nl+1:]),p.getData()))
             except:  pass
         obn=self.objname.getData()
         obj=FreeCAD.ActiveDocument.getObject(obn)
@@ -859,7 +859,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
         }
 
         say(self.pinsk)
-        for p in self.pinsk.keys():
+        for p in list(self.pinsk.keys()):
             if self.pinsk[p]  !=  None:
                 say(p,self.pinsk[p])
                 self.createOutputPin(p, self.pinsk[p])
@@ -888,7 +888,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
         cc=FreeCAD.ActiveDocument.getObject(part)
         say(cc,cc.Label)
         shape=cc.Shape
-        for n in self.pinsk.keys():
+        for n in list(self.pinsk.keys()):
             v=getattr(shape,n)
             if self.pinsk[n]  !=  None:
                 self.setData(n,v)

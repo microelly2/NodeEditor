@@ -5,7 +5,7 @@ from PyFlow.UI.UIInterfaces import IPackage
 
 
 # Factories
-#from PyFlow.Packages.PyFlowFreeCAD.Factories.PinInputWidgetFactory import getInputWidget
+from PyFlow.Packages.PyFlowFreeCAD.Factories.PinInputWidgetFactory import getInputWidget
 #from PyFlow.Packages.PyFlowFreeCAD.Factories.UINodeFactory import createUINode
 #-#
 
@@ -21,12 +21,12 @@ _PINS = {
     VectorPin.__name__: VectorPin,
     RotationPin.__name__: RotationPin,
     PlacementPin.__name__: PlacementPin,
-	ArrayPin.__name__: ArrayPin,
+    ArrayPin.__name__: ArrayPin,
 }
 
 from PyFlow.Packages.PyFlowFreeCAD.Pins.FCobjPin import nodelist 
 for n in nodelist():
-	_PINS[ n.__name__]=n
+    _PINS[ n.__name__]=n
 
 
 # Function based nodes
@@ -39,7 +39,7 @@ _FOO_LIBS = {
     Vector.__name__: Vector(PACKAGE_NAME),
     Rotation.__name__: Rotation(PACKAGE_NAME),
     Placement.__name__: Placement(PACKAGE_NAME),
-	Numpy.__name__: Numpy(PACKAGE_NAME),
+    Numpy.__name__: Numpy(PACKAGE_NAME),
 }
 
 
@@ -47,16 +47,18 @@ _FOO_LIBS = {
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import FreeCAD_Placement
 
 _NODES = {
-	FreeCAD_Placement.__name__: FreeCAD_Placement,
+    FreeCAD_Placement.__name__: FreeCAD_Placement,
 }
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
-for n in nodelist():
-	_NODES[ n.__name__]=n
+if 1:
+    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
+    for n in nodelist():
+        _NODES[ n.__name__]=n
+
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
 for n in nodelist():
-	_NODES[ n.__name__]=n
+    _NODES[ n.__name__]=n
 
 
 # tools
@@ -65,28 +67,29 @@ _TOOLS = OrderedDict()
 
 
 
+from PyFlow.Packages.PyFlowFreeCAD.Factories.UINodeFactory import createUINode
 
 
 class PyFlowFreeCAD(IPackage):
     def __init__(self):
         super(PyFlowFreeCAD, self).__init__()
-
+    
     @staticmethod
     def GetFunctionLibraries():
         return _FOO_LIBS
-
+    
     @staticmethod
     def GetNodeClasses():
         return _NODES
-
+    
     @staticmethod
     def GetPinClasses():
         return _PINS
-
+    
     @staticmethod
     def GetToolClasses():
         return _TOOLS
-
+    
     @staticmethod
     def PinsInputWidgetFactory():
         return getInputWidget
@@ -96,9 +99,9 @@ class PyFlowFreeCAD(IPackage):
  #   def UIPinsFactory():
   #      return createUIPin
 
-'''
+
     @staticmethod
     def UINodesFactory():
         return createUINode
 
-'''
+

@@ -914,28 +914,6 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.shapeout = self.createInputPin('Shape_in', 'ShapePin')
-        self.shapeout.description="Shapimport numpy as np
-import random
-import functools
-import time
-import inspect
-
-from FreeCAD import Vector
-import FreeCAD
-import FreeCADGui
-import Part
-
-
-from PyFlow import CreateRawPin
-from PyFlow.Core import NodeBase
-from PyFlow.Core.NodeBase import NodePinsSuggestionsHelper
-from PyFlow.Core.Common import *
-from PyFlow.Packages.PyFlowBase.Nodes import FLOW_CONTROL_COLOR
-
-import nodeeditor.store as store
-from nodeeditor.say import *
-
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
 
 
 
@@ -1138,7 +1116,9 @@ class FreeCAD_uvGrid(FreeCadNodeBase):
 
     @staticmethod
     def keywords():
-        return []
+        return []	
+        
+
 
 
 
@@ -1983,53 +1963,8 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
         self.tolerance.recomputeNode=True
 
 
-    @staticmethod
-    def description():
-        return FreeCAD_interpolateBSpline.__doc__
-
-    @staticmethod
-    def category():
-        return 'BSpline'
-
-    @staticmethod
-    def keywords():
-        return ['Interpolate','Curve','Nurbs','Projection']
 
 
-
-def nodelist():
-    return [
-#                FreeCAD_Bar,
-                FreeCAD_Mouse,
-                FreeCAD_Tripod,
-#                FreeCAD_YYY,
-                FreeCAD_uIso, FreeCAD_vIso,
-                FreeCAD_uvGrid,
-                FreeCAD_Voronoi,
-                FreeCAD_Hull,
-
-                FreeCAD_2DGeometry,
-                FreeCAD_2DCircle,
-                FreeCAD_2DEllipse,
-                FreeCAD_2DArcOfEllipse,
-                FreeCAD_2DArcOfParabola,
-                FreeCAD_2DArcOfCircle,
-
-                FreeCAD_Simplex,
-                FreeCAD_Tread,
-                FreeCAD_Discretize,
-                FreeCAD_Offset,
-                FreeCAD_FillEdge,
-                FreeCAD_Solid,
-                
-                FreeCAD_Destruct_BSpline,
-                FreeCAD_Destruct_BSplineSurface,
-                FreeCAD_Collect_Vectors,
-                FreeCAD_approximateBSpline,
-                FreeCAD_interpolateBSpline,
-
-        ]
-e which has exactly one face, this edge is explored"
 
 
         self.createOutputPin('poles', 'VectorPin', structure=PinStructure.Array).\
@@ -2057,7 +1992,7 @@ e which has exactly one face, this edge is explored"
 
     @staticmethod
     def description():
-        return FreeCAD_Destruct_BSpline.__doc__
+        return FreeCAD_interpolateBSpline.__doc__
 
     @staticmethod
     def category():
@@ -2065,8 +2000,7 @@ e which has exactly one face, this edge is explored"
 
     @staticmethod
     def keywords():
-        return []
-
+        return ['Interpolate','Curve','Nurbs','Projection']
 
 
 
