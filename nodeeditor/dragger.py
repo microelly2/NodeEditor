@@ -258,7 +258,7 @@ class EventFilter(QtCore.QObject):
                 (x,y)=Gui.ActiveDocument.ActiveView.getCursorPos()
                 t=Gui.ActiveDocument.ActiveView.getObjectsInfo((x,y))
                 #say(time.time())
-                if t <> None:
+                if t  !=  None:
                     self.t=[]
                     for tt in t:
                         if not tt['Object'].startswith('ID') and  tt['Component'].startswith("Face"):
@@ -324,6 +324,7 @@ def start(self,*args, **kwargs):
     from PySide import QtGui,QtCore
     mw=QtGui.qApp
     mw.installEventFilter(ef)
+    self.outExec.call()
 
 
 def stop(self,*args, **kwargs):
@@ -331,7 +332,10 @@ def stop(self,*args, **kwargs):
     mw=QtGui.qApp
     ef=self.eventfilter
     mw.removeEventFilter(ef)
+    self.outExec.call()
 
 
 def compute(self,*args, **kwargs):
     sayl()
+    self.outExec.call()
+

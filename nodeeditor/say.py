@@ -96,7 +96,7 @@ def sayexc(mess=''):
 	l=len(inspect.stack())
 	print (inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2])
 	if l>3: print (inspect.stack()[2][3]," @ ",inspect.stack()[2][1]," line: ",inspect.stack()[2][2])
-	if l>3 and inspect.stack()[3][3] <>'<module>':        
+	if l>3 and inspect.stack()[3][3] != '<module>':        
 		print (inspect.stack()[3][1]," line ",inspect.stack()[3][2])
 		print (inspect.stack()[3][3])
 
@@ -139,7 +139,7 @@ def sayexc2(title='Error', mess=''):
 	l=len(inspect.stack())
 	say(inspect.stack()[1][3]+" @ "+inspect.stack()[1][1]+" line: ",inspect.stack()[1][2])
 	if l>3: say (inspect.stack()[2][3]+" @ "+inspect.stack()[2][1]+" line: ",inspect.stack()[2][2])
-	if l>4 and inspect.stack()[3][3] <>'<module>':
+	if l>4 and inspect.stack()[3][3] != '<module>':
 		say (inspect.stack()[3][1]," line ",inspect.stack()[2][2])
 		say (inspect.stack()[3][3])
 

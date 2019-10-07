@@ -218,13 +218,13 @@ class FreeCAD_StorePins(NodeBase):
         say ("get shapein")
         shapein=self.shapein.getData()
 
-        if shapein <> None:
+        if shapein  !=  None:
             say("shapein",shapein)
             s=store.store().get(shapein)
 
             #
             say("s:::::::",s)
-            if s <>  None:
+            if s  !=   None:
                 say("!!!!!!!!!!!!!!!!!!!!show")
                 #Part.show(s)
 
@@ -270,20 +270,20 @@ class FreeCAD_StorePins(NodeBase):
 
         print("input object from pin",self.obja,"getData ..",self.obja.getData())
 
-        if shapein <> None:
+        if shapein  !=  None:
             say("shapein",shapein)
             s=store.store().get(shapein)
 
             #
             say("s:::::::",s)
-            if s <>  None:
+            if s  !=   None:
                 say("!!!!!!!!!!!!!!!!!!!!show")
                 #Part.show(s)
 
             #store.store().dela(shapein)
             store.store().list()
 
-            if s <> None:
+            if s  !=  None:
                     say("!!!!!!!!!!!!!!!!!!!!show")
                     cc.Shape=s
 
@@ -531,7 +531,7 @@ class FreeCAD_Polygon(FreeCadNodeBase):
             n=t.__class__.__name__
             d=t.getData()
             if d.__class__.__name__ =='Vector':
-                #if pts[-1] <> d:
+                #if pts[-1]  !=  d:
                     pts += [d]
 
 

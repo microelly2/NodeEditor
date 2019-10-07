@@ -25,9 +25,24 @@ __title__="FreeCAD PyFlow"
 __url__ = "http://www.freecadbuch.de"
 __vers__ ="0.01"
 
+
+pv3= 0
+
+import sys
+
+pv3=sys.version.startswith('3')
+
+if pv3:
+	sys.path.append('/usr/local/lib/python3.4/dist-packages')
+	sys.path.append('/usr/lib/python3/dist-packages')
+	import blinker
+	import docutils
+
+
 import nodeeditor
 
-os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
+if not pv3:
+	os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
 import Qt
 
 
@@ -130,7 +145,7 @@ class _Command2():
 			exec("import " + modul)
 			exec("import " + self.lmod)
 			dd=eval(self.command[:-2]+".__doc__")
-			if dd <> None:
+			if dd != None:
 				dd=dd.replace("\n"," ")
 				dd=dd.replace("\t"," ")
 			else:
@@ -151,6 +166,7 @@ class _Command2():
 				'CmdType': "ForEdit"  # bleibt aktiv, wenn sketch editor oder andere tasktab an ist
 			}
 
+	
 	def IsActive(self):
 		if Gui.ActiveDocument:
 			return True
@@ -170,7 +186,7 @@ class _Command2():
 				modul = self.name
 			Gui.doCommand("import " + modul)
 			Gui.doCommand("import " + self.lmod)
-			Gui.doCommand("reload(" + self.lmod+")")
+			#Gui.doCommand("reload(" + self.lmod+")")
 			Gui.doCommand(self.command)
 		if ta:
 			FreeCAD.ActiveDocument.commitTransaction()

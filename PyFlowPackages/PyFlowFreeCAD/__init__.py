@@ -3,9 +3,12 @@ PACKAGE_NAME = 'PyFlowFreeCAD'
 from collections import OrderedDict
 from PyFlow.UI.UIInterfaces import IPackage
 
+
 # Factories
-from PyFlow.Packages.PyFlowFreeCAD.Factories.PinInputWidgetFactory import getInputWidget
-from PyFlow.Packages.PyFlowFreeCAD.Factories.UINodeFactory import createUINode
+#from PyFlow.Packages.PyFlowFreeCAD.Factories.PinInputWidgetFactory import getInputWidget
+#from PyFlow.Packages.PyFlowFreeCAD.Factories.UINodeFactory import createUINode
+#-#
+
 
 
 # Pins
@@ -62,6 +65,8 @@ _TOOLS = OrderedDict()
 
 
 
+
+
 class PyFlowFreeCAD(IPackage):
     def __init__(self):
         super(PyFlowFreeCAD, self).__init__()
@@ -91,7 +96,9 @@ class PyFlowFreeCAD(IPackage):
  #   def UIPinsFactory():
   #      return createUIPin
 
+'''
     @staticmethod
     def UINodesFactory():
         return createUINode
 
+'''

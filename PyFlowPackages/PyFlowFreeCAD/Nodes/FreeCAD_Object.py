@@ -20,13 +20,15 @@ import nodeeditor.store as store
 from nodeeditor.say import *
 
 
-from FreeCAD_Base import *
-
-
+#from FreeCAD_Base import *
+import PyFlowPackages.PyFlowFreeCAD.Nodes.FreeCAD_Base
+from PyFlowPackages.PyFlowFreeCAD.Nodes.FreeCAD_Base import FreeCadNodeBase,timer
 
 
 class FreeCAD_Box( FreeCadNodeBase):
-    '''erzeuge einer Part.Box'''
+    '''
+    erzeuge einer Part.Box
+    '''
 
     def __init__(self, name="MyBox"):
 
@@ -357,7 +359,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
                 self.postCompute()
             else:
                 cc=self.getObject()
-                if cc <> None:
+                if cc  !=  None:
                     cc.Label=self.objname.getData()
                     cc.Shape=shape
                     self.postCompute(cc)
@@ -427,7 +429,7 @@ class FreeCAD_Boolean(FreeCadNodeBase):
         s1=store.store().get(shape1)
         s2=store.store().get(shape2)
 
-        if s1 <> None and s2 <>None:
+        if s1  !=  None and s2  != None:
             # arbeite mit shapes
             pass
 
@@ -700,7 +702,7 @@ class FreeCAD_Object(FreeCadNodeBase):
 
 
     def reload(self, *args, **kwargs):
-        print "reload from FreeCADobject and refresh data"
+        print ("reload from FreeCADobject and refresh data")
 
     def store(self, *args, **kwargs):
 
@@ -732,7 +734,7 @@ class FreeCAD_Object(FreeCadNodeBase):
                 except:
                     v=self.fob.getPropertyByName(pn)
 
-                if v <> vn:  # value has changed
+                if v  !=  vn:  # value has changed
                     setattr(self.fob,pn,vn)
 
         FreeCAD.activeDocument().recompute()
@@ -858,7 +860,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 
         say(self.pinsk)
         for p in self.pinsk.keys():
-            if self.pinsk[p] <> None:
+            if self.pinsk[p]  !=  None:
                 say(p,self.pinsk[p])
                 self.createOutputPin(p, self.pinsk[p])
 
@@ -888,7 +890,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
         shape=cc.Shape
         for n in self.pinsk.keys():
             v=getattr(shape,n)
-            if self.pinsk[n] <> None:
+            if self.pinsk[n]  !=  None:
                 self.setData(n,v)
         if 0:
             ls=shape.writeInventor().split('\n')
@@ -1577,7 +1579,7 @@ class FreeCAD_Ref(FreeCadNodeBase):
             if not p.isExec():
                 if p.name == "Shape_out":
                     self.setPinObject(p.name,obj.Shape)
-                elif p.name <> "objectname":
+                elif p.name  !=  "objectname":
                     subob =getattr(obj.Shape,p.name)
                     self.setPinObject(p.name,subob)
 
@@ -1632,7 +1634,7 @@ class FreeCAD_RefList(FreeCadNodeBase):
         #clean up
         for p in pins:
 #            if not p.isExec():
-            if not p.isExec() and p.direction <> PinDirection.Input :
+            if not p.isExec() and p.direction  !=  PinDirection.Input :
                 p.kill()
 
         # pins for sub shapes
@@ -1692,7 +1694,7 @@ class FreeCAD_RefList(FreeCadNodeBase):
             if not p.isExec():
                 if p.name == "Shape":
                     self.setPinObject(p.name,obj.Shape)
-                elif p.name <> "objectname":
+                elif p.name  !=  "objectname":
                     subob =getattr(obj.Shape,p.name)
                     self.setPinObject(p.name,subob)
 

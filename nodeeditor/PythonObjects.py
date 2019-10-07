@@ -46,9 +46,9 @@ class FeaturePython:
 		if prop.startswith('_show'):
 			mode= 0 if getattr(obj,prop) else 2
 			for pn in obj.PropertiesList:
-				if obj.getGroupOfProperty(pn).replace(' ','')==prop[5:] and pn<>prop:
+				if obj.getGroupOfProperty(pn).replace(' ','')==prop[5:] and pn != prop:
 					obj.setEditorMode(pn,mode)
-				if obj.getGroupOfProperty(pn).startswith('~') and obj.getGroupOfProperty(pn).replace(' ','')[1:]==prop[5:] and pn<>prop:
+				if obj.getGroupOfProperty(pn).startswith('~') and obj.getGroupOfProperty(pn).replace(' ','')[1:]==prop[5:] and pn != prop:
 					obj.setEditorMode(pn,mode)
 			return
 
@@ -125,17 +125,16 @@ class ViewProvider:
 		for prop in  s.PropertiesList:
 			if s.getTypeIdOfProperty(prop) in ['App::PropertyLink']:
 				v=s.getPropertyByName(prop)
-				if v <>None:
+				if v  != None:
 					rc += [v]
 			elif s.getTypeIdOfProperty(prop) in ['App::PropertyLinkList']:
 				v=s.getPropertyByName(prop)
-				if len(v) <> 0:
+				if len(v)  !=  0:
 					rc += v
 		return rc
 
 	def recompute(self):
 		obj=self.Object
-		print "Recompute ",obj.Label
 		obj.Proxy.myOnChanged(obj,"_recompute_")
 
 	def setupContextMenu(self, obj, menu):
@@ -145,21 +144,17 @@ class ViewProvider:
 		action.triggered.connect(self.recompute)
 
 #	def edit(self):
-#		print "noimp"
+#		git grep "from FreeCAD" "noimp"
 
 
 	def setEdit(self,vobj,mode=0):
 		#self.createDialog()
-		print "huhu"
 		try:
 			self.edit()
-#			print "ha 2"
 		except:
 			pass
 
 		#FreeCAD.ActiveDocument.recompute()
-#		print "hah"
-#		print vobj
 #		FreeCAD.v=vobj
 		return True
 

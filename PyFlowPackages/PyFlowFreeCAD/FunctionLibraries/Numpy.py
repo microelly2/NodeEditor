@@ -375,11 +375,11 @@ class Numpy(FunctionLibraryBase):
         returns data[umin:umax,vmin:vmax]
         '''
 
-        if umax<>0 and vmax<>0:
+        if umax != 0 and vmax != 0:
             return np.flipud(np.array(data))[umin:umax,vmin:vmax]
-        elif umax<>0:
+        elif umax != 0:
             return np.flipud(np.array(data))[umin:umax,vmin:]
-        elif vmax<>0:
+        elif vmax != 0:
             return np.flipud(np.array(data))[umin:,vmin:vmax]
         else:
             return np.flipud(np.array(data))[umin:,vmin:]
@@ -427,11 +427,11 @@ class Numpy(FunctionLibraryBase):
         '''
         reshape(data, (a [,b {,c]]))    Gives a new shape to an array without changing its data.
         '''
-        if c <> 0 :
+        if c  !=  0 :
             return np.reshape(np.array(data), (a,b,c))
-        elif b <> 0 :
+        elif b  !=  0 :
             return np.reshape(np.array(data), (a,b))
-        elif a <> 0 :
+        elif a  !=  0 :
             return np.reshape(np.array(data), (a))
         else:
             raise Exception("no valid shape")

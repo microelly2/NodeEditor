@@ -23,23 +23,23 @@ def runraw(self):
     fobj=FreeCAD.ActiveDocument.getObject(objname)
 
     if fobj == None:
-        print "cannot create pins because no FreeCAD object for name {}".format(objname)
+        say("cannot create pins because no FreeCAD object for name {}".format(objname))
         return []
     ps=fobj.PropertiesList
     if 0:
         sayl('#')
-        print "FreeCAD object Properties ---"
+        say("FreeCAD object Properties ---")
         for p in ps:
-            print p
+            say (p)
 
 
     pins=[]
     ipm=self.namePinInputsMap
 
     if 0:
-        print("ipm.keys() for ",objname,fobj.Name,fobj.Label)
+        say("ipm.keys() for ",objname,fobj.Name,fobj.Label)
         for k in ipm.keys():
-            print k
+            say(k)
 
 #---------------
 
@@ -48,7 +48,7 @@ def runraw(self):
         try:
             a=getattr(fobj,p)
         except:
-            print ("ignore problem with prop",p," fix it later !!")
+            say ("ignore problem with prop",p," fix it later !!")
             continue
 
         if p in ["Placement","Shape",
@@ -245,9 +245,9 @@ def run_Plot_compute(self,*args, **kwargs):
     say(len(x),len(y))
 
 
-    if len(y) <>0:
+    if len(y)  != 0:
         N=len(y)
-        if len(x)<>len(y):
+        if len(x) != len(y):
             x = np.linspace(0, 10, N, endpoint=True)
         else:
             x=np.array(x)
@@ -262,7 +262,7 @@ def run_Plot_compute(self,*args, **kwargs):
     x2=self.xpin2.getData()
     y2=self.ypin2.getData()
     say (len(x2),len(y2))
-    if x2 <> None and y2 <> None:
+    if x2  !=  None and y2  !=  None:
         x2=np.array(x2)
         y2=np.array(y2)
         if self.f3.getData():
@@ -294,7 +294,7 @@ def run_projection_compute(self,*args, **kwargs):
     say("direction",d)
     shape=f.makeParallelProjection(e,d)
     cc=self.getObject()
-    if cc <> None:
+    if cc  !=  None:
         cc.Label=self.objname.getData()
         cc.Shape=shape
         #cc.ViewObject.LineWidth=8
@@ -319,7 +319,7 @@ def run_perspective_projection_compute(self,*args, **kwargs):
     say("direction",d)
     shape=f.makeParallelProjection(e,d)
     cc=self.getObject()
-    if cc <> None:
+    if cc  !=  None:
         cc.Label=self.objname.getData()
         cc.Shape=shape
         #cc.ViewObject.LineWidth=8
@@ -381,7 +381,7 @@ def run_uv_projection_compute(self,*args, **kwargs):
     except: return
 
     cc=self.getObject()
-    if cc <> None:
+    if cc  !=  None:
         cc.Label=self.objname.getData()
 
     if self.getPinN('inverse').getData():
@@ -464,7 +464,7 @@ def run_FreeCAD_view3D(self, *args, **kwargs):
     f=w.getObject(name)
     if f == None:
         f = w.addObject('Part::Feature', name)
-    if s <> None:
+    if s  !=  None:
         f.Shape=s
     w.recompute()
 
@@ -856,7 +856,7 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
     edges=[]
     col=[]
     for r in  vor.ridge_points:
-        pts=[points[v] for v in r if v <> -1]
+        pts=[points[v] for v in r if v  !=  -1]
         if len(pts)>1:
             for i in range(len(pts)-1):
                 pa=pts[i]
@@ -899,9 +899,9 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
     #
     #for ix, r in  enumerate(vor.ridge_vertices):
     for ix, r in  enumerate(vor.regions):
-        pts=[vertexes[v] for v in r if v <> -1]
+        pts=[vertexes[v] for v in r if v  !=  -1]
         say(ix,len(r),len(pts))
-        #if ix <>pos:
+        #if ix  != pos:
         #   continue
         uvedgesA=[]
         if len(pts)>1:
@@ -955,7 +955,7 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
     #
     say("vor.regions",vor.regions)
     for ix, r in  enumerate(vor.regions):
-        pts=[vertexes[v] for v in r if v <> -1]
+        pts=[vertexes[v] for v in r if v  !=  -1]
         if ix==self.getData('indA'):
             say(ix,r)
             if len(pts)<=2:
@@ -1410,7 +1410,7 @@ def run_FreeCAD_2DArcOfParabola(self,*args, **kwargs):
     say(arca,arcb)
     fig=Part.Geom2d.ArcOfParabola2d(fig,arca,arcb)
 
-    if sf <> None:
+    if sf  !=  None:
         ee = fig.toShape(sf)
     else:
         ee = fig.toShape()
@@ -1555,7 +1555,7 @@ def run_FreeCAD_RefList(self,*args, **kwargs):
         #clean up
         pins=self.getOrderedPins()
         for p in pins:
-            if not p.isExec() and p.direction <> PinDirection.Input :
+            if not p.isExec() and p.direction  !=  PinDirection.Input :
                 p.kill()
 
         name="objects"
@@ -1990,7 +1990,7 @@ def run_FreeCAD_bakery(self):
     #say("AB",time.time()-timeA)
     if 1 or f == None:
         f = w.addObject('Part::Feature', name)
-    if s <> None:
+    if s  !=  None:
     #    say("AC",time.time()-timeA)
         f.Shape=s
     #    say("AD",time.time()-timeA)

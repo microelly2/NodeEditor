@@ -1637,7 +1637,7 @@ def T3():
 					#say()
 					say("[["+pin.__class__.__name__+"]]")
 					des=getdescription(pin)
-					if des <>'':
+					if des !='':
 						say(des)
 					say()
 				say("===OUTPUT PINS===")
@@ -1652,7 +1652,7 @@ def T3():
 					#say(pin.name)
 					say("[[" + pin.__class__.__name__ + "]]")
 					des=getdescription(pin)
-					if des <>'':
+					if des  != '':
 						say(des)
 
 					say()

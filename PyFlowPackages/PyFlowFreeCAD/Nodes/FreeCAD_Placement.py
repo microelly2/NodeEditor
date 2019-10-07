@@ -93,6 +93,4 @@ class FreeCAD_Placement(NodeBase):
 		c=FreeCAD.ActiveDocument.getObject(self.vobjname.getData())
 		c.Placement.Base=10*self.pa.getData()
 		c.Placement.Rotation.Angle=100*self.pc.getData()
-		print c.Placement
-
 		self.outExec.call()

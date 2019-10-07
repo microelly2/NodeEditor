@@ -50,7 +50,7 @@ class FCobjPin(PinBase):
 
     def getObject(self):
         arrin=self.getData()
-        if arrin <> None:
+        if arrin  !=  None:
             s=FreeCAD.ActiveDocument.getObject(arrin)
             return s
         else:
@@ -260,7 +260,7 @@ class ArrayPin(FCobjPin):
         #say("getArray method")
         arrin=self.getData()
         #say("got key:",arrin)
-        if arrin <> None:
+        if arrin  !=  None:
             s=store.store().get(arrin)
             return s
         else:
