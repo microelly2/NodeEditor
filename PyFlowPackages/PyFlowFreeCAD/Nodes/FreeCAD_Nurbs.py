@@ -29,7 +29,7 @@ class FreeCAD_Tripod(FreeCadNodeBase):
     position on a surface or curve
     '''
 
-    def __init__(self, name="LOD",**kvargs):
+    def __init__(self, name="MyTripod",**kvargs):
 
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -65,82 +65,14 @@ class FreeCAD_Tripod(FreeCadNodeBase):
 
 
 
-class FreeCAD_YYY(FreeCadNodeBase):
-    '''
-    position on a surface or curve
-    '''
-
-    def __init__(self, name="LOD",**kvargs):
-
-        superself.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
-        self.createInputPin('name', 'StringPin','view3d')
-        a=self.createInputPin('u', 'FloatPin',0)
-        a.recomputeNode=True
-        a=self.createInputPin('v', 'FloatPin',0)
-        a.recomputeNode=True
-        self.createInputPin('Shape', 'ShapePin')
-        self.createOutputPin('position', 'VectorPin')
-        self.createOutputPin('placement', 'PlacementPin' )
-        self.createInputPin("display", 'BoolPin', True)
-        self.createInputPin("directionNormale", 'BoolPin', False)
-        self.createInputPin("curvatureMode", 'BoolPin', True)
-        
-
-
-    @staticmethod
-    def description():
-        return FreeCAD_YYY.__doc__
-
-    @staticmethod
-    def category():
-        return 'Document'
-
-    @staticmethod
-    def keywords():
-        return ['Surface','position','Point','uv']
-
-
-class FreeCAD_Bar(FreeCadNodeBase):
-    '''
-    dummy for tests
-    '''
-
-    def __init__(self, name="Fusion"):
-       super(self.__class__, self).__init__(name)
-#       self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-       
-       self.inExec = self.createInputPin("start", 'ExecPin', None, self.start)
-       self.inExec = self.createInputPin("stop", 'ExecPin', None, self.stop)
-       self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-       self.createOutputPin('positionApp', 'VectorPin')#.description="position of the mouse in the application window"
-       self.createOutputPin('positionWindow', 'VectorPin')
-       self.createOutputPin('Shape_out', 'ShapePin').description="Shape for illustration"
- 
-
-    @staticmethod
-    def description():
-        return FreeCAD_Bar.__doc__
-
-    @staticmethod
-    def category():
-        return 'Development'
-
-    @staticmethod
-    def keywords():
-        return []
-
-
 
 class FreeCAD_Mouse(FreeCadNodeBase):
     '''
-    dummy for tests
+    a Mouse Sensor
     '''
 
 
-    def __init__(self, name="Fausion"):
+    def __init__(self, name="MouseSensor"):
        super(self.__class__, self).__init__(name)
 #       self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
        
@@ -209,7 +141,7 @@ class FreeCAD_uIso(FreeCadNodeBase):
     '''
 
     dok= 2
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyUIso"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -243,7 +175,7 @@ class FreeCAD_vIso(FreeCadNodeBase):
     '''
 
     dok = 2
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyVIso"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -272,7 +204,7 @@ class FreeCAD_uvGrid(FreeCadNodeBase):
     uIso and vIso curves grid
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="myUvGrid"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -305,7 +237,7 @@ class FreeCAD_Voronoi(FreeCadNodeBase):
     voronoi cells, delaunay triangulation on a surface for a given set of uv points  on this surface
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyVoronoi"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -352,7 +284,7 @@ class FreeCAD_Hull(FreeCadNodeBase):
     delaynay triangulation, convex hull and alpha hull for a given set of points
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyHull"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -402,7 +334,7 @@ class FreeCAD_2DGeometry(FreeCadNodeBase):
     2d Geometry object
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="Geo2D"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -440,7 +372,7 @@ class FreeCAD_2DCircle(FreeCadNodeBase):
     2d Geometry object
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyCircle2D"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -475,7 +407,7 @@ class FreeCAD_2DEllipse(FreeCadNodeBase):
     2d Geometry object
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyEllipse2D"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -517,7 +449,7 @@ class FreeCAD_2DArcOfEllipse(FreeCadNodeBase):
     2d Geometry object
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyArcOfEllipse2D"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -564,7 +496,7 @@ class FreeCAD_2DArcOfParabola(FreeCadNodeBase):
     2d Geometry object
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyArcOfParabola2D"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -616,7 +548,7 @@ class FreeCAD_2DArcOfCircle(FreeCadNodeBase):
 
     dok = 2
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyArcOfCircle2D"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -668,7 +600,7 @@ class FreeCAD_Simplex(FreeCadNodeBase):
     Tetraeder
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MySimplex"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -712,7 +644,7 @@ class FreeCAD_Tread(FreeCadNodeBase):
     Schindel oder Stufe
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyTread"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
@@ -768,7 +700,7 @@ class FreeCAD_Discretize(FreeCadNodeBase):
     '''
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyDiscretizeFusion"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 #        self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
@@ -783,7 +715,7 @@ class FreeCAD_Discretize(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_2DEllipse.__doc__
+        return FreeCAD_Discretize.__doc__
 
     @staticmethod
     def category():
@@ -805,7 +737,7 @@ class FreeCAD_Offset(FreeCadNodeBase):
     '''
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyOffset"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
@@ -851,7 +783,7 @@ class FreeCAD_FillEdge(FreeCadNodeBase):
     closed edge to face
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyFillEdge"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
@@ -894,7 +826,7 @@ class FreeCAD_Solid(FreeCadNodeBase):
     make solid of faces
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MySolid"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.inExec = self.createInputPin('bake', 'ExecPin', None, self.bake)
@@ -941,7 +873,7 @@ class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
     provides the parameters of a bspline edge object
     '''
     dok=2 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyDestruct"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -981,7 +913,7 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
     provides the parameters of a bspline surface object
     '''
     dok=2 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyDestruct"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -1037,7 +969,7 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
     collect vectors to a list
     '''
     dok=2 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyCollection"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.inReset = self.createInputPin("reset", 'ExecPin', None, self.reset)
@@ -1092,7 +1024,7 @@ class FreeCAD_approximateBSpline(FreeCadNodeBase):
     create an approximated BSpline for **points** on face **Shape_in**
     '''
     dok=2 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyApproximation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
       
@@ -1125,7 +1057,7 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
     create an interpolated BSpline for **points** on face **Shape_in**
     '''
     dok=2 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyInterpolation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
       
@@ -1156,10 +1088,10 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
 
 def nodelist():
     return [
-                FreeCAD_Bar,
+#                FreeCAD_Bar,
                 FreeCAD_Mouse,
                 FreeCAD_Tripod,
-                FreeCAD_YYY,
+#                FreeCAD_YYY,
                 FreeCAD_uIso, FreeCAD_vIso,
                 FreeCAD_uvGrid,
                 FreeCAD_Voronoi,

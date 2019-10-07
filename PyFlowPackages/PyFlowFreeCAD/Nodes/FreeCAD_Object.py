@@ -298,7 +298,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
     input pin for a list of vectors
     '''
 
-    def __init__(self, name="MyQuadrangle"):
+    def __init__(self, name="MyPolygon"):
 
         super(self.__class__, self).__init__(name)
 
@@ -504,7 +504,7 @@ class FreeCAD_BSplineSurface(FreeCadNodeBase):
         return '''create a default bspline surface from poles and degrees'''
 
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyBSplineSurface"):
 
         super(self.__class__, self).__init__(name)
 
@@ -548,7 +548,7 @@ class FreeCAD_BSplineCurve(FreeCadNodeBase):
         return '''create a default bspline surface from poles and degrees'''
 
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyBSplineCurve"):
 
         super(self.__class__, self).__init__(name)
 
@@ -582,7 +582,7 @@ class FreeCAD_BSplineCurve(FreeCadNodeBase):
 class FreeCAD_VectorArray(FreeCadNodeBase):
     '''Array of Vectors Surface'''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyVectorArray"):
 
         super(self.__class__, self).__init__(name)
 
@@ -652,7 +652,7 @@ class FreeCAD_Object(FreeCadNodeBase):
     load and save objects in FreeCAD document
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyObject"):
         super(self.__class__, self).__init__(name)
 
 
@@ -765,7 +765,7 @@ class FreeCAD_Console(FreeCadNodeBase):
     '''
     write to FreeCAD.Console
     '''
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="Console"):
         super(self.__class__, self).__init__(name)
 
 
@@ -817,7 +817,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
     dummy for tests
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyPartExplorer"):
 
         super(self.__class__, self).__init__(name)
 
@@ -954,7 +954,7 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
     '''
 
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyShapeIndex"):
         super(self.__class__, self).__init__(name)
 
 
@@ -1026,7 +1026,7 @@ class FreeCAD_Face(FreeCadNodeBase):
     or a shapePin
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyFace"):
         super(self.__class__, self).__init__(name)
 
 
@@ -1081,7 +1081,7 @@ class FreeCAD_Edge(FreeCadNodeBase):
     or a shapePin
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyEdge"):
         super(self.__class__, self).__init__(name)
 
 
@@ -1134,7 +1134,7 @@ class FreeCAD_Destruct_Shape(FreeCadNodeBase):
     or a shapePin
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyDestruction"):
         super(self.__class__, self).__init__(name)
 
 
@@ -1195,7 +1195,7 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
     dummy for tests
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyParallelProjection"):
         super(self.__class__, self).__init__(name)
 
 
@@ -1246,7 +1246,7 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
     dummy for tests
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyPerspectiveProjection"):
         super(self.__class__, self).__init__(name)
 
 
@@ -1297,7 +1297,7 @@ class FreeCAD_UVprojection(FreeCadNodeBase):
     dummy for tests
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyUVProjection"):
         super(self.__class__, self).__init__(name)
 
 
@@ -1354,7 +1354,7 @@ class FreeCAD_Compound(FreeCadNodeBase):
     compound of a list of shapes
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyCompound"):
         super(self.__class__, self).__init__(name)
 
 
@@ -1396,7 +1396,7 @@ class FreeCAD_Plot(NodeBase):
     dummy for tests
     '''
 
-    def __init__(self, name="Fusion"):
+    def __init__(self, name="MyPlot"):
         super(self.__class__, self).__init__(name)
 
 
@@ -1457,7 +1457,7 @@ class FreeCAD_Ref(FreeCadNodeBase):
     these selected details is created
     '''
 
-    def __init__(self, name="Fusion",**kvargs):
+    def __init__(self, name="MyReference",**kvargs):
         try:
             s=FreeCADGui.Selection.getSelection()[0]
             name="REF_"+s.Name
@@ -1599,7 +1599,7 @@ class FreeCAD_RefList(FreeCadNodeBase):
     a reference to a list of objects
     '''
 
-    def __init__(self, name="Fusion",**kvargs):
+    def __init__(self, name="MyReferenceList",**kvargs):
         try:
             s=FreeCADGui.Selection.getSelection()[0]
             name="REF_"+s.Name
@@ -1715,7 +1715,7 @@ class FreeCAD_LOD(FreeCadNodeBase):
     Level of Detail switch
     '''
 
-    def __init__(self, name="LOD",**kvargs):
+    def __init__(self, name="MyLOD",**kvargs):
 
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1759,7 +1759,7 @@ class FreeCAD_view3D(FreeCadNodeBase):
     '''
 
     dok = 2
-    def __init__(self, name="LOD",**kvargs):
+    def __init__(self, name="MyView3D",**kvargs):
 
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1808,7 +1808,7 @@ class FreeCAD_bakery(FreeCadNodeBase):
     '''
 
     dok = 2
-    def __init__(self, name="LOD",**kvargs):
+    def __init__(self, name="baked",**kvargs):
 
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
