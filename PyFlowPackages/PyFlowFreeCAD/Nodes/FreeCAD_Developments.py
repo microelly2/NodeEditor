@@ -35,7 +35,7 @@ class FreeCAD_PinsTest(FreeCadNodeBase):
         for pn in  'Any Vector Rotation Enumeration Shape ShapeList FCobj Array Float Int String Bool'.split(' '):
             p=self.createInputPin(pn+"_in", pn+'Pin')
             p=self.createOutputPin(pn+"_out", pn+'Pin')
-            p=self.createInputPin(pn+"_in_array", pn+'Pin', structure=PinStructure.Array)
+            p=self.createInputPin(pn+"_in_array", pn+'Pin', structure=StructureType.Array)
 
             # gleiche pins einzeln oder als liste
             p.enableOptions(PinOptions.AllowMultipleConnections)
@@ -43,7 +43,7 @@ class FreeCAD_PinsTest(FreeCadNodeBase):
 
 #           p=self.createInputPin(pn+"_in_dict", pn+'Pin', structure=PinStructure.Dict)
 #           p=self.createInputPin(pn+"_in_mult", pn+'Pin', structure=PinStructure.Multi)
-            p=self.createOutputPin(pn+"_out_array", pn+'Pin', structure=PinStructure.Array)
+            p=self.createOutputPin(pn+"_out_array", pn+'Pin', structure=StructureType.Array)
 #           p=self.createOutputPin(pn+"_out_dict", pn+'Pin', structure=PinStructure.Dict)
 
         self.createInputPin("yyy","AnyPin", None,  supportedPinDataTypes=["FloatPin", "IntPin"])

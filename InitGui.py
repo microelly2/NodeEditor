@@ -40,6 +40,7 @@ if pv3:
 
 
 import nodeeditor
+from nodeeditor.utils import *
 
 if not pv3:
 	os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
@@ -56,9 +57,10 @@ import re
 global __dir__
 __dir__ = os.path.dirname(nodeeditor.__file__)
 
-import sys
-if sys.version_info[0] !=2:
-	from importlib import reload
+#import sys
+#if sys.version_info[0] !=2:
+#	from importlib import reload
+
 
 
 import FreeCAD, FreeCADGui

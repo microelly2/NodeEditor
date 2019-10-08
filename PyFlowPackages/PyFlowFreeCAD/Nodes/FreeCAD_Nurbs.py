@@ -17,6 +17,7 @@ from PyFlow.Core.Common import *
 from PyFlow.Packages.PyFlowBase.Nodes import FLOW_CONTROL_COLOR
 
 import nodeeditor.store as store
+from nodeeditor.utils import *
 from nodeeditor.say import *
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
@@ -250,8 +251,8 @@ class FreeCAD_Voronoi(FreeCadNodeBase):
         self.createInputPin("indB", 'IntPin', True)
         self.createOutputPin('uEdges', 'ShapeListPin')
         self.createOutputPin('vEdges', 'ShapeListPin')
-        self.createInputPin('uList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
-        self.createInputPin('vList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
+        self.createInputPin('uList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
+        self.createInputPin('vList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
 
         self.createOutputPin('Points', 'ShapePin')
         self.createOutputPin('convexHull', 'ShapePin')
@@ -299,9 +300,9 @@ class FreeCAD_Hull(FreeCadNodeBase):
 
         self.createOutputPin('uEdges', 'ShapeListPin')
         self.createOutputPin('vEdges', 'ShapeListPin')
-        self.createInputPin('uList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
-        self.createInputPin('vList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
-        #self.createOutputPin('edges', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
+        self.createInputPin('uList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
+        self.createInputPin('vList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
+        #self.createOutputPin('edges', 'FloatPin', structure=StructureType.Array,defaultValue=None)
         self.createOutputPin('Points', 'ShapePin')
         self.createOutputPin('convexHull', 'ShapePin')
         self.createOutputPin('delaunayTriangles', 'ShapePin')
@@ -829,8 +830,8 @@ class FreeCAD_Solid(FreeCadNodeBase):
 
         #a=self.createInputPin("count", 'IntPin', True)
         #a=self.createInputPin("Wire", 'ShapePin', True)
-        a=self.createInputPin("Shapes", 'ShapePin',structure=PinStructure.Array)
-        a=self.createInputPin("Faces", 'FacePin',structure=PinStructure.Array)
+        a=self.createInputPin("Shapes", 'ShapePin',structure=StructureType.Array)
+        a=self.createInputPin("Faces", 'FacePin',structure=StructureType.Array)
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
 
@@ -876,11 +877,11 @@ class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
         self.shapeout = self.createInputPin('Shape_in', 'ShapePin')
         self.shapeout.description="Shape which has exactly one edge, this edge is explored"
 
-        self.createOutputPin('poles', 'VectorPin', structure=PinStructure.Array).\
+        self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="list of the poles vectors"
-        self.createOutputPin('knots', 'FloatPin',structure=PinStructure.Array).\
+        self.createOutputPin('knots', 'FloatPin',structure=StructureType.Array).\
         description="list of the knots"
-        self.createOutputPin('mults', 'IntPin',structure=PinStructure.Array).\
+        self.createOutputPin('mults', 'IntPin',structure=StructureType.Array).\
         description="list of the multiplicities"
         self.createOutputPin('degree', 'IntPin').\
         description="degree of the curve"
@@ -1146,8 +1147,8 @@ class FreeCAD_Voronoi(FreeCadNodeBase):
         self.createInputPin("indB", 'IntPin', True)
         self.createOutputPin('uEdges', 'ShapeListPin')
         self.createOutputPin('vEdges', 'ShapeListPin')
-        self.createInputPin('uList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
-        self.createInputPin('vList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
+        self.createInputPin('uList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
+        self.createInputPin('vList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
 
         self.createOutputPin('Points', 'ShapePin')
         self.createOutputPin('convexHull', 'ShapePin')
@@ -1195,9 +1196,9 @@ class FreeCAD_Hull(FreeCadNodeBase):
 
         self.createOutputPin('uEdges', 'ShapeListPin')
         self.createOutputPin('vEdges', 'ShapeListPin')
-        self.createInputPin('uList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
-        self.createInputPin('vList', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
-        #self.createOutputPin('edges', 'FloatPin', structure=PinStructure.Array,defaultValue=None)
+        self.createInputPin('uList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
+        self.createInputPin('vList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
+        #self.createOutputPin('edges', 'FloatPin', structure=StructureType.Array,defaultValue=None)
         self.createOutputPin('Points', 'ShapePin')
         self.createOutputPin('convexHull', 'ShapePin')
         self.createOutputPin('delaunayTriangles', 'ShapePin')
@@ -1725,8 +1726,8 @@ class FreeCAD_Solid(FreeCadNodeBase):
 
         #a=self.createInputPin("count", 'IntPin', True)
         #a=self.createInputPin("Wire", 'ShapePin', True)
-        a=self.createInputPin("Shapes", 'ShapePin',structure=PinStructure.Array)
-        a=self.createInputPin("Faces", 'FacePin',structure=PinStructure.Array)
+        a=self.createInputPin("Shapes", 'ShapePin',structure=StructureType.Array)
+        a=self.createInputPin("Faces", 'FacePin',structure=StructureType.Array)
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
 
@@ -1772,11 +1773,11 @@ class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
         self.shapeout = self.createInputPin('Shape_in', 'ShapePin')
         self.shapeout.description="Shape which has exactly one edge, this edge is explored"
 
-        self.createOutputPin('poles', 'VectorPin', structure=PinStructure.Array).\
+        self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="list of the poles vectors"
-        self.createOutputPin('knots', 'FloatPin',structure=PinStructure.Array).\
+        self.createOutputPin('knots', 'FloatPin',structure=StructureType.Array).\
         description="list of the knots"
-        self.createOutputPin('mults', 'IntPin',structure=PinStructure.Array).\
+        self.createOutputPin('mults', 'IntPin',structure=StructureType.Array).\
         description="list of the multiplicities"
         self.createOutputPin('degree', 'IntPin').\
         description="degree of the curve"
@@ -1813,11 +1814,11 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
         self.shapeout.description="Shape which has exactly one face, this edge is explored"
 
 
-        self.createOutputPin('poles', 'VectorPin', structure=PinStructure.Array).\
+        self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="array of the poles vectors"
-        self.createOutputPin('uknots', 'FloatPin',structure=PinStructure.Array).\
+        self.createOutputPin('uknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the uknots"
-        self.createOutputPin('umults', 'IntPin',structure=PinStructure.Array).\
+        self.createOutputPin('umults', 'IntPin',structure=StructureType.Array).\
         description="list of the umultiplicities"
         self.createOutputPin('udegree', 'IntPin').\
         description="udegree of the surface"
@@ -1825,9 +1826,9 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
         self.createOutputPin('uperiodic', 'BoolPin').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
         
-        self.createOutputPin('vknots', 'FloatPin',structure=PinStructure.Array).\
+        self.createOutputPin('vknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the vknots"
-        self.createOutputPin('vmults', 'IntPin',structure=PinStructure.Array).\
+        self.createOutputPin('vmults', 'IntPin',structure=StructureType.Array).\
         description="list of the umultiplicities"
         self.createOutputPin('vdegree', 'IntPin').\
         description="udegree of the surface"
@@ -1876,7 +1877,7 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
         self.createInputPin("reduce",'IntPin',0).\
         description="create only a discretized list of the polygon with this size"
 
-        a=self.createOutputPin('points', 'VectorPin', structure=PinStructure.Array)
+        a=self.createOutputPin('points', 'VectorPin', structure=StructureType.Array)
         a.description="list of collected vectors"
         
         self.points=[]
@@ -1921,7 +1922,7 @@ class FreeCAD_approximateBSpline(FreeCadNodeBase):
       
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('points', 'VectorPin', structure=PinStructure.Array)
+        self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
         self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')
@@ -1954,7 +1955,7 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
       
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('points', 'VectorPin', structure=PinStructure.Array)
+        self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
         self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')
@@ -1967,11 +1968,11 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
 
 
 
-        self.createOutputPin('poles', 'VectorPin', structure=PinStructure.Array).\
+        self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="array of the poles vectors"
-        self.createOutputPin('uknots', 'FloatPin',structure=PinStructure.Array).\
+        self.createOutputPin('uknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the uknots"
-        self.createOutputPin('umults', 'IntPin',structure=PinStructure.Array).\
+        self.createOutputPin('umults', 'IntPin',structure=StructureType.Array).\
         description="list of the umultiplicities"
         self.createOutputPin('udegree', 'IntPin').\
         description="udegree of the surface"
@@ -1979,9 +1980,9 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
         self.createOutputPin('uperiodic', 'BoolPin').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
         
-        self.createOutputPin('vknots', 'FloatPin',structure=PinStructure.Array).\
+        self.createOutputPin('vknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the vknots"
-        self.createOutputPin('vmults', 'IntPin',structure=PinStructure.Array).\
+        self.createOutputPin('vmults', 'IntPin',structure=StructureType.Array).\
         description="list of the umultiplicities"
         self.createOutputPin('vdegree', 'IntPin').\
         description="udegree of the surface"
@@ -2029,7 +2030,7 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
         self.createInputPin("reduce",'IntPin',0).\
         description="create only a discretized list of the polygon with this size"
 
-        a=self.createOutputPin('points', 'VectorPin', structure=PinStructure.Array)
+        a=self.createOutputPin('points', 'VectorPin', structure=StructureType.Array)
         a.description="list of collected vectors"
         
         self.points=[]
@@ -2074,7 +2075,7 @@ class FreeCAD_approximateBSpline(FreeCadNodeBase):
       
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('points', 'VectorPin', structure=PinStructure.Array)
+        self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
         self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')
@@ -2107,7 +2108,7 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
       
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('points', 'VectorPin', structure=PinStructure.Array)
+        self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
         self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')

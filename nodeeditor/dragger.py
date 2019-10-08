@@ -1,17 +1,19 @@
 #dragger.py
-import os
-os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
-#import Qt
-#from Qt import QtCore
-#from Qt import QtGui
+
+#import os
+#os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join([ "PyQt4"])
+
+
 #from Qt.QtWidgets import *
 
 
 
 
-from nurbswb.say import *
+from nodeeditor.utils import *
 
 import FreeCAD
+import Part
+import FreeCADGui as Gui
 import sys,time
 import random
 
@@ -21,7 +23,14 @@ from nodeeditor.say import *
 from nodeeditor.Commands import clearReportView
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import timer
-from PySide import QtGui,QtCore
+#from PySide import QtGui,QtCore
+
+
+import Qt
+from Qt import QtCore
+from Qt import QtGui
+say(Qt)
+say(Qt.QtWidgets.QWidget)
 
 class EventFilter(QtCore.QObject):
     '''Eventfilter for facedrawing'''
@@ -51,15 +60,16 @@ class EventFilter(QtCore.QObject):
         self.t=[]
         self.z=0
         self.LMpress=False
+        sayl()
 
     @timer
     def snapList(self,delta=0.04):
-            #say("snaplist")
+            say("snaplist")
 #            if self.t == None:
 #                return
             if not self.LMpress:
                 return
-
+            say("run..")
             if self.displayObjects<time.time()-delta:
                 
                 #clearReportView(name="dragger")
@@ -138,20 +148,21 @@ class EventFilter(QtCore.QObject):
         z=str(e.type())
 
         event=e
+        
 
         if event.type() == QtCore.QEvent.ContextMenu : return True
 
         # not used events
-        if z == 'PySide.QtCore.QEvent.Type.ChildAdded' or \
-                z == 'PySide.QtCore.QEvent.Type.ChildRemoved'or \
-                z == 'PySide.QtCore.QEvent.Type.User'  or \
-                z == 'PySide.QtCore.QEvent.Type.Paint' or \
-                z == 'PySide.QtCore.QEvent.Type.LayoutRequest' or\
-                z == 'PySide.QtCore.QEvent.Type.UpdateRequest'  : 
-            return QtGui.QWidget.eventFilter(self, o, e)
+        if z == 'PySide2.QtCore.QEvent.Type.ChildAdded' or \
+                z == 'PySide2.QtCore.QEvent.Type.ChildRemoved'or \
+                z == 'PySide2.QtCore.QEvent.Type.User'  or \
+                z == 'PySide2.QtCore.QEvent.Type.Paint' or \
+                z == 'PySide2.QtCore.QEvent.Type.LayoutRequest' or\
+                z == 'PySide2.QtCore.QEvent.Type.UpdateRequest'  : 
+            return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
 
 
-        if z == 'PySide.QtCore.QEvent.Type.KeyPress':
+        if z == 'PySide2.QtCore.QEvent.Type.KeyPress':
             # http://doc.qt.io/qt-4.8/qkeyevent.html
 
             if 1:
@@ -175,13 +186,15 @@ class EventFilter(QtCore.QObject):
                         if not self.on:
                             say("------------F3 on-----------------")
                             self.on=True
-                        return QtGui.QWidget.eventFilter(self, o, e)
+                        return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
+                        #return QtGui.QWidget.eventFilter(self, o, e)
                         return True
                     elif e.key()== QtCore.Qt.Key_F4 :
                         if self.on:
                             say("------------F4 off-----------------")
                             self.on=False
-                        return QtGui.QWidget.eventFilter(self, o, e)
+                        return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
+                        #return QtGui.QWidget.eventFilter(self, o, e)
                         return True
                 try:
 
@@ -212,7 +225,7 @@ class EventFilter(QtCore.QObject):
                         say("go up")
                         return True
                     elif e.key() == QtCore.Qt.Key_Down :
-                        print "Go Down"
+                        print ("Go Down")
                         return True
 #                    elif e.key() == QtCore.Qt.Key_PageUp :
 #                    elif e.key() == QtCore.Qt.Key_PageDown :
@@ -248,13 +261,14 @@ class EventFilter(QtCore.QObject):
             return True
 
         if event.type() == QtCore.QEvent.MouseButtonPress:
-            if str(event.button()) == 'PySide.QtCore.Qt.MouseButton.LeftButton':
+            if str(event.button()) == 'PySide2.QtCore.Qt.MouseButton.LeftButton':
                 self.LMpress=True
 
         if event.type() == QtCore.QEvent.MouseButtonRelease:
             self.LMpress=False
 
         if event.type() == QtCore.QEvent.MouseMove:
+                #say("mouse move")
                 (x,y)=Gui.ActiveDocument.ActiveView.getCursorPos()
                 t=Gui.ActiveDocument.ActiveView.getObjectsInfo((x,y))
                 #say(time.time())
@@ -270,7 +284,7 @@ class EventFilter(QtCore.QObject):
                     p = cursor.pos()
                     if self.on:
                         
-                        #say("Mouse pos",p.x(),p.y(),"Cursor pos in window",x,y)
+                        say("Mouse pos",p.x(),p.y(),"Cursor pos in window",x,y)
                         self.ax=p.x()
                         self.ay=p.y()
                         self.x=x
@@ -291,26 +305,28 @@ class EventFilter(QtCore.QObject):
                 # details siehe sculpter.py
                 
                 #-----------------------------
-                return QtGui.QWidget.eventFilter(self, o, e)
+                #return QtGui.QWidget.eventFilter(self, o, e)
+                return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
                 return True
 
         # end of a single key pressed
         if 0:
-            if z == 'PySide.QtCore.QEvent.Type.KeyRelease':
+            if z == 'PySide2.QtCore.QEvent.Type.KeyRelease':
                 self.lasttime=time.time()
                 say("released")
                 self.keyPressed2=False
 
 
-            if z == 'PySide.QtCore.QEvent.Type.Enter' :
+            if z == 'PySide2.QtCore.QEvent.Type.Enter' :
                 say("enter")
-            elif z == 'PySide.QtCore.QEvent.Type.Leave' :
+            elif z == 'PySide2.QtCore.QEvent.Type.Leave' :
                 say("leave")
 
-            if z == 'PySide.QtCore.QEvent.Type.HoverMove' :
+            if z == 'PySide2.QtCore.QEvent.Type.HoverMove' :
                 say("hover")
 
-        return QtGui.QWidget.eventFilter(self, o, e)
+        return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
+        #return QtGui.QWidget.eventFilter(self, o, e)
 
 
 
@@ -321,7 +337,7 @@ def start(self,*args, **kwargs):
     ef.mouseWheel=0
     ef.node=self
     self.eventfilter=ef
-    from PySide import QtGui,QtCore
+    from PySide2 import QtGui,QtCore
     mw=QtGui.qApp
     mw.installEventFilter(ef)
     self.outExec.call()
@@ -329,6 +345,7 @@ def start(self,*args, **kwargs):
 
 def stop(self,*args, **kwargs):
     sayl()
+    from PySide2 import QtGui,QtCore
     mw=QtGui.qApp
     ef=self.eventfilter
     mw.removeEventFilter(ef)

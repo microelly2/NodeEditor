@@ -330,7 +330,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
         self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
         self.shapeOnly.recomputeNode=True
 
-        self.points = self.createInputPin('points', 'VectorPin',[], structure=PinStructure.Multi)
+        self.points = self.createInputPin('points', 'VectorPin',[], structure=StructureType.Multi)
         self.points.setData([FreeCAD.Vector(0,0,0),FreeCAD.Vector(10,0,0)])
 
 
@@ -525,7 +525,7 @@ class FreeCAD_BSplineSurface(FreeCadNodeBase):
 
         self.randomize = self.createInputPin("randomize", 'BoolPin')
 
-        self.arrayData = self.createInputPin('poles', 'VectorPin', structure=PinStructure.Array)
+        self.arrayData = self.createInputPin('poles', 'VectorPin', structure=StructureType.Array)
         self.arrayData.description="Array of poles vectors"
         self.arrayData.enableOptions(PinOptions.AllowMultipleConnections)
         self.arrayData.disableOptions(PinOptions.SupportsOnlyArrays)
@@ -569,7 +569,7 @@ class FreeCAD_BSplineCurve(FreeCadNodeBase):
 
         self.randomize = self.createInputPin("randomize", 'BoolPin')
         self.shapeout = self.createOutputPin('Shape_out', 'EdgePin')
-        self.arrayData = self.createInputPin('poles', 'VectorPin', structure=PinStructure.Array)
+        self.arrayData = self.createInputPin('poles', 'VectorPin', structure=StructureType.Array)
         self.createInputPin('maxDegree', 'IntPin', 3)
 
         self.arrayData.enableOptions(PinOptions.AllowMultipleConnections)
@@ -626,7 +626,7 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
         self.createInputPin("degreeA", 'IntPin',3)
         self.createInputPin("degreeB", 'IntPin',3)
 
-        self.outArray = self.createOutputPin('out', 'AnyPin', [[],[]], structure=PinStructure.Array)
+        self.outArray = self.createOutputPin('out', 'AnyPin', [[],[]], structure=StructureType.Array)
         self.outArray.enableOptions(PinOptions.AllowAny)
 
 
@@ -799,7 +799,7 @@ class FreeCAD_Console(FreeCadNodeBase):
 #       self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 #        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.entity = self.createInputPin('entity', 'AnyPin',[], structure=PinStructure.Multi)
+        self.entity = self.createInputPin('entity', 'AnyPin',[], structure=StructureType.Multi)
         self.entity.setData([FreeCAD.Vector(),FreeCAD.Vector()])
 
 
@@ -850,7 +850,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
         self.shapeOnly.recomputeNode=True
 
         self.part = self.createInputPin('Part_in', 'FCobjPin')
-        self.outArray = self.createOutputPin('Points', 'VectorPin', structure=PinStructure.Array)
+        self.outArray = self.createOutputPin('Points', 'VectorPin', structure=StructureType.Array)
         a=self.createOutputPin('Faces', 'ShapeListPin')
         b=self.createOutputPin('Edges', 'ShapeListPin')
 
@@ -1152,7 +1152,7 @@ class FreeCAD_Destruct_Shape(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.outArray = self.createOutputPin('Points', 'VectorPin', structure=PinStructure.Array)
+        self.outArray = self.createOutputPin('Points', 'VectorPin', structure=StructureType.Array)
         self.outArray.description="a list of the vectors for the vertexes of the shape"
         a=self.createOutputPin('Faces', 'ShapeListPin')
         a.description="list of the faces of the shape"
@@ -1426,11 +1426,11 @@ class FreeCAD_Plot(NodeBase):
         self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
         self.shapeOnly.recomputeNode=True
 
-        self.xpin=self.createInputPin('x', 'FloatPin', structure=PinStructure.Array)
-        self.ypin=self.createInputPin('y', 'FloatPin', structure=PinStructure.Array)
+        self.xpin=self.createInputPin('x', 'FloatPin', structure=StructureType.Array)
+        self.ypin=self.createInputPin('y', 'FloatPin', structure=StructureType.Array)
 
-        self.xpin2=self.createInputPin('x2', 'FloatPin', structure=PinStructure.Array)
-        self.ypin2=self.createInputPin('y2', 'FloatPin', structure=PinStructure.Array)
+        self.xpin2=self.createInputPin('x2', 'FloatPin', structure=StructureType.Array)
+        self.ypin2=self.createInputPin('y2', 'FloatPin', structure=StructureType.Array)
 
         self.f2=self.createInputPin('Figure2', 'BoolPin')
         self.f3=self.createInputPin('Figure3', 'BoolPin')
@@ -1623,8 +1623,8 @@ class FreeCAD_RefList(FreeCadNodeBase):
 #       self.inExec = self.createInputPin('Adapt Selection', 'ExecPin', None, self.refresh)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 #        self.objname = self.createInputPin("objectname", 'StringPin')
-#        self.objname = self.createInputPin("positions", 'VectorPin',structure=PinStructure.Array)
-#        self.objname = self.createInputPin("rotations", 'RotationPin',[],structure=PinStructure.Array)
+#        self.objname = self.createInputPin("positions", 'VectorPin',structure=StructureType.Array)
+#        self.objname = self.createInputPin("rotations", 'RotationPin',[],structure=StructureType.Array)
 #        self.objname.setData(name)
 
         try:

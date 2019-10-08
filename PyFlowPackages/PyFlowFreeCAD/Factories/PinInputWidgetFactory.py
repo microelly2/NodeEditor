@@ -379,12 +379,34 @@ class MyInputWidget(InputWidgetSingle):
         self.le.setText(str(val))
 
 
+from PyFlow.Packages.PyFlowBase.Factories.PinInputWidgetFactory import *
 
 
 def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WIDGET_VARIANT,  **kwds):
     '''
     factory method
     '''
+    say("widgetvariant",widgetVariant,dataType)
+    if dataType == 'FloatPin':
+        say("float pin")
+        if widgetVariant == "Simple2":
+            say("simple2 gefunden")
+            return FloatInputWidgetSimple(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+#        elif widgetVariant == "FloatInputWidgetSimple":
+#            return FloatInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+        if widgetVariant == "Slider":
+            return FloatInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+
+
+
+    if dataType == 'IntPin':
+#        if widgetVariant == DEFAULT_WIDGET_VARIANT:
+#            return IntInputWidgetSimple(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+#        elif widgetVariant == "IntInputWidgetSimple":
+            return IntInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+
+
+
 
     if dataType == 'IntPin':
         say("input variant for freecad int pin ",widgetVariant)

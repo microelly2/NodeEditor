@@ -271,6 +271,7 @@ class ArrayPin(FCobjPin):
         self.setData(str(self.uid))
 
 
+from PyFlow.Packages.PyFlowBase.Pins.FloatPin import FloatPin
 
 
 
