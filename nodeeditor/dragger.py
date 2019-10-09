@@ -163,42 +163,33 @@ class EventFilter(QtCore.QObject):
 
 
         if z == 'PySide2.QtCore.QEvent.Type.KeyPress':
-            # http://doc.qt.io/qt-4.8/qkeyevent.html
-
             if 1:
+                if e.key()== QtCore.Qt.Key_F2:
+                    say("------------F2-- show mode and moddata---------------")
+                    say(self.node)
+                    return False
+                elif e.key()== QtCore.Qt.Key_Escape:
+                    say("------------Escape = Stop-AA----------------")
+                    self.t=[{'Object':"HUHU",'Component':"Face1"}]
+                    self.snapList(0.002)
+                    stop(self.node)
 
+                elif e.key()== QtCore.Qt.Key_F3 :
+                    if not self.on:
+                        say("------------F3 on-----------------")
+                        self.on=True
+                    return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
+                    #return QtGui.QWidget.eventFilter(self, o, e)
+                    return True
+                elif e.key()== QtCore.Qt.Key_F4 :
+                    if self.on:
+                        say("------------F4 off-----------------")
+                        self.on=False
+                    return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
+                    #return QtGui.QWidget.eventFilter(self, o, e)
+                    return True
 
-                if 1:
-                    # only two function keys implemented, no modifieres
-                    if e.key()== QtCore.Qt.Key_F2:
-                        say("------------F2-- show mode and moddata---------------")
-                        say(self.node)
-                        return False
-                    elif e.key()== QtCore.Qt.Key_Escape:
-                        say("------------Escape = Stop-AA----------------")
-                        #self.node.selectedFaceChanged.call() 
-                        #self.node.selectionExec.call()
-                        self.t=[{'Object':"HUHU",'Component':"Face1"}]
-                        self.snapList(0.002)
-                        stop(self.node)
-
-                    elif e.key()== QtCore.Qt.Key_F3 :
-                        if not self.on:
-                            say("------------F3 on-----------------")
-                            self.on=True
-                        return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
-                        #return QtGui.QWidget.eventFilter(self, o, e)
-                        return True
-                    elif e.key()== QtCore.Qt.Key_F4 :
-                        if self.on:
-                            say("------------F4 off-----------------")
-                            self.on=False
-                        return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
-                        #return QtGui.QWidget.eventFilter(self, o, e)
-                        return True
                 try:
-
-                    
                     if  e.key()== QtCore.Qt.Key_F5 :
                         if self.displayObjects<time.time()-0.1:
                             clearReportView(name="dragger")
@@ -208,7 +199,6 @@ class EventFilter(QtCore.QObject):
                                 for tt in self.t:
                                     say(tt)
                         self.displayObjects=time.time()    
-
                         return False
                     elif e.key()== QtCore.Qt.Key_F6 :
                         say("------------F6 none-----------------")
@@ -239,10 +229,7 @@ class EventFilter(QtCore.QObject):
                         p = cursor.pos()
                         cursor.setPos(p.x(),p.y()+1)
                         return True
-#                    elif e.key() == QtCore.Qt.Key_PageUp :
-#                    elif e.key() == QtCore.Qt.Key_PageDown :
-
-                    if e.key()== QtCore.Qt.Key_Enter or e.key()== QtCore.Qt.Key_Return:
+                    elif e.key()== QtCore.Qt.Key_Enter or e.key()== QtCore.Qt.Key_Return:
                         say("Enter Action-----------------------------")
                         return True
                     else: # letter key pressed
@@ -260,7 +247,7 @@ class EventFilter(QtCore.QObject):
                             return True
                         if r=='*':
                             Gui.activeDocument().ActiveView.fitAll()
-                            return True
+                    return True
 
                 except:
                     sayexc()
@@ -295,69 +282,36 @@ class EventFilter(QtCore.QObject):
                     cursor=QtGui.QCursor()
                     p = cursor.pos()
                     if self.on:
-                        
                         say("Mouse pos",p.x(),p.y(),"Cursor pos in window",x,y)
                         self.ax=p.x()
                         self.ay=p.y()
                         self.x=x
                         self.y=y
-                        pts=[FreeCAD.Vector(self.ax,self.ay),FreeCAD.Vector(),FreeCAD.Vector(self.x,self.y)]
-                        shape=Part.makePolygon(pts)
-                        #self.node.setPinObject("Shape_out",shape)
-                        self.node.setData('positionApp',pts[0])
-                        self.node.setData('positionWindow',pts[2])
-                        
-                        
-
-                        
+                        self.node.setData('positionApp',FreeCAD.Vector(self.ax,self.ay))
+                        self.node.setData('positionWindow',FreeCAD.Vector(self.x,self.y))
                         self.node.outExec.call()
                     
-                    #self.snapList(0.02)
-
-                # details siehe sculpter.py
-                
-                #-----------------------------
-                #return QtGui.QWidget.eventFilter(self, o, e)
                 return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
-                return True
 
-        # end of a single key pressed
-        if 0:
-            if z == 'PySide2.QtCore.QEvent.Type.KeyRelease':
-                self.lasttime=time.time()
-                say("released")
-                self.keyPressed2=False
-
-
-            if z == 'PySide2.QtCore.QEvent.Type.Enter' :
-                say("enter")
-            elif z == 'PySide2.QtCore.QEvent.Type.Leave' :
-                say("leave")
-
-            if z == 'PySide2.QtCore.QEvent.Type.HoverMove' :
-                say("hover")
 
         return Qt.QtWidgets.QWidget.eventFilter(self, o, e)
-        #return QtGui.QWidget.eventFilter(self, o, e)
 
 
 
 
 def start(self,*args, **kwargs):
-    sayl()
     ef=EventFilter()
     ef.mouseWheel=0
     ef.node=self
     self.eventfilter=ef
-    from PySide2 import QtGui,QtCore
+    from PySide2 import QtGui
     mw=QtGui.qApp
     mw.installEventFilter(ef)
     self.outExec.call()
 
 
 def stop(self,*args, **kwargs):
-    sayl()
-    from PySide2 import QtGui,QtCore
+    from PySide2 import QtGui
     mw=QtGui.qApp
     ef=self.eventfilter
     mw.removeEventFilter(ef)
@@ -365,6 +319,6 @@ def stop(self,*args, **kwargs):
 
 
 def compute(self,*args, **kwargs):
-    sayl()
     self.outExec.call()
 
+# 371 lines
