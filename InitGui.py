@@ -186,9 +186,10 @@ class _Command2():
 				modul = self.modul
 			else:
 				modul = self.name
+			Gui.doCommand('from importlib import reload')
 			Gui.doCommand("import " + modul)
 			Gui.doCommand("import " + self.lmod)
-			#Gui.doCommand("reload(" + self.lmod+")")
+			Gui.doCommand("reload(" + self.lmod+")")
 			Gui.doCommand(self.command)
 		if ta:
 			FreeCAD.ActiveDocument.commitTransaction()

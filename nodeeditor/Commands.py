@@ -1563,8 +1563,7 @@ def getdescription(pin):
 def T3():
 	clearReportView()
 	packs=pfwrap.getNodesClasses()
-	# say(packs)
-	keys=packs.keys()
+	keys=list(packs.keys())
 	keys.sort()
 	for p in keys:
 		if p == 'PyFlowBase':
@@ -1572,7 +1571,7 @@ def T3():
 		pack=packs[p]
 		say("======"+p+"======")
 		classNodes = pack.GetNodeClasses()
-		cnks=classNodes.keys()
+		cnks=list(classNodes.keys())
 		cnks.sort()
 		for c in cnks:
 			if c[7:] in ['PinsTest']:
@@ -1611,7 +1610,8 @@ def T3():
 			'FreeCAD_vIso', 
 			#'FreeCAD_view3D'
 			]:
-				continue
+				pass
+				# continue
 			
 
 
