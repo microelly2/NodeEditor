@@ -64,7 +64,7 @@ class EventFilter(QtCore.QObject):
 
     @timer
     def snapList(self,delta=0.04):
-            say("snaplist")
+#            say("snaplist")
 #            if self.t == None:
 #                return
             if not self.LMpress:
@@ -217,15 +217,27 @@ class EventFilter(QtCore.QObject):
                        say("------------Enter-----------------")
                     elif e.key() == QtCore.Qt.Key_Right :
                         say("Go right")
+                        cursor=QtGui.QCursor()
+                        p = cursor.pos()
+                        cursor.setPos(p.x()+1,p.y())
                         return True
                     elif e.key() == QtCore.Qt.Key_Left :
                         say("Go Left")
+                        cursor=QtGui.QCursor()
+                        p = cursor.pos()
+                        cursor.setPos(p.x()-1,p.y())
                         return True
                     elif e.key() == QtCore.Qt.Key_Up :
+                        cursor=QtGui.QCursor()
+                        p = cursor.pos()
+                        cursor.setPos(p.x(),p.y()-1)
                         say("go up")
                         return True
                     elif e.key() == QtCore.Qt.Key_Down :
                         print ("Go Down")
+                        cursor=QtGui.QCursor()
+                        p = cursor.pos()
+                        cursor.setPos(p.x(),p.y()+1)
                         return True
 #                    elif e.key() == QtCore.Qt.Key_PageUp :
 #                    elif e.key() == QtCore.Qt.Key_PageDown :
