@@ -6,6 +6,13 @@ A Node editor for FreeCAD using PyFLow
 
 ## Screencasts
 
+## v0.22
+
+  - https://youtu.be/7FInafkuuEI facedraw with pyflow
+  - https://youtu.be/zy8wqJsP9VI crooked stairs with treads
+  - https://youtu.be/8PUBl8KmUx0 mapping geom2d to surface
+  - https://youtu.be/PbRHFuk1ojk alpha shape
+
 ### v0.0.6
 
   - https://youtu.be/fCelpH6e7Xc generator for vector array, grids and bspline surfaces
@@ -20,6 +27,24 @@ A Node editor for FreeCAD using PyFLow
   - v0.0.1  https://youtu.be/39VoYv0OTNU  
 
 ## Requirements
+
+    The current master works for this version of FreeCAD.
+    OS: Ubuntu 14.04.6 LTS (Unity/ubuntu)
+    Word size of OS: 64-bit
+    Word size of FreeCAD: 64-bit
+    Version: 0.19.18403 (Git) AppImage
+    Build type: Release
+    Branch: master
+    Hash: 0717b4fc23ef1db70964c3977d25e2fe46a739d1
+    Python version: 3.7.3
+    Qt version: 5.12.5
+    Coin version: 4.0.0a
+    OCC version: 7.3.0
+    Locale: German/Germany (de_DE)
+
+Python2 in not longer supported.
+
+
 PyFlow (from my fork): https://github.com/microelly2/PyFlow  
 Qp.py from https://github.com/mottosso/Qt.py  
 blinker  
