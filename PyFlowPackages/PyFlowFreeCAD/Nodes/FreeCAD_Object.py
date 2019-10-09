@@ -1485,6 +1485,7 @@ class FreeCAD_Ref(FreeCadNodeBase):
         self.objname = self.createInputPin("objectname", 'StringPin')
         self.objname.description="name of the part used for reference, this parameter is changed automaticly by the adapt button."
         self.objname.setData(name)
+        self._refpins = []
 
         try:
             self.refresh()
@@ -1574,7 +1575,60 @@ class FreeCAD_Ref(FreeCadNodeBase):
         except:
             pass
 
+        self.compute(args,kwargs)
         self.outExec.call()
+
+
+    def createPins(self,objname,pinnames):
+            
+        # pins for sub shapes
+        oldpinnames=[]
+        for s in [1]:
+            subscreated=False
+            for name in pinnames:
+                subscreated=True
+                pinname=name
+                
+                if 1: # pinname not in oldpinnames:
+                    pintyp="ShapePin"
+                    p2 = CreateRawPin(pinname,self, pintyp, PinDirection.Output)
+                    try:
+                        uiPin = self.getWrapper()._createUIPinWrapper(p2)
+                        uiPin.setDisplayName("{}".format(p2.name))
+                    except:
+                        pass
+
+##                self.setPinObject(pinname,subob)
+
+            # if no subshapes selected, create shape pin
+            if not subscreated:
+                pinname="Shape_out"
+                pintyp="ShapePin"
+                if pinname not in oldpinnames:
+                    p2 = CreateRawPin(pinname,self, pintyp, PinDirection.Output)
+
+                try:
+                    uiPin = self.getWrapper()._createUIPinWrapper(p2)
+                    uiPin.setDisplayName("{0}".format(p2.name))
+                except:
+                    pass
+
+        # remember objectname
+        #self.objname = self.createInputPin("objectname", 'StringPin')
+        self.objname.setData(objname)
+
+        try:
+            wr=self.getWrapper()
+            newName = wr.canvasRef().graphManager.getUniqNodeName("Ref_"+objname)
+            wr.setHeaderHtml(newName)
+            uiPin = self.getWrapper()._createUIPinWrapper(self.objname)
+            uiPin.setDisplayName("{}".format(self.objname.name))
+        except:
+            pass
+
+        self.compute()
+        self.outExec.call()
+
 
 
     def compute(self, *args, **kwargs):
@@ -1582,15 +1636,17 @@ class FreeCAD_Ref(FreeCadNodeBase):
 
         pins=self.getOrderedPins()
         objname=self.getPinByName("objectname").getData()
+        self._refpins=[]
 
         obj=FreeCAD.activeDocument().getObject(objname)
         for p in pins:
             if not p.isExec():
                 if p.name == "Shape_out":
                     self.setPinObject(p.name,obj.Shape)
-                elif p.name  !=  "objectname":
+                elif p.name  !=  "objectname" :
                     subob =getattr(obj.Shape,p.name)
                     self.setPinObject(p.name,subob)
+                    self._refpins += [p.name]
 
     @staticmethod
     def description():
@@ -1604,6 +1660,36 @@ class FreeCAD_Ref(FreeCadNodeBase):
     def keywords():
         return ['Part','Shape','Edge','Selection']
 
+#--------------------------------
+
+
+    def serialize(self):
+        # eigentliches objekt serialisieren
+        data = super(self.__class__, self).serialize()
+        # extra data
+        data['reflist'] = "extra data for reflisrt"
+        data['_refpins'] = self._refpins
+        say("serialize")
+        say(data['_refpins'])
+        return data
+
+    
+    def postCreate(self, jsonTemplate=None):
+        super(self.__class__, self).postCreate(jsonTemplate=jsonTemplate)
+        # recreate dynamic pins extra data
+        say("postcreate")
+
+        if jsonTemplate is not None and '_refpins' in jsonTemplate:
+            say("process extra data:",jsonTemplate['_refpins'])
+            objname=self.getPinByName("objectname").getData()
+            pinnames=jsonTemplate['_refpins']
+            say(objname)
+            say(pinnames)
+            self.createPins(objname,pinnames)
+            say("done")
+            
+
+#--------------------------------
 
 class FreeCAD_RefList(FreeCadNodeBase):
     '''
