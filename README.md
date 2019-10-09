@@ -42,15 +42,19 @@ A Node editor for FreeCAD using PyFLow
     OCC version: 7.3.0
     Locale: German/Germany (de_DE)
 
-Python2 in not longer supported.
+Python2 in not longer supported. The nodeeditor now works with the original PyFlow@wonderworks-software without extra modifications.
 
 
-PyFlow (from my fork): https://github.com/microelly2/PyFlow  
+PyFlow: https://github.com/wonderworks-software/PyFlow
 Qp.py from https://github.com/mottosso/Qt.py  
 blinker  
 
+
 ## Usage
 Addon is still heavily developed and is shown here as a proof-of-concept for the time being.  
+
+## Documentation
+Documentation will start here http://freecadbuch.de/doku.php?id=pyflow
 
 ## Feedback
 For feedback, questions, discussions, improvements etc... on this Addon, please use the [dedicated FreeCAD forum thread](https://forum.freecadweb.org/viewtopic.php?f=8&t=36299).
