@@ -647,7 +647,7 @@ class MyDockWidget(QDockWidget):
 def PyFlowtoDockWidget():
 
 	# erzeugen PyFlow Fenster
-	test_AA()
+#	test_AA()
 	# erzeuge eigenes Fesnter und uebernehme die Daten
 	a=MyDockWidget(None, "objectname")
 	a.show()
@@ -1673,4 +1673,17 @@ def reset():
 	data = instance.graphManager.get().serialize()
 	instance.graphManager.get().clear()
 	instance.loadFromData(data)
+
+from PyFlow.UI.Tool.Tool import ShelfTool, DockTool
+from PyFlow.UI.Tool import GET_TOOLS
+from PyFlow.UI.Tool import REGISTER_TOOL
+
+
+def displayTools():
+	''' tools for pyflow'''
+
+	packageName="PyFlowBase"
+	for toolName in ["Properties","NodeBox"]:
+		FreeCAD.PF.invokeDockToolByName(packageName, toolName, settings=None)
+
 

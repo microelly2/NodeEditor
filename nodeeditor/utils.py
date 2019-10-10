@@ -11,3 +11,9 @@ from nodeeditor.utils import *
 import sys
 if sys.version_info[0] !=2:
 	from importlib import reload
+
+
+
+def devmode():
+    ''' more details for development'''
+    return False
