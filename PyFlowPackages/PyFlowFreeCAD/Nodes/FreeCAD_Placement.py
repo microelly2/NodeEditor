@@ -60,6 +60,9 @@ class FreeCAD_Placement(NodeBase):
 		self.vobjname.setData(name)
 
 		self.Shape="DAS IST SHAPE"
+		self.pa.recomputeNode=True
+		self.pb.recomputeNode=True
+		self.pc.recomputeNode=True
 
 
 	def reshape(self, *args, **kwargs):
