@@ -45,7 +45,6 @@ class FreeCAD_Placement(NodeBase):
 
 		super(FreeCAD_Placement, self).__init__(name)
 		self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-#		self.in2 = self.createInputPin('reshape', 'ExecPin', None, self.reshape)
 
 		self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 

@@ -15,8 +15,9 @@ class FreeCADUINodeBase(UINodeBase):
 
 	def __init__(self,*args,**kargs):
 		super(FreeCADUINodeBase, self).__init__(*args, **kargs)
-		self.addActions()
+		self.addActions_dev()
 
+	'''
 	def addActions(self):
 		say("add the FreeCAD special actions")
 
@@ -53,6 +54,13 @@ class FreeCADUINodeBase(UINodeBase):
 		actionAddOut5 = self._menu.addAction("bake mode")
 		#actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
 		actionAddOut5.triggered.connect(self.bake)
+
+	'''
+
+	def addActions_dev(self):
+		import nodeeditor.dev_uinode
+		reload (nodeeditor.dev_uinode)
+		nodeeditor.dev_uinode.addActions(self,RESOURCES_DIR)
 
 
 	def f2(self):
