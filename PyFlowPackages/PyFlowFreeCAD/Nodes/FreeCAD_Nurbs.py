@@ -2142,6 +2142,7 @@ class FreeCAD_swept(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('trackPoints', 'VectorPin', structure=StructureType.Array)
         self.createInputPin('centerAxis', 'VectorPin')
+
         
 
         self.createInputPin("Path",'ShapePin')
@@ -2149,7 +2150,9 @@ class FreeCAD_swept(FreeCadNodeBase):
         #+# todo: more parameters for approximate
         self.createOutputPin('Shape_out', 'ShapePin')
 
-        self.createInputPin('steps', 'IntPin',200)
+        a=self.createInputPin('steps', 'IntPin',200)
+        a.setInputWidgetVariant("SimpleSlider")
+        
         self.step=self.createInputPin('step', 'IntPin',0)
         self.step.recomputeNode=True
         self.createOutputPin('Car_out', 'ShapePin')
@@ -2158,7 +2161,7 @@ class FreeCAD_swept(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_interpolateBSpline.__doc__
+        return FreeCAD_swept.__doc__
 
     @staticmethod
     def category():

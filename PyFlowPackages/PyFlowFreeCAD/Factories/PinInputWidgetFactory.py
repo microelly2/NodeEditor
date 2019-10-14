@@ -61,6 +61,7 @@ class EnumerationInputWidget(InputWidgetSingle):
 
 
 
+
 class Array(object):
     def __init__(self,dat=[]):
         self.dat=np.array(dat)
@@ -378,6 +379,55 @@ class MyInputWidget(InputWidgetSingle):
     def setWidgetValue(self, val):
         self.le.setText(str(val))
 
+# alter slider funtionalitaet
+class FloatInputWidgetSimpleSlider(InputWidgetSingle):
+    """
+    Floating point data input widget
+    """
+
+    def __init__(self, parent=None, **kwds):
+        super(FloatInputWidgetSimpleSlider, self).__init__(parent=parent, **kwds)
+
+        self.sb = pyf_Slider(self, "float", style=0)
+        self.setWidget(self.sb)
+        # when spin box updated call setter function
+        self.sb.valueChanged.connect(lambda val: self.dataSetCallback(val))
+
+
+    def blockWidgetSignals(self, bLocked):
+        self.sb.blockSignals(bLocked)
+
+    def setWidgetValue(self, val):
+        self.sb.setValue(float(val))
+
+    def setMaximum(self, max):
+        self.sb.setMaximum(max)
+
+    def setMinimum(self, min):
+        self.sb.setMinimum(min)
+
+
+
+
+class IntInputWidgetSimpleSlider(InputWidgetSingle):
+    """
+    Decimal number input widget
+    """
+
+    def __init__(self, parent=None, **kwds):
+        super(IntInputWidgetSimpleSlider, self).__init__(parent=parent, **kwds)
+        valueRange = (INT_RANGE_MIN, INT_RANGE_MAX)
+        self.sb = pyf_Slider(self, "int", style=1)
+        self.setWidget(self.sb)
+        self.sb.valueChanged.connect(self.dataSetCallback)
+
+    def blockWidgetSignals(self, bLocked):
+        self.sb.blockSignals(bLocked)
+
+    def setWidgetValue(self, val):
+        self.sb.setValue(int(val))
+
+
 
 from PyFlow.Packages.PyFlowBase.Factories.PinInputWidgetFactory import *
 
@@ -386,7 +436,7 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     '''
     factory method
     '''
-    say("widgetvariant",widgetVariant,dataType)
+    #say("widgetvariant",widgetVariant,dataType)
     if dataType == 'FloatPin':
         say("float pin")
         if widgetVariant == "Simple2":
@@ -403,6 +453,7 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
             if kwds["pinAnnotations"] is not None and "ValueRange" in kwds["pinAnnotations"]:
                 return FloatInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
+        
         return FloatInputWidgetSimple(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
 
@@ -411,18 +462,22 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
 
 
     if dataType == 'IntPin':
+        say("widgetvariant",widgetVariant,dataType)
+#        if widgetVariant == "SimpleSlider":
+#            return IntInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+        if widgetVariant == "Simple":
+            return IntInputWidgetSimple(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
         if kwds is not None and "pinAnnotations" in kwds:
             if kwds["pinAnnotations"] is not None and "ValueRange" in kwds["pinAnnotations"]:
                 return IntInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
-        return IntInputWidgetSimple(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
-
-
-    if dataType == 'IntPin':
-        say("input variant for freecad int pin ",widgetVariant)
         if widgetVariant == "HUHU":
             return MyInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+
+
+        return IntInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+
     if dataType == 'VectorPin':
         return VectorInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'RotationPin':
