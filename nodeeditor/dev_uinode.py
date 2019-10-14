@@ -66,4 +66,6 @@ def addActions(self,RESOURCES_DIR):
         actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/gear.svg"))
         actionAddOut4.triggered.connect(self.visualize)
         
-        
+        # erzeuge abhaengig vond e pins methoden
+        # wenn shape_out, dann visualizer, baker
+        #  

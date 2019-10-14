@@ -1117,7 +1117,7 @@ class FreeCAD_uvGrid(FreeCadNodeBase):
 
     @staticmethod
     def keywords():
-        return []	
+        return []   
         
 
 
@@ -2130,6 +2130,44 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
         return ['Interpolate','Curve','Nurbs','Projection']
 
 
+class FreeCAD_swept(FreeCadNodeBase):
+    '''
+    sweptpath step generator
+    '''
+    dok=2 
+    def __init__(self, name="MyInterpolation"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.createInputPin('trackPoints', 'VectorPin', structure=StructureType.Array)
+        self.createInputPin('centerAxis', 'VectorPin')
+        
+
+        self.createInputPin("Path",'ShapePin')
+
+        #+# todo: more parameters for approximate
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+        self.createInputPin('steps', 'IntPin',200)
+        self.step=self.createInputPin('step', 'IntPin',0)
+        self.step.recomputeNode=True
+        self.createOutputPin('Car_out', 'ShapePin')
+        self.createOutputPin('tracks_out', 'ShapePin')
+        self.createOutputPin('flowAxes_out', 'ShapePin')
+
+    @staticmethod
+    def description():
+        return FreeCAD_interpolateBSpline.__doc__
+
+    @staticmethod
+    def category():
+        return 'BSpline'
+
+    @staticmethod
+    def keywords():
+        return []
+
 
 def nodelist():
     return [
@@ -2161,5 +2199,6 @@ def nodelist():
                 FreeCAD_Collect_Vectors,
                 FreeCAD_approximateBSpline,
                 FreeCAD_interpolateBSpline,
+                FreeCAD_swept,
 
         ]
