@@ -2165,11 +2165,54 @@ class FreeCAD_swept(FreeCadNodeBase):
 
     @staticmethod
     def category():
-        return 'BSpline'
+        return 'HighLevel'
 
     @staticmethod
     def keywords():
-        return []
+        return ["archi"]
+
+class FreeCAD_handrail(FreeCadNodeBase):
+    '''
+    staircase handrail
+    '''
+    def __init__(self, name="MyInterpolation"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin("Path",'ShapePin')
+        self.createInputPin("borderA",'ShapePin')
+        self.createInputPin("borderB",'ShapePin')
+
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+        a=self.createInputPin('steps', 'IntPin',13)
+        a.setInputWidgetVariant("SimpleSlider")
+        a.recomputeNode=True
+        
+        a=self.createInputPin('heightStair', 'FloatPin',250)
+        a.setInputWidgetVariant("SimpleSlider")
+        a.recomputeNode=True
+        
+        a=self.createInputPin('heightBorder', 'FloatPin',70)
+        a.setInputWidgetVariant("SimpleSlider")
+        a.recomputeNode=True
+       
+
+    @staticmethod
+    def description():
+        return FreeCAD_handrail.__doc__
+
+    @staticmethod
+    def category():
+        return 'HighLevel'
+
+    @staticmethod
+    def keywords():
+        return ['stair','rail','archi']
+
+
 
 
 def nodelist():
@@ -2202,6 +2245,8 @@ def nodelist():
                 FreeCAD_Collect_Vectors,
                 FreeCAD_approximateBSpline,
                 FreeCAD_interpolateBSpline,
+
                 FreeCAD_swept,
+                FreeCAD_handrail,
 
         ]

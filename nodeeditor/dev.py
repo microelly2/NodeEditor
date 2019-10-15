@@ -2191,3 +2191,56 @@ def run_FreeCAD_swept(self):
 
 
 	say(time.time()-ta)
+
+
+
+import Part
+import time
+
+def run_FreeCAD_handrail(self):
+
+	anz=self.getData('steps')
+	heightStep=self.getData('heightStair')/anz*4
+	heightBorder=self.getData('heightBorder')
+	path=self.getPinObject("Path")
+	borderA=self.getPinObject("borderA")
+	borderB=self.getPinObject("borderB")
+
+	edge=path
+	curv=edge.Curve
+	pts=edge.discretize(anz)
+	allc=[]
+	comps=[]
+	borders= [ borderA, borderB, ] 
+
+	for edge2 in borders:
+		rail=[]
+		up=FreeCAD.Vector(0,0,heightStep)
+		g=FreeCAD.Vector(0,0,heightBorder)
+		for i in range(anz):
+			p=pts[i]
+			tp=curv.parameter(p)
+			n=curv.normal(tp)
+
+			a=p+n*10
+			b=p-n*10
+			line=Part.makePolygon([a,b])
+			cc=line.Edge1.Curve.intersectCC(edge2.Curve)
+
+			if len(cc) != 0:
+				pp=cc[0]
+				c=FreeCAD.Vector(pp.X,pp.Y,pp.Z)
+				line=Part.makePolygon([p+i*up,c+i*up])
+				comps += [line]
+				rail +=[c+i*up+g,c+i*up,c+i*up+g]
+			else:
+				pass
+#				comps += [line]
+
+		comps += [Part.makePolygon(rail)]
+
+	shape=Part.Compound(comps)
+	self.setPinObject("Shape_out",shape)
+	self.outExec.call()
+	
+			

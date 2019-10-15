@@ -454,7 +454,7 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
                 return FloatInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
         
-        return FloatInputWidgetSimple(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+        return FloatInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
 
 
