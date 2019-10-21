@@ -1687,17 +1687,3 @@ def displayTools():
 		FreeCAD.PF.invokeDockToolByName(packageName, toolName, settings=None)
 
 
-
-
-def test_AA():
-
-	import FreeCAD
-	try:
-		FreeCAD.open(u"/home/thomas/Schreibtisch/bvender.FCStd")
-		FreeCAD.setActiveDocument("bvender")
-		FreeCAD.getDocument("bvender").getObject("Array001").NumberZ = 1
-	except:
-		pass
-	loadGraph()
-
-

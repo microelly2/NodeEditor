@@ -149,7 +149,7 @@ def runraw(self):
 
 
 
-def run_FreeCAD_VectorArray(self,*args, **kwargs):
+def run_VectorArray_compute(self,*args, **kwargs):
 
     countA=self.getData("countA")
     countB=self.getData("countB")
@@ -205,15 +205,15 @@ def run_FreeCAD_VectorArray(self,*args, **kwargs):
         shape=sf.toShape()
 
 
-    self.setData('vectors_out',poles.tolist())
+    self.setData('out',poles)
 
-    #cc=self.getObject()
-    #try:
-    #    cc.Label=self.objname.getData()
-    #except:
-    #    pass
-    #cc.Shape=shape
-    self.setPinObject('Shape_out',shape)
+    cc=self.getObject()
+    try:
+        cc.Label=self.objname.getData()
+    except:
+        pass
+    cc.Shape=shape
+    self.setPinObject('Shape',shape)
     self.outExec.call()
 
 
@@ -1812,11 +1812,10 @@ def run_FreeCAD_Destruct_BSplineSurface(self,bake=False, **kwargs):
     self.outExec.call()
 
 
-def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
+def run_FreeCAD_BSpline(self, *args, **kwargs):
 
-        say("kok")
         dat=self.arrayData.getData()
-        #say("dat",dat)
+        say("dat",dat)
         if len(dat) == 0:
             sayW("no points for poles")
             return
@@ -1824,7 +1823,7 @@ def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
         sf=Part.BSplineSurface()
 
         poles=np.array(dat)
-        #say(poles)
+        say(poles)
 
         (countA,countB,_)=poles.shape
         degB=min(countB-1,3,self.getPinByName("maxDegreeU").getData())
@@ -2119,79 +2118,79 @@ import numpy as np
 import time
 
 def run_FreeCAD_swept(self):
-    ta=time.time()
-    l=self.getData("steps")
-    step=self.getData("step")
+	ta=time.time()
+	l=self.getData("steps")
+	step=self.getData("step")
 
-    # the border of the car
-    trackpoints=self.getData("trackPoints")
-#   say(trackpoints)
-    path=self.getPinObject("Path")
-#   say(path)
-    pts=path.discretize(l+1)
-#   say(pts)
-    centerAxis=self.getData("centerAxis")
-#   return
-    pols=[]
-    pms=[]
-    pts=FreeCAD.ActiveDocument.Sketch.Shape.Edge1.discretize(l+1)
+	# the border of the car
+	trackpoints=self.getData("trackPoints")
+#	say(trackpoints)
+	path=self.getPinObject("Path")
+#	say(path)
+	pts=path.discretize(l+1)
+#	say(pts)
+	centerAxis=self.getData("centerAxis")
+#	return
+	pols=[]
+	pms=[]
+	pts=FreeCAD.ActiveDocument.Sketch.Shape.Edge1.discretize(l+1)
 
-    centers=[]
-    a=pts[0]+centerAxis
-    pols=[Part.makePolygon([a,pts[0]])]
-    for i in range(l):
-        b=pts[i]
-        b2=pts[i+1]
+	centers=[]
+	a=pts[0]+centerAxis
+	pols=[Part.makePolygon([a,pts[0]])]
+	for i in range(l):
+		b=pts[i]
+		b2=pts[i+1]
 
-        A=np.array([[b.x-a.x,b.y-a.y],[b.x-b2.x,b.y-b2.y]])
-        B=np.array([(b-a).dot(a),(b-b2).dot((b+b2)*0.5)])
-        x=np.linalg.solve(A,B)
-        m=FreeCAD.Vector(x[0],x[1])
-        centers += [m]
-        r=FreeCAD.Rotation(b-m,b2-m)
-        pm=FreeCAD.Placement(FreeCAD.Vector(),r,m)
+		A=np.array([[b.x-a.x,b.y-a.y],[b.x-b2.x,b.y-b2.y]])
+		B=np.array([(b-a).dot(a),(b-b2).dot((b+b2)*0.5)])
+		x=np.linalg.solve(A,B)
+		m=FreeCAD.Vector(x[0],x[1])
+		centers += [m]
+		r=FreeCAD.Rotation(b-m,b2-m)
+		pm=FreeCAD.Placement(FreeCAD.Vector(),r,m)
 
-        a2=pm.multVec(a)
-        pols += [Part.makePolygon([a2,b2])]
-        pms += [pm]
+		a2=pm.multVec(a)
+		pols += [Part.makePolygon([a2,b2])]
+		pms += [pm]
 
-        a=a2
+		a=a2
 
-    # the axes flow of the car movement
-    flows = Part.Compound(pols)
-    self.setPinObject("flowAxes_out",flows)
+	# the axes flow of the car movement
+	flows = Part.Compound(pols)
+	self.setPinObject("flowAxes_out",flows)
 
-    # calculate the list of transformations
-    pm=FreeCAD.Placement()
-    pms2=[pm]
-    for p in pms:
-        pm=p.multiply(pm)
-        pms2 += [pm]
+	# calculate the list of transformations
+	pm=FreeCAD.Placement()
+	pms2=[pm]
+	for p in pms:
+		pm=p.multiply(pm)
+		pms2 += [pm]
 
-    # the tracks of the trackpoints
-    tcols=[]
-    for c0 in trackpoints:
-        ptcs=[p.multVec(c0) for p in pms2]
-        tcols+= [Part.makePolygon(ptcs)]
-    shapea=Part.Compound(tcols)
-    
-    #shapea=Part.makePolygon(centers)
-    
-    self.setPinObject("tracks_out",shapea)
+	# the tracks of the trackpoints
+	tcols=[]
+	for c0 in trackpoints:
+		ptcs=[p.multVec(c0) for p in pms2]
+		tcols+= [Part.makePolygon(ptcs)]
+	shapea=Part.Compound(tcols)
+	
+	#shapea=Part.makePolygon(centers)
+	
+	self.setPinObject("tracks_out",shapea)
 
-    # display the starting car
-    car=trackpoints+[trackpoints[0]]
-    # Part.show(Part.makePolygon(trackpoints+[trackpoints[0]]))
+	# display the starting car
+	car=trackpoints+[trackpoints[0]]
+	# Part.show(Part.makePolygon(trackpoints+[trackpoints[0]]))
 
-    # display the final car
-    carend=[pms2[step].multVec(c) for c in car]
-    shape=Part.makePolygon(carend)
-    #say(shape)
-    self.setPinObject("Car_out",shape)
-    self.outExec.call()
+	# display the final car
+	carend=[pms2[step].multVec(c) for c in car]
+	shape=Part.makePolygon(carend)
+	#say(shape)
+	self.setPinObject("Car_out",shape)
+	self.outExec.call()
 
 
-    say(time.time()-ta)
+	say(time.time()-ta)
 
 
 
@@ -2200,229 +2199,48 @@ import time
 
 def run_FreeCAD_handrail(self):
 
-    anz=self.getData('steps')
-    heightStep=self.getData('heightStair')/anz*4
-    heightBorder=self.getData('heightBorder')
-    path=self.getPinObject("Path")
-    borderA=self.getPinObject("borderA")
-    borderB=self.getPinObject("borderB")
+	anz=self.getData('steps')
+	heightStep=self.getData('heightStair')/anz*4
+	heightBorder=self.getData('heightBorder')
+	path=self.getPinObject("Path")
+	borderA=self.getPinObject("borderA")
+	borderB=self.getPinObject("borderB")
 
-    edge=path
-    curv=edge.Curve
-    pts=edge.discretize(anz)
-    allc=[]
-    comps=[]
-    borders= [ borderA, borderB, ] 
+	edge=path
+	curv=edge.Curve
+	pts=edge.discretize(anz)
+	allc=[]
+	comps=[]
+	borders= [ borderA, borderB, ] 
 
-    for edge2 in borders:
-        rail=[]
-        up=FreeCAD.Vector(0,0,heightStep)
-        g=FreeCAD.Vector(0,0,heightBorder)
-        for i in range(anz):
-            p=pts[i]
-            tp=curv.parameter(p)
-            n=curv.normal(tp)
+	for edge2 in borders:
+		rail=[]
+		up=FreeCAD.Vector(0,0,heightStep)
+		g=FreeCAD.Vector(0,0,heightBorder)
+		for i in range(anz):
+			p=pts[i]
+			tp=curv.parameter(p)
+			n=curv.normal(tp)
 
-            a=p+n*10
-            b=p-n*10
-            line=Part.makePolygon([a,b])
-            cc=line.Edge1.Curve.intersectCC(edge2.Curve)
+			a=p+n*10
+			b=p-n*10
+			line=Part.makePolygon([a,b])
+			cc=line.Edge1.Curve.intersectCC(edge2.Curve)
 
-            if len(cc) != 0:
-                pp=cc[0]
-                c=FreeCAD.Vector(pp.X,pp.Y,pp.Z)
-                line=Part.makePolygon([p+i*up,c+i*up])
-                comps += [line]
-                rail +=[c+i*up+g,c+i*up,c+i*up+g]
-            else:
-                pass
-#               comps += [line]
+			if len(cc) != 0:
+				pp=cc[0]
+				c=FreeCAD.Vector(pp.X,pp.Y,pp.Z)
+				line=Part.makePolygon([p+i*up,c+i*up])
+				comps += [line]
+				rail +=[c+i*up+g,c+i*up,c+i*up+g]
+			else:
+				pass
+#				comps += [line]
 
-        comps += [Part.makePolygon(rail)]
+		comps += [Part.makePolygon(rail)]
 
-    shape=Part.Compound(comps)
-    self.setPinObject("Shape_out",shape)
-    self.outExec.call()
-
-
-def createToy():
-    import Part
-    import numpy as np
-
-    countA=11
-    countB=11
-
-    degA=3
-    degB=3
-
-    poles=np.zeros(countA*countB*3).reshape(countA,countB,3)
-    for u in range(countA):
-        for v in range(countB):
-            poles[u,v,0]=10*u
-            poles[u,v,1]=10*v
-
-    poles[1:-1,:,2]=30
-    poles[2:-2,:,2]=60
-    
-    poles[3:8,3:8,2]=180
-    poles[4,4,2]=150
-    poles[6,4,2]=220
-
-    multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-    multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
-    knotA=range(len(multA))
-    knotB=range(len(multB))
-
-    sf=Part.BSplineSurface()
-    sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,False,degA,degB)
-    shape=sf.toShape()
-    Part.show(shape)
-
-
-
-def run_FreeCAD_Bender(self):
-
-    if FreeCAD.ActiveDocument.getObject("Shape") == None:
-        createToy()
-        #return
-
-    # say("huhu")
-    import Part
-    import numpy as np
-
-    a=self.getData('a')
-    b=self.getData('b')
-    c=self.getData('c')
-
-    countA=11
-    countB=11
-
-    degA=3
-    degB=3
-
-    multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-    multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
-    knotA=range(len(multA))
-    knotB=range(len(multB))
-
-    comps=[]
-
-    poles=FreeCAD.ActiveDocument.Shape.Shape.Face1.Surface.getPoles()
-    shapein=self.getPinObject("Shape_in")
-    say(shapein)
-    poles=shapein.Surface.getPoles()
-    poles=np.array(poles)
-
-    col=[]
-    for ps in poles:
-        ps=[FreeCAD.Vector(p) for p in ps]
-        col += [Part.makePolygon(ps)]
-
-    for ps in poles.swapaxes(0,1):
-        ps=[FreeCAD.Vector(p) for p in ps]
-        col += [Part.makePolygon(ps)]
-
-
-    comps += [Part.Compound(col)]
-
-    # trafo
-    b=np.pi/360*b/100
-    a *= 10
-    c *= np.pi/360 *4
-
-    from math import sin,cos
-
-    #poles2=np.zeros(countA*countB*3).reshape(countA,countB,3)
-    poles2=np.zeros([countA,countB,3])
-
-    for u in range(countA):
-        for v in range(countB):
-            [x,y,z]=poles[u,v]
-            poles2[u,v,0]=(a+x)*cos(b*y+c)
-            poles2[u,v,1]=(a+x)*sin(b*y+c)
-            poles2[u,v,2]=z
-
-
-    col=[]
-    for ps in poles2:
-        ps=[FreeCAD.Vector(p) for p in ps]
-        col += [Part.makePolygon(ps)]
-
-    for ps in poles2.swapaxes(0,1):
-        ps=[FreeCAD.Vector(p) for p in ps]
-        col += [Part.makePolygon(ps)]
-
-
-    # Part.show(Part.Compound(col))
-    comps += [Part.Compound(col)]
-
-    sf=Part.BSplineSurface()
-    sf.buildFromPolesMultsKnots(poles2,multA,multB,knotA,knotB,False,False,degA,degB)
-    shape=sf.toShape()
-    #App.ActiveDocument.Shape003.Shape=shape
-
-    comps  = [shape]
-
-    shape=Part.Compound(comps)
-    self.setPinObject("Shape_out",shape)
-    self.outExec.call()
-
-
-def run_FreeCAD_ConnectPoles(self):
-
-    ySortedPins = sorted(self.polesin.affected_by, key=lambda pin: pin.owningNode().y)
-    #say("sortedPins",ySortedPins)
-    ovl=self.getData('overlay')
-    ws=[]
-    for p in ySortedPins:
-        #say(p)
-        w=np.array(p.getData())
-        ws += [w]
-        say(w.shape)
-    if ovl != 0:
-        for i,w in enumerate(ws):
-            if i == 0: 
-                pl=[w[:-1]]
-                last=w[-1]
-            else:
-                m=(last+w[0])*0.5
-                pl += [[m],w[1:-1]]
-            last=w[-1]
-        pl += [[last]]
-        poles=np.concatenate(pl)
-    else:
-        poles=np.concatenate(ws)
-    
-    if 1:
-        (countA,countB,_)=poles.shape
-        degA=3
-        degB=3
-
-        say(poles.shape)
-        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-        multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
-        knotA=range(len(multA))
-        knotB=range(len(multB))
-
-        sf=Part.BSplineSurface()
-        sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,False,degA,degB)
-        shape=sf.toShape()
-        self.setPinObject("Shape_out",shape)
-
-    say("connected")
-    self.setData('poles_out',poles.tolist())
-    self.outExec.call()
- 
-
-    say("end neue version")
-
-
-
-
-def run_FreeCAD_FlipSwapArray(self):
-    say("flipswap")
-    say(self.name)
-    polesA=np.array(self.getData('poles_in'))
-    poles=polesA.swapaxes(0,1)
-    self.setData('poles_out',poles.tolist())
-    self.outExec.call()
+	shape=Part.Compound(comps)
+	self.setPinObject("Shape_out",shape)
+	self.outExec.call()
+	
+			

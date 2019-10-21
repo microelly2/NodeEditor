@@ -78,9 +78,6 @@ class FreeCAD_Box( FreeCadNodeBase):
         shape=self.applyPins(Part.makeBox,"length width height position direction")
         self.setPinObject("Shape_out",shape)
         self.outExec.call()
-        if self._preview:
-            self.preview()
-
 
     @staticmethod
     def description():
@@ -142,8 +139,6 @@ class FreeCAD_Cone(FreeCadNodeBase):
         shape=self.applyPins(Part.makeCone,"radius1 radius2 height position direction angle")
         self.setPinObject("Shape_out",shape)
         self.outExec.call()
-        if self._preview:
-            self.preview()
 
 
     @staticmethod
@@ -199,8 +194,6 @@ class FreeCAD_Sphere(FreeCadNodeBase):
         shape=self.applyPins(Part.makeSphere,"radius position direction angle1 angle2 angle3")
         self.setPinObject("Shape_out",shape)
         self.outExec.call()
-        if self._preview:
-            self.preview()
 
 
     @staticmethod
@@ -296,10 +289,6 @@ class FreeCAD_Quadrangle(FreeCadNodeBase):
 
         self.Called=False
 
-        if self._preview:
-            self.preview()
-
-
     @staticmethod
     def description():
         return FreeCAD_Quadrangle.__doc__
@@ -383,9 +372,6 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
                     cc.Label=self.objname.getData()
                     cc.Shape=shape
                     self.postCompute(cc)
-
-        if self._preview:
-            self.preview()
 
         #self.Called=False
 
@@ -503,8 +489,6 @@ class FreeCAD_Boolean(FreeCadNodeBase):
         say("Volume for {0}: {1:.2f}".format(self.getName(),shape.Volume))
         self.volume.setData(shape.Volume)
         self.outExec.call()
-        if self._preview:
-            self.preview()
 
 
     @staticmethod
@@ -619,7 +603,15 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
-        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+
+        self.part = self.createOutputPin('Part', 'FCobjPin')
+        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+
+        self.objname = self.createInputPin("objectname", 'StringPin')
+        self.objname.setData(name)
+
+        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', False)
+        self.shapeOnly.recomputeNode=True
 
         self.createInputPin("vecA", 'VectorPin',FreeCAD.Vector(20,0,0))
         self.createInputPin("vecB", 'VectorPin',FreeCAD.Vector(0,10,0))
@@ -633,7 +625,21 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
         self.createInputPin("randomZ", 'FloatPin',5)
         self.createInputPin("degreeA", 'IntPin',3)
         self.createInputPin("degreeB", 'IntPin',3)
-        self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
+
+        self.outArray = self.createOutputPin('out', 'AnyPin', [[],[]], structure=StructureType.Array)
+        self.outArray.enableOptions(PinOptions.AllowAny)
+
+
+        self.result = self.createOutputPin('result', 'BoolPin')
+
+    @timer
+    def compute(self, *args, **kwargs):
+
+        say ("in compute",self.getName(),"objname is",self.objname.getData())
+
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        return  nodeeditor.dev.run_VectorArray_compute(self,*args, **kwargs)
 
 
     @staticmethod
@@ -1570,6 +1576,7 @@ class FreeCAD_Ref(FreeCadNodeBase):
             pass
 
         self.compute(args,kwargs)
+        self.outExec.call()
 
 
     def createPins(self,objname,pinnames):
@@ -1620,7 +1627,7 @@ class FreeCAD_Ref(FreeCadNodeBase):
             pass
 
         self.compute()
-        
+        self.outExec.call()
 
 
 
@@ -1637,13 +1644,9 @@ class FreeCAD_Ref(FreeCadNodeBase):
                 if p.name == "Shape_out":
                     self.setPinObject(p.name,obj.Shape)
                 elif p.name  !=  "objectname" :
-                    try:
-                        subob =getattr(obj.Shape,p.name)
-                        self.setPinObject(p.name,subob)
-                        self._refpins += [p.name]
-                    except:
-                        pass
-        self.outExec.call()
+                    subob =getattr(obj.Shape,p.name)
+                    self.setPinObject(p.name,subob)
+                    self._refpins += [p.name]
 
     @staticmethod
     def description():

@@ -63,11 +63,8 @@ for n in nodelist():
 
 # tools
 
-from PyFlow.Packages.PyFlowFreeCAD.Tools.PreviewTool import PreviewTool
-
 _TOOLS = OrderedDict()
 
-_TOOLS[PreviewTool.__name__] = PreviewTool
 
 
 from PyFlow.Packages.PyFlowFreeCAD.Factories.UINodeFactory import createUINode
