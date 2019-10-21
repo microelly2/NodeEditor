@@ -209,10 +209,10 @@ def c3bI(menu, isactive, name, text, icon='None', cmd=None, tooltip='',*info):
 	if icon=='None':
 		pic=re.sub(r' ', '', text)
 		icon='/../icons/'+pic+'.svg'
-	
+
 #	if tooltip=='':
 #		tooltip=name
-	
+
 	t = _Command2(name, text, icon, cmd, tooltip=tooltip,*info)
 	title = re.sub(r' ', '', text)
 	name1 = "Micro_" + title
@@ -231,11 +231,13 @@ if FreeCAD.GuiUp:
 	_current=[]
 
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'shutdown',icon=None)]
+
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_AA',icon="/../icons/AA")]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_BB',icon="/../icons/BB")]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_CC',icon="/../icons/CC")]
+	current += [c3bI(["nodeeditor"], always, 'Commands', 'test_DD',icon="/../icons/DD")]
+
 	if devmode():
-		current += [c3bI(["nodeeditor"], always, 'Commands', 'test_AA',icon="/../icons/AA")]
-		current += [c3bI(["nodeeditor"], always, 'Commands', 'test_BB',icon="/../icons/BB")]
-		current += [c3bI(["nodeeditor"], always, 'Commands', 'test_CC',icon="/../icons/CC")]
-		current += [c3bI(["nodeeditor"], always, 'Commands', 'test_DD',icon="/../icons/DD")]
 		current += [c3bI(["nodeeditor"], always, 'Commands', 'reset',icon=None)]
 		current += [c3bI(["nodeeditor"], always, 'Commands', 'T1',icon=None)]
 		current += [c3bI(["nodeeditor"], always, 'Commands', 'T2',icon=None)]
