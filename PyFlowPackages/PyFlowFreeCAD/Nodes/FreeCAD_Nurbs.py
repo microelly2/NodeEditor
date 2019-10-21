@@ -2213,6 +2213,143 @@ class FreeCAD_handrail(FreeCadNodeBase):
         return ['stair','rail','archi']
 
 
+class FreeCAD_Bender(FreeCadNodeBase):
+    '''
+    transforms the poles of a BSpline Surface **Shape_in** to the poles2 of the **Shape_out**
+    
+    for u in range(countA):
+
+        for v in range(countB):
+
+            [x,y,z]=poles[u,v]
+
+            poles2[u,v,0]=(a+x)*cos(b*y+c)
+
+            poles2[u,v,1]=(a+x)*sin(b*y+c)
+
+            poles2[u,v,2]=z
+
+    '''
+    def __init__(self, name="MyInterpolation"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin("Shape_in",'ShapePin')
+#        self.createInputPin("borderA",'ShapePin')
+#        self.createInputPin("borderB",'ShapePin')
+
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+        a=self.createInputPin('a', 'IntPin',13)
+        a.setInputWidgetVariant("SimpleSlider")
+        a.recomputeNode=True
+
+        a=self.createInputPin('b', 'IntPin',13)
+        a.setInputWidgetVariant("SimpleSlider")
+        a.recomputeNode=True
+
+        a=self.createInputPin('c', 'IntPin',13)
+        a.setInputWidgetVariant("SimpleSlider")
+        a.recomputeNode=True
+        
+       
+
+    @staticmethod
+    def description():
+        return FreeCAD_Bender.__doc__
+
+    @staticmethod
+    def category():
+        return 'HighLevel'
+
+    @staticmethod
+    def keywords():
+        return ['transform','spline']
+
+
+class FreeCAD_ConnectPoles(FreeCadNodeBase):
+    '''
+    concatenate vectorarrays with the same first axis together
+    '''
+
+    def __init__(self, name="MyInterpolation"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.polesin=self.createInputPin("poles_in",'VectorPin', structure=StructureType.Array)
+        self.polesin.enableOptions(PinOptions.AllowMultipleConnections)
+        self.polesin.description="connection for multiple 2 dimensional vectorarrays which sould be concatenated, they must have the same numver of rows"
+
+        a=self.createOutputPin('poles_out', 'VectorPin', structure=StructureType.Array)
+        a.description="2 dim array of vectors as base for a grid or bspline surface"
+
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+        a.description="a BSplineSurface degree 3 to visualize the poles array"
+
+        a=self.createInputPin('overlay', 'IntPin',0)
+        a.description="0 = concatenate, 1 = calculate mean of the last and first row of two arrays"
+        #a.setInputWidgetVariant("SimpleSlider")
+        a.recomputeNode=True
+
+    @staticmethod
+    def description():
+        return FreeCAD_ConnectPoles.__doc__
+
+    @staticmethod
+    def category():
+        return 'VectorArray dim 2'
+
+    @staticmethod
+    def keywords():
+        return ['matrix','vector','concatenate']
+
+
+class FreeCAD_FlipSwapArray(FreeCadNodeBase):
+    '''
+    flip directions of the vector-array or swap its axes
+    '''
+
+    def __init__(self, name="MyInterpolation"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin("poles_in",'VectorPin', structure=StructureType.Array)
+
+        a=self.createOutputPin('poles_out', 'VectorPin', structure=StructureType.Array)
+        
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+        a.description="a BSplineSurface degree 3 to visualize the poles array"
+
+        a=self.createInputPin('swap', 'BoolPin',13)
+        a.recomputeNode=True
+        a.description="Flag for swap axes of the array"
+
+        a=self.createInputPin('flipu', 'BoolPin',13)
+        a.recomputeNode=True
+        a.description="Flag for invert u direction of the array"
+
+        a=self.createInputPin('flipv', 'BoolPin',13)
+        a.recomputeNode=True
+        a.description="Flag for invert v direction of the array"
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_FlipSwapArray.__doc__
+
+    @staticmethod
+    def category():
+        return 'VectorArray dim 2'
+
+    @staticmethod
+    def keywords():
+        return ['flip','swap','Vector']
+
 
 
 def nodelist():
@@ -2248,5 +2385,8 @@ def nodelist():
 
                 FreeCAD_swept,
                 FreeCAD_handrail,
+                FreeCAD_Bender,
+                FreeCAD_ConnectPoles,
+                FreeCAD_FlipSwapArray,
 
         ]
