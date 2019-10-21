@@ -27,16 +27,9 @@ if 1:
         sayl("bake from gui not implemented")
 
 
-
-
 #the add action
 
 def addActions(self,RESOURCES_DIR):
-
-        sayl()
-        say("add the FreeCAD special actions")
-
-        say("!con",RESOURCES_DIR + "/pin.svg")
         
         actionAddOut2 = self._menu.addAction("show node")
         actionAddOut2.setData(NodeActionButtonInfo(RESOURCES_DIR + "/show.svg"))
@@ -48,23 +41,14 @@ def addActions(self,RESOURCES_DIR):
         actionAddOut3.setToolTip("compute node")
         actionAddOut3.triggered.connect(self._rawNode.compute)
 
-        actionAddOut4 = self._menu.addAction("f4")
-        actionAddOut4.setToolTip("refresh node")
-        actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
-        actionAddOut4.triggered.connect(f4)
-
-
+        # methods for the contextmenu
         self._menu.addAction("visualize").triggered.connect(self.visualize)
         self._menu.addAction("delete node").triggered.connect(self.deleteNode)
         self._menu.addAction("debug mode").triggered.connect(self.debug)
         self._menu.addAction("bake mode").triggered.connect(self.bake)
 
 
-        FreeCAD.yy=self
-        typ=self._rawNode.__class__.__name__
-        actionAddOut4 = self._menu.addAction(typ+"Y")
-        actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/gear.svg"))
-        actionAddOut4.triggered.connect(self.visualize)
+#        typ=self._rawNode.__class__.__name__
         
         # erzeuge abhaengig vond e pins methoden
         # wenn shape_out, dann visualizer, baker
