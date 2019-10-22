@@ -36,7 +36,6 @@ class FreeCAD_Box( FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.randomize = self.createInputPin("randomize", 'BoolPin')
 
@@ -78,6 +77,7 @@ class FreeCAD_Box( FreeCadNodeBase):
         shape=self.applyPins(Part.makeBox,"length width height position direction")
         self.setPinObject("Shape_out",shape)
         self.outExec.call()
+
         if self._preview:
             self.preview()
 
@@ -112,7 +112,6 @@ class FreeCAD_Cone(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
@@ -169,7 +168,6 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.radius = self.createInputPin("radius", 'FloatPin')
         self.radius.description="Radius of the sphere"
@@ -230,7 +228,6 @@ class FreeCAD_Quadrangle(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -327,7 +324,6 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -413,7 +409,6 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -615,7 +610,6 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -663,7 +657,6 @@ class FreeCAD_Object(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -678,8 +671,8 @@ class FreeCAD_Object(FreeCadNodeBase):
         self.shapeOnly.recomputeNode=True
 
 
-        self.Show = self.createInputPin('Reload_from_FC', 'ExecPin', None, self.reload)
-        self.Show = self.createInputPin('Store_to_FC', 'ExecPin', None, self.store,)
+        self.createInputPin('Reload_from_FC', 'ExecPin', None, self.reload)
+        self.createInputPin('Store_to_FC', 'ExecPin', None, self.store,)
         for i in range(7):
             self.createOutputPin('dummy', 'ExecPin')
 
@@ -701,6 +694,9 @@ class FreeCAD_Object(FreeCadNodeBase):
         self.fob=obj
         self.store()
         self.outExec.call()
+
+        if self._preview:
+            self.preview()
 
 
 
@@ -776,22 +772,6 @@ class FreeCAD_Console(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-#        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
-
-#        self.trace = self.createInputPin('trace', 'BoolPin')
-#        self.randomize = self.createInputPin("randomize", 'BoolPin')
-
-#        self.part = self.createOutputPin('Part', 'FCobjPin')
-#        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
-
-#        self.objname = self.createInputPin("objectname", 'StringPin')
-#        self.objname.setData(name)
-
-#        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-#        self.shapeOnly.recomputeNode=True
-
-#       self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-#        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.entity = self.createInputPin('entity', 'AnyPin',[], structure=StructureType.Multi)
         self.entity.setData([FreeCAD.Vector(),FreeCAD.Vector()])
@@ -829,7 +809,6 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -936,6 +915,9 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 
         self.outExec.call()
 
+        if self._preview:
+            self.preview()
+
     @staticmethod
     def description():
         return FreeCAD_PartExplorer.__doc__
@@ -965,7 +947,6 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -1008,6 +989,9 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
         say(self.getData('index'))
         self.setPinObject("Shape",subshapes[self.getData('index')])
         self.outExec.call()
+
+        if self._preview:
+            self.preview()
 
     @staticmethod
     def description():
@@ -1064,6 +1048,9 @@ class FreeCAD_Face(FreeCadNodeBase):
         self.setPinObject("Shape_out",face)
         self.outExec.call()
 
+        if self._preview:
+            self.preview()
+
 
     @staticmethod
     def description():
@@ -1118,6 +1105,10 @@ class FreeCAD_Edge(FreeCadNodeBase):
 
         self.setPinObject("Shape_out",edge)
         self.outExec.call()
+
+        if self._preview:
+            self.preview()
+
 
     @staticmethod
     def description():
@@ -1181,6 +1172,9 @@ class FreeCAD_Destruct_Shape(FreeCadNodeBase):
 
         self.outExec.call()
 
+        if self._preview:
+            self.preview()
+
     @staticmethod
     def description():
         return FreeCAD_Edge.__doc__
@@ -1206,7 +1200,6 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -1233,6 +1226,10 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
         nodeeditor.dev.run_projection_compute(self,*args, **kwargs)
         self.outExec.call()
 
+        if self._preview:
+            self.preview()
+
+
     @staticmethod
     def description():
         return FreeCAD_Parallelprojection.__doc__
@@ -1257,7 +1254,6 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -1284,6 +1280,9 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
         nodeeditor.dev.run_perspective_projection_compute(self,*args, **kwargs)
         self.outExec.call()
 
+        if self._preview:
+            self.preview()
+
     @staticmethod
     def description():
         return FreeCAD_Perspectiveprojection.__doc__
@@ -1308,7 +1307,6 @@ class FreeCAD_UVprojection(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('trace', 'BoolPin')
         self.randomize = self.createInputPin("randomize", 'BoolPin')
@@ -1339,6 +1337,9 @@ class FreeCAD_UVprojection(FreeCadNodeBase):
         reload (nodeeditor.dev)
         nodeeditor.dev.run_uv_projection_compute(self,*args, **kwargs)
         self.outExec.call()
+
+        if self._preview:
+            self.preview()
 
 
     @staticmethod
@@ -1438,6 +1439,9 @@ class FreeCAD_Plot(NodeBase):
         nodeeditor.dev.run_Plot_compute(self,*args, **kwargs)
 
         self.outExec.call()
+
+        if self._preview:
+            self.preview()
 
 
     @staticmethod
@@ -1645,6 +1649,9 @@ class FreeCAD_Ref(FreeCadNodeBase):
                         pass
         self.outExec.call()
 
+        if self._preview:
+            self.preview()
+
     @staticmethod
     def description():
         return FreeCAD_Ref.__doc__
@@ -1832,6 +1839,9 @@ class FreeCAD_LOD(FreeCadNodeBase):
         else:
             say("lod out of range")
         self.outExec.call()
+
+        if self._preview:
+            self.preview()
 
     @staticmethod
     def description():

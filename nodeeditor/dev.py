@@ -2443,7 +2443,7 @@ def run_FreeCAD_ConnectPoles(self):
     self.outExec.call()
  
     say(self.getWrapper())
-    FreeCAD.b=self.getWrapper()
+    FreeCAD.b=self.getWrapper().getHeaderText()
     say("end neue version")
 
 
