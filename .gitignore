@@ -1,3 +1,7 @@
+/makefile
+/nodeeditor/dragger_vorlage_lang.py
+/h
+/some_tests.py
 /nodeeditor/fc_nodeeditor_alt.py
 # Byte-compiled / optimized / DLL files
 __pycache__/
