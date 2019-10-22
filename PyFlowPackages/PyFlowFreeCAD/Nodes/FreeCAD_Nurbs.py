@@ -2283,11 +2283,21 @@ class FreeCAD_ConnectPoles(FreeCadNodeBase):
         self.polesin.enableOptions(PinOptions.AllowMultipleConnections)
         self.polesin.description="connection for multiple 2 dimensional vectorarrays which sould be concatenated, they must have the same numver of rows"
 
+
         a=self.createOutputPin('poles_out', 'VectorPin', structure=StructureType.Array)
         a.description="2 dim array of vectors as base for a grid or bspline surface"
+        
+        self.createOutputPin('umults_out', 'FloatPin',structure=StructureType.Array).\
+        description="list of the umults depends on overlay"
+
 
         a=self.createOutputPin('Shape_out', 'ShapePin')
         a.description="a BSplineSurface degree 3 to visualize the poles array"
+
+        a=self.createInputPin('tangentA', 'FloatPin',0)
+        a.recomputeNode=True
+        a=self.createInputPin('tangentB', 'FloatPin',0)
+        a.recomputeNode=True
 
         a=self.createInputPin('overlay', 'IntPin',0)
         a.description="0 = concatenate, 1 = calculate mean of the last and first row of two arrays"

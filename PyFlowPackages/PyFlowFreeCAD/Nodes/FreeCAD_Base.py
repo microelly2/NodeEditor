@@ -112,6 +112,7 @@ class FreeCadNodeBase(NodeBase):
         yid="ID_"+str(self.uid)
         yid=yid.replace('-','_')
         name=yid
+        label="PV_"+self.getWrapper().getHeaderText()
         a=FreeCAD.ActiveDocument.getObject(name)
 
         if not self._preview and a != None:
@@ -126,6 +127,7 @@ class FreeCadNodeBase(NodeBase):
                 pm=a.Placement
                 a.Shape=shape
                 a.Placement=pm
+                a.Label=label
             except:
                 pass
  

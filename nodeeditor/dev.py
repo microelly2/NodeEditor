@@ -2379,7 +2379,8 @@ def run_FreeCAD_ConnectPoles(self):
         w=np.array(p.getData())
         ws += [w]
         say(w.shape)
-    if ovl != 0:
+
+    if ovl == 1:
         for i,w in enumerate(ws):
             if i == 0: 
                 pl=[w[:-1]]
@@ -2390,7 +2391,29 @@ def run_FreeCAD_ConnectPoles(self):
             last=w[-1]
         pl += [[last]]
         poles=np.concatenate(pl)
-    else:
+
+    
+    if ovl == 2:
+        say("ovl tangent")
+        a=ws[0][-2]
+        b=ws[0][-1]
+        c=ws[1][0]
+        d=ws[1][1]
+        fa=1+self.getData('tangentA')*0.01
+        fb=1+self.getData('tangentB')*0.01
+        
+        a2=b+fa*(b-a)
+        b2=c+fb*(c-d)
+
+        pl = [ws[0],[a2,b2],ws[1]]
+        poles=np.concatenate(pl)
+        say(ws[0].shape[0])
+        say(ws[1].shape[0])
+        kns=(ws[0].shape[0],ws[1].shape[0])
+
+
+
+    elif ovl == 0:
         poles=np.concatenate(ws)
     
     if 1:
@@ -2398,9 +2421,14 @@ def run_FreeCAD_ConnectPoles(self):
         degA=3
         degB=3
 
-        say(poles.shape)
-        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+        if ovl == 2:
+            multA = [degA+1]+[1]*(kns[0]-1-degA)+[degA]
+            multA += [degA]+[1]*(kns[1]-1-degA)+[degA+1]
+        else:
+            multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+
         multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
+
         knotA=range(len(multA))
         knotB=range(len(multB))
 
@@ -2409,11 +2437,13 @@ def run_FreeCAD_ConnectPoles(self):
         shape=sf.toShape()
         self.setPinObject("Shape_out",shape)
 
+    self.setData("umults_out",multA)
     say("connected")
     self.setData('poles_out',poles.tolist())
     self.outExec.call()
  
-
+    say(self.getWrapper())
+    FreeCAD.b=self.getWrapper()
     say("end neue version")
 
 
