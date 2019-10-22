@@ -92,6 +92,7 @@ class FreeCadNodeBase(NodeBase):
         
         super(FreeCadNodeBase, self).__init__(name)
         self._debug = False
+        self._preview=False
     
     @timer
 #    @genPart
@@ -101,6 +102,33 @@ class FreeCadNodeBase(NodeBase):
         import nodeeditor.dev
         reload (nodeeditor.dev)
         a=eval("nodeeditor.dev.run_{}(self)".format(self.__class__.__name__))
+        if self._debug: say("Done:",self)
+        if self._preview:
+            say("create preview")
+            self.preview()
+            
+
+    def preview(self):
+        yid="ID_"+str(self.uid)
+        yid=yid.replace('-','_')
+        name=yid
+        a=FreeCAD.ActiveDocument.getObject(name)
+
+        if not self._preview and a != None:
+            FreeCAD.ActiveDocument.removeObject(name)
+        else:
+            try:
+                shape=self.getPinObject("Shape_out")
+                FreeCAD.Console.PrintError("update Shape for "+name+"\n")
+                
+                if a== None:
+                    a=FreeCAD.ActiveDocument.addObject("Part::Feature",name)
+                pm=a.Placement
+                a.Shape=shape
+                a.Placement=pm
+            except:
+                pass
+ 
     
     
     def bake(self, *args, **kwargs):
