@@ -774,30 +774,30 @@ class FreeCAD_Offset(FreeCadNodeBase):
 
 
 
-class FreeCAD_FillEdge(FreeCadNodeBase):
+class XXFreeCAD_FillEdge(FreeCadNodeBase):
     '''
-    closed edge to face
+    closed edges to face Part.makeFilledFace
     '''
 
     def __init__(self, name="MyFillEdge"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin("count", 'IntPin', True)
+#        a=self.createInputPin("count", 'IntPin', True)
         a=self.createInputPin("Wire", 'ShapePin', True)
-        a=self.createInputPin("Shape", 'ShapePin', True)
-        a=self.createInputPin("offset", 'FloatPin', True)
-        a=self.createInputPin("height", 'FloatPin', True)
+        a.description="closed wire to fill"
+#        a=self.createInputPin("Shape", 'ShapePin', True)
+#        a=self.createInputPin("offset", 'FloatPin', True)
+#        a=self.createInputPin("height", 'FloatPin', True)
 
-        self.createOutputPin('Shape_out', 'ShapePin')
-        self.createOutputPin('Compound_out', 'ShapePin') # Faces compound without tolerance
+        self.createOutputPin('Shape_out', 'ShapePin').description="filled Face"
+#        self.createOutputPin('Compound_out', 'ShapePin') # Faces compound without tolerance
 
 
     @staticmethod
     def description():
-        return FreeCAD_2DEllipse.__doc__
+        return FreeCAD_FillEdge.__doc__
 
     @staticmethod
     def category():
@@ -807,13 +807,6 @@ class FreeCAD_FillEdge(FreeCadNodeBase):
     def keywords():
         return []
 
-#   def produce(self,**kvargs):
-#       self.compute(produce=True)
-
-    def produce(self, *args, **kwargs):
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_FreeCAD_Offset(self,produce=True)
 
 
 
@@ -1672,28 +1665,26 @@ class FreeCAD_Offset(FreeCadNodeBase):
 
 class FreeCAD_FillEdge(FreeCadNodeBase):
     '''
-    closed edge to face
+    closed wire to face Part.makeFilledFace
     '''
 
     def __init__(self, name="MyFillEdge"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin("count", 'IntPin', True)
-        a=self.createInputPin("Wire", 'ShapePin', True)
-        a=self.createInputPin("Shape", 'ShapePin', True)
-        a=self.createInputPin("offset", 'FloatPin', True)
-        a=self.createInputPin("height", 'FloatPin', True)
+        a=self.createInputPin("Edges", 'ShapePin',structure=StructureType.Array)
+        a.enableOptions(PinOptions.AllowMultipleConnections)
 
-        self.createOutputPin('Shape_out', 'ShapePin')
-        self.createOutputPin('Compound_out', 'ShapePin') # Faces compound without tolerance
+        a=self.createInputPin("Wire", 'ShapePin', True)
+        a.description="closed wire to be filled"
+
+        self.createOutputPin('Shape_out', 'ShapePin').description="filled face"
 
 
     @staticmethod
     def description():
-        return FreeCAD_2DEllipse.__doc__
+        return FreeCAD_FillEdge.__doc__
 
     @staticmethod
     def category():
@@ -1703,13 +1694,6 @@ class FreeCAD_FillEdge(FreeCadNodeBase):
     def keywords():
         return []
 
-#   def produce(self,**kvargs):
-#       self.compute(produce=True)
-
-    def produce(self, *args, **kwargs):
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_FreeCAD_Offset(self,produce=True)
 
 
 
@@ -2237,9 +2221,6 @@ class FreeCAD_Bender(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.createInputPin("Shape_in",'ShapePin')
-#        self.createInputPin("borderA",'ShapePin')
-#        self.createInputPin("borderB",'ShapePin')
-
         self.createOutputPin('Shape_out', 'ShapePin')
 
         a=self.createInputPin('a', 'IntPin',13)
@@ -2271,7 +2252,7 @@ class FreeCAD_Bender(FreeCadNodeBase):
 
 class FreeCAD_ConnectPoles(FreeCadNodeBase):
     '''
-    concatenate vectorarrays with the same first axis together
+    concatenate vectorarrays with the same 2nd axis together along the first axis
     '''
 
     def __init__(self, name="MyInterpolation"):
@@ -2288,19 +2269,22 @@ class FreeCAD_ConnectPoles(FreeCadNodeBase):
         a.description="2 dim array of vectors as base for a grid or bspline surface"
         
         self.createOutputPin('umults_out', 'FloatPin',structure=StructureType.Array).\
-        description="list of the umults depends on overlay"
+        description="list of the multiplicities in the first axis depends on overlay"
 
 
         a=self.createOutputPin('Shape_out', 'ShapePin')
         a.description="a BSplineSurface degree 3 to visualize the poles array"
 
         a=self.createInputPin('tangentA', 'FloatPin',0)
+        a.description="force of the tangents of the first array" 
         a.recomputeNode=True
+        
         a=self.createInputPin('tangentB', 'FloatPin',0)
+        a.description="force of the tangents of the 2nd array" 
         a.recomputeNode=True
 
         a=self.createInputPin('overlay', 'IntPin',0)
-        a.description="0 = concatenate, 1 = calculate mean of the last and first row of two arrays"
+        a.description="0 = concatenate, 1 = calculate mean of the last and first row of two arrays, 2 = add tangent support between the faces"
         #a.setInputWidgetVariant("SimpleSlider")
         a.recomputeNode=True
 
@@ -2329,21 +2313,23 @@ class FreeCAD_FlipSwapArray(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         a=self.createInputPin("poles_in",'VectorPin', structure=StructureType.Array)
+        a.description="2 dim vector array" 
 
         a=self.createOutputPin('poles_out', 'VectorPin', structure=StructureType.Array)
+        a.description="2 dim vector array flipped or swapped poles_in" 
         
         a=self.createOutputPin('Shape_out', 'ShapePin')
         a.description="a BSplineSurface degree 3 to visualize the poles array"
 
-        a=self.createInputPin('swap', 'BoolPin',13)
+        a=self.createInputPin('swap', 'BoolPin',0)
         a.recomputeNode=True
         a.description="Flag for swap axes of the array"
 
-        a=self.createInputPin('flipu', 'BoolPin',13)
+        a=self.createInputPin('flipu', 'BoolPin',0)
         a.recomputeNode=True
         a.description="Flag for invert u direction of the array"
 
-        a=self.createInputPin('flipv', 'BoolPin',13)
+        a=self.createInputPin('flipv', 'BoolPin',0)
         a.recomputeNode=True
         a.description="Flag for invert v direction of the array"
 

@@ -444,11 +444,14 @@ def run_FreeCAD_view3D(self, *args, **kwargs):
     s=shape
     l=FreeCAD.listDocuments()
     if workspace=='' or workspace=='None':
+        w=FreeCAD.ActiveDocument
+        '''
         try:
             w=l['Unnamed']
         except:
             w=FreeCAD.newDocument("Unnamed")
             FreeCADGui.runCommand("Std_TileWindows")
+        '''
     else:
         if workspace in l.keys():
             w=l[workspace]
@@ -1725,11 +1728,11 @@ def run_FreeCAD_Offset(self,produce=False, **kwargs):
 
 
 def run_FreeCAD_FillEdge(self,produce=False, **kwargs):
-    
-    edge=self.getPinObject("Wire")
-    say(edge)
+   
+
+    wire=FreeCAD.ActiveDocument.BePlane.Shape.Wires[0]
     #_=Part.makeFilledFace(Part.__sortEdges__([App.ActiveDocument.Shape004.Shape.Edge2, ]))
-    _=Part.makeFilledFace([edge])
+    _=Part.makeFilledFace(wire.Edges)
     Part.show(_)
     
 
@@ -2456,3 +2459,447 @@ def run_FreeCAD_FlipSwapArray(self):
     poles=polesA.swapaxes(0,1)
     self.setData('poles_out',poles.tolist())
     self.outExec.call()
+
+
+def topokey(s):
+    a=s.PrincipalProperties['Moments']
+    f=a[2]
+    return tuple([round(s.Area/f**2,1),round(s.Volume/f**3,1),round(a[0]/f,1),round(a[1]/f,1),round(a[2]/f,1)])
+    return tuple([round(s.Area,1),round(s.Volume,1),round(a[0],1),round(a[1],1),round(a[2],1)])
+
+
+def run_FreeCAD_topo(self):
+    say("topo2")
+    topomap={}
+    topomap2={}
+    sh=FreeCAD.ActiveDocument.Fusion.Shape
+    sh=FreeCAD.ActiveDocument.Fusion001.Shape
+    for i,s in enumerate(sh.Faces):
+        #print (topokey(s))
+        try:
+            topomap[topokey(s)] += ["A.Face{}".format(i+1)]
+            topomap2[topokey(s)] += [s]
+        except:
+            topomap[topokey(s)] = ["A.Face{}".format(i+1)]
+            topomap2[topokey(s)] = [s]
+    
+
+    
+    sh=FreeCAD.ActiveDocument.Fusion001.Shape
+    sh=FreeCAD.ActiveDocument.Clone.Shape
+    for i,s in enumerate(sh.Faces):
+        #print (topokey(s))
+        try:
+            topomap[topokey(s)] += ["B.Face{}".format(i+1)]
+            topomap2[topokey(s)] += [s]
+        except:
+            topomap2[topokey(s)] = [s]
+            topomap[topokey(s)] = ["B.Face{}".format(i+1)]
+
+    changed=[]
+    lost=[]
+    new=[]
+    for k in topomap:
+        print (k,topomap[k])
+        if len(topomap[k]) == 1:
+            
+                changed += topomap2[k]
+                if topomap[k][0].startswith("A"): 
+                    lost +=  topomap2[k]
+                else:
+                    new +=  topomap2[k]
+                    
+
+    comp=Part.makeCompound(changed)
+    #Part.show(comp)
+    self.setPinObject("Shape_out",comp)
+    self.setPinObject("Shape_lost",Part.makeCompound(lost))
+    self.setPinObject("Shape_new",Part.makeCompound(new))
+    
+    mods=[]
+    for fa in lost:
+        for fb in new:
+            tt={}
+            anz=0
+            lanz=(len(fa.Edges),len(fb.Edges))
+            for e in fa.Edges:
+                tt[topokey(e)]=1
+            for e in fb.Edges:
+                try:
+                    if tt[topokey(e)]:
+                        anz += 1
+                except:
+                    pass
+            if anz != 0:
+                say("uebereinstimmungen",anz,lanz)
+                mods += [fa,fb]
+
+    if 0:
+        say("Edges...")
+        topomapE={}
+        topomapE2={}
+        sh=FreeCAD.ActiveDocument.Fusion.Shape
+        
+        for i,s in enumerate(sh.Edges):
+            #print (topokey(s))
+            try:
+                topomapE[topokey(s)] += ["A.Edge{}".format(i+1)]
+                topomapE2[topokey(s)] += [s]
+            except:
+                topomapE[topokey(s)] = ["A.Edge{}".format(i+1)]
+                topomapE2[topokey(s)] = [s]
+        
+        
+        sh=FreeCAD.ActiveDocument.Fusion001.Shape
+        for i,s in enumerate(sh.Edges):
+            #print (topokey(s))
+            try:
+                topomapE[topokey(s)] += ["B.Edge{}".format(i+1)]
+                topomapE2[topokey(s)] += [s]
+            except:
+                topomapE2[topokey(s)] = [s]
+                topomapE[topokey(s)] = ["B.Edge{}".format(i+1)]
+
+
+
+        
+        for k in topomapE:
+            print (k,topomapE[k])
+            if len(topomapE[k]) == 1:
+                changed += topomapE2[k]
+            
+    comp=Part.makeCompound(changed)
+    comp=Part.makeCompound(mods)
+    #Part.show(comp)
+    self.setPinObject("Shape_out",comp)
+    self.outExec.call()
+
+
+def run_FreeCAD_conny(self):
+ 
+    edges=self.getPinObjects(pinname='Shapes_in',sort=False)   
+    sayl()
+    neighbor=[]
+    gaps=[]
+
+    ec=len(edges)
+    say("len edges",ec)
+    #return 
+        
+        
+        
+        
+        
+        
+    for i in range(ec):
+        sf=-1
+        sflag=0
+        sdist=10**8
+        f=-1
+        flag=0
+        dist=10**8
+        
+        vs=edges[i].Vertexes[0].Point
+        ve=edges[i].Vertexes[1].Point
+        for j in range(ec):
+            if i == j:
+                continue
+            if (edges[j].Vertexes[0].Point-vs).Length <sdist:
+                sf=j
+                sdist=(edges[j].Vertexes[0].Point-vs).Length
+                sflag=0
+            if (edges[j].Vertexes[1].Point-vs).Length <sdist:
+                sf=j
+                sdist=(edges[j].Vertexes[1].Point-vs).Length
+                sflag=1
+            if (edges[j].Vertexes[0].Point-ve).Length <dist:
+                f=j
+                dist=(edges[j].Vertexes[0].Point-ve).Length
+                flag=0
+            if (edges[j].Vertexes[1].Point-ve).Length <dist:
+                f=j
+                dist=(edges[j].Vertexes[1].Point-ve).Length
+                flag=1
+        neighbor += [(sf,sflag,sdist,f,flag,dist)]
+#        print (i,sf,sflag,sdist,f,flag,dist)
+
+    e=0
+    ee=neighbor[e][0]
+    chain=[e,ee]
+    for i in range(14):
+        if neighbor[ee][0] not in chain:
+            ee2=neighbor[ee][0]
+            chain += [ee2]
+            e=ee
+            ee=ee2
+        elif neighbor[ee][3] not in chain:
+            ee2=neighbor[ee][3]
+            chain += [ee2]
+            e=ee
+            ee=ee2
+
+    print("chain",chain)
+
+
+    pts=[]
+    col=[]
+
+    
+    cc=len(chain)
+    for i in range(cc):
+        
+        lmin=10**8
+        ep=chain[i-1]
+        e=chain[i]
+        for f in range(2):
+            for fp in range(2):
+                pa,pb=edges[e].Vertexes[f].Point,edges[ep].Vertexes[fp].Point
+                
+
+                
+                
+                l=(pa-pb).Length
+                if l<lmin:
+                    lmin=l
+                    paa,pbb=pa,pb
+                    polsa=edges[e].toNurbs().Edge1.Curve.getPoles()
+                    polsb=edges[ep].toNurbs().Edge1.Curve.getPoles()
+
+                    ff=1 # flag zum umschalten als parametre einbauen
+                    ff= 1 if  self.getData('ff') else 0
+                    if f==ff:
+                        na=[polsa[0],polsa[1]]
+                    else:
+                        na=[polsa[-1],polsa[-2]]
+                    if fp==ff:
+                        nb=[polsb[0],polsb[1]]
+                    else:
+                        nb=[polsb[-1],polsb[-2]]
+
+
+#                    print (i,f,fp)
+        say("na",na)
+        say("nb",nb)
+        if (na[0]-nb[0]).Length> 0.0001:
+            say("make gap")
+            k=0.2
+            
+            k=self.getData("tangentForce")*0.05
+            nn=[na[0],na[0]+(na[0]-na[1])*k,nb[0]+(nb[0]-nb[1])*k,nb[0]]
+            
+            t=Part.makePolygon(nn)
+            #Part.show(t)
+            #col += [Part.makePolygon([paa,pbb]).Edge1]
+            t=Part.BSplineCurve()
+            say(nn)
+            t.buildFromPolesMultsKnots(nn,[4,4],[0,1],False,3)
+            say(t)
+            gaps += [t.toShape().Edge1]
+            col += [t.toShape().Edge1]
+            #col += Part.makePolygon(nn).Edges
+        else:
+            say("no gap")
+
+        col += [edges[ep]]
+
+
+
+#----------
+    
+    if ec==2:
+        e=0
+        ep=1
+        col=[]
+        gaps=[]
+        polsa=edges[e].toNurbs().Edge1.Curve.getPoles()
+        polsb=edges[ep].toNurbs().Edge1.Curve.getPoles()
+        
+        ff= 1 if  self.getData('ff') else 0
+        na=[polsa[-1],polsa[-2]]
+        nb=[polsb[-1],polsb[-2]]
+
+
+        na=[polsa[0],polsa[1]]
+        nb=[polsb[-1],polsb[-2]]
+        
+#                    print (i,f,fp)
+        say("na",na)
+        say("nb",nb)
+        if (na[0]-nb[0]).Length> 0.0001:
+            say("make gap")
+            k=0.2
+            
+            k=self.getData("tangentForce")*0.05
+            nn=[na[0],na[0]+(na[0]-na[1])*k,nb[0]+(nb[0]-nb[1])*k,nb[0]]
+            
+            t=Part.makePolygon(nn)
+            #Part.show(t)
+            #col += [Part.makePolygon([paa,pbb]).Edge1]
+            t=Part.BSplineCurve()
+            say(nn)
+            t.buildFromPolesMultsKnots(nn,[4,4],[0,1],False,3)
+            say(t)
+            gaps += [t.toShape().Edge1]
+            col += [t.toShape().Edge1]
+            #col += Part.makePolygon(nn).Edges
+        else:
+            say("no gap")
+
+
+        na=[polsa[-1],polsa[-2]]
+        nb=[polsb[0],polsb[1]]
+
+        
+
+
+
+#                    print (i,f,fp)
+        say("na",na)
+        say("nb",nb)
+        if (na[0]-nb[0]).Length> 0.0001:
+            say("make gap")
+            k=0.2
+            
+            k=self.getData("tangentForce")*0.05
+            nn=[na[0],na[0]+(na[0]-na[1])*k,nb[0]+(nb[0]-nb[1])*k,nb[0]]
+            
+            t=Part.makePolygon(nn)
+            #Part.show(t)
+            #col += [Part.makePolygon([paa,pbb]).Edge1]
+            t=Part.BSplineCurve()
+            say(nn)
+            t.buildFromPolesMultsKnots(nn,[4,4],[0,1],False,3)
+            say(t)
+            gaps += [t.toShape().Edge1]
+            col += [t.toShape().Edge1]
+            #col += Part.makePolygon(nn).Edges
+        else:
+            say("no gap")
+
+
+
+
+        col += [edges[ep]]
+        col += [edges[e]]
+
+#------------------------        
+
+
+
+#----------
+
+
+    sh=Part.Compound(col)
+    if self.getData("createFace"):
+            ss=Part.sortEdges(col)
+            sh=Part.makeFilledFace(ss[0])
+
+    self.setPinObject("Shape_out",sh)
+    say("col",col)
+    say("gaps",gaps)
+    self.setPinObject("gaps",Part.Compound(gaps))
+    sayl()
+    self.outExec.call()
+
+
+def aa():    
+    #-------------------- kann weg/reuse otherwhere
+    if 1:
+        pass
+    else:
+        
+        ss=Part.sortEdges(col)
+        poles=[]
+        polesseg=[]
+        for w in ss[0]:
+            wn=w.toNurbs()
+            pls=wn.Edge1.Curve.getPoles()
+            if len(polesseg)>0:
+                if (pls[0]- polesseg[-1][-1]).Length<0.001:
+                    pass
+                else:
+                    pls.reverse()
+            polesseg += [pls]
+            poles += pls
+        
+        degA=self.getData("degree")   
+        ls=int(len(polesseg)/2)
+        poles=[]
+        k=self.getData("tangentForce")
+        
+        pfak=degA
+        pfak=0 # fuer weiche uebergaenge
+        
+        for i in range(ls):
+            ll= (polesseg[2*i][0]-polesseg[2*i][1]).Length
+            k *= 0.1*ll
+            poles += [ polesseg[2*i][0]]*pfak
+            try:
+                poles += [
+                    polesseg[2*i][0] + (polesseg[2*i][0]- polesseg[2*i-1][-2]).normalize()*k,
+                    polesseg[2*i][1] + (polesseg[2*i][1] -polesseg[2*i+1][1]).normalize()*k,
+                    ]
+            except:
+                say("no tangantes possible")
+                poles += [
+                    polesseg[2*i][0] + (polesseg[2*i][0]- polesseg[2*i-1][-2]),
+                    polesseg[2*i][1] + (polesseg[2*i][1] -polesseg[2*i+1][1]),
+                    ]
+
+                pass
+            poles += [polesseg[2*i][1]]*pfak
+            
+            poles +=polesseg[2*i+1]
+        
+        sh=Part.makePolygon(poles)
+        sf=Part.BSplineCurve()
+
+        poles=np.array(poles)
+        (countA,_)=poles.shape
+
+        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+        knotA=range(len(multA))
+
+        sf=Part.BSplineCurve()
+        n=self.getData("rotateAxis")
+        poles2=np.concatenate([poles[n:],poles[:n]]);poles=poles2
+        
+        sf.buildFromPolesMultsKnots(poles,multA,knotA,False,degA)
+
+        sh=sf.toShape()
+
+        if 0 and self.getData("createFace"):
+            t=len(multA)//3-1
+            sf1=sf.copy()
+            sf2=sf.copy()
+            sf3=sf.copy()
+            sf2.segment(0,t)
+            sf3.segment(t,2*t)
+            sf1.segment(2*t,len(multA)-1)
+
+            sh=Part.Compound([sf2.toShape(),sf3.toShape(),sf1.toShape()])
+            Part.show(sh)
+            tt=FreeCAD.ActiveDocument.ActiveObject
+            surf=FreeCAD.ActiveDocument.addObject("Surface::GeomFillSurface","Surface")
+            surf.BoundaryList=[(tt, ('Edge1', 'Edge2', 'Edge3'))]
+
+            FreeCAD.ActiveDocument.recompute(None,True,True)
+
+
+        if  self.getData("createFace"):
+            t=len(multA)//2
+            sf1=sf.copy()
+            sf2=sf.copy()
+            sf2.segment(0,t)          
+            sf1.segment(t,len(multA)-1)
+            sh=Part.Compound([sf2.toShape(),sf1.toShape()])
+            e2=sf1.toShape().Edge1
+            e2.reverse()
+            sh=Part.makeRuledSurface(sf2.toShape().Edge1,e2)
+      
+
+         
+            
+    self.setPinObject("Shape_out",sh)
+    self.outExec.call()
+
