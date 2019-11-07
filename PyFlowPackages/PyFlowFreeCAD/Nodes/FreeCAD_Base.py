@@ -304,7 +304,22 @@ class FreeCadNodeBase(NodeBase):
         k=str(pin.uid)
         store.store().add(k,obj)
         pin.setData(k)
-        
+
+
+    def getPinObjects(self,pinname='Shapes_in',sort=False):
+        outArray=[]
+        pin=self.getPinByName(pinname)
+        if sort:
+            pins = sorted(pin.affected_by, key=lambda pin: pin.owningNode().y)
+        else:
+            pins = pin.affected_by
+
+        for i in pins:
+            outArray.append(i.owningNode().getPinObject(i.name))
+
+        print (outArray)
+        return outArray
+            
     def reset(self,*args, **kwargs):
         pass
         
