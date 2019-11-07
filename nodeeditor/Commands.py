@@ -1573,6 +1573,7 @@ def T3():
 		classNodes = pack.GetNodeClasses()
 		cnks=list(classNodes.keys())
 		cnks.sort()
+		kats={}
 		for c in cnks:
 			if c[7:] in ['PinsTest']:
 				continue 
@@ -1611,15 +1612,17 @@ def T3():
 			#'FreeCAD_view3D'
 			]:
 				pass
-				# continue
+				#continue
 			
 
 
 			try:
 				say("=====FC"+c[7:]+"=====")
+
 				say("/*")
 				node = classNodes[c]("nodeName")
 				say("*/")
+				
 #				if node.dok != 2: continue
 
 				# say(c,node)
@@ -1628,8 +1631,14 @@ def T3():
 				docs=node.__doc__
 				for s in docs.split('\n'):
 					say("  "+s.lstrip())
-				FreeCAD.n=node
 				
+				say("[[nodes::{}|More ...]]\n\n".format(c[8:]))
+				FreeCAD.n=node
+				try:
+					kats[node.category()] +=  [c]
+				except:
+					kats[node.category()] =  [c]
+
 				say("===INPUT PINS===")
 				for pin in node.getOrderedPins():
 					if str(pin.direction) != 'PinDirection.Input':
@@ -1664,7 +1673,15 @@ def T3():
 					FreeCAD.pin=pin
 			except:
 				sayErr("problem for ",c)
-	# sayl("t3 done")
+#	sayl("t3 done")
+	say("======Nodes by category======")
+	kl=list(kats.keys())
+	kl.sort()
+	for k in kl:
+		say("====={}=====".format(k))
+		for c in kats[k]:
+			say("[[nodes::{}]]".format(c[8:]))
+			say("[[start#fc_{}|/°/  ]]".format(c[8:]))
 
 
 def reset():
