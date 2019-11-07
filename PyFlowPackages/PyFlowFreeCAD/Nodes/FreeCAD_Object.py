@@ -1943,6 +1943,106 @@ class FreeCAD_bakery(FreeCadNodeBase):
         return ['Part','Shape',]
 
 
+class FreeCAD_topo(FreeCadNodeBase):
+    '''
+    '''
+
+    dok = 2
+    def __init__(self, name="baked",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('name', 'StringPin','view3d').\
+        description = "name of the object in 3D space"
+
+        self.createInputPin('label', 'StringPin','view3d').\
+        description = "label for the object in 3D space"
+        #+# todo:add functionality for label
+
+        self.createInputPin('Workspace', 'StringPin','').\
+        description = " name of the workspace where the view is displayed, if empty  the active document is used" 
+        self.createInputPin('Shape_in', 'ShapePin').\
+        description= "shape to display"
+        self.createOutputPin('Shape_out', 'ShapePin').description="filled face"
+        self.createOutputPin('Shape_lost', 'ShapePin').description="filled face"
+        self.createOutputPin('Shape_new', 'ShapePin').description="filled face"
+
+    @staticmethod
+    def description():
+        return FreeCAD_topo.__doc__
+
+    @staticmethod
+    def category():
+        return 'Document'
+
+    @staticmethod
+    def keywords():
+        return ['Part','Shape',]
+
+
+
+class FreeCAD_conny(FreeCadNodeBase):
+    '''
+    connect wires
+    '''
+
+    dok = 2
+    def __init__(self, name="baked",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        '''
+        a=self.createInputPin('degree', 'IntPin',3)
+        a.recomputeNode=True
+        a.setInputWidgetVariant("Simple")
+        a=self.createInputPin('rotateAxis', 'IntPin',2)
+        a.recomputeNode=True
+        a.setInputWidgetVariant("Simple")
+        a=self.createInputPin('simpleConnection', 'BoolPin')
+        a.recomputeNode=True
+        
+        '''
+
+        a=self.createInputPin('ff', 'BoolPin')
+        a.recomputeNode=True
+
+        a=self.createInputPin('tangentForce', 'IntPin',2)
+        a.recomputeNode=True
+        a.setInputWidgetVariant("Simple")
+
+        a=self.createInputPin('createFace', 'BoolPin')
+        a.recomputeNode=True
+
+        
+#        a=self.createInputPin('Shape_in', 'ShapePin')     
+#        a.enableOptions(PinOptions.AllowMultipleConnections)
+#        a.disableOptions(PinOptions.SupportsOnlyArrays)
+
+        self.shapes=self.createInputPin('Shapes_in', 'ShapePin', None)
+        self.shapes.enableOptions(PinOptions.AllowMultipleConnections)
+        self.shapes.disableOptions(PinOptions.SupportsOnlyArrays)
+
+
+        self.createOutputPin('Shape_out', 'ShapePin').description="filled face"
+        self.createOutputPin('gaps', 'ShapePin').description="filled face"
+        self.createOutputPin('border', 'ShapePin').description="filled face"
+
+    @staticmethod
+    def description():
+        return FreeCAD_topo.__doc__
+
+    @staticmethod
+    def category():
+        return 'Document'
+
+    @staticmethod
+    def keywords():
+        return ['Part','Shape',]
+
 
 
 
@@ -1983,4 +2083,7 @@ def nodelist():
                 FreeCAD_view3D,
                 FreeCAD_Destruct_Shape,
                 FreeCAD_bakery,
+                FreeCAD_topo,
+                FreeCAD_conny,
+                
         ]
