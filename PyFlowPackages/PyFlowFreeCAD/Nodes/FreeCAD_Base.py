@@ -130,6 +130,23 @@ class FreeCadNodeBase(NodeBase):
                 a.Label=label
             except:
                 pass
+
+    def makebackref(self):
+        '''make reference insinde FreeCAD document to the node'''
+        import nodeeditor.PyFlowGraph
+        from nodeeditor.PyFlowGraph import PyFlowRef
+        reload (nodeeditor.PyFlowGraph)
+        yid="REFID_"+str(self.uid)
+        yid=yid.replace('-','_')
+        name=yid
+        label="REF_"+self.getWrapper().getHeaderText()
+        a=FreeCAD.ActiveDocument.getObject(name)
+        if a == None:
+            a=PyFlowRef(name)
+            a.refname=self.name
+            a.Label=label
+
+        return a
  
     
     
