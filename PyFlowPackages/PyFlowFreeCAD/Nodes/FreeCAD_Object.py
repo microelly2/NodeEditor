@@ -1985,7 +1985,7 @@ class FreeCAD_topo(FreeCadNodeBase):
 
 class FreeCAD_conny(FreeCadNodeBase):
     '''
-    connect wires
+    connect edges and close gaps, create a filled face 
     '''
 
     dok = 2
@@ -2028,8 +2028,8 @@ class FreeCAD_conny(FreeCadNodeBase):
 
 
         self.createOutputPin('Shape_out', 'ShapePin').description="filled face"
-        self.createOutputPin('gaps', 'ShapePin').description="filled face"
-        self.createOutputPin('border', 'ShapePin').description="filled face"
+        self.createOutputPin('gaps', 'ShapePin').description="edges created to get wire closed"
+        self.createOutputPin('border', 'ShapePin').description="edges of the face only"
 
     @staticmethod
     def description():
@@ -2041,7 +2041,64 @@ class FreeCAD_conny(FreeCadNodeBase):
 
     @staticmethod
     def keywords():
-        return ['Part','Shape',]
+        return ['Edge','FilledFace',]
+
+
+class FreeCAD_randomizePolygon(FreeCadNodeBase):
+    '''
+    add some randomness to a polygon
+    '''
+
+    dok = 2
+    def __init__(self, name="baked",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        '''
+        a=self.createInputPin('degree', 'IntPin',3)
+        a.recomputeNode=True
+        a.setInputWidgetVariant("Simple")
+        a=self.createInputPin('rotateAxis', 'IntPin',2)
+        a.recomputeNode=True
+        a.setInputWidgetVariant("Simple")
+        a=self.createInputPin('simpleConnection', 'BoolPin')
+        a.recomputeNode=True
+        
+        '''
+
+        a=self.createInputPin('ff', 'BoolPin')
+        a.recomputeNode=True
+
+        a=self.createInputPin('factorEnds', 'IntPin',2)
+        a.recomputeNode=True
+        a.setInputWidgetVariant("Simple")
+
+        a=self.createInputPin('factorInner', 'IntPin',2)
+        a.recomputeNode=True
+        a.setInputWidgetVariant("Simple")
+
+        a=self.createInputPin('createFace', 'BoolPin')
+        a.recomputeNode=True
+
+        self.shapes=self.createInputPin('Shape_in', 'ShapePin', None)
+        self.arrayData = self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
+
+        self.createOutputPin('Shape_out', 'ShapePin')#.description="filled face"
+        self.arrayData = self.createOutputPin('points_out', 'VectorPin', structure=StructureType.Array)
+
+    @staticmethod
+    def description():
+        return FreeCAD_randomizePolygon.__doc__
+
+    @staticmethod
+    def category():
+        return 'Document'
+
+    @staticmethod
+    def keywords():
+        return ['Edge','FilledFace',]
 
 
 
@@ -2085,5 +2142,6 @@ def nodelist():
                 FreeCAD_bakery,
                 FreeCAD_topo,
                 FreeCAD_conny,
+                FreeCAD_randomizePolygon
                 
         ]
