@@ -232,6 +232,8 @@ if FreeCAD.GuiUp:
 
 	current += [c3bI(["nodeeditor"], always, 'Commands', 'shutdown',icon=None)]
 	if devmode():
+		pass
+	if 1:
 		current += [c3bI(["nodeeditor"], always, 'Commands', 'test_AA',icon="/../icons/AA")]
 		current += [c3bI(["nodeeditor"], always, 'Commands', 'test_BB',icon="/../icons/BB")]
 		current += [c3bI(["nodeeditor"], always, 'Commands', 'test_CC',icon="/../icons/CC")]
@@ -286,6 +288,7 @@ if FreeCAD.GuiUp:
 	current += [c3bI(["scenes"], always, 'Commands', 'createBePlane',icon=None)]
 	current += [c3bI(["scenes"], always, 'Commands', 'create some parts',icon=None)]
 	current += [c3bI(["scenes"], always, 'Commands', 'display Tools',icon=None)]
+	current += [c3bI(["scenes"], always, 'Commands', 'display Preferences Window',icon=None)]
 
 #	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 #	_current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]

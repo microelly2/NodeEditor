@@ -1335,6 +1335,7 @@ def VoronoiforPointcloud():
 	gg=pfwrap.getGraphManager().getAllGraphs()[0]
 
 
+
 	makeInt=pfwrap.createFunction('PyFlowBase',"DefaultLib","makeInt")
 	makeInt.setData('i', 50)
 	gg.addNode(makeInt)
@@ -1703,4 +1704,12 @@ def displayTools():
 	for toolName in ["Properties","NodeBox"]:
 		FreeCAD.PF.invokeDockToolByName(packageName, toolName, settings=None)
 
+
+
+
+
+def displayPreferencesWindow():
+    a=pfwrap.getInstance()
+    say(a)
+    a.showPreferencesWindow()
 
