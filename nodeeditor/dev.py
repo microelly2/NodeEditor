@@ -1438,6 +1438,10 @@ Part.ArcOfCircle(circ,3.110107,4.361358)
 
 #--------------------------
 
+import sys
+if sys.version_info[0] !=2:
+	from importlib import reload
+
 
 def run_FreeCAD_Simplex(self,*args, **kwargs):
 
@@ -1491,6 +1495,20 @@ def run_FreeCAD_Simplex(self,*args, **kwargs):
 
     self.outExec.call()
 
+    sayl("start reftest")
+    import nodeeditor.PyFlowGraph
+    from nodeeditor.PyFlowGraph import PyFlowRef
+    reload (nodeeditor.PyFlowGraph)
+    yid="REFID_"+str(self.uid)
+    yid=yid.replace('-','_')
+    name=yid
+    label="REF_"+self.getWrapper().getHeaderText()
+    a=FreeCAD.ActiveDocument.getObject(name)
+    if a == None:
+        a=PyFlowRef(name)
+        a.refname=self.name
+        a.Label=label
+    sayl("ref test fertig")
 
 
 def run_FreeCAD_Tread(self,produce=False, **kwargs):
@@ -2900,3 +2918,13 @@ def run_FreeCAD_randomizePolygon(self,*args, **kwargs):
     self.outExec.call()
     sayl("fewrtig-- ")
     return
+
+
+def myExecute_PyFlowRef(proy,fp):
+    say("PyFlow ref executer")
+    gm=FreeCAD.PF.graphManager.get()
+    
+    node=gm.findNode(fp.refname)
+    say("node found",node)
+    node.compute()
+    sayl("compute calles")
