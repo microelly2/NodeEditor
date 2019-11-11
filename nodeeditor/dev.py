@@ -1594,12 +1594,26 @@ def run_FreeCAD_RefList(self,*args, **kwargs):
 
 
 def run_FreeCAD_Discretize(self,*args, **kwargs):
-    #sayl()
+    sayl()
     count=self.getData("count")
     edge=self.getPinObject("Wire")
     say(edge)
+    pts=edge.discretize(count)
+    k=1
+    a=pts[0]
+    b=pts[-1]
+    ptsa=[a+(b-a).normalize()*k]+[p+FreeCAD.Vector(random.random(),random.random(),random.random())*k for p in pts[1:-1]]+[b+(a-b).normalize()*k]
+    self.setPinObject("Shape_out",Part.makePolygon(ptsa))
+    if 0:
+        sc=Part.BSplineCurve()
+        sc.buildFromPoles(ptsa)
+        self.setPinObject("Shape_out",sc.toShape())
+    
+    self.outExec.call()
+    return
+
     pts=edge.discretize(count*10)
-    Part.show(Part.makePolygon(pts))
+    #Part.show(Part.makePolygon(pts))
     face=FreeCAD.ActiveDocument.BePlane.Shape.Face1
     sf=face.Surface
     r=200
@@ -1618,12 +1632,14 @@ def run_FreeCAD_Discretize(self,*args, **kwargs):
         u,v=sf.parameter(p-n.cross(t)*r)
         pts3 += [sf.value(u,v)]
     closed=True
-    if closed:
-        Part.show(Part.makePolygon(pts2+[pts2[0]]))
-        Part.show(Part.makePolygon(pts3+[pts3[0]]))
-    else:
-        Part.show(Part.makePolygon(pts2))
-        Part.show(Part.makePolygon(pts3))
+    if 0:
+        if closed:
+            Part.show(Part.makePolygon(pts2+[pts2[0]]))
+            Part.show(Part.makePolygon(pts3+[pts3[0]]))
+        else:
+            Part.show(Part.makePolygon(pts2))
+            Part.show(Part.makePolygon(pts3))
+
 
 
 
@@ -1862,13 +1878,18 @@ def run_FreeCAD_BSplineCurve(self, *args, **kwargs):
         knotA=range(len(multA))
 
         sf=Part.BSplineCurve()
-        sf.buildFromPolesMultsKnots(poles,multA,knotA,FalsedegA)
+        sf.buildFromPolesMultsKnots(poles,multA,knotA,False,degA)
         shape=sf.toShape()
 
         shape=sf.toShape()
-        cc=self.getObject()
-        cc.Label=self.objname.getData()
-        cc.Shape=shape
+        
+        #cc=self.getObject()
+        #cc.Label=self.objname.getData()
+        #cc.Shape=shape
+
+        self.setPinObject("Shape_out",shape)
+        self.outExec.call()
+    
 
 
 def run_FreeCAD_Compound(self, *args, **kwargs):
@@ -2583,7 +2604,17 @@ def run_FreeCAD_conny(self):
     gaps=[]
 
     ec=len(edges)
-    say("len edges",ec)
+#    say("len edges",ec)
+#    say("edges")
+    e2=[]
+    for e in edges:
+        #say(e,e.__class__)
+        try: e2 += [e.Edge1]
+        except:
+            e2 += [e]
+           
+    e=e2
+    #say(e)
     #return 
         
         
@@ -2601,6 +2632,7 @@ def run_FreeCAD_conny(self):
         
         vs=edges[i].Vertexes[0].Point
         ve=edges[i].Vertexes[1].Point
+        #say(vs,ve)
         for j in range(ec):
             if i == j:
                 continue
@@ -2623,7 +2655,8 @@ def run_FreeCAD_conny(self):
         neighbor += [(sf,sflag,sdist,f,flag,dist)]
 #        print (i,sf,sflag,sdist,f,flag,dist)
 
-    e=0
+    # find neighbors chain of edges 
+    e=0 # starting edge
     ee=neighbor[e][0]
     chain=[e,ee]
     for i in range(14):
@@ -2641,22 +2674,22 @@ def run_FreeCAD_conny(self):
     print("chain",chain)
 
 
+
+    # calculate gap filler for the chain
     pts=[]
     col=[]
-
-    
+  
     cc=len(chain)
     for i in range(cc):
         
         lmin=10**8
         ep=chain[i-1]
         e=chain[i]
+        ff=-1
+        # shortest gap between two edges of the chain
         for f in range(2):
             for fp in range(2):
                 pa,pb=edges[e].Vertexes[f].Point,edges[ep].Vertexes[fp].Point
-                
-
-                
                 
                 l=(pa-pb).Length
                 if l<lmin:
@@ -2665,141 +2698,84 @@ def run_FreeCAD_conny(self):
                     polsa=edges[e].toNurbs().Edge1.Curve.getPoles()
                     polsb=edges[ep].toNurbs().Edge1.Curve.getPoles()
 
-                    ff=1 # flag zum umschalten als parametre einbauen
-                    ff= 1 if  self.getData('ff') else 0
-                    if f==ff:
+                    if ff == -1:
+                        if (polsa[0]-polsb[0]).Length < (polsa[-1]-polsb[-1]).Length:
+                            ff=0
+                        else:
+                            ff = 1
+                    ff2= 1 - ff if  self.getData('ff') else 0
+
+
+
+
+                    if f==ff2:
                         na=[polsa[0],polsa[1]]
                     else:
                         na=[polsa[-1],polsa[-2]]
-                    if fp==ff:
+                    if fp==ff2:
                         nb=[polsb[0],polsb[1]]
                     else:
                         nb=[polsb[-1],polsb[-2]]
 
-
-#                    print (i,f,fp)
-        say("na",na)
-        say("nb",nb)
+        # create the gap filler
         if (na[0]-nb[0]).Length> 0.0001:
-            say("make gap")
-            k=0.2
-            
+
+            #+# k should depend on size of gap (na[0]-nb[0]).Length
             k=self.getData("tangentForce")*0.05
             nn=[na[0],na[0]+(na[0]-na[1])*k,nb[0]+(nb[0]-nb[1])*k,nb[0]]
             
-            t=Part.makePolygon(nn)
-            #Part.show(t)
-            #col += [Part.makePolygon([paa,pbb]).Edge1]
+            ###simple line connection
+            ##t=Part.makePolygon(nn)
+            ##col += [Part.makePolygon([paa,pbb]).Edge1]
+
             t=Part.BSplineCurve()
-            say(nn)
             t.buildFromPolesMultsKnots(nn,[4,4],[0,1],False,3)
-            say(t)
             gaps += [t.toShape().Edge1]
             col += [t.toShape().Edge1]
-            #col += Part.makePolygon(nn).Edges
-        else:
-            say("no gap")
 
-        col += [edges[ep]]
+        col += [edges[ep].Edge1]
 
-
-
-#----------
-    
+    # special case only two edges 
     if ec==2:
-        e=0
-        ep=1
         col=[]
         gaps=[]
-        polsa=edges[e].toNurbs().Edge1.Curve.getPoles()
-        polsb=edges[ep].toNurbs().Edge1.Curve.getPoles()
+
+        polsa=edges[0].toNurbs().Edge1.Curve.getPoles()
+        polsb=edges[1].toNurbs().Edge1.Curve.getPoles()
         
         ff= 1 if  self.getData('ff') else 0
-        na=[polsa[-1],polsa[-2]]
-        nb=[polsb[-1],polsb[-2]]
 
-
-        na=[polsa[0],polsa[1]]
-        nb=[polsb[-1],polsb[-2]]
+        for [na,nb]  in  [
+                    [[polsa[0],polsa[1]],[polsb[-1],polsb[-2]]],
+                     [[polsa[-1],polsa[-2]],[polsb[0],polsb[1]]]
+                     ]:
         
-#                    print (i,f,fp)
-        say("na",na)
-        say("nb",nb)
-        if (na[0]-nb[0]).Length> 0.0001:
-            say("make gap")
-            k=0.2
-            
-            k=self.getData("tangentForce")*0.05
-            nn=[na[0],na[0]+(na[0]-na[1])*k,nb[0]+(nb[0]-nb[1])*k,nb[0]]
-            
-            t=Part.makePolygon(nn)
-            #Part.show(t)
-            #col += [Part.makePolygon([paa,pbb]).Edge1]
-            t=Part.BSplineCurve()
-            say(nn)
-            t.buildFromPolesMultsKnots(nn,[4,4],[0,1],False,3)
-            say(t)
-            gaps += [t.toShape().Edge1]
-            col += [t.toShape().Edge1]
-            #col += Part.makePolygon(nn).Edges
-        else:
-            say("no gap")
+            if (na[0]-nb[0]).Length> 0.0001:
+                
+                k=self.getData("tangentForce")*0.05
+                nn=[na[0],na[0]+(na[0]-na[1])*k,nb[0]+(nb[0]-nb[1])*k,nb[0]]
+                
+                t=Part.BSplineCurve()
+                t.buildFromPolesMultsKnots(nn,[4,4],[0,1],False,3)
+                gaps += [t.toShape().Edge1]
+                col += [t.toShape().Edge1]
 
+        col += [edges[1]]
+        col += [edges[0]]
 
-        na=[polsa[-1],polsa[-2]]
-        nb=[polsb[0],polsb[1]]
-
-        
-
-
-
-#                    print (i,f,fp)
-        say("na",na)
-        say("nb",nb)
-        if (na[0]-nb[0]).Length> 0.0001:
-            say("make gap")
-            k=0.2
-            
-            k=self.getData("tangentForce")*0.05
-            nn=[na[0],na[0]+(na[0]-na[1])*k,nb[0]+(nb[0]-nb[1])*k,nb[0]]
-            
-            t=Part.makePolygon(nn)
-            #Part.show(t)
-            #col += [Part.makePolygon([paa,pbb]).Edge1]
-            t=Part.BSplineCurve()
-            say(nn)
-            t.buildFromPolesMultsKnots(nn,[4,4],[0,1],False,3)
-            say(t)
-            gaps += [t.toShape().Edge1]
-            col += [t.toShape().Edge1]
-            #col += Part.makePolygon(nn).Edges
-        else:
-            say("no gap")
-
-
-
-
-        col += [edges[ep]]
-        col += [edges[e]]
-
-#------------------------        
-
-
-
-#----------
-
-
-    sh=Part.Compound(col)
+    #say(col)
     if self.getData("createFace"):
-            ss=Part.sortEdges(col)
-            sh=Part.makeFilledFace(ss[0])
+        ss=Part.sortEdges(col)
+        sh=Part.makeFilledFace(ss[0])
+    else:
+        sh=Part.Compound(col)
 
     self.setPinObject("Shape_out",sh)
-    say("col",col)
-    say("gaps",gaps)
+    #say("col",col)
+    #say("gaps",gaps)
     self.setPinObject("gaps",Part.Compound(gaps))
-    sayl()
     self.outExec.call()
+
 
 
 def aa():    
@@ -2903,3 +2879,24 @@ def aa():
     self.setPinObject("Shape_out",sh)
     self.outExec.call()
 
+
+def run_FreeCAD_randomizePolygon(self,*args, **kwargs):
+#    return
+#def u():
+    sayl()
+    edge=self.getPinObject("Shape_in")
+    say(edge)
+    pts=[v.Point for v in edge.Vertexes]
+    say(len(pts))
+    ke=self.getData("factorEnds")
+    ki=self.getData("factorInner")
+    say(ki)
+    a=pts[0]
+    b=pts[-1]
+    ptsa=[a+(b-a).normalize()*ke ]+[p+FreeCAD.Vector(random.random(),random.random(),random.random())*ki for p in pts[1:-1]]+[b+(a-b).normalize()*ke]
+
+    self.setPinObject("Shape_out",Part.makePolygon(ptsa))
+    self.setData("points_out",ptsa)
+    self.outExec.call()
+    sayl("fewrtig-- ")
+    return
