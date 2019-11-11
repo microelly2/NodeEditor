@@ -1495,20 +1495,6 @@ def run_FreeCAD_Simplex(self,*args, **kwargs):
 
     self.outExec.call()
 
-    sayl("start reftest")
-    import nodeeditor.PyFlowGraph
-    from nodeeditor.PyFlowGraph import PyFlowRef
-    reload (nodeeditor.PyFlowGraph)
-    yid="REFID_"+str(self.uid)
-    yid=yid.replace('-','_')
-    name=yid
-    label="REF_"+self.getWrapper().getHeaderText()
-    a=FreeCAD.ActiveDocument.getObject(name)
-    if a == None:
-        a=PyFlowRef(name)
-        a.refname=self.name
-        a.Label=label
-    sayl("ref test fertig")
 
 
 def run_FreeCAD_Tread(self,produce=False, **kwargs):
@@ -1616,11 +1602,8 @@ def run_FreeCAD_Discretize(self,*args, **kwargs):
     count=self.getData("count")
     edge=self.getPinObject("Wire")
     say(edge)
-    pts=edge.discretize(count)
-    k=1
-    a=pts[0]
-    b=pts[-1]
-    ptsa=[a+(b-a).normalize()*k]+[p+FreeCAD.Vector(random.random(),random.random(),random.random())*k for p in pts[1:-1]]+[b+(a-b).normalize()*k]
+    ptsa=edge.discretize(count)
+
     self.setPinObject("Shape_out",Part.makePolygon(ptsa))
     if 0:
         sc=Part.BSplineCurve()
@@ -2921,10 +2904,8 @@ def run_FreeCAD_randomizePolygon(self,*args, **kwargs):
 
 
 def myExecute_PyFlowRef(proy,fp):
-    say("PyFlow ref executer")
     gm=FreeCAD.PF.graphManager.get()
-    
     node=gm.findNode(fp.refname)
-    say("node found",node)
-    node.compute()
-    sayl("compute calles")
+    if node != None:
+        say("node to execute found",node)
+        node.compute()
