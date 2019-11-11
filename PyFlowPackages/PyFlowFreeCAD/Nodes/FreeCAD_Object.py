@@ -1651,6 +1651,9 @@ class FreeCAD_Ref(FreeCadNodeBase):
 
         if self._preview:
             self.preview()
+            
+        a=self.makebackref()
+        a.sources=[obj]
 
     @staticmethod
     def description():
@@ -2009,13 +2012,16 @@ class FreeCAD_conny(FreeCadNodeBase):
 
         a=self.createInputPin('ff', 'BoolPin')
         a.recomputeNode=True
+        a.description='a flag to change the ordering of the gap filler curves'
 
         a=self.createInputPin('tangentForce', 'IntPin',2)
         a.recomputeNode=True
         a.setInputWidgetVariant("Simple")
+        a.description=' how smooth the open ends of edges should be connected. 0 means no tangent support, this is a straight line from one end to the other'
 
         a=self.createInputPin('createFace', 'BoolPin')
         a.recomputeNode=True
+        a.description='''if this flag is set a filled face will be computed. Because the Part.filledFace is a miraclic method this call sometimes fails and other approaches are better'''
 
         
 #        a=self.createInputPin('Shape_in', 'ShapePin')     
@@ -2025,15 +2031,16 @@ class FreeCAD_conny(FreeCadNodeBase):
         self.shapes=self.createInputPin('Shapes_in', 'ShapePin', None)
         self.shapes.enableOptions(PinOptions.AllowMultipleConnections)
         self.shapes.disableOptions(PinOptions.SupportsOnlyArrays)
+        self.shapes.description='multiple edges or wires which should be connected'
 
 
-        self.createOutputPin('Shape_out', 'ShapePin').description="filled face"
+        self.createOutputPin('Shape_out', 'ShapePin').description="a filled face shape or the border (closed curve) of it"
         self.createOutputPin('gaps', 'ShapePin').description="edges created to get wire closed"
         self.createOutputPin('border', 'ShapePin').description="edges of the face only"
 
     @staticmethod
     def description():
-        return FreeCAD_topo.__doc__
+        return FreeCAD_conny.__doc__
 
     @staticmethod
     def category():
@@ -2056,37 +2063,22 @@ class FreeCAD_randomizePolygon(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        '''
-        a=self.createInputPin('degree', 'IntPin',3)
-        a.recomputeNode=True
-        a.setInputWidgetVariant("Simple")
-        a=self.createInputPin('rotateAxis', 'IntPin',2)
-        a.recomputeNode=True
-        a.setInputWidgetVariant("Simple")
-        a=self.createInputPin('simpleConnection', 'BoolPin')
-        a.recomputeNode=True
-        
-        '''
-
-        a=self.createInputPin('ff', 'BoolPin')
-        a.recomputeNode=True
-
         a=self.createInputPin('factorEnds', 'IntPin',2)
         a.recomputeNode=True
         a.setInputWidgetVariant("Simple")
+        a.description="factor for randomness on the endpoints of the polygon"
 
         a=self.createInputPin('factorInner', 'IntPin',2)
         a.recomputeNode=True
         a.setInputWidgetVariant("Simple")
-
-        a=self.createInputPin('createFace', 'BoolPin')
-        a.recomputeNode=True
+        a.description="factor for randomness for the inner points of the polygon"
 
         self.shapes=self.createInputPin('Shape_in', 'ShapePin', None)
         self.arrayData = self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
 
-        self.createOutputPin('Shape_out', 'ShapePin')#.description="filled face"
+        self.createOutputPin('Shape_out', 'ShapePin').description="modified points as wire"
         self.arrayData = self.createOutputPin('points_out', 'VectorPin', structure=StructureType.Array)
+        self.arrayData.description="modified position of the vertexes as vectorlist"
 
     @staticmethod
     def description():
@@ -2098,7 +2090,7 @@ class FreeCAD_randomizePolygon(FreeCadNodeBase):
 
     @staticmethod
     def keywords():
-        return ['Edge','FilledFace',]
+        return ['Polygon','random','Vector']
 
 
 
