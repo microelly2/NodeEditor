@@ -697,7 +697,18 @@ class FreeCAD_Object(FreeCadNodeBase):
         obj=FreeCAD.ActiveDocument.getObject(obn)
         self.fob=obj
         self.store()
+        try:
+            sh=obj.Shape
+            self.setPinObject("Shape_out",sh)
+        except:
+            pass # no shape
+
         self.outExec.call()
+
+        a=self.makebackref()
+        if a != None:
+            a.sources=[obj]
+
 
         if self._preview:
             self.preview()
