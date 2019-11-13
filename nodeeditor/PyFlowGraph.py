@@ -76,7 +76,7 @@ def PyFlowGraph():
     return obj
 
 
-
+import time
 import sys
 if sys.version_info[0] !=2:
 	from importlib import reload
@@ -88,8 +88,25 @@ class _PyFlowRef(FeaturePython):
         FeaturePython.__init__(self, obj)
         obj.Proxy = self
         self.Type = self.__class__.__name__
+        self.lastExec=0
 
     def myExecute(self,fp):
+        if not fp.ViewObject.Visibility:
+            sayl(fp.Label,"hiden --no execute")
+            return
+        try:
+            _=self.lastExec
+        except:
+            self.lastExec=0
+
+        say ("pause",self.lastExec+fp.pauseAfter*0.001 -time.time())
+        if self.lastExec+fp.pauseAfter*0.001>time.time():
+                sayl("still pausing ...")
+                say (self.lastExec+fp.pauseAfter*0.001 -time.time())
+                return
+
+        self.lastExec = time.time()
+
         say("My Execute")
         import nodeeditor.dev
         reload (nodeeditor.dev)
@@ -108,7 +125,7 @@ class _PyFlowRefViewProvider(ViewProvider):
         instance.loadFromData(data)
         pfwrap.getInstance().show()
 
-    def setupContextMenu(self, obj, menu):
+    def XsetupContextMenu(self, obj, menu):
 
         action = menu.addAction("load and show Graph ...")
         action.triggered.connect(self.recompute)
@@ -153,6 +170,9 @@ def PyFlowRef(name="Ref2",):
         #obj=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroupPython",name)
         obj.addProperty("App::PropertyString", "refname", "Data","name of the node in pyflow")
         obj.addProperty("App::PropertyLinkList", "sources", "Data",)
+        obj.addProperty("App::PropertyInteger", "pauseAfter", "_aux","minimum time between consecutive recomputes")
+        obj.pauseAfter=1000
+
         _PyFlowRef(obj)
         _PyFlowRefViewProvider(obj.ViewObject,'/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/icons/BB.svg')
     say(obj)
