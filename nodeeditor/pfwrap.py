@@ -43,8 +43,8 @@ def getInstance():
 
 	t=instance.windowTitle()
 	if not t.startswith("FreeCAD NodeEditor"):
-		instance.setWindowTitle("FreeCAD NodeEditor v0.27 @ "+instance.windowTitle())
-		instance.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+		instance.setWindowTitle("FreeCAD NodeEditor v0.28 @ "+instance.windowTitle())
+		#instance.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
 
 	FreeCAD.PF=instance
 

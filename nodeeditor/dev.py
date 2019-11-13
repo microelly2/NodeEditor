@@ -18,6 +18,7 @@ import nodeeditor.pfwrap as pfwrap
 
 
 def runraw(self):
+    sayl("#+")
     # called biy FreeCAD_Object createpins
     objname=self.objname.getData()
     fobj=FreeCAD.ActiveDocument.getObject(objname)
@@ -26,7 +27,7 @@ def runraw(self):
         say("cannot create pins because no FreeCAD object for name {}".format(objname))
         return []
     ps=fobj.PropertiesList
-    if 0:
+    if 10:
         sayl('#')
         say("FreeCAD object Properties ---")
         for p in ps:
@@ -45,6 +46,7 @@ def runraw(self):
 
     recomputepins=[]
     for p in ps:
+        say("X",p)
         try:
             a=getattr(fobj,p)
         except:
@@ -58,11 +60,11 @@ def runraw(self):
                 "AttacherType",
                 "AttachmentOffset","ExpressionEngine","Support"]:
             pass
-            #continue
+            continue
 
 
         if p in ipm.keys():
-            #print "IGNORE '{}' - exists already".format(p)
+            print("IGNORE '{}' - exists already".format(p))
             continue
 
         cn=a.__class__.__name__
@@ -119,19 +121,48 @@ def runraw(self):
             say(p,cn,a,"is not known")
             continue
 
-
+        say("-----------------")
 
         pinname=p
         pinval=a
 
-#       say("create pin for ",pintyp,pinname,pinval)
+        say("create pin for ",pintyp,pinname,pinval)
+        '''
+        if pinname not in oldpinnames:
+            pintyp="ShapePin"
+            p2 = CreateRawPin(pinname,self, pintyp, PinDirection.Output)
+            try:
+                uiPin = self.getWrapper()._createUIPinWrapper(p2)
+                uiPin.setDisplayName("{}".format(p2.name))
+            except:
+                pass
+
+        self.setPinObject(pinname,subob)
+        '''
         p1 = CreateRawPin(pinname,self, pintyp, PinDirection.Input)
         p2 = CreateRawPin(pinname+"_out",self, pintyp, PinDirection.Output)
+
+        try:
+            uiPin = self.getWrapper()._createUIPinWrapper(p2)
+            uiPin.setDisplayName("{}".format(p2.name))
+        except:
+            pass
+
+        try:
+            uiPin = self.getWrapper()._createUIPinWrapper(p1)
+            uiPin.setDisplayName("{}".format(p1.name))
+        except:
+            pass
+
+
         p1.enableOptions(PinOptions.Dynamic)
     #   p1.recomputeNode=True
         recomputepins += [p1]
-        p1.setData(pinval)
-        p2.setData(pinval)
+        try:
+            p1.setData(pinval)
+            p2.setData(pinval)
+        except:
+            say("probme seting",p)
         say("created:",p1)
 
         pins  += [p1,p2]
@@ -144,7 +175,9 @@ def runraw(self):
 
     for p in pins:
         p.group="FOP"
-
+    sh=fobj.Shape
+    self.setPinObject("Shape_out",sh)
+    
     return pins
 
 
@@ -469,7 +502,8 @@ def run_FreeCAD_view3D(self, *args, **kwargs):
         f = w.addObject('Part::Feature', name)
     if s  !=  None:
         f.Shape=s
-    w.recompute()
+    f.recompute()
+    f.purgeTouched()
 
     if 0:
         if not wireframe:
@@ -1446,6 +1480,7 @@ if sys.version_info[0] !=2:
 def run_FreeCAD_Simplex(self,*args, **kwargs):
 
     k=self.getData("noise")
+    say("kkk",k)
 
     def rav(v):
         '''add a random vector to a vector'''
@@ -2909,3 +2944,16 @@ def myExecute_PyFlowRef(proy,fp):
     if node != None:
         say("node to execute found",node)
         node.compute()
+
+
+def reload_obj(self,*args, **kwargs):
+    say("reload ",self)
+    obn=self.objname.getData()
+    obj=FreeCAD.ActiveDocument.getObject(obn)
+    say(obn)
+    say(obj)
+    props=obj.PropertiesList
+    for p in props:
+        v=getattr(obj,p)
+        say(p,v)
+    self.createPins(self,*args, **kwargs)
