@@ -136,10 +136,14 @@ class FreeCadNodeBase(NodeBase):
         import nodeeditor.PyFlowGraph
         from nodeeditor.PyFlowGraph import PyFlowRef
         reload (nodeeditor.PyFlowGraph)
+        try:
+            label="REF_"+self.getWrapper().getHeaderText()
+        except:
+            return
+
         yid="REFID_"+str(self.uid)
         yid=yid.replace('-','_')
         name=yid
-        label="REF_"+self.getWrapper().getHeaderText()
         a=FreeCAD.ActiveDocument.getObject(name)
         if a == None:
             a=PyFlowRef(name)

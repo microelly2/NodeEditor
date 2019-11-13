@@ -21,6 +21,10 @@ from nodeeditor.say import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
 
 
+import sys
+if sys.version_info[0] !=2:
+	from importlib import reload
+
 
 
 
@@ -658,23 +662,23 @@ class FreeCAD_Object(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.trace = self.createInputPin('trace', 'BoolPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
+#        self.trace = self.createInputPin('trace', 'BoolPin')
+#        self.randomize = self.createInputPin("randomize", 'BoolPin')
 
-        self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+#        self.part = self.createOutputPin('Part', 'FCobjPin')
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
         self.objname = self.createInputPin("objectname", 'StringPin')
-        self.objname.setData(name)
+        self.objname.setData("Box")
 
-        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-        self.shapeOnly.recomputeNode=True
+#        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+#        self.shapeOnly.recomputeNode=True
 
 
         self.createInputPin('Reload_from_FC', 'ExecPin', None, self.reload)
         self.createInputPin('Store_to_FC', 'ExecPin', None, self.store,)
-        for i in range(7):
-            self.createOutputPin('dummy', 'ExecPin')
+#        for i in range(7):
+#            self.createOutputPin('dummy', 'ExecPin')
 
 
 
@@ -702,6 +706,12 @@ class FreeCAD_Object(FreeCadNodeBase):
 
     def reload(self, *args, **kwargs):
         print ("reload from FreeCADobject and refresh data")
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        nodeeditor.dev.reload_obj(self)
+        sayl()
+
+
 
     def store(self, *args, **kwargs):
 
@@ -711,31 +721,42 @@ class FreeCAD_Object(FreeCadNodeBase):
         pps=self.getOrderedPins()
         for p in pps:
             dat=p.getData()
-#           print ("#+#+#",p.getName(),dat)
+            print ("#+#+#",p.getName(),dat)
             data[str(p.name)+"_out"]=dat
 
+        say("data")
+        say(data)
+        say("pps")
+        say(pps)
 
         for p in pps:
             if p.group=='FOP':
                 n=p.getName()
                 if n.endswith('_out'):
                     p.setData(data[str(n)])
+                    pn=n[:-4]
+                    vn=data[str(n)]
+                    say("set",n,pn,vn)
+                    setattr(self.fob,pn,vn)
                     continue
 
-                pn=n.split('_')[1]
-                if pn=="Object": # hack for names FreeCAD_Object #+#
-                    pn=n.split('_')[2]
-
-                vn=p.getData()
-
                 try:
-                    v=self.fob.getPropertyByName(pn).Value
+                    pn=n.split('_')[1]
+                    if pn=="Object": # hack for names FreeCAD_Object #+#
+                        pn=n.split('_')[2]
+
+                    vn=p.getData()
+
+                    try:
+                        v=self.fob.getPropertyByName(pn).Value
+                    except:
+                        v=self.fob.getPropertyByName(pn)
+                    say("change value",n,pn,v,vn)
+                    if v  !=  vn:  # value has changed
+                        setattr(self.fob,pn,vn)
                 except:
-                    v=self.fob.getPropertyByName(pn)
-
-                if v  !=  vn:  # value has changed
-                    setattr(self.fob,pn,vn)
-
+                    sayl("problem with store",n)
+    
         FreeCAD.activeDocument().recompute()
 
 
@@ -797,7 +818,7 @@ class FreeCAD_Console(FreeCadNodeBase):
 
 
 
-class FreeCAD_PartExplorer(FreeCadNodeBase):
+class FreeCAD_ShapeExplorer(FreeCadNodeBase):
     '''
     dummy for tests
     '''
@@ -810,19 +831,19 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.trace = self.createInputPin('trace', 'BoolPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
+#        self.trace = self.createInputPin('trace', 'BoolPin')
+#        self.randomize = self.createInputPin("randomize", 'BoolPin')
 
-        self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+#        self.part = self.createOutputPin('Part', 'FCobjPin')
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
-        self.objname = self.createInputPin("objectname", 'StringPin')
-        self.objname.setData(name)
+#        self.objname = self.createInputPin("objectname", 'StringPin')
+#        self.objname.setData(name)
 
-        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-        self.shapeOnly.recomputeNode=True
+#        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+#        self.shapeOnly.recomputeNode=True
 
-        self.part = self.createInputPin('Part_in', 'FCobjPin')
+        self.part = self.createInputPin('Shape_in', 'ShapePin')
         self.outArray = self.createOutputPin('Points', 'VectorPin', structure=StructureType.Array)
         a=self.createOutputPin('Faces', 'ShapeListPin')
         b=self.createOutputPin('Edges', 'ShapeListPin')
@@ -853,23 +874,8 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 
     def compute(self, *args, **kwargs):
 
-        sayl()
-
-#       import nodeeditor.dev
-#       reload (nodeeditor.dev)
-#       nodeeditor.dev.run_PartExplorer_compute(self,*args, **kwargs)
-
-#   def run_PartExplorer_compute(self,*args, **kwargs):
-
-        sayl()
-        part=self.getData("Part_in")
-
-        if part == None:
-            return
-
-        cc=FreeCAD.ActiveDocument.getObject(part)
-        say(cc,cc.Label)
-        shape=cc.Shape
+        shape=self.getPinObject("Shape_in")
+        self.setPinObject("Shape_out",shape)
         for n in list(self.pinsk.keys()):
             v=getattr(shape,n)
             if self.pinsk[n]  !=  None:
@@ -898,7 +904,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
             else:
                 say("{} = {} ({})".format(t.getName(),t.getData(),t.__class__.__name__))
 
-            if len(t.affects):
+            if 0 and len(t.affects):
                 for tt in t.affects:
                     if not tt.getName().startswith(self.getName()):
                         if tt.__class__.__name__ in ['AnyPin']:
@@ -920,7 +926,7 @@ class FreeCAD_PartExplorer(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_PartExplorer.__doc__
+        return FreeCAD_ShapeExplorer.__doc__
 
     @staticmethod
     def category():
@@ -1653,7 +1659,8 @@ class FreeCAD_Ref(FreeCadNodeBase):
             self.preview()
             
         a=self.makebackref()
-        a.sources=[obj]
+        if a != None:
+            a.sources=[obj]
 
     @staticmethod
     def description():
@@ -2118,7 +2125,7 @@ def nodelist():
                 FreeCAD_BSplineCurve,
                 FreeCAD_Plot,
                 FreeCAD_ShapeIndex,
-                FreeCAD_PartExplorer,
+                FreeCAD_ShapeExplorer,
                 FreeCAD_Compound,
                 FreeCAD_Edge,
                 FreeCAD_Face,
