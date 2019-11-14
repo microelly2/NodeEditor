@@ -28,7 +28,7 @@ from Qt.QtWidgets import *
 
 import nodeeditor.PyFlowGraph
 
-from nodeeditor.PyFlowGraph import PyFlowGraph
+from nodeeditor.PyFlowGraph import PyFlowGraph, Blinker, Receiver
 
 from PyFlow import(
 	INITIALIZE,
@@ -1713,3 +1713,13 @@ def displayPreferencesWindow():
     say(a)
     a.showPreferencesWindow()
 
+
+
+def createSender():
+    a=Blinker()
+
+def createBlinker():
+    a=Blinker()
+    
+def createReceiver():
+    a=Receiver()

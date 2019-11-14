@@ -2111,6 +2111,58 @@ class FreeCAD_randomizePolygon(FreeCadNodeBase):
         return ['Polygon','random','Vector']
 
 
+class FreeCAD_Blinker(FreeCadNodeBase):
+    '''
+    blinker sender
+    '''
+
+    dok = 2
+    def __init__(self, name="baked",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Blinker.__doc__
+
+    @staticmethod
+    def category():
+        return 'Signal'
+
+    @staticmethod
+    def keywords():
+        return ['Sender']
+
+
+class FreeCAD_Receiver(FreeCadNodeBase):
+    '''
+    blinker receiver
+    '''
+
+    dok = 2
+    def __init__(self, name="baked",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Receiver.__doc__
+
+    @staticmethod
+    def category():
+        return 'Signale'
+
+    @staticmethod
+    def keywords():
+        return ['Receiver']
+
+
 
 
 
@@ -2152,6 +2204,9 @@ def nodelist():
                 FreeCAD_bakery,
                 FreeCAD_topo,
                 FreeCAD_conny,
-                FreeCAD_randomizePolygon
+                FreeCAD_randomizePolygon,
+                
+                FreeCAD_Blinker,
+                FreeCAD_Receiver,
                 
         ]

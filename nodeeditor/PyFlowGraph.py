@@ -181,3 +181,177 @@ def PyFlowRef(name="Ref2",):
     return obj
 
 
+
+
+class _Blinker(FeaturePython):
+
+    def __init__(self,obj):
+        FeaturePython.__init__(self, obj)
+        obj.Proxy = self
+        self.Type = self.__class__.__name__
+        self.lastExec=0
+
+    def myExecute(self,fp):
+        if not fp.ViewObject.Visibility:
+            sayl(fp.Label,"hiden --no execute")
+            return
+
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        nodeeditor.dev.myExecute_Blinker(self,fp)
+
+
+class _BlinkerViewProvider(ViewProvider):
+
+    def recompute(self):
+        obj=self.Object
+        say("Recompute ",obj.Label)
+        instance=pfwrap.getInstance()
+        instance.graphManager.get().clear()
+        a=PyFlowGraph()
+        data=eval(a.graph)
+        instance.loadFromData(data)
+        pfwrap.getInstance().show()
+
+    def XsetupContextMenu(self, obj, menu):
+
+        action = menu.addAction("load and show Graph ...")
+        action.triggered.connect(self.recompute)
+
+        action = menu.addAction("show PyFlow ...")
+        action.triggered.connect(self.showPyFlow)
+
+        action = menu.addAction("hide PyFlow ...")
+        action.triggered.connect(self.hidePyFlow)
+
+        action = menu.addAction("clear Graph ...")
+        action.triggered.connect(self.clearGraph)
+
+
+    def hidePyFlow(self):
+        pfwrap.deleteInstance()
+
+    def showPyFlow(self):
+        try:
+            FreeCAD.PF.hide()
+        except:
+            pass
+        pfwrap.getInstance().show()
+
+    def clearGraph(self):
+        instance=pfwrap.getInstance()
+        instance.graphManager.get().clear()
+
+
+    def setEdit(self,vobj,mode=0):
+        say("set edit deactivated")
+        self.recompute()
+        return False
+
+# anwendungsklassen 
+
+def Blinker(name="Document_Blinker",):
+
+    obj = FreeCAD.ActiveDocument.getObject(name)
+    if 1 or obj == None:
+        obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",name)
+        #obj=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroupPython",name)
+        obj.addProperty("App::PropertyString", "refname", "Data","name of the node in pyflow")
+        obj.addProperty("App::PropertyLinkList", "sources", "Data",)
+        obj.addProperty("App::PropertyInteger", "pauseAfter", "_aux","minimum time between consecutive recomputes")
+        obj.pauseAfter=1000
+
+        _Blinker(obj)
+        _BlinkerViewProvider(obj.ViewObject,'/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/icons/BB.svg')
+    say(obj)
+    
+    #obj.myExecute()
+    return obj
+
+
+class _Receiver(FeaturePython):
+
+    def __init__(self,obj):
+        FeaturePython.__init__(self, obj)
+        obj.Proxy = self
+        self.Type = self.__class__.__name__
+        self.lastExec=0
+
+    def myExecute(self,fp):
+        if not fp.ViewObject.Visibility:
+            sayl(fp.Label,"hiden --no execute")
+            return
+
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        nodeeditor.dev.myExecute_Receiver(self,fp)
+
+
+class _ReceiverViewProvider(ViewProvider):
+
+    def recompute(self):
+        obj=self.Object
+        say("Recompute ",obj.Label)
+        instance=pfwrap.getInstance()
+        instance.graphManager.get().clear()
+        a=PyFlowGraph()
+        data=eval(a.graph)
+        instance.loadFromData(data)
+        pfwrap.getInstance().show()
+
+    def XsetupContextMenu(self, obj, menu):
+
+        action = menu.addAction("load and show Graph ...")
+        action.triggered.connect(self.recompute)
+
+        action = menu.addAction("show PyFlow ...")
+        action.triggered.connect(self.showPyFlow)
+
+        action = menu.addAction("hide PyFlow ...")
+        action.triggered.connect(self.hidePyFlow)
+
+        action = menu.addAction("clear Graph ...")
+        action.triggered.connect(self.clearGraph)
+
+
+    def hidePyFlow(self):
+        pfwrap.deleteInstance()
+
+    def showPyFlow(self):
+        try:
+            FreeCAD.PF.hide()
+        except:
+            pass
+        pfwrap.getInstance().show()
+
+    def clearGraph(self):
+        instance=pfwrap.getInstance()
+        instance.graphManager.get().clear()
+
+
+    def setEdit(self,vobj,mode=0):
+        say("set edit deactivated")
+        self.recompute()
+        return False
+
+# anwendungsklassen 
+
+def Receiver(name="Document_Receiver",):
+
+    obj = FreeCAD.ActiveDocument.getObject(name)
+    if 1 or obj == None:
+        obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",name)
+        #obj=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroupPython",name)
+        obj.addProperty("App::PropertyString", "refname", "Data","name of the node in pyflow")
+        obj.addProperty("App::PropertyLinkList", "sources", "Data",)
+        obj.addProperty("App::PropertyInteger", "pauseAfter", "_aux","minimum time between consecutive recomputes")
+        obj.pauseAfter=1000
+
+        _Receiver(obj)
+        _ReceiverViewProvider(obj.ViewObject,'/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/icons/BB.svg')
+    say(obj)
+    
+    #obj.myExecute()
+    return obj
+
+
