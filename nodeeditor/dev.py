@@ -2959,63 +2959,39 @@ def reload_obj(self,*args, **kwargs):
     self.createPins(self,*args, **kwargs)
 
 
+
 def run_FreeCAD_Blinker(self):
 
     from blinker import signal
+    try:
+        sn=self.getData('signalName')
+        ss= self.name +"@PyFlow"
+    except:
+        sn=self.Object.signalName
+        ss=self.name +")@FreeCAD"
 
-    class Processor:
-        def __init__(self, name):
-            self.name = name
-
-        def go(self):
-            ready = signal('ready')
-            ready.send(self)
-            print(self.name+" Processing goes here.")
-            complete = signal('complete')
-            complete.send(self)
-
-        def __repr__(self):
-            return '<Processor %s>' % self.name
-
-    Processor("PROCESSOR -"+self.name+"- " ).go()
-    send_data = signal('send-data')
-    result = send_data.send('anonymous', abc=123)
-    say(self.name, "result:")
+    send_data = signal(sn)
+    say()
+    say("%r sends signal %r to receivers ..." %(ss,sn))
+    result = send_data.send(self.name, abc=123)
+    say()
+    say( "%r gets result of signal:" %self.name)
     for r in result:
         say(r[1])
 
 def run_FreeCAD_Receiver(self):
 
-    from blinker import signal
-
-    send_data = signal('send-data')
-    @send_data.connect
-    def receive_data(sender, **kw):
-        print("%r: caught signal from %r, data %r" % (self.name,sender, kw))
-        return ("The result from Receiver "+ self.name)
-    self.r=receive_data
-
-    ready = signal('ready')
-    @ready.connect
-    def readyf(sender, **kw):
-        say(self.name, "is ready for ")
-    self.ready=readyf
-      
-    
-    complete = signal('complete')
-    @complete.connect
-    def completef(sender, **kw):
-        say(self.name," is complete for")
-    self.complete=completef
+    say("Data:",self.kw)
+    say("Sender:",self.sender)
 
 
 
 def myExecute_Receiver(proxy,fp):
-    sayl()
+#    sayl()
     proxy.name=fp.Name
     run_FreeCAD_Receiver(proxy)
 
 def myExecute_Blinker(proxy,fp):
-    sayl()
+#    sayl()
     proxy.name=fp.Name
     run_FreeCAD_Blinker(proxy)

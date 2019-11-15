@@ -2122,7 +2122,7 @@ class FreeCAD_Blinker(FreeCadNodeBase):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
+        self.signal=self.createInputPin('signalName', 'StringPin', 'blink')
 
     @staticmethod
     def description():
@@ -2147,7 +2147,42 @@ class FreeCAD_Receiver(FreeCadNodeBase):
 
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.inExec = self.createInputPin('subscribe', 'ExecPin', None, self.subscribe)
+        self.inExec = self.createInputPin('unsubscribe', 'ExecPin', None, self.unsubscribe)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.signal=self.createInputPin('signalName', 'StringPin', 'blink')
+        self.createOutputPin('senderName', 'StringPin')
+        #self.createOutputPin('senderData', 'AnyPin')
+        
+    def subscribe(self, *args, **kwargs):
+        sayl()
+        from blinker import signal
+        sn=self.getData('signalName')
+
+        send_data = signal(sn)
+        @send_data.connect
+        def receive_data(sender, **kw):
+            print("%r: caught signal from %r, data %r" % (self.name,sender, kw))
+            
+            self.sender = sender
+            self.kw = kw
+            self.setData("senderName",sender)
+            self.outExec.call()
+            
+            return ("got return from  "+ self.name)
+            
+        self.r=receive_data
+        
+    def unsubscribe(self, *args, **kwargs):
+        from blinker import signal
+        sn=self.getData('signalName')
+        send_data = signal(sn)
+        send_data.disconnect(self.r)
+        sayl()
+
+        self.r=None
+        self.sender = None
+        self.kw = None
 
 
     @staticmethod
@@ -2156,7 +2191,7 @@ class FreeCAD_Receiver(FreeCadNodeBase):
 
     @staticmethod
     def category():
-        return 'Signale'
+        return 'Signal'
 
     @staticmethod
     def keywords():

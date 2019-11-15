@@ -256,10 +256,9 @@ def Blinker(name="Document_Blinker",):
     if 1 or obj == None:
         obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",name)
         #obj=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroupPython",name)
-        obj.addProperty("App::PropertyString", "refname", "Data","name of the node in pyflow")
+        obj.addProperty("App::PropertyString", "signalName", "Data","name of the signal")
+        obj.signalName='blink'
         obj.addProperty("App::PropertyLinkList", "sources", "Data",)
-        obj.addProperty("App::PropertyInteger", "pauseAfter", "_aux","minimum time between consecutive recomputes")
-        obj.pauseAfter=1000
 
         _Blinker(obj)
         _BlinkerViewProvider(obj.ViewObject,'/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/icons/BB.svg')
@@ -342,10 +341,7 @@ def Receiver(name="Document_Receiver",):
     if 1 or obj == None:
         obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",name)
         #obj=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroupPython",name)
-        obj.addProperty("App::PropertyString", "refname", "Data","name of the node in pyflow")
-        obj.addProperty("App::PropertyLinkList", "sources", "Data",)
-        obj.addProperty("App::PropertyInteger", "pauseAfter", "_aux","minimum time between consecutive recomputes")
-        obj.pauseAfter=1000
+        obj.addProperty("App::PropertyString", "senderName", "Data","name of the signal sender")
 
         _Receiver(obj)
         _ReceiverViewProvider(obj.ViewObject,'/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/icons/BB.svg')

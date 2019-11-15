@@ -249,7 +249,7 @@ if FreeCAD.GuiUp:
     current += [c3bI(["nodeeditor"], always, 'Commands', 'load Graph',icon=None)]
     current += [c3bI(["nodeeditor"], always, 'Commands', 'clear Graph',icon=None)]
 
-    current += [c3bI(["nodeeditor"], always, 'Commands', 'create Sender',icon=None)]
+    current += [c3bI(["nodeeditor"], always, 'Commands', 'create Blinker',icon=None)]
     current += [c3bI(["nodeeditor"], always, 'Commands', 'create Receiver',icon=None)]
 
     if devmode():
