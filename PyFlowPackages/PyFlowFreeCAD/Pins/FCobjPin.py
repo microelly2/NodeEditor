@@ -29,6 +29,7 @@ class FCobjPin(PinBase):
 
     @staticmethod
     def supportedDataTypes():
+        return ('FCobjPin','ShapePin','FacePin','EdgePin',None)
         return ('FCobjPin',None)
 
     @staticmethod

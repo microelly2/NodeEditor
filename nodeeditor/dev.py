@@ -2973,9 +2973,8 @@ def run_FreeCAD_Blinker(self):
     send_data = signal(sn)
     say()
     say("%r sends signal %r to receivers ..." %(ss,sn))
-    result = send_data.send(self.name, abc=123)
-    say()
-    say( "%r gets result of signal:" %self.name)
+    result = send_data.send(self.name, message=self.getData("signalMessage"),obj=self.getData("signalObject"))
+    say( "%r signal feedbacks:" %self.name)
     for r in result:
         say(r[1])
 
@@ -2983,6 +2982,8 @@ def run_FreeCAD_Receiver(self):
 
     say("Data:",self.kw)
     say("Sender:",self.sender)
+    #self.setData("signalName",self.sender)
+    self.setData("senderMessage",self.kw['message'])
 
 
 
@@ -2995,3 +2996,55 @@ def myExecute_Blinker(proxy,fp):
 #    sayl()
     proxy.name=fp.Name
     run_FreeCAD_Blinker(proxy)
+
+def f(x):
+        return x*x
+
+
+def run_FreeCAD_Async(self):
+    #say(self.name)
+    #sayl()
+    #anz=0
+    maxanz=15
+    obj=self
+
+    self.setData("message",self.name+" start")
+    self.outExec.call()
+    self.setData("message","")
+
+    import time,random
+    from threading import Thread
+
+    def sleeper(i):
+        
+        anz=0
+        for j in range(56):
+            tt=random.randint(1,4)*2+1
+     #       tt=2
+            #print (self.name," %d loops for %f " % (j,tt))
+            #print(obj)
+            for zz in range(tt):
+                anz += 1
+                time.sleep(0.28)
+                lll=0
+                for k in range(100):
+                    for kk in range(1000):
+                        lll +=1
+                #print (self.name,anz)
+            
+            #print ("thread %d woke up" % i)
+            self.setData("message",self.name+"-----"+str(anz))
+            obj.outExec.call()
+
+            if anz>maxanz:
+                break
+            
+        print ("-------------------Ende",self.name,anz,maxanz)
+        self.setData("message",self.name+"  ENDE")
+        self.outExec.call()
+
+    for i in range(1):
+        t = Thread(target=sleeper, args=(i,))
+        t.start()
+    
+    self.outExec.call()

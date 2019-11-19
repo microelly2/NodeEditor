@@ -2123,6 +2123,9 @@ class FreeCAD_Blinker(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.signal=self.createInputPin('signalName', 'StringPin', 'blink')
+        self.data=self.createInputPin('signalMessage', 'StringPin')
+        self.d3=self.createInputPin('signalObject', 'FCobjPin')
+        self.d3=self.createInputPin('sleep', 'FloatPin')
 
     @staticmethod
     def description():
@@ -2152,7 +2155,10 @@ class FreeCAD_Receiver(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.signal=self.createInputPin('signalName', 'StringPin', 'blink')
         self.createOutputPin('senderName', 'StringPin')
-        #self.createOutputPin('senderData', 'AnyPin')
+        self.createOutputPin('senderMessage', 'StringPin')
+        self.createOutputPin('senderObject', 'FCobjPin')
+        self.signal=self.createInputPin('autoSubscribe', 'BoolPin', False)
+
         
     def subscribe(self, *args, **kwargs):
         sayl()
@@ -2167,6 +2173,8 @@ class FreeCAD_Receiver(FreeCadNodeBase):
             self.sender = sender
             self.kw = kw
             self.setData("senderName",sender)
+            self.setData("senderMessage",self.kw['message'])
+            self.setData("senderObject",self.kw['obj'])
             self.outExec.call()
             
             return ("got return from  "+ self.name)
@@ -2185,6 +2193,14 @@ class FreeCAD_Receiver(FreeCadNodeBase):
         self.kw = None
 
 
+    def postCreate(self, jsonTemplate=None):
+        super(self.__class__, self).postCreate(jsonTemplate=jsonTemplate)
+        say("postcreate")
+        if self.getData("autoSubscribe"):
+            self.subscribe()
+
+
+
     @staticmethod
     def description():
         return FreeCAD_Receiver.__doc__
@@ -2196,6 +2212,48 @@ class FreeCAD_Receiver(FreeCadNodeBase):
     @staticmethod
     def keywords():
         return ['Receiver']
+
+
+class FreeCAD_Async(FreeCadNodeBase):
+    '''
+    
+    '''
+
+    dok = 2
+    def __init__(self, name="baked",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+#        self.inExec = self.createInputPin('subscribe', 'ExecPin', None, self.subscribe)
+#        self.inExec = self.createInputPin('unsubscribe', 'ExecPin', None, self.unsubscribe)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.signal=self.createInputPin('step', 'FloatPin', 2)
+        self.signal=self.createOutputPin('message', 'StringPin')
+
+        
+
+
+#    def postCreate(self, jsonTemplate=None):
+#        super(self.__class__, self).postCreate(jsonTemplate=jsonTemplate)
+#        say("postcreate")
+#        if self.getData("autoSubscribe"):
+#            self.subscribe()
+
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Receiver.__doc__
+
+    @staticmethod
+    def category():
+        return 'Signal'
+
+    @staticmethod
+    def keywords():
+        return ['Receiver']
+
+
 
 
 
@@ -2243,5 +2301,6 @@ def nodelist():
                 
                 FreeCAD_Blinker,
                 FreeCAD_Receiver,
+                FreeCAD_Async,
                 
         ]
