@@ -2960,6 +2960,8 @@ def reload_obj(self,*args, **kwargs):
 
 
 
+
+
 def run_FreeCAD_Blinker(self):
 
     from blinker import signal
@@ -2970,13 +2972,96 @@ def run_FreeCAD_Blinker(self):
         sn=self.Object.signalName
         ss=self.name +")@FreeCAD"
 
-    send_data = signal(sn)
-    say()
-    say("%r sends signal %r to receivers ..." %(ss,sn))
-    result = send_data.send(self.name, message=self.getData("signalMessage"),obj=self.getData("signalObject"))
-    say( "%r signal feedbacks:" %self.name)
-    for r in result:
-        say(r[1])
+    import time,random
+    from threading import Thread
+
+
+    def sleeper(i):
+        
+        anz=0
+        for j in range(1000):
+            send_data = signal(sn)
+            say("###",i,j,self.getData("sleep"),time.time())
+            #say("%r sends signal %r to receivers ..." %(ss,sn))
+            result = send_data.send(self.name, message=self.getData("signalMessage"),obj=self.getData("signalObject"))
+            #say( "%r signal feedbacks:" %self.name)
+            #for r in result:
+            #    say(r[1])
+
+            self.outExec.call()
+            time.sleep(1+0.02*random.random())
+            if self.getData("sleep") ==0:
+                say("ENDE",i)
+                return
+        say("NDE ALL",i)
+
+    def sleeper2(i):
+
+            sleeper2a(i)
+
+
+
+    def sleeper2a(i):
+        a=time.time()
+        say("start  outExec.call",i)
+        self.outExec.call()
+        say("Ende call ",i,time.time()-a)
+
+
+
+
+    def looper(j):
+        j=self.getData("loops")
+        say("################# vSTART Looper",j)
+        for i in range(j):
+            if self.stopped:
+                say("stopped")
+                return
+            send_data = signal(sn)
+            say("###",i,j,self.getData("sleep"),time.time())
+            say("%r sends signal %r to receivers ..." %(ss,sn))
+            result = send_data.send(self.name, message=self.getData("signalMessage"),obj=self.getData("signalObject"))
+            say( "%r signal feedbacks:" %self.name)
+            for r in result:
+                say(r[1])
+
+            if self.getData("sleep") ==0:
+                say("ENDE blinker calls at iteration",i)
+                return
+            t = Thread(target=sleeper2, args=(i,))
+            t.start()
+            time.sleep(self.getData("sleep")*0.1) 
+
+
+        say("###             END Looper",j)
+
+    a=time.time()
+    self.stopped=False
+    t2 = Thread(target=looper, args=(10,))
+    t2.start()
+    say("startf")
+    #t2._stop();  say("stoppedAA")
+    FreeCAD.t2=t2
+
+    say("-----------------------------------Ende main",time.time()-a)
+
+    def hu():
+        for i in range(3):
+            send_data = signal(sn)
+            say()
+            say("%r sends signal %r to receivers ..." %(ss,sn))
+            result = send_data.send(self.name, message=self.getData("signalMessage"),obj=self.getData("signalObject"))
+            say( "%r signal feedbacks:" %self.name)
+            for r in result:
+                say(r[1])
+            tsleep=self.getData('sleep')
+            if tsleep == 0:
+                say("no loop")
+                return
+            else:
+                say("sleep...",0.2)
+                time.sleep(tsleep)
+                say(i,"wake on!!")
 
 def run_FreeCAD_Receiver(self):
 
@@ -3048,3 +3133,9 @@ def run_FreeCAD_Async(self):
         t.start()
     
     self.outExec.call()
+
+def run_FreeCAD_Toy(self):
+    for i in range(10):
+        say("Toy action",i)
+        time.sleep(random.random())
+    say("Toy done",self)

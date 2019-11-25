@@ -2121,11 +2121,13 @@ class FreeCAD_Blinker(FreeCadNodeBase):
 
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.createInputPin("Stop", 'ExecPin', None, self.stop)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.signal=self.createInputPin('signalName', 'StringPin', 'blink')
         self.data=self.createInputPin('signalMessage', 'StringPin')
         self.d3=self.createInputPin('signalObject', 'FCobjPin')
-        self.d3=self.createInputPin('sleep', 'FloatPin')
+        self.d3=self.createInputPin('sleep', 'FloatPin',10)
+        self.d3=self.createInputPin('loops', 'IntPin',20)
 
     @staticmethod
     def description():
@@ -2138,6 +2140,9 @@ class FreeCAD_Blinker(FreeCadNodeBase):
     @staticmethod
     def keywords():
         return ['Sender']
+    
+    def stop(self, *args, **kwargs):
+        self.stopped=True
 
 
 class FreeCAD_Receiver(FreeCadNodeBase):
@@ -2254,6 +2259,55 @@ class FreeCAD_Async(FreeCadNodeBase):
         return ['Receiver']
 
 
+class FreeCAD_Toy(FreeCadNodeBase):
+    '''
+    methode zum spielen
+    '''
+
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
+
+        self.trace = self.createInputPin('trace', 'BoolPin')
+        self.randomize = self.createInputPin("randomize", 'BoolPin')
+
+        self.part = self.createOutputPin('Part', 'FCobjPin')
+        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+
+        self.objname = self.createInputPin("objectname", 'StringPin')
+        self.objname.setData(name)
+
+        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+        self.shapeOnly.recomputeNode=True
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.part = self.createOutputPin('Part', 'FCobjPin')
+        self.objname = self.createInputPin("objectname", 'StringPin')
+        self.randomize = self.createInputPin("randomize", 'BoolPin')
+        name="MyToy"
+        self.objname.setData(name)
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Toy.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+
+
+
 
 
 
@@ -2264,7 +2318,7 @@ class FreeCAD_Async(FreeCadNodeBase):
 def nodelist():
     return [
 #                FreeCAD_Foo,
-#                FreeCAD_Toy,
+                FreeCAD_Toy,
 #               FreeCAD_Bar,
                 FreeCAD_Object,
                 FreeCAD_Box,
