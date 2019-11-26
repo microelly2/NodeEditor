@@ -1861,8 +1861,11 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
         self.inRefresh.description="update the outpin **points**"
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('point', 'VectorPin').\
-        description="list of collected vectors"
+        self.pp=self.createInputPin('point', 'VectorPin')
+        self.pp.description="list of collected vectors"
+#        self.pp.enableOptions(PinOptions.AllowMultipleConnections)
+#        self.pp.disableOptions(PinOptions.SupportsOnlyArrays)
+
         self.createInputPin("maxSize",'IntPin',100).\
         description="maximum length of the points list, if more points are gotten older points are dropped"
         self.createInputPin("reduce",'IntPin',0).\

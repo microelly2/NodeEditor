@@ -333,7 +333,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
         self.randomize = self.createInputPin("randomize", 'BoolPin')
 
         self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
         self.objname = self.createInputPin("objectname", 'StringPin')
         self.objname.setData(name)
@@ -350,7 +350,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 
 
     @timer
-    def compute(self, *args, **kwargs):
+    def Xcompute(self, *args, **kwargs):
 
         # recursion stopper
         if self.Called:
@@ -369,7 +369,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
                 return
 
 
-            self.setPinObject("Shape",shape)
+            self.setPinObject("Shape_out",shape)
 
             if self.shapeout.hasConnections():
                 self.postCompute()
@@ -2307,6 +2307,71 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
 
 
+class FreeCAD_figureOnFace(FreeCadNodeBase):
+    '''
+    map figures
+    '''
+
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.shapeout = self.createInputPin('Shape_in', 'ShapePin')
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+
+        
+        self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
+        #self.pas=self.createInputPin('pattern', 'VectorPin', structure=StructureType.Array)
+
+        self.pas=self.createInputPin('pattern', 'VectorPin')
+        self.pas.enableOptions(PinOptions.AllowMultipleConnections)
+        self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
+
+
+        a=self.createInputPin("startU", 'FloatPin')
+        a.recomputeNode=True
+        a=self.createInputPin("startV", 'FloatPin')
+        a.recomputeNode=True
+        a=self.createInputPin("scaleU", 'FloatPin',2)
+        a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
+        a.recomputeNode=True
+        
+        #beispiel parametr range flaot
+        a=self.createInputPin("scaleV", 'FloatPin',2)
+        a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
+        a.recomputeNode=True
+
+        #beispiel fuer parametre range int
+        a=self.createInputPin("degree", 'IntPin',1)
+        a.annotationDescriptionDict={ "ValueRange":(0.,3.)}
+        
+        #a.recomputeNode=True
+        a=self.createInputPin("createFaces", 'BoolPin',False)
+        #a.recomputeNode=True
+        a=self.createInputPin("tangentForce", 'FloatPin',10)
+        a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
+
+        a.recomputeNode=True
+
+
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Toy.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+
+
 
 
 
@@ -2356,5 +2421,6 @@ def nodelist():
                 FreeCAD_Blinker,
                 FreeCAD_Receiver,
                 FreeCAD_Async,
+                FreeCAD_figureOnFace,
                 
         ]

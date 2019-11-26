@@ -247,6 +247,11 @@ def run_FreeCAD_VectorArray(self,*args, **kwargs):
     #    pass
     #cc.Shape=shape
     self.setPinObject('Shape_out',shape)
+    #Beispiel Nodename setzen
+    #self.setNodename("HUHU")
+    
+    # Fehler setzen
+    self.setError("raise Exception")
     self.outExec.call()
 
 
@@ -3139,3 +3144,176 @@ def run_FreeCAD_Toy(self):
         say("Toy action",i)
         time.sleep(random.random())
     say("Toy done",self)
+
+
+
+def run_FreeCAD_figureOnFace(self):
+    sayl()
+
+    # get list of nodes of the figure 
+    ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
+    b=[]
+    for i in ySortedPins:
+        vv=i.owningNode().getData(i.name)
+        b += [[vv.x,vv.y]]
+    say(b)
+
+
+    # get the positions 
+    apts=self.getData("vectors")
+    a=np.array(apts)[:,:,0:2]
+    say(a.shape)
+    (da,db,dc)=a.shape
+
+    startU=self.getData("startU")
+    scaleU=self.getData("scaleU")
+    startV=self.getData("startV")
+    scaleV=self.getData("scaleV")
+    
+    a=a.reshape(da*db,dc)
+    a[:,1] *= scaleV
+    a[:,0] *= scaleU
+    a[:,1] += startU
+    a[:,0] += startV
+    
+    #say(a)
+        
+    # muster
+    #b=np.array([[0,1],[1,0],[2,1],[1,2]])
+    # say([[av+bv for bv in b] for av in a])
+    c=[[av+bv for bv in b] for av in a]
+    
+
+    shape=self.getPinObject('Shape_in')
+    sf=shape.Surface
+    say(shape.ParameterRange)
+    (umin,umax,vmin,vmax)=shape.ParameterRange
+    cols=[]
+    tf=self.getData("tangentForce")*0.005
+    for cv in c: 
+        pts=[]  
+        uvs=[]  
+        uvsA=[]     
+        for ca in cv+[cv[0]]:
+            (u,v)=ca.tolist()
+            if u<umin: u=umin
+            if u>umax: u=umax
+            if v<vmin:v=vmin
+            if v>vmax:v=vmax
+
+            p=sf.value(u,v)
+            pts+= [p]
+            uvs += [FreeCAD.Base.Vector2d(u,v)]
+            uvsA += [FreeCAD.Base.Vector(u,v)]
+        if 0: # polygon dirfekt      
+            try:
+                cols += [Part.makePolygon(pts)]
+            except:
+                pass
+
+        bs2d = Part.Geom2d.BSplineCurve2d()
+
+        #bs2d.buildFromPolesMultsKnots(uvs,[1]*(len(uvs)+1),range(len(uvs)+1),True,1)
+        deg=self.getData("degree")
+        #if deg >1:
+        if 1:
+            uvsA += [uvsA[0]]
+            l=len(uvsA)
+            uvs2=[]
+            for i in range(l-1):
+                try:
+                    pa=uvsA[i]
+                    pb=uvsA[i+1]
+                    ll=(pb.sub(pa)).Length
+                    n=(pb.sub(pa)).normalize()
+                    uvs2 += [pa,pa+n*tf*ll,pb-n*tf*ll]
+                except:
+                    pass
+            uvs2 += [pb]
+            uvs=[FreeCAD.Base.Vector2d(v.x,v.y) for v in uvs2]
+            
+        bs2d.buildFromPolesMultsKnots(uvs,[1]*(len(uvs)+1),range(len(uvs)+1),True,deg)
+        e1 = bs2d.toShape(sf)
+        cols += [e1]
+        say(cols)
+
+        
+        if 1 and deg>1 and self.getData("createFaces"):    
+            face=shape
+            try:
+                splita=[(e1,face)]
+                r=Part.makeSplitShape(face, splita)
+                cols += [r[0][0]]
+                
+            except:
+                say("FEHLER XX")
+                pass
+
+        if 0: 
+            e2=e1.copy()
+            say(e2)
+            e2.Placement.Base.z=10
+            loft=Part.makeLoft([e1,e2],False)
+            cols += [loft]
+
+
+
+    self.setPinObject("Shape_out",Part.Compound(cols))
+
+
+def run_FreeCAD_figureOnFace(self):
+    say('##example set color')
+    self.setColor(random.random(),random.random(),random.random(), 1.)
+
+
+    return
+    '''
+    # punkte zuordnen und polygone
+    cols=[]
+    for cv in c:          
+        pts=[FreeCAD.Vector(*ca.tolist()) for ca in cv+[cv[0]]]
+        cols += [Part.makePolygon(pts)]
+
+    #Part.show(Part.Compound(cols))
+    '''
+
+def run_FreeCAD_Polygon2(self):
+    
+            # recursion stopper
+        if self.Called:
+            return
+        #sayl()
+        # mit zeitstemple aktivieren
+        #self.Called=True
+
+        pts=self.points.getData()
+        say(pts)
+        if len(pts)<2:
+            sayW("zu wenig points")
+        else:
+            try:
+                shape=Part.makePolygon(pts)
+            except:
+                return
+
+            say("shape",shape)
+            self.setPinObject("Shape_out",shape)
+
+            if self.shapeout.hasConnections():
+                self.postCompute()
+
+            if self.shapeOnly.getData():
+                cc=self.getObject()
+                self.postCompute()
+            else:
+                cc=self.getObject()
+                if cc  !=  None:
+                    cc.Label=self.objname.getData()
+                    cc.Shape=shape
+                    self.postCompute(cc)
+
+        if self._preview:
+            self.preview()
+
+        #self.Called=False
+
