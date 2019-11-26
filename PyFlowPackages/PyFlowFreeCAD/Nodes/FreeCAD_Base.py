@@ -358,7 +358,15 @@ class FreeCadNodeBase(NodeBase):
     def funC(self,*args, **kwargs):
         sayl("function funC called")
         pass
-        
+ 
+    def setNodename(self,name):
+        self.getWrapper().setHeaderHtml(name)
+       
+    def setColor(self, r=.4,g=.82, b=0.84314, a=1.):
+        wr=self.getWrapper()
+        wr.headColor=QtGui.QColor.fromRgbF(r,g,b,a)
+        wr.update()
+
 
 
 # example shape
