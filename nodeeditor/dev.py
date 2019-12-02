@@ -3379,6 +3379,7 @@ def run_FreeCAD_Polygon2(self):
 
         #self.Called=False
 
+
 def run_FreeCAD_listOfVectors(self):
     
     say()
@@ -3387,7 +3388,7 @@ def run_FreeCAD_listOfVectors(self):
     ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
     b=[]
     for i in ySortedPins:
-        # hack
+        # hack to get current values #+# todo debug
         i.owningNode().compute()
         vv=i.owningNode().getData(i.name)
         say(i.name,vv)
@@ -3400,7 +3401,6 @@ def run_FreeCAD_listOfVectors(self):
             b += [vv]
     
     b=[FreeCAD.Vector(*v) for v in b]
-    say(b)
     self.setData("vectors",b)
     self.setColor(a=0.7)
     self.outExec.call()    

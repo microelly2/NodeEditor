@@ -2388,7 +2388,7 @@ class FreeCAD_figureOnFace(FreeCadNodeBase):
 
 class FreeCAD_listOfVectors(FreeCadNodeBase):
     '''
-    create a list of vectors
+    create a list of vectors from  single vectors
     '''
 
 
@@ -2409,7 +2409,7 @@ class FreeCAD_listOfVectors(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_Toy.__doc__
+        return FreeCAD_listOfVectors.__doc__
 
     @staticmethod
     def category():
