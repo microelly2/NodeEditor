@@ -3077,7 +3077,10 @@ def run_FreeCAD_Receiver(self):
     say("Data:",self.kw)
     say("Sender:",self.sender)
     #self.setData("signalName",self.sender)
-    self.setData("senderMessage",self.kw['message'])
+    #self.setData("senderMessage",self.kw['message'])
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
 
 
 
@@ -3143,58 +3146,32 @@ def run_FreeCAD_Async(self):
     
     self.outExec.call()
 
-def run_FreeCAD_Toy(self):
-    for i in range(10):
-        say("Toy action",i)
-        time.sleep(random.random())
-    say("Toy done",self)
-
 
 
 def run_FreeCAD_figureOnFace(self):
 
-
     ca=np.array(self.getData("pattern"))
-    say(ca.shape)
+
+	#todo reshape auf flach
     if len(ca.shape)==2:
         ca=ca.reshape(1,ca.shape[0],3)
 
     c=ca[:,:,0:2]
 
-#    startU=self.getData("startU")
-#    scaleU=self.getData("scaleU")
-#    startV=self.getData("startV")
-#    scaleV=self.getData("scaleV")
-    
-#    scaleU,scaleV=1.2,1.2
-#    c[:,:,1] *= scaleV*0.01
-#    c[:,:,0] *= scaleU*0.01
-#    c[:,:,1] += startU*0.01
-#    c[:,:,0] += startV*0.01
-
-
-    say("---------------run getData")
+	#+# todo affine trafo matrix multiplikation vollstaendig machen
     p=self.getPinByName("transformation")
-    say("!----------eingelesne transformation  ------------")
-    say (p.getTransformation())
     trafo=p.getTransformation()
-    say(trafo)
+
     if trafo is not None:
         c[:,:,0] *= trafo[0,0]*0.01
         c[:,:,1] *= trafo[1,1]*0.01
         c[:,:,0] += trafo[3,0]
         c[:,:,1] += trafo[3,1]
-       
-
-
-
-
-
     
     cutborder=self.getData("cutBorder")
-    say(c)
     shape=self.getPinObject('Shape_in')
     sf=shape.Surface
+
     say(shape.ParameterRange)
     (umin,umax,vmin,vmax)=shape.ParameterRange
     cols=[]
@@ -3316,25 +3293,6 @@ def run_FreeCAD_repeatPattern(self):
     self.setColor(a=0.7)
     self.outExec.call()    
 
-
-
-
-
-def Xrun_FreeCAD_figureOnFace(self):
-    say('##example set color')
-    self.setColor(random.random(),random.random(),random.random(), 1.)
-
-
-    return
-    '''
-    # punkte zuordnen und polygone
-    cols=[]
-    for cv in c:          
-        pts=[FreeCAD.Vector(*ca.tolist()) for ca in cv+[cv[0]]]
-        cols += [Part.makePolygon(pts)]
-
-    #Part.show(Part.Compound(cols))
-    '''
 
 def run_FreeCAD_Polygon2(self):
     

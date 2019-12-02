@@ -1575,6 +1575,7 @@ def T3():
 		cnks=list(classNodes.keys())
 		cnks.sort()
 		kats={}
+		doclevel={}
 		for c in cnks:
 			if c[7:] in ['PinsTest']:
 				continue 
@@ -1625,6 +1626,10 @@ def T3():
 				say("*/")
 				
 #				if node.dok != 2: continue
+				try:
+					doclevel[node.dok]  += [c]
+				except:
+					doclevel[node.dok]  = [c]
 
 				# say(c,node)
 				# say("-----") # horiz linie
@@ -1681,6 +1686,16 @@ def T3():
 	for k in kl:
 		say("====={}=====".format(k))
 		for c in kats[k]:
+			say("[[nodes::{}]]".format(c[8:]))
+			say("[[start#fc_{}|/°/  ]]".format(c[8:]))
+
+	say("======Nodes by doc level======")
+	kl=list(doclevel.keys())
+	kl.sort()
+
+	for k in kl:
+		say("====={}=====".format(k))
+		for c in doclevel[k]:
 			say("[[nodes::{}]]".format(c[8:]))
 			say("[[start#fc_{}|/°/  ]]".format(c[8:]))
 

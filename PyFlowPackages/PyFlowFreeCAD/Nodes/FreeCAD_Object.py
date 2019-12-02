@@ -23,7 +23,7 @@ from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeB
 
 import sys
 if sys.version_info[0] !=2:
-	from importlib import reload
+    from importlib import reload
 
 
 
@@ -2166,7 +2166,7 @@ class FreeCAD_Receiver(FreeCadNodeBase):
         self.createOutputPin('senderName', 'StringPin')
         self.createOutputPin('senderMessage', 'StringPin')
         self.createOutputPin('senderObject', 'FCobjPin')
-        self.signal=self.createInputPin('autoSubscribe', 'BoolPin', False)
+        self.signal=self.createInputPin('autoSubscribe', 'BoolPin', True)
 
         
     def subscribe(self, *args, **kwargs):
@@ -2184,6 +2184,7 @@ class FreeCAD_Receiver(FreeCadNodeBase):
             self.setData("senderName",sender)
             self.setData("senderMessage",self.kw['message'])
             self.setData("senderObject",self.kw['obj'])
+            self.setColor(b=0,a=0.4)
             self.outExec.call()
             
             return ("got return from  "+ self.name)
@@ -2233,26 +2234,14 @@ class FreeCAD_Async(FreeCadNodeBase):
 
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-#        self.inExec = self.createInputPin('subscribe', 'ExecPin', None, self.subscribe)
-#        self.inExec = self.createInputPin('unsubscribe', 'ExecPin', None, self.unsubscribe)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.signal=self.createInputPin('step', 'FloatPin', 2)
         self.signal=self.createOutputPin('message', 'StringPin')
 
-        
-
-
-#    def postCreate(self, jsonTemplate=None):
-#        super(self.__class__, self).postCreate(jsonTemplate=jsonTemplate)
-#        say("postcreate")
-#        if self.getData("autoSubscribe"):
-#            self.subscribe()
-
-
 
     @staticmethod
     def description():
-        return FreeCAD_Receiver.__doc__
+        return FreeCAD_Async.__doc__
 
     @staticmethod
     def category():
@@ -2267,8 +2256,6 @@ class FreeCAD_Toy(FreeCadNodeBase):
     '''
     methode zum spielen
     '''
-
-
 
     def __init__(self, name="MyToy"):
 
@@ -2313,10 +2300,10 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
 class FreeCAD_figureOnFace(FreeCadNodeBase):
     '''
-    map figures
+    map figures pattens onto a surface
     '''
 
-
+    dok = 4
 
     def __init__(self, name="MyToy"):
 
@@ -2327,63 +2314,35 @@ class FreeCAD_figureOnFace(FreeCadNodeBase):
         self.shapeout = self.createInputPin('Shape_in', 'ShapePin')
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
         self.shapeout = self.createOutputPin('details', 'ShapeListPin')
-        # einzelne Elemente
-
-        #self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
-        #self.pas=self.createInputPin('pattern', 'VectorPin', structure=StructureType.Array)
 
         self.createInputPin('pattern', 'VectorPin', structure=StructureType.Array)
-
-#        self.pas=self.createInputPin('pattern', 'VectorPin')
-#        self.pas.enableOptions(PinOptions.AllowMultipleConnections)
-#        self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
-
-
-        '''
-        a=self.createInputPin("startU", 'FloatPin')
-        a.recomputeNode=True
-        '''
         
         a=self.createInputPin("cutBorder", 'BoolPin')
         a.recomputeNode=True
-        
-        '''
-        a=self.createInputPin("scaleU", 'FloatPin',2)
-        a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
-        a.recomputeNode=True
-
-        
-        #beispiel parametr range flaot
-        a=self.createInputPin("scaleV", 'FloatPin',2)
-        a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
-        a.recomputeNode=True
-        '''
         
         self.createInputPin('transformation', 'TransformationPin')
 
         #beispiel fuer parametre range int
         a=self.createInputPin("degree", 'IntPin',1)
-        a.annotationDescriptionDict={ "ValueRange":(0.,3.)}
-        
+        a.annotationDescriptionDict={ "ValueRange":(0.,3.)}     
         #a.recomputeNode=True
         a=self.createInputPin("createFaces", 'BoolPin',False)
         #a.recomputeNode=True
         a=self.createInputPin("tangentForce", 'FloatPin',10)
         a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
-
         a.recomputeNode=True
-
-
 
 
     @staticmethod
     def description():
-        return FreeCAD_Toy.__doc__
+        return FreeCAD_figureOnFace.__doc__
 
     @staticmethod
     def category():
         return 'Development'
 
+## ||
+## \/ okay
 
 
 class FreeCAD_listOfVectors(FreeCadNodeBase):
@@ -2391,7 +2350,7 @@ class FreeCAD_listOfVectors(FreeCadNodeBase):
     create a list of vectors from  single vectors
     '''
 
-
+    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2416,8 +2375,6 @@ class FreeCAD_listOfVectors(FreeCadNodeBase):
         return 'Development'
 
 
-## ||
-## \/ okay
 
 
 class FreeCAD_moveVectors(FreeCadNodeBase):
@@ -2425,6 +2382,7 @@ class FreeCAD_moveVectors(FreeCadNodeBase):
     move a list of vectors
     '''
 
+    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2453,6 +2411,7 @@ class FreeCAD_scaleVectors(FreeCadNodeBase):
     scale list of vectors
     '''
 
+    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2483,6 +2442,7 @@ class FreeCAD_repeatPattern(FreeCadNodeBase):
     repeat a pattern along a vectors list - each vector of vectors is a start position of a copy of the pattern vectors
     '''
 
+    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2517,6 +2477,7 @@ class FreeCAD_Transformation(FreeCadNodeBase):
     affine transformation matrix
     '''
 
+    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2548,6 +2509,8 @@ class FreeCAD_Reduce(FreeCadNodeBase):
     '''
     select a sublist fo a list of shapes on  flag list selection
     '''
+
+    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2573,6 +2536,7 @@ class FreeCAD_IndexToList(FreeCadNodeBase):
     create a flag list with 1 for the numbers and 0 for the others
     '''
 
+    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
