@@ -3446,19 +3446,7 @@ def run_FreeCAD_listOfVectors(self):
     
     
 def run_FreeCAD_moveVectors(self):
-
-    '''
-    vv=self.getData("vectors")
-    b=[]
-    if len(np.array(vv).shape)>1:
-        ll=np.array(vv).shape
-        vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
-        b += vv.tolist()
-    else:
-        b += [vv]
-    
-    b=[FreeCAD.Vector(*v) for v in b]
-    '''
+	#+# todo anpassen 1 2 3 dimensionale arrays
 
     vv=self.getData("vectors")
     mv=self.getData("mover")
@@ -3472,11 +3460,12 @@ def run_FreeCAD_moveVectors(self):
         b2=[v+mv for v in b]
 
     self.setData("vectors_out",b2)
-
     self.setColor(g=0,a=0.4)
     self.outExec.call()    
 
 def run_FreeCAD_scaleVectors(self):
+	#+# todo anpassen 1 2 3 dimensionale arrays
+
     vv=self.getData("vectors")
     mv=self.getData("scaler")
 
@@ -3489,12 +3478,14 @@ def run_FreeCAD_scaleVectors(self):
         b += [vv]
     
     b=[FreeCAD.Vector(*v) for v in b]
-
     b2=[FreeCAD.Vector(v.x*mv.x,v.y*mv.y,v.z*mv.z) for v in b]
-    self.setData("vectors_out",b2)
 
+    self.setData("vectors_out",b2)
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
+
+## ||
+## \/ okay
 
 
 def run_FreeCAD_Transformation(self):
@@ -3510,83 +3501,42 @@ def run_FreeCAD_Transformation(self):
         ]
     
     dat=np.array(dat).reshape(4,3)
-    p=self.getPinByName("transformation_in")
-    say(self.name)
-    yy=p.getTransformation()
-    say("got",yy)
 
     vv2=self.getPinByName("transformation")
     vv2.setTransformation(dat)
-
     self.outExec.call()    
-     
-'''
-def getData(self):
-    say("GET DATA",self.name,)
-    FreeCAD.yy=self
-    say("PPP///",self._data)
-    
-    if self._data.__class__.__name__ == 'TArray':
-        say("EXTRAS",self._data.dat)
-    say("----")
-    return self._data
-
-    try:
-        return np.array(self._data).reshape(4,3)
-    except:
-        return None
-
-def setData(self,data):
-    say("SET",data)
-    self._data=data
-    #self.dat=data
-'''
 
 
 def run_FreeCAD_Reduce(self):
 
-    # ss=self.getPinObjects("shapes")
-    # da ist wóhl ein Fehler im Skript - hier kommt nix raus #+#
-
     flags=self.getData("selection")
-    say("selection",flags)
-
     eids=self.getData("shapes")
-    if eids is None:
-        say("none")
-        return
-    say("--------------")
-    shapes=[store.store().get(eid)  for eid in eids]
-    if len(flags) == 0:
-        flags=[1]*len(shapes)
-        tt=[0,0,1,0,1,1,0,1,1,1,1,1,0,0,0,]
-        for i,j in enumerate(tt):
-            flags[i]=j
 
+    if eids is None:
+        return
+    shapes=[store.store().get(eid)  for eid in eids]
     reduced=[]
     for f,s in zip(shapes,flags):
         if s:
              reduced += [f]
-    say(reduced)
     self.setPinObject("Shape_out",Part.Compound(reduced))
     self.outExec.call()    
 
 
 def run_FreeCAD_IndexToList(self):
-    aa=self.getData("index")
+
     outArray = []
     pins=self.getPinByName('index').affected_by
     for i in pins:
         outArray.append(i.owningNode().getData(i.name))
     arr=np.array(outArray).flatten()
-    say(arr)
     m=max(arr)
     flags=np.zeros(m+1)
     for p in arr:
         flags[p]=1
-    say(flags)
     self.setData("flags",flags.tolist())
     self.outExec.call()    
     
     
     
+## ab hier neu 02.12.

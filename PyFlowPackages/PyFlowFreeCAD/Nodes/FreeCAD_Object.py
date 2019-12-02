@@ -2508,13 +2508,14 @@ class FreeCAD_repeatPattern(FreeCadNodeBase):
     def category():
         return 'Development'
 
+## ||
+## \/ okay
 
 
 class FreeCAD_Transformation(FreeCadNodeBase):
     '''
-    scale list of vectors
+    affine transformation matrix
     '''
-
 
     def __init__(self, name="MyToy"):
 
@@ -2523,27 +2524,30 @@ class FreeCAD_Transformation(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('transformation_in', 'TransformationPin')
         a=self.createInputPin('vectorX', 'VectorPin',FreeCAD.Vector(1,0,0))
         a.recomputeNode=True
+        a.description="the result of the first base vector X=(1,0,0)"
         a=self.createInputPin('vectorY', 'VectorPin',FreeCAD.Vector(0,1,0))
         a.recomputeNode=True
+        a.description="the result of the 2nd base vector Y=(0,1,0)"
         a=self.createInputPin('vectorZ', 'VectorPin',FreeCAD.Vector(0,0,1))
         a.recomputeNode=True
+        a.description="the result of the 3rd base vector X=(0,0,1)"
         a=self.createInputPin('vector0', 'VectorPin',FreeCAD.Vector(0,0,0))
         a.recomputeNode=True
+        a.description="movement vector after generic affine transformation"
         
-
-#       self.createOutputPin('pattern_out', 'VectorPin', structure=StructureType.Array)
-#        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
         self.createOutputPin('transformation', 'TransformationPin' )
+
+    @staticmethod
+    def description():
+        return FreeCAD_Transformation.__doc__
+
 
 class FreeCAD_Reduce(FreeCadNodeBase):
     '''
-    scale list of vectors
+    select a sublist fo a list of shapes on  flag list selection
     '''
-
-
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2551,17 +2555,23 @@ class FreeCAD_Reduce(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('shapes', 'ShapeListPin')
+        a=self.createInputPin('shapes', 'ShapeListPin')
+        a.description="list of shapes"
         a=self.createInputPin('selection', 'BoolPin',structure=StructureType.Array)
+        a.description="list of flags which shapes should be in the resulting list"
 
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+        self.shapeout.description = "compound of the filtered shapes" 
+
+    @staticmethod
+    def description():
+        return FreeCAD_Reduce.__doc__
 
 
 class FreeCAD_IndexToList(FreeCadNodeBase):
     '''
-    scale list of vectors
+    create a flag list with 1 for the numbers and 0 for the others
     '''
-
 
     def __init__(self, name="MyToy"):
 
@@ -2570,12 +2580,18 @@ class FreeCAD_IndexToList(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('index', 'IntPin')#,structure=StructureType.Array)
+        a=self.createInputPin('index', 'IntPin')
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
+        a.description="numbers where the flag should be 1 (the others are 0"
         a=self.createOutputPin('flags', 'BoolPin',structure=StructureType.Array)
+        a.description="list of 0's and 1's"
 
+    @staticmethod
+    def description():
+        return FreeCAD_IndexToList.__doc__
 
+#------------------------
 
 
 
