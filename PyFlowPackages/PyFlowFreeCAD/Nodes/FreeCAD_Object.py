@@ -2416,13 +2416,14 @@ class FreeCAD_listOfVectors(FreeCadNodeBase):
         return 'Development'
 
 
+## ||
+## \/ okay
 
 
 class FreeCAD_moveVectors(FreeCadNodeBase):
     '''
-    create a list of vectors
+    move a list of vectors
     '''
-
 
     def __init__(self, name="MyToy"):
 
@@ -2436,12 +2437,11 @@ class FreeCAD_moveVectors(FreeCadNodeBase):
 
         a=self.createInputPin('mover', 'VectorPin')
         a.recomputeNode=True
-
-
+        a.description ="mover vector"
 
     @staticmethod
     def description():
-        return FreeCAD_Toy.__doc__
+        return FreeCAD_moveVectors.__doc__
 
     @staticmethod
     def category():
@@ -2453,7 +2453,6 @@ class FreeCAD_scaleVectors(FreeCadNodeBase):
     scale list of vectors
     '''
 
-
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2464,14 +2463,14 @@ class FreeCAD_scaleVectors(FreeCadNodeBase):
         self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
         self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
 
-        a=self.pas=self.createInputPin('scaler', 'VectorPin')
+        a=self.createInputPin('scaler', 'VectorPin')    
         a.recomputeNode=True
-
+        a.description ="factors to scale the three  ain axes"
 
 
     @staticmethod
     def description():
-        return FreeCAD_Toy.__doc__
+        return FreeCAD_scaleVectors.__doc__
 
     @staticmethod
     def category():
@@ -2481,9 +2480,8 @@ class FreeCAD_scaleVectors(FreeCadNodeBase):
 
 class FreeCAD_repeatPattern(FreeCadNodeBase):
     '''
-    scale list of vectors
+    repeat a pattern along a vectors list - each vector of vectors is a start position of a copy of the pattern vectors
     '''
-
 
     def __init__(self, name="MyToy"):
 
@@ -2492,24 +2490,26 @@ class FreeCAD_repeatPattern(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('pattern', 'VectorPin', structure=StructureType.Array)
+        a=self.createInputPin('pattern', 'VectorPin', structure=StructureType.Array)
+        a.description="list of vectors which define a figure"
         self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
+        a.description="list of starting points  of the copoes of the figure pattern"
 
-        self.createOutputPin('pattern_out', 'VectorPin', structure=StructureType.Array)
+        a=self.createOutputPin('pattern_out', 'VectorPin', structure=StructureType.Array)
+        a.description="list of pattern lists"
+        
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
-
+        self.shapeout.description ="Compound of the copied pattern polygons"
 
 
     @staticmethod
     def description():
-        return FreeCAD_Toy.__doc__
+        return FreeCAD_repeatPattern.__doc__
 
     @staticmethod
     def category():
         return 'Development'
 
-## ||
-## \/ okay
 
 
 class FreeCAD_Transformation(FreeCadNodeBase):

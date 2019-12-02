@@ -3291,65 +3291,26 @@ def run_FreeCAD_figureOnFace(self):
 def run_FreeCAD_repeatPattern(self):
 
     b=self.getData("pattern")
-    #b=[]
-    #say("!!",bbs)
-    #for vv in bbs:
-    #    b += [[vv.x,vv.y]]
-    #say(b)
-        
-
-
-    # get the positions 
     apts=self.getData("vectors")
-    #a={FreeCAD.Vector(v) for 
+
     a=np.array(apts)
     say(a.shape)
-    #(da,db,dc)=a.shape
-    #a=a.reshape(da*db,3)
 
     say(np.array(a).shape)
+    # make the vectors array flat
     if len(np.array(a).shape)>1:
         ll=np.array(a).shape
         a=np.array(a).reshape(np.prod(ll[:-1]),3)
 
-
-
-
     a=[FreeCAD.Vector(v.tolist()) for v in a]
-    
-
-    '''
-    startU=self.getData("startU")
-    scaleU=self.getData("scaleU")
-    startV=self.getData("startV")
-    scaleV=self.getData("scaleV")
-    
-    a=a.reshape(da*db,dc)
-    a[:,1] *= scaleV
-    a[:,0] *= scaleU
-    a[:,1] += startU
-    a[:,0] += startV
-    '''
-    
-    #say(a)
-    #say()
-    #say(b)
-    #return
-        
-    # muster
-    #b=np.array([[0,1],[1,0],[2,1],[1,2]])
-    # say([[av+bv for bv in b] for av in a])
     c=[[av+bv for bv in b] for av in a]
-    #c=[av+bv for bv in b for av in a]
-    say()
+
     col=[]
     for pts in c:
         col +=[Part.makePolygon(pts)]
-    #Part.show()
-    #say("hu")
-    #say(col)
+
     cc=Part.Compound(col)
-    #say(cc)
+
     self.setData("pattern_out",c)
     self.setPinObject("Shape_out",cc)
     self.setColor(a=0.7)
