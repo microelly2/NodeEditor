@@ -16,12 +16,14 @@ from PyFlow.Packages.PyFlowFreeCAD.Pins.VectorPin import VectorPin
 from PyFlow.Packages.PyFlowFreeCAD.Pins.RotationPin import RotationPin
 from PyFlow.Packages.PyFlowFreeCAD.Pins.PlacementPin import PlacementPin
 from PyFlow.Packages.PyFlowFreeCAD.Pins.ArrayPin import ArrayPin
+#from PyFlow.Packages.PyFlowFreeCAD.Pins.TransformationPin import TransformationPin
 
 _PINS = {
     VectorPin.__name__: VectorPin,
     RotationPin.__name__: RotationPin,
     PlacementPin.__name__: PlacementPin,
     ArrayPin.__name__: ArrayPin,
+#    TransformationPin.__name__:TransformationPin,
 }
 
 from PyFlow.Packages.PyFlowFreeCAD.Pins.FCobjPin import nodelist 

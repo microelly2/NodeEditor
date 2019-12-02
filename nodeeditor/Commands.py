@@ -1723,3 +1723,48 @@ def createBlinker():
     
 def createReceiver():
     a=Receiver()
+
+
+#------------ move_2 ------------------ 28.11.2019
+
+def  test_AA():
+    import FreeCAD
+    import FreeCADGui
+    App=FreeCAD
+    Gui=FreeCADGui
+    ### Begin command Std_RecentFiles
+    try:
+        App.closeDocument('Unnamed')
+    except:
+        pass
+        App.setActiveDocument("")
+        App.ActiveDocument=None
+        Gui.ActiveDocument=None
+    
+    FreeCAD.open(u"/home/thomas/Schreibtisch/move_2.FCStd")
+    App.setActiveDocument("move_2")
+    App.ActiveDocument=App.getDocument("move_2")
+    Gui.ActiveDocument=Gui.getDocument("move_2")
+    ### End command Std_RecentFiles
+    loadGraph()
+
+
+
+def getNodebyName(name):
+    ''' find a node by its name '''
+    g=pfwrap.getGraphManager().getAllGraphs()[0]
+    t=g.getNodesList()
+    for n in t:
+        print("!"+n.name+"!",name)
+        say("hu")
+        if name==n.name:
+                 return n
+
+def test_BB():
+    n=getNodebyName("FreeCAD_VectorArray")
+    n.compute()
+    n=getNodebyName("FreeCAD_VectorArray8")
+    n.compute()
+     
+     
+     

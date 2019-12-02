@@ -251,7 +251,8 @@ def run_FreeCAD_VectorArray(self,*args, **kwargs):
     #self.setNodename("HUHU")
     
     # Fehler setzen
-    self.setError("raise Exception")
+    #self.setError("raise Exception")
+    
     self.outExec.call()
 
 
@@ -3009,6 +3010,9 @@ def run_FreeCAD_Blinker(self):
     def sleeper2a(i):
         a=time.time()
         say("start  outExec.call",i)
+        say('##example set color')
+        self.setColor()
+
         self.outExec.call()
         say("Ende call ",i,time.time()-a)
 
@@ -3148,42 +3152,47 @@ def run_FreeCAD_Toy(self):
 
 
 def run_FreeCAD_figureOnFace(self):
-    sayl()
-
-    # get list of nodes of the figure 
-    ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
-    b=[]
-    for i in ySortedPins:
-        vv=i.owningNode().getData(i.name)
-        b += [[vv.x,vv.y]]
-    say(b)
 
 
-    # get the positions 
-    apts=self.getData("vectors")
-    a=np.array(apts)[:,:,0:2]
-    say(a.shape)
-    (da,db,dc)=a.shape
+    ca=np.array(self.getData("pattern"))
+    say(ca.shape)
+    if len(ca.shape)==2:
+        ca=ca.reshape(1,ca.shape[0],3)
 
-    startU=self.getData("startU")
-    scaleU=self.getData("scaleU")
-    startV=self.getData("startV")
-    scaleV=self.getData("scaleV")
+    c=ca[:,:,0:2]
+
+#    startU=self.getData("startU")
+#    scaleU=self.getData("scaleU")
+#    startV=self.getData("startV")
+#    scaleV=self.getData("scaleV")
     
-    a=a.reshape(da*db,dc)
-    a[:,1] *= scaleV
-    a[:,0] *= scaleU
-    a[:,1] += startU
-    a[:,0] += startV
-    
-    #say(a)
-        
-    # muster
-    #b=np.array([[0,1],[1,0],[2,1],[1,2]])
-    # say([[av+bv for bv in b] for av in a])
-    c=[[av+bv for bv in b] for av in a]
-    
+#    scaleU,scaleV=1.2,1.2
+#    c[:,:,1] *= scaleV*0.01
+#    c[:,:,0] *= scaleU*0.01
+#    c[:,:,1] += startU*0.01
+#    c[:,:,0] += startV*0.01
 
+
+    say("---------------run getData")
+    p=self.getPinByName("transformation")
+    say("!----------eingelesne transformation  ------------")
+    say (p.getTransformation())
+    trafo=p.getTransformation()
+    say(trafo)
+    if trafo is not None:
+        c[:,:,0] *= trafo[0,0]*0.01
+        c[:,:,1] *= trafo[1,1]*0.01
+        c[:,:,0] += trafo[3,0]
+        c[:,:,1] += trafo[3,1]
+       
+
+
+
+
+
+    
+    cutborder=self.getData("cutBorder")
+    say(c)
     shape=self.getPinObject('Shape_in')
     sf=shape.Surface
     say(shape.ParameterRange)
@@ -3194,48 +3203,61 @@ def run_FreeCAD_figureOnFace(self):
         pts=[]  
         uvs=[]  
         uvsA=[]     
+        broken=False
         for ca in cv+[cv[0]]:
             (u,v)=ca.tolist()
-            if u<umin: u=umin
-            if u>umax: u=umax
-            if v<vmin:v=vmin
-            if v>vmax:v=vmax
-
+            if cutborder:
+                if u<umin or u>umax or v<vmin or v>vmax: 
+                    broken=True
+            
             p=sf.value(u,v)
             pts+= [p]
             uvs += [FreeCAD.Base.Vector2d(u,v)]
             uvsA += [FreeCAD.Base.Vector(u,v)]
-        if 0: # polygon dirfekt      
+        if broken:
+            continue
+
+        deg=self.getData("degree")
+
+        if deg == 0: # polygon dirfekt      
             try:
-                cols += [Part.makePolygon(pts)]
+                cols += [Part.makePolygon(pts+[pts[0]])]
             except:
                 pass
 
-        bs2d = Part.Geom2d.BSplineCurve2d()
+        else:
+            bs2d = Part.Geom2d.BSplineCurve2d()
 
-        #bs2d.buildFromPolesMultsKnots(uvs,[1]*(len(uvs)+1),range(len(uvs)+1),True,1)
-        deg=self.getData("degree")
-        #if deg >1:
-        if 1:
-            uvsA += [uvsA[0]]
-            l=len(uvsA)
-            uvs2=[]
-            for i in range(l-1):
-                try:
-                    pa=uvsA[i]
-                    pb=uvsA[i+1]
-                    ll=(pb.sub(pa)).Length
-                    n=(pb.sub(pa)).normalize()
-                    uvs2 += [pa,pa+n*tf*ll,pb-n*tf*ll]
-                except:
-                    pass
-            uvs2 += [pb]
-            uvs=[FreeCAD.Base.Vector2d(v.x,v.y) for v in uvs2]
+            #bs2d.buildFromPolesMultsKnots(uvs,[1]*(len(uvs)+1),range(len(uvs)+1),True,1)
+            #if deg >1:
+            if 1:
+                uvsA += [uvsA[0]]
+                l=len(uvsA)
+                uvs2=[]
+                for i in range(l-1):
+                    try:
+                        pa=uvsA[i]
+                        pb=uvsA[i+1]
+                        ll=(pb.sub(pa)).Length
+                        n=(pb.sub(pa)).normalize()
+                        uvs2 += [pa,pa+n*tf*ll,pb-n*tf*ll]
+                    except:
+                        pass
+                uvs2 += [pb]
+                uvs=[FreeCAD.Base.Vector2d(v.x,v.y) for v in uvs2]
+                
+            bs = Part.BSplineCurve()
+            uvs2=uvs2[:-1]
+            uvs=uvs[:-1]
+            bs.buildFromPolesMultsKnots(uvs2,[1]*(len(uvs2)+1),range(len(uvs2)+1),True,2)
+            #Part.show(bs.toShape());            return
             
-        bs2d.buildFromPolesMultsKnots(uvs,[1]*(len(uvs)+1),range(len(uvs)+1),True,deg)
-        e1 = bs2d.toShape(sf)
-        cols += [e1]
-        say(cols)
+            bs2d.buildFromPolesMultsKnots(uvs,[1]*(len(uvs)+1),range(len(uvs)+1),True,deg)
+            #bs2d.buildFromPolesMultsKnots(uvs,[1]*(len(uvs)+1),range(len(uvs)+1),False,deg)
+            e1 = bs2d.toShape(sf)
+            if deg <= 1:
+                cols += [e1]
+            #say(cols)
 
         
         if 1 and deg>1 and self.getData("createFaces"):    
@@ -3248,6 +3270,8 @@ def run_FreeCAD_figureOnFace(self):
             except:
                 say("FEHLER XX")
                 pass
+        else:
+                cols += [e1]
 
         if 0: 
             e2=e1.copy()
@@ -3257,11 +3281,85 @@ def run_FreeCAD_figureOnFace(self):
             cols += [loft]
 
 
-
+    say("---------",cols)
     self.setPinObject("Shape_out",Part.Compound(cols))
+    self.setPinObjects("details",cols)
+
+    self.setColor()
+    self.outExec.call()    
+    
+def run_FreeCAD_repeatPattern(self):
+
+    b=self.getData("pattern")
+    #b=[]
+    #say("!!",bbs)
+    #for vv in bbs:
+    #    b += [[vv.x,vv.y]]
+    #say(b)
+        
 
 
-def run_FreeCAD_figureOnFace(self):
+    # get the positions 
+    apts=self.getData("vectors")
+    #a={FreeCAD.Vector(v) for 
+    a=np.array(apts)
+    say(a.shape)
+    #(da,db,dc)=a.shape
+    #a=a.reshape(da*db,3)
+
+    say(np.array(a).shape)
+    if len(np.array(a).shape)>1:
+        ll=np.array(a).shape
+        a=np.array(a).reshape(np.prod(ll[:-1]),3)
+
+
+
+
+    a=[FreeCAD.Vector(v.tolist()) for v in a]
+    
+
+    '''
+    startU=self.getData("startU")
+    scaleU=self.getData("scaleU")
+    startV=self.getData("startV")
+    scaleV=self.getData("scaleV")
+    
+    a=a.reshape(da*db,dc)
+    a[:,1] *= scaleV
+    a[:,0] *= scaleU
+    a[:,1] += startU
+    a[:,0] += startV
+    '''
+    
+    #say(a)
+    #say()
+    #say(b)
+    #return
+        
+    # muster
+    #b=np.array([[0,1],[1,0],[2,1],[1,2]])
+    # say([[av+bv for bv in b] for av in a])
+    c=[[av+bv for bv in b] for av in a]
+    #c=[av+bv for bv in b for av in a]
+    say()
+    col=[]
+    for pts in c:
+        col +=[Part.makePolygon(pts)]
+    #Part.show()
+    #say("hu")
+    #say(col)
+    cc=Part.Compound(col)
+    #say(cc)
+    self.setData("pattern_out",c)
+    self.setPinObject("Shape_out",cc)
+    self.setColor(a=0.7)
+    self.outExec.call()    
+
+
+
+
+
+def Xrun_FreeCAD_figureOnFace(self):
     say('##example set color')
     self.setColor(random.random(),random.random(),random.random(), 1.)
 
@@ -3288,6 +3386,9 @@ def run_FreeCAD_Polygon2(self):
 
         pts=self.points.getData()
         say(pts)
+        if pts[0].__class__.__name__ == 'list':
+            pts=pts[0]
+        say("--")
         if len(pts)<2:
             sayW("zu wenig points")
         else:
@@ -3317,3 +3418,175 @@ def run_FreeCAD_Polygon2(self):
 
         #self.Called=False
 
+def run_FreeCAD_listOfVectors(self):
+    
+    say()
+    say("list of vectors dump ...")
+    say("Hack recompute input nodes")
+    ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
+    b=[]
+    for i in ySortedPins:
+        # hack
+        i.owningNode().compute()
+        vv=i.owningNode().getData(i.name)
+        say(i.name,vv)
+        say(np.array(vv).shape)
+        if len(np.array(vv).shape)>1:
+            ll=np.array(vv).shape
+            vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
+            b += vv.tolist()
+        else:
+            b += [vv]
+    
+    b=[FreeCAD.Vector(*v) for v in b]
+    say(b)
+    self.setData("vectors",b)
+    self.setColor(a=0.7)
+    self.outExec.call()    
+    
+    
+def run_FreeCAD_moveVectors(self):
+
+    '''
+    vv=self.getData("vectors")
+    b=[]
+    if len(np.array(vv).shape)>1:
+        ll=np.array(vv).shape
+        vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
+        b += vv.tolist()
+    else:
+        b += [vv]
+    
+    b=[FreeCAD.Vector(*v) for v in b]
+    '''
+
+    vv=self.getData("vectors")
+    mv=self.getData("mover")
+
+    if len(np.array(vv).shape)>1:
+        b2=[]
+        for av in vv:
+            b3=[v+mv for v in av]
+            b2 += [b3]
+    else:
+        b2=[v+mv for v in b]
+
+    self.setData("vectors_out",b2)
+
+    self.setColor(g=0,a=0.4)
+    self.outExec.call()    
+
+def run_FreeCAD_scaleVectors(self):
+    vv=self.getData("vectors")
+    mv=self.getData("scaler")
+
+    b=[]
+    if len(np.array(vv).shape)>1:
+        ll=np.array(vv).shape
+        vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
+        b += vv.tolist()
+    else:
+        b += [vv]
+    
+    b=[FreeCAD.Vector(*v) for v in b]
+
+    b2=[FreeCAD.Vector(v.x*mv.x,v.y*mv.y,v.z*mv.z) for v in b]
+    self.setData("vectors_out",b2)
+
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+
+def run_FreeCAD_Transformation(self):
+
+    vx=self.getData("vectorX")
+    vy=self.getData("vectorY") 
+    vz=self.getData("vectorZ") 
+    v0=self.getData("vector0") 
+    dat=[vx.x,vx.y,vx.z,
+        vy.x,vy.y,vy.z,
+        vz.x,vz.y,vz.z,
+        v0.x,v0.y,v0.z,
+        ]
+    
+    dat=np.array(dat).reshape(4,3)
+    p=self.getPinByName("transformation_in")
+    say(self.name)
+    yy=p.getTransformation()
+    say("got",yy)
+
+    vv2=self.getPinByName("transformation")
+    vv2.setTransformation(dat)
+
+    self.outExec.call()    
+     
+'''
+def getData(self):
+    say("GET DATA",self.name,)
+    FreeCAD.yy=self
+    say("PPP///",self._data)
+    
+    if self._data.__class__.__name__ == 'TArray':
+        say("EXTRAS",self._data.dat)
+    say("----")
+    return self._data
+
+    try:
+        return np.array(self._data).reshape(4,3)
+    except:
+        return None
+
+def setData(self,data):
+    say("SET",data)
+    self._data=data
+    #self.dat=data
+'''
+
+
+def run_FreeCAD_Reduce(self):
+
+    # ss=self.getPinObjects("shapes")
+    # da ist wóhl ein Fehler im Skript - hier kommt nix raus #+#
+
+    flags=self.getData("selection")
+    say("selection",flags)
+
+    eids=self.getData("shapes")
+    if eids is None:
+        say("none")
+        return
+    say("--------------")
+    shapes=[store.store().get(eid)  for eid in eids]
+    if len(flags) == 0:
+        flags=[1]*len(shapes)
+        tt=[0,0,1,0,1,1,0,1,1,1,1,1,0,0,0,]
+        for i,j in enumerate(tt):
+            flags[i]=j
+
+    reduced=[]
+    for f,s in zip(shapes,flags):
+        if s:
+             reduced += [f]
+    say(reduced)
+    self.setPinObject("Shape_out",Part.Compound(reduced))
+    self.outExec.call()    
+
+
+def run_FreeCAD_IndexToList(self):
+    aa=self.getData("index")
+    outArray = []
+    pins=self.getPinByName('index').affected_by
+    for i in pins:
+        outArray.append(i.owningNode().getData(i.name))
+    arr=np.array(outArray).flatten()
+    say(arr)
+    m=max(arr)
+    flags=np.zeros(m+1)
+    for p in arr:
+        flags[p]=1
+    say(flags)
+    self.setData("flags",flags.tolist())
+    self.outExec.call()    
+    
+    
+    

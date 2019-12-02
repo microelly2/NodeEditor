@@ -91,13 +91,18 @@ class Vector(FunctionLibraryBase):
         rc=[av *0.1*(10-m)+bv*m*0.1 for av,bv in zip(a,b)]
         return rc
 
+
     @staticmethod
+    @IMPLEMENT_NODE(returns=('VectorPin', [MVector()]),  meta={'Category': 'Vector', 'Keywords': ['Vector', '-']})
     @IMPLEMENT_NODE(returns=('AnyPin', []), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector', '-']})
     def move(a=('AnyPin', [],{'constraint': '1', 
                 "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), 
-        v=('VectorPin', MVector())):
-        ''''''
+                v=('VectorPin', MVector())):
+        ''' huhuh '''
+        
+
         rc=[MVector(av)+v for av in a]
+        say(rc)
         return rc
 
 

@@ -272,9 +272,63 @@ class ArrayPin(FCobjPin):
         self.setData(str(self.uid))
 
 
+
+
+
+class Transformation():
+    pass
+
+
+class TransformationPin(FCobjPin):
+    """doc string for FloatFCobjPin"""
+    def __init__(self, name, parent, direction, **kwargs):
+        super(TransformationPin, self).__init__(name, parent, direction, **kwargs)
+
+
+    @staticmethod
+    def IsValuePin():
+        return True
+
+    @staticmethod
+    def supportedDataTypes():
+        return ('TransformationPin',None)
+
+    @staticmethod
+    def color():
+        return (0, 250, 250, 255)
+
+    @staticmethod
+    def pinDataTypeHint():
+        return 'TransformationPin', None
+
+    @staticmethod
+    def internalDataStructure():
+        return Transformation
+
+    @staticmethod
+    def processData(data):
+        return data
+
+    def getTransformation(self):
+        #say("getTransformation method")
+        arrin=self.getData()
+        #say("got key:",arrin)
+        if arrin  !=  None:
+            s=store.store().get(arrin)
+            return s
+        else:
+            return None
+
+    def setTransformation(self,Transformation):
+        store.store().add(str(self.uid),Transformation)
+        self.setData(str(self.uid))
+
+
+
+
 from PyFlow.Packages.PyFlowBase.Pins.FloatPin import FloatPin
 
 
 
 def nodelist():
-    return [EnumerationPin,ShapePin,FacePin,EdgePin,ShapeListPin,FCobjPin,ArrayPin]
+    return [EnumerationPin,ShapePin,FacePin,EdgePin,ShapeListPin,FCobjPin,ArrayPin,TransformationPin]

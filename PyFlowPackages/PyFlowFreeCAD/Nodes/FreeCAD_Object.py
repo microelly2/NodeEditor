@@ -341,7 +341,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
         self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
         self.shapeOnly.recomputeNode=True
 
-        self.points = self.createInputPin('points', 'VectorPin',[], structure=StructureType.Multi)
+        self.points = self.createInputPin('points', 'VectorPin',[], structure=StructureType.Array)
         self.points.setData([FreeCAD.Vector(0,0,0),FreeCAD.Vector(10,0,0)])
 
 
@@ -2126,8 +2126,12 @@ class FreeCAD_Blinker(FreeCadNodeBase):
         self.signal=self.createInputPin('signalName', 'StringPin', 'blink')
         self.data=self.createInputPin('signalMessage', 'StringPin')
         self.d3=self.createInputPin('signalObject', 'FCobjPin')
-        self.d3=self.createInputPin('sleep', 'FloatPin',10)
-        self.d3=self.createInputPin('loops', 'IntPin',20)
+        a=self.createInputPin('sleep', 'FloatPin',10)
+        a.annotationDescriptionDict={ "ValueRange":(0.,300.)}
+
+        a=self.createInputPin('loops', 'IntPin',20)
+        a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
+
 
     @staticmethod
     def description():
@@ -2318,33 +2322,44 @@ class FreeCAD_figureOnFace(FreeCadNodeBase):
 
         super(self.__class__, self).__init__(name)
 
-
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.shapeout = self.createInputPin('Shape_in', 'ShapePin')
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+        self.shapeout = self.createOutputPin('details', 'ShapeListPin')
+        # einzelne Elemente
 
-        
-        self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
+        #self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
         #self.pas=self.createInputPin('pattern', 'VectorPin', structure=StructureType.Array)
 
-        self.pas=self.createInputPin('pattern', 'VectorPin')
-        self.pas.enableOptions(PinOptions.AllowMultipleConnections)
-        self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
+        self.createInputPin('pattern', 'VectorPin', structure=StructureType.Array)
+
+#        self.pas=self.createInputPin('pattern', 'VectorPin')
+#        self.pas.enableOptions(PinOptions.AllowMultipleConnections)
+#        self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
 
 
+        '''
         a=self.createInputPin("startU", 'FloatPin')
         a.recomputeNode=True
-        a=self.createInputPin("startV", 'FloatPin')
+        '''
+        
+        a=self.createInputPin("cutBorder", 'BoolPin')
         a.recomputeNode=True
+        
+        '''
         a=self.createInputPin("scaleU", 'FloatPin',2)
         a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
         a.recomputeNode=True
+
         
         #beispiel parametr range flaot
         a=self.createInputPin("scaleV", 'FloatPin',2)
         a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
         a.recomputeNode=True
+        '''
+        
+        self.createInputPin('transformation', 'TransformationPin')
 
         #beispiel fuer parametre range int
         a=self.createInputPin("degree", 'IntPin',1)
@@ -2371,7 +2386,194 @@ class FreeCAD_figureOnFace(FreeCadNodeBase):
 
 
 
+class FreeCAD_listOfVectors(FreeCadNodeBase):
+    '''
+    create a list of vectors
+    '''
 
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createOutputPin('vectors', 'VectorPin', structure=StructureType.Array)
+
+        self.pas=self.createInputPin('pattern', 'VectorPin')
+        self.pas.enableOptions(PinOptions.AllowMultipleConnections)
+        self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
+
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Toy.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+
+
+class FreeCAD_moveVectors(FreeCadNodeBase):
+    '''
+    create a list of vectors
+    '''
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
+        self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
+
+        a=self.createInputPin('mover', 'VectorPin')
+        a.recomputeNode=True
+
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Toy.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+class FreeCAD_scaleVectors(FreeCadNodeBase):
+    '''
+    scale list of vectors
+    '''
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
+        self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
+
+        a=self.pas=self.createInputPin('scaler', 'VectorPin')
+        a.recomputeNode=True
+
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Toy.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+
+class FreeCAD_repeatPattern(FreeCadNodeBase):
+    '''
+    scale list of vectors
+    '''
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('pattern', 'VectorPin', structure=StructureType.Array)
+        self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
+
+        self.createOutputPin('pattern_out', 'VectorPin', structure=StructureType.Array)
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Toy.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+
+class FreeCAD_Transformation(FreeCadNodeBase):
+    '''
+    scale list of vectors
+    '''
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('transformation_in', 'TransformationPin')
+        a=self.createInputPin('vectorX', 'VectorPin',FreeCAD.Vector(1,0,0))
+        a.recomputeNode=True
+        a=self.createInputPin('vectorY', 'VectorPin',FreeCAD.Vector(0,1,0))
+        a.recomputeNode=True
+        a=self.createInputPin('vectorZ', 'VectorPin',FreeCAD.Vector(0,0,1))
+        a.recomputeNode=True
+        a=self.createInputPin('vector0', 'VectorPin',FreeCAD.Vector(0,0,0))
+        a.recomputeNode=True
+        
+
+#       self.createOutputPin('pattern_out', 'VectorPin', structure=StructureType.Array)
+#        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+        self.createOutputPin('transformation', 'TransformationPin' )
+
+class FreeCAD_Reduce(FreeCadNodeBase):
+    '''
+    scale list of vectors
+    '''
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('shapes', 'ShapeListPin')
+        a=self.createInputPin('selection', 'BoolPin',structure=StructureType.Array)
+
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+
+
+class FreeCAD_IndexToList(FreeCadNodeBase):
+    '''
+    scale list of vectors
+    '''
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('index', 'IntPin')#,structure=StructureType.Array)
+        a.enableOptions(PinOptions.AllowMultipleConnections)
+        a.disableOptions(PinOptions.SupportsOnlyArrays)
+        a=self.createOutputPin('flags', 'BoolPin',structure=StructureType.Array)
 
 
 
@@ -2422,5 +2624,12 @@ def nodelist():
                 FreeCAD_Receiver,
                 FreeCAD_Async,
                 FreeCAD_figureOnFace,
+                FreeCAD_listOfVectors,
+                FreeCAD_moveVectors,
+                FreeCAD_scaleVectors,
+                FreeCAD_repeatPattern,
+                FreeCAD_Transformation,
+                FreeCAD_Reduce,
+                FreeCAD_IndexToList
                 
         ]
