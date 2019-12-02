@@ -362,7 +362,14 @@ class FreeCadNodeBase(NodeBase):
     def setNodename(self,name):
         self.getWrapper().setHeaderHtml(name)
        
-    def setColor(self, r=.4,g=.82, b=0.84314, a=1.):
+    def setColor(self, r= None,g= None, b= None, a=1.):
+        if r == None:
+            r = random.random()
+        if g == None:
+            g = random.random()
+        if b == None:
+            b = random.random()
+            
         wr=self.getWrapper()
         wr.headColor=QtGui.QColor.fromRgbF(r,g,b,a)
         wr.update()
