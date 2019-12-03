@@ -304,7 +304,7 @@ class FreeCadNodeBase(NodeBase):
         return store.store().get(self.getData(pinName))
         
         
-    def getPinObjects(self,pinName):
+    def getPinObjectsA(self,pinName):
         eids=self.getData(pinName)
         if eids == None:
             sayW("no data on pin",pinName)

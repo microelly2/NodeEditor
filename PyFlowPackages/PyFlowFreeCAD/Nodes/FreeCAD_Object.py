@@ -2555,10 +2555,80 @@ class FreeCAD_IndexToList(FreeCadNodeBase):
     def description():
         return FreeCAD_IndexToList.__doc__
 
+
+class FreeCAD_distToShape(FreeCadNodeBase):
+    '''
+    list of distances of a target shape to a list of shapes
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+
+        a=self.createInputPin('shapes', 'ShapeListPin')
+        a=self.createInputPin('target', 'ShapePin')
+
+        a=self.createOutputPin('distance', 'FloatPin',structure=StructureType.Array)
+
+    @staticmethod
+    def description():
+        return FreeCAD_distToShape.__doc__
+
+
+class FreeCAD_lessThan(FreeCadNodeBase):
+    '''
+    compare a list of floats with a threshold
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('shapes', 'ShapeListPin')
+        a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('threshold', 'FloatPin')
+        a.recomputeNode=True
+
+        a=self.createOutputPin('lessThan', 'BoolPin',structure=StructureType.Array)
+        
+
+    @staticmethod
+    def description():
+        return FreeCAD_lessThan.__doc__
+
+
+class FreeCAD_and(FreeCadNodeBase):
+    '''
+    booloan and of two boolean lists
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('a', 'BoolPin',structure=StructureType.Array)
+        a=self.createInputPin('b', 'BoolPin',structure=StructureType.Array)
+        a=self.createOutputPin('and', 'BoolPin',structure=StructureType.Array)
+        
+        a.description="elementwisewise a and b "
+
+    @staticmethod
+    def description():
+        return FreeCAD_and.__doc__
+
+
 #------------------------
-
-
-
 
 
 
@@ -2610,6 +2680,10 @@ def nodelist():
                 FreeCAD_repeatPattern,
                 FreeCAD_Transformation,
                 FreeCAD_Reduce,
-                FreeCAD_IndexToList
+                FreeCAD_IndexToList,
+                
+                FreeCAD_distToShape,
+                FreeCAD_lessThan,
+                FreeCAD_and,
                 
         ]

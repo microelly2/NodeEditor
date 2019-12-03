@@ -5,7 +5,6 @@ import time
 import FreeCAD
 import FreeCADGui
 
-import nodeeditor.store
 import Part
 
 from PyFlow.Core.Common import *
@@ -13,7 +12,6 @@ from PyFlow import CreateRawPin
 
 from nodeeditor.say import *
 import nodeeditor.store as store
-import nodeeditor.store
 import nodeeditor.pfwrap as pfwrap
 
 
@@ -477,7 +475,6 @@ def run_FreeCAD_view3D(self, *args, **kwargs):
     wireframe=False
     transparency=50
     #+#todo make the parameters to pins
-
     timeA=time.time()
     shape=self.getPinObject('Shape_in')
     s=shape
@@ -507,7 +504,12 @@ def run_FreeCAD_view3D(self, *args, **kwargs):
     if f == None:
         f = w.addObject('Part::Feature', name)
     if s  !=  None:
-        f.Shape=s
+        if s.Volume != 0:
+            f.Shape=s
+        else:  
+            t=Part.makeBox(0.001,0.001,0.001)#.toShape()
+            f.Shape=t
+
     f.recompute()
     f.purgeTouched()
 
@@ -1191,7 +1193,6 @@ def run_FreeCAD_Hull(self,*args, **kwargs):
 #---------------
 
 def cylindricprojection(self,*args, **kwargs):
-    import numpy as bp
 
     s=App.activeDocument().ReflectLines001.Shape
 
@@ -1480,7 +1481,7 @@ Part.ArcOfCircle(circ,3.110107,4.361358)
 
 import sys
 if sys.version_info[0] !=2:
-	from importlib import reload
+    from importlib import reload
 
 
 def run_FreeCAD_Simplex(self,*args, **kwargs):
@@ -2181,8 +2182,6 @@ def run_FreeCAD_interpolateBSpline(self):
     self.outExec.call()
 
 
-import numpy as np
-import time
 
 def run_FreeCAD_swept(self):
     ta=time.time()
@@ -2261,8 +2260,6 @@ def run_FreeCAD_swept(self):
 
 
 
-import Part
-import time
 
 def run_FreeCAD_handrail(self):
 
@@ -2312,8 +2309,6 @@ def run_FreeCAD_handrail(self):
 
 
 def createToy():
-    import Part
-    import numpy as np
 
     countA=11
     countB=11
@@ -2351,10 +2346,6 @@ def run_FreeCAD_Bender(self):
     if FreeCAD.ActiveDocument.getObject("Shape") == None:
         createToy()
         #return
-
-    # say("huhu")
-    import Part
-    import numpy as np
 
     a=self.getData('a')
     b=self.getData('b')
@@ -2978,7 +2969,6 @@ def run_FreeCAD_Blinker(self):
         sn=self.Object.signalName
         ss=self.name +")@FreeCAD"
 
-    import time,random
     from threading import Thread
 
 
@@ -3109,7 +3099,6 @@ def run_FreeCAD_Async(self):
     self.outExec.call()
     self.setData("message","")
 
-    import time,random
     from threading import Thread
 
     def sleeper(i):
@@ -3152,13 +3141,13 @@ def run_FreeCAD_figureOnFace(self):
 
     ca=np.array(self.getData("pattern"))
 
-	#todo reshape auf flach
+    #todo reshape auf flach
     if len(ca.shape)==2:
         ca=ca.reshape(1,ca.shape[0],3)
 
     c=ca[:,:,0:2]
 
-	#+# todo affine trafo matrix multiplikation vollstaendig machen
+    #+# todo affine trafo matrix multiplikation vollstaendig machen
     p=self.getPinByName("transformation")
     trafo=p.getTransformation()
 
@@ -3365,7 +3354,7 @@ def run_FreeCAD_listOfVectors(self):
     
     
 def run_FreeCAD_moveVectors(self):
-	#+# todo anpassen 1 2 3 dimensionale arrays
+    #+# todo anpassen 1 2 3 dimensionale arrays
 
     vv=self.getData("vectors")
     mv=self.getData("mover")
@@ -3383,7 +3372,7 @@ def run_FreeCAD_moveVectors(self):
     self.outExec.call()    
 
 def run_FreeCAD_scaleVectors(self):
-	#+# todo anpassen 1 2 3 dimensionale arrays
+    #+# todo anpassen 1 2 3 dimensionale arrays
 
     vv=self.getData("vectors")
     mv=self.getData("scaler")
@@ -3430,7 +3419,7 @@ def run_FreeCAD_Reduce(self):
 
     flags=self.getData("selection")
     eids=self.getData("shapes")
-
+    say(self.name)
     if eids is None:
         return
     shapes=[store.store().get(eid)  for eid in eids]
@@ -3438,7 +3427,13 @@ def run_FreeCAD_Reduce(self):
     for f,s in zip(shapes,flags):
         if s:
              reduced += [f]
-    self.setPinObject("Shape_out",Part.Compound(reduced))
+    try:
+        rc=Part.Compound(reduced)
+    except:
+       rc=Part.Shape()
+    say("!!rc=",rc)
+    self.setPinObject("Shape_out",rc)
+    self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
 
@@ -3454,8 +3449,43 @@ def run_FreeCAD_IndexToList(self):
     for p in arr:
         flags[p]=1
     self.setData("flags",flags.tolist())
+    self.setColor(b=0,a=0.4)
     self.outExec.call()    
     
     
     
 ## ab hier neu 02.12.
+
+def run_FreeCAD_distToShape(self):
+    
+    eids=self.getPinObjectsA("shapes")
+    target=self.getPinObject("target")
+    dists=[]
+    for s in eids:
+        dists += [target.distToShape(s)[0]]
+    self.setData("distance",dists)
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+
+def run_FreeCAD_lessThan(self):
+    values=self.getData("values")
+    threshold=self.getData("threshold")
+    rc=[]
+    for v in values:
+        say(v, v<threshold)
+        rc += [v<threshold]
+    self.setData("lessThan",rc)
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+def run_FreeCAD_and(self):
+    a=self.getData("a")
+    b=self.getData("b")
+    rc=[va and vb for va,vb in zip(a,b)]
+    self.setData("and",rc)
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+
+##ab hier neu 03.12.
