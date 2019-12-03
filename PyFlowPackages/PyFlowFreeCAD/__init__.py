@@ -65,7 +65,7 @@ for n in nodelist():
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic import nodelist
 for n in nodelist():
-    _NODES[ n.__name__]=n
+	_NODES[ n.__name__]=n
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
 for n in nodelist():

@@ -39,7 +39,6 @@ class FreeCAD_lessThan(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('shapes', 'ShapeListPin')
         a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
         a=self.createInputPin('threshold', 'FloatPin')
         a.recomputeNode=True
@@ -50,6 +49,92 @@ class FreeCAD_lessThan(FreeCadNodeBase):
     @staticmethod
     def description():
         return FreeCAD_lessThan.__doc__
+
+    @staticmethod
+    def category():
+        return 'Logic'
+
+class FreeCAD_moreThan(FreeCadNodeBase):
+    '''
+    compare a list of floats with a treshold
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('treshold', 'FloatPin')
+        a.recomputeNode=True
+
+        a=self.createOutputPin('moreThan', 'BoolPin',structure=StructureType.Array)
+        
+
+    @staticmethod
+    def description():
+        return FreeCAD_moreThan.__doc__
+
+    @staticmethod
+    def category():
+        return 'Logic'
+
+
+class FreeCAD_equal(FreeCadNodeBase):
+    '''
+    compare a list of floats with a treshold
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('value', 'FloatPin')
+        a.recomputeNode=True
+
+        a=self.createOutputPin('equal', 'BoolPin',structure=StructureType.Array)
+        
+
+    @staticmethod
+    def description():
+        return FreeCAD_equal.__doc__
+
+    @staticmethod
+    def category():
+        return 'Logic'
+
+
+class FreeCAD_nearly(FreeCadNodeBase):
+    '''
+    compare a list of floats with a threshold
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('value', 'FloatPin')
+        a.recomputeNode=True
+
+        a=self.createInputPin('tolerance', 'FloatPin',0.1)
+        a.recomputeNode=True
+
+        a=self.createOutputPin('nearly', 'BoolPin',structure=StructureType.Array)
+        
+
+    @staticmethod
+    def description():
+        return FreeCAD_nearly.__doc__
 
     @staticmethod
     def category():
@@ -218,6 +303,10 @@ class FreeCAD_BoolToy(FreeCadNodeBase):
 def nodelist():
     return [
                 FreeCAD_lessThan,
+                FreeCAD_moreThan,
+                FreeCAD_equal,
+                FreeCAD_nearly,
+
                 FreeCAD_and,
                 FreeCAD_or,
                 FreeCAD_not,
