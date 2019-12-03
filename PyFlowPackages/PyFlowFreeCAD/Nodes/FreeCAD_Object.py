@@ -2111,146 +2111,6 @@ class FreeCAD_randomizePolygon(FreeCadNodeBase):
         return ['Polygon','random','Vector']
 
 
-class FreeCAD_Blinker(FreeCadNodeBase):
-    '''
-    blinker sender
-    '''
-
-    dok = 2
-    def __init__(self, name="baked",**kvargs):
-
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.createInputPin("Stop", 'ExecPin', None, self.stop)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.signal=self.createInputPin('signalName', 'StringPin', 'blink')
-        self.data=self.createInputPin('signalMessage', 'StringPin')
-        self.d3=self.createInputPin('signalObject', 'FCobjPin')
-        a=self.createInputPin('sleep', 'FloatPin',10)
-        a.annotationDescriptionDict={ "ValueRange":(0.,300.)}
-
-        a=self.createInputPin('loops', 'IntPin',20)
-        a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
-
-
-    @staticmethod
-    def description():
-        return FreeCAD_Blinker.__doc__
-
-    @staticmethod
-    def category():
-        return 'Signal'
-
-    @staticmethod
-    def keywords():
-        return ['Sender']
-    
-    def stop(self, *args, **kwargs):
-        self.stopped=True
-
-
-class FreeCAD_Receiver(FreeCadNodeBase):
-    '''
-    blinker receiver
-    '''
-
-    dok = 2
-    def __init__(self, name="baked",**kvargs):
-
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.inExec = self.createInputPin('subscribe', 'ExecPin', None, self.subscribe)
-        self.inExec = self.createInputPin('unsubscribe', 'ExecPin', None, self.unsubscribe)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.signal=self.createInputPin('signalName', 'StringPin', 'blink')
-        self.createOutputPin('senderName', 'StringPin')
-        self.createOutputPin('senderMessage', 'StringPin')
-        self.createOutputPin('senderObject', 'FCobjPin')
-        self.signal=self.createInputPin('autoSubscribe', 'BoolPin', True)
-
-        
-    def subscribe(self, *args, **kwargs):
-        sayl()
-        from blinker import signal
-        sn=self.getData('signalName')
-
-        send_data = signal(sn)
-        @send_data.connect
-        def receive_data(sender, **kw):
-            print("%r: caught signal from %r, data %r" % (self.name,sender, kw))
-            
-            self.sender = sender
-            self.kw = kw
-            self.setData("senderName",sender)
-            self.setData("senderMessage",self.kw['message'])
-            self.setData("senderObject",self.kw['obj'])
-            self.setColor(b=0,a=0.4)
-            self.outExec.call()
-            
-            return ("got return from  "+ self.name)
-            
-        self.r=receive_data
-        
-    def unsubscribe(self, *args, **kwargs):
-        from blinker import signal
-        sn=self.getData('signalName')
-        send_data = signal(sn)
-        send_data.disconnect(self.r)
-        sayl()
-
-        self.r=None
-        self.sender = None
-        self.kw = None
-
-
-    def postCreate(self, jsonTemplate=None):
-        super(self.__class__, self).postCreate(jsonTemplate=jsonTemplate)
-        say("postcreate")
-        if self.getData("autoSubscribe"):
-            self.subscribe()
-
-
-
-    @staticmethod
-    def description():
-        return FreeCAD_Receiver.__doc__
-
-    @staticmethod
-    def category():
-        return 'Signal'
-
-    @staticmethod
-    def keywords():
-        return ['Receiver']
-
-
-class FreeCAD_Async(FreeCadNodeBase):
-    '''
-    
-    '''
-
-    dok = 2
-    def __init__(self, name="baked",**kvargs):
-
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.signal=self.createInputPin('step', 'FloatPin', 2)
-        self.signal=self.createOutputPin('message', 'StringPin')
-
-
-    @staticmethod
-    def description():
-        return FreeCAD_Async.__doc__
-
-    @staticmethod
-    def category():
-        return 'Signal'
-
-    @staticmethod
-    def keywords():
-        return ['Receiver']
-
 
 class FreeCAD_Toy(FreeCadNodeBase):
     '''
@@ -2579,53 +2439,9 @@ class FreeCAD_distToShape(FreeCadNodeBase):
     def description():
         return FreeCAD_distToShape.__doc__
 
-
-class FreeCAD_lessThan(FreeCadNodeBase):
-    '''
-    compare a list of floats with a threshold
-    '''
-
-    dok = 4
-    def __init__(self, name="MyToy"):
-
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
-        a=self.createInputPin('shapes', 'ShapeListPin')
-        a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
-        a=self.createInputPin('threshold', 'FloatPin')
-        a.recomputeNode=True
-
-        a=self.createOutputPin('lessThan', 'BoolPin',structure=StructureType.Array)
-        
-
     @staticmethod
-    def description():
-        return FreeCAD_lessThan.__doc__
-
-
-class FreeCAD_and(FreeCadNodeBase):
-    '''
-    booloan and of two boolean lists
-    '''
-
-    dok = 4
-    def __init__(self, name="MyToy"):
-
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
-        a=self.createInputPin('a', 'BoolPin',structure=StructureType.Array)
-        a=self.createInputPin('b', 'BoolPin',structure=StructureType.Array)
-        a=self.createOutputPin('and', 'BoolPin',structure=StructureType.Array)
-        
-        a.description="elementwisewise a and b "
-
-    @staticmethod
-    def description():
-        return FreeCAD_and.__doc__
+    def category():
+        return 'Information'
 
 
 #------------------------
@@ -2670,9 +2486,6 @@ def nodelist():
                 FreeCAD_conny,
                 FreeCAD_randomizePolygon,
                 
-                FreeCAD_Blinker,
-                FreeCAD_Receiver,
-                FreeCAD_Async,
                 FreeCAD_figureOnFace,
                 FreeCAD_listOfVectors,
                 FreeCAD_moveVectors,
@@ -2681,9 +2494,5 @@ def nodelist():
                 FreeCAD_Transformation,
                 FreeCAD_Reduce,
                 FreeCAD_IndexToList,
-                
-                FreeCAD_distToShape,
-                FreeCAD_lessThan,
-                FreeCAD_and,
-                
+
         ]

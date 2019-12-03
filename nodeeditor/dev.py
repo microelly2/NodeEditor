@@ -3488,4 +3488,35 @@ def run_FreeCAD_and(self):
     self.outExec.call()    
 
 
+
+
+
+def run_FreeCAD_BoolToy(self):
+    self.setData("flags",[self.getData("flagA"),self.getData("flagB"),self.getData("flagC"),self.getData("flagD")])
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+def run_FreeCAD_or(self):
+    a=self.getData("a")
+    b=self.getData("b")
+    self.setData("or",[va or vb for va,vb in zip(a,b)])
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+def run_FreeCAD_not(self):
+    a=self.getData("a")
+    self.setData("not",[not va for va in a])
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+def run_FreeCAD_true(self):
+    self.setData("true",[True]*self.getData("count"))
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+def run_FreeCAD_false(self):
+    self.setData("false",[False]*self.getData("count"))
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
 ##ab hier neu 03.12.
