@@ -2485,7 +2485,6 @@ def nodelist():
                 FreeCAD_topo,
                 FreeCAD_conny,
                 FreeCAD_randomizePolygon,
-                
                 FreeCAD_figureOnFace,
                 FreeCAD_listOfVectors,
                 FreeCAD_moveVectors,

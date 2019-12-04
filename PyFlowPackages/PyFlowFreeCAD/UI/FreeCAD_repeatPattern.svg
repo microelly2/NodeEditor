@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="10px"
+   height="10px"
+   viewBox="0 0 10 10"
+   version="1.1"
+   id="SVGRoot"
+   sodipodi:docname="yyyreduce.svg">
+   <g id="ALL">
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="FreeCAD_view3D">
+  <rect
+     style="fill:#0000ff"
+     id="rect2983"
+     width="53."
+     height="30"
+     x="0"
+     y="0" />
+  </g>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="XX_FreeCAD_view3D">
+  <rect
+     style="fill:#fff0f0"
+     id="rect2983"
+     width="49."
+     height="26"
+     x="2"
+     y="2" />
+  </g>
+    </g>
+</svg>

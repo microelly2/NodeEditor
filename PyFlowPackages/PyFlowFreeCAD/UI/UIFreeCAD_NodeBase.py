@@ -3,6 +3,8 @@ from PyFlow.UI.Canvas.UICommon import NodeActionButtonInfo
 
 from nodeeditor.say import *
 
+from PyFlow.UI.Utils.stylesheet import Colors
+
 import os
 RESOURCES_DIR=os.path.dirname(__file__)
 
@@ -14,48 +16,59 @@ class FreeCADUINodeBase(UINodeBase):
 
 
     def __init__(self,*args,**kargs):
+
+
         super(FreeCADUINodeBase, self).__init__(*args, **kargs)
+
+        import nodeeditor.dev_uinode
+        reload (nodeeditor.dev_uinode)
+        nodeeditor.dev_uinode.loadimage(self,RESOURCES_DIR)
+
         self.addActions_dev()
 
-    '''
-    def addActions(self):
-        say("add the FreeCAD special actions")
+        '''
+        def addActions(self):
+            say("add the FreeCAD special actions")
 
-        say("!con",RESOURCES_DIR + "/pin.svg")
-        
-        actionAddOut2 = self._menu.addAction("show node")
+            say("!con",RESOURCES_DIR + "/pin.svg")
+            
+            actionAddOut2 = self._menu.addAction("show node")
 
-        actionAddOut2.setData(NodeActionButtonInfo(RESOURCES_DIR + "/show.svg"))
-        actionAddOut2.setToolTip("show internal data of the node")
-        actionAddOut2.triggered.connect(self.f2)
+            actionAddOut2.setData(NodeActionButtonInfo(RESOURCES_DIR + "/show.svg"))
+            actionAddOut2.setToolTip("show internal data of the node")
+            actionAddOut2.triggered.connect(self.f2)
 
-        actionAddOut3 = self._menu.addAction("compute node")
-        actionAddOut3.setData(NodeActionButtonInfo(RESOURCES_DIR + "/compute.svg"))
-        actionAddOut3.setToolTip("compute node")
-        actionAddOut3.triggered.connect(self.f3)
+            actionAddOut3 = self._menu.addAction("compute node")
+            actionAddOut3.setData(NodeActionButtonInfo(RESOURCES_DIR + "/compute.svg"))
+            actionAddOut3.setToolTip("compute node")
+            actionAddOut3.triggered.connect(self.f3)
 
-        actionAddOut4 = self._menu.addAction("f4")
-        actionAddOut4.setToolTip("refresh node")
-        actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
-        actionAddOut4.triggered.connect(self.f4)
+            actionAddOut4 = self._menu.addAction("f4")
+            actionAddOut4.setToolTip("refresh node")
+            actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+            actionAddOut4.triggered.connect(self.f4)
 
-        actionAddOut4 = self._menu.addAction("visualize")
-        #actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
-        actionAddOut4.triggered.connect(self.visualize)
+            actionAddOut4 = self._menu.addAction("visualize")
+            #actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+            actionAddOut4.triggered.connect(self.visualize)
 
-        actionAddOut4 = self._menu.addAction("delete node")
-        #actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
-        actionAddOut4.triggered.connect(self.deleteNode)
+            actionAddOut4 = self._menu.addAction("delete node")
+            #actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+            actionAddOut4.triggered.connect(self.deleteNode)
 
-        actionAddOut5 = self._menu.addAction("debug mode")
-        #actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
-        actionAddOut5.triggered.connect(self.debug)
+            actionAddOut5 = self._menu.addAction("debug mode")
+            #actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+            actionAddOut5.triggered.connect(self.debug)
 
-        actionAddOut5 = self._menu.addAction("bake mode")
-        #actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
-        actionAddOut5.triggered.connect(self.bake)
+            actionAddOut5 = self._menu.addAction("bake mode")
+            #actionAddOut4.setData(NodeActionButtonInfo(RESOURCES_DIR + "/pin.svg"))
+            actionAddOut5.triggered.connect(self.bake)
 
-    '''
+        '''
+
+
+
+
 
     def addActions_dev(self):
         import nodeeditor.dev_uinode
@@ -91,6 +104,11 @@ class FreeCADUINodeBase(UINodeBase):
 
     def bake(self):
         sayl("bake from gui not implemented")
+        import nodeeditor.dev_uinode
+        reload (nodeeditor.dev_uinode)
+        nodeeditor.dev_uinode.bake(self,RESOURCES_DIR)
+        say("---------done bake hake")
+
 
 
 class FreeCADUIFunctionBase(UINodeBase):
@@ -142,3 +160,11 @@ class FreeCADUIFunctionBase(UINodeBase):
             self._rawNode._debug = not self._rawNode._debug
         except:
             self._rawNode._debug = True
+
+
+
+class UIFreeCAD_Reduce(FreeCADUINodeBase):
+    def __init__(self, raw_node):
+        super(UIFreeCAD_Reduce, self).__init__(raw_node)
+        self.image = RESOURCES_DIR + "/FreeCAD_Reduce.svg"
+
