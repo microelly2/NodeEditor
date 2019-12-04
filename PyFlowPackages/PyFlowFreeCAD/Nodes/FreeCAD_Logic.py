@@ -282,9 +282,13 @@ class FreeCAD_BoolToy(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         a=self.createInputPin('flagA', 'BoolPin')
+        a.recomputeNode=True
         a=self.createInputPin('flagB', 'BoolPin')
+        a.recomputeNode=True
         a=self.createInputPin('flagC', 'BoolPin')
+        a.recomputeNode=True
         a=self.createInputPin('flagD', 'BoolPin')
+        a.recomputeNode=True
         a=self.createOutputPin('flags', 'BoolPin',structure=StructureType.Array)
         
 

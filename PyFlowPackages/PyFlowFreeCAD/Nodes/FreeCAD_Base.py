@@ -24,8 +24,10 @@ from nodeeditor.say import *
 
 import sys
 if sys.version_info[0] !=2:
-	from importlib import reload
+    from importlib import reload
 
+import nodeeditor.config
+reload(nodeeditor.config)
 
 # method only for get runtime
 def timer(func):
@@ -33,6 +35,7 @@ def timer(func):
     @functools.wraps(func)
     def wrapper_timer(*args, **kwargs):
         log=False
+        log=nodeeditor.config.log
         try :
                 is_method   = inspect.getargspec(func)[0][0] == 'self'
         except :
@@ -51,38 +54,6 @@ def timer(func):
     return wrapper_timer
 
 
-def Xtimer(func):
-    """print runtime of the function and create part for shape"""
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        
-        try :
-                is_method   = inspect.getargspec(func)[0][0] == 'self'
-        except :
-                is_method   = False
-        
-        if is_method :
-                name    = '{}.{}.{}'.format(func.__module__, args[0].__class__.__name__, func.__name__)
-        else :
-                name    = '{}.{}'.format(fn.__module__, func.__name__)
-        
-        sayW("call with genPart'{}'".format(name))
-        start_time = time.time()
-        value = func(*args, **kwargs)
-        end_time = time.time()
-        run_time = end_time - start_time    # 3
-        
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_genPart(func,args,kwargs)
-        
-        sayW("Finished method '{0}' in {1:.4f} secs".format(func.__name__,run_time))
-        return value
-    return wrapper
-
-
-
-
 class FreeCadNodeBase(NodeBase):
     '''common methods for FreeCAD integration'''
     
@@ -92,17 +63,19 @@ class FreeCadNodeBase(NodeBase):
         
         super(FreeCadNodeBase, self).__init__(name)
         self._debug = False
+        self._debug = nodeeditor.config.debug
         self._preview=False
     
     @timer
-#    @genPart
     def compute(self, *args, **kwargs):
         if self._debug:
-            say("debug on for ",self)
+            say("--- Start",self.name)
+            self._started=time.time()
         import nodeeditor.dev
         reload (nodeeditor.dev)
         a=eval("nodeeditor.dev.run_{}(self)".format(self.__class__.__name__))
-        if self._debug: say("Done:",self)
+        if self._debug: 
+            say("--- Done",self.name,round(time.time()-self._started,2))
         if self._preview:
             say("create preview")
             self.preview()

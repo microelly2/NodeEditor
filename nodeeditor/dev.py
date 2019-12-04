@@ -3247,7 +3247,7 @@ def run_FreeCAD_figureOnFace(self):
             cols += [loft]
 
 
-    say("---------",cols)
+    # say("---------",cols)
     self.setPinObject("Shape_out",Part.Compound(cols))
     self.setPinObjects("details",cols)
 
@@ -3260,9 +3260,7 @@ def run_FreeCAD_repeatPattern(self):
     apts=self.getData("vectors")
 
     a=np.array(apts)
-    say(a.shape)
 
-    say(np.array(a).shape)
     # make the vectors array flat
     if len(np.array(a).shape)>1:
         ll=np.array(a).shape
@@ -3331,15 +3329,15 @@ def run_FreeCAD_listOfVectors(self):
     
     say()
     say("list of vectors dump ...")
-    say("Hack recompute input nodes")
+    say("Hack recompute input nodes is active")
     ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
     b=[]
     for i in ySortedPins:
         # hack to get current values #+# todo debug
         i.owningNode().compute()
         vv=i.owningNode().getData(i.name)
-        say(i.name,vv)
-        say(np.array(vv).shape)
+        #say(i.name,vv)
+        #say(np.array(vv).shape)
         if len(np.array(vv).shape)>1:
             ll=np.array(vv).shape
             vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
@@ -3482,30 +3480,59 @@ def run_FreeCAD_lessThan(self):
 def run_FreeCAD_and(self):
     a=self.getData("a")
     b=self.getData("b")
-    rc=[va and vb for va,vb in zip(a,b)]
-    self.setData("and",rc)
+    flags=[va and vb for va,vb in zip(a,b)]
+    self.setData("and",flags)
+
+    wr=self.getWrapper()
+    wr.setHeaderHtml("AND: "+flagstring(flags))
+
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
 
-
+def flagstring(flags,lenf=10):
+    '''create string form boolean list'''
+    fstring=""
+    for f in flags[:lenf]:
+        fstring += "L" if f else "O"
+    if lenf<len(flags):
+        fstring += "..."
+    return fstring
 
 
 def run_FreeCAD_BoolToy(self):
     self.setData("flags",[self.getData("flagA"),self.getData("flagB"),self.getData("flagC"),self.getData("flagD")])
+    flags=[self.getData("flagA"),self.getData("flagB"),self.getData("flagC"),self.getData("flagD")]
+    fstring="Flags:"
+    for f in flags:
+        fstring += "L" if f else "O"
+    #set the label of the node
+    wr=self.getWrapper()
+    wr.setHeaderHtml(fstring)
+ 
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
 def run_FreeCAD_or(self):
     a=self.getData("a")
     b=self.getData("b")
-    self.setData("or",[va or vb for va,vb in zip(a,b)])
+    flags = [va or vb for va,vb in zip(a,b)]
+    self.setData("or",flags)
+    
+    wr=self.getWrapper()
+    wr.setHeaderHtml("OR: "+flagstring(flags))
+ 
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
 def run_FreeCAD_not(self):
     a=self.getData("a")
-    self.setData("not",[not va for va in a])
+    flags=[not va for va in a]
+    self.setData("not",flags)
+
+    wr=self.getWrapper()
+    wr.setHeaderHtml("NOT: "+flagstring(flags))
+
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
