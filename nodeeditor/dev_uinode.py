@@ -23,8 +23,21 @@ if 1:
         except:
             self._rawNode._debug = True
 
-    def bake(self):
-        sayl("bake from gui not implemented")
+    def bake(self,*args,**kvargs):
+        say("bake from gui not implemented - use for test icons")
+        say(self)
+        t="/home/thomas/.FreeCAD/Mod/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/pin.svg"
+        t="/home/thomas/.FreeCAD/Mod/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/reduce.svg"
+        t="/home/thomas/.FreeCAD/Mod/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/FreeCAD_view3D.svg"
+        say("!!",t,"!!")
+        self.image=t
+        elementName = QtCore.QFileInfo(t).baseName()
+        say(elementName)
+
+        self.svgIcon.setElementId("XX_"+elementName)
+        self.svgIcon.setElementId("ALL")
+
+        say(self.image)
 
 
 #the add action
@@ -53,3 +66,28 @@ def addActions(self,RESOURCES_DIR):
         # erzeuge abhaengig vond e pins methoden
         # wenn shape_out, dann visualizer, baker
         #  
+
+
+
+import os
+
+def loadimage(self,RESOURCES_DIR):
+
+        #self.headColorOverride = Colors.Gray
+        #self.color = Colors.DarkGray
+        say("UINODE getter    ",self._rawNode.__class__.__name__)
+        image=RESOURCES_DIR + "/"+ str(self._rawNode.__class__.__name__)+".svg"
+        if os.path.exists(image):
+            self.image = image
+            self.svgIcon.setElementId("ALL")
+        else:
+            self.image = RESOURCES_DIR + "/gear.svg"
+
+
+'''
+say("self.image:",self.image)
+say(self.svgIcon)
+self.svgIcon.renderer().load(self.image)
+self.svgIcon.setElementId("ALL")
+'''
+
