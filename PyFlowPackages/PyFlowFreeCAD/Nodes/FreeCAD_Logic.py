@@ -301,6 +301,74 @@ class FreeCAD_BoolToy(FreeCadNodeBase):
         return 'Logic'
 
 
+class FreeCAD_FloatToy(FreeCadNodeBase):
+    '''
+    float toy - make a list of 10 floats
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        for i in range(10):
+            a=self.createInputPin('float', 'FloatPin',i)
+            a.recomputeNode=True
+
+        a=self.createInputPin('scale', 'FloatPin',1)
+        a.recomputeNode=True
+        a.description="all floats are multiplied with this parameter"
+
+        a=self.createInputPin('start', 'FloatPin',0)
+        a.recomputeNode=True
+        a.description="this parameter is added to the floats"
+
+
+
+        a=self.createOutputPin('floats', 'FloatPin',structure=StructureType.Array)
+        
+
+    @staticmethod
+    def description():
+        return FreeCAD_BoolToy.__doc__
+
+    @staticmethod
+    def category():
+        return 'Logic'
+
+
+class FreeCAD_Tube(FreeCadNodeBase):
+    '''
+    calculate the points for a parametric tube along a backbone curve
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('backbone', 'ShapePin')
+        a.description="backbone curve for the tube"
+        a=self.createInputPin('parameter', 'FloatPin',structure=StructureType.Array)
+        a.description="u parameter of the position of the ribs"
+        a=self.createInputPin('radius', 'FloatPin',structure=StructureType.Array)
+        a.description="radius/size of the rib rings"
+        a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description="array of poles for the postprocessing bspline surface"
+
+    @staticmethod
+    def description():
+        return FreeCAD_BoolToy.__doc__
+
+    @staticmethod
+    def category():
+        return 'Information'
+
+
 
 
 
@@ -317,5 +385,10 @@ def nodelist():
                 FreeCAD_true,
                 FreeCAD_false,
                 FreeCAD_BoolToy,
+                FreeCAD_FloatToy,
+                FreeCAD_Tube,
                 
         ]
+
+
+

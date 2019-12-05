@@ -1876,7 +1876,6 @@ def run_FreeCAD_Destruct_BSplineSurface(self,bake=False, **kwargs):
 
 def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
 
-        say("kok")
         dat=self.arrayData.getData()
         #say("dat",dat)
         if len(dat) == 0:
@@ -1891,14 +1890,27 @@ def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
         (countA,countB,_)=poles.shape
         degB=min(countB-1,3,self.getPinByName("maxDegreeU").getData())
         degA=min(countA-1,3,self.getPinByName("maxDegreeV").getData())
+        
+        periodicU=self.getData("periodicU")
+        
+        periodicV=self.getData("periodicV")
+        if periodicU:
+            multA=[1]*(countA+1)
+            knotA=range(len(multA))
+        else:
+            multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+            knotA=range(len(multA))
 
-        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-        multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
-        knotA=range(len(multA))
-        knotB=range(len(multB))
+        if periodicV:
+            multB=[1]*(countB+1)
+            knotB=range(len(multB))
+        else:
+            multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]       
+            knotB=range(len(multB))
+
 
         sf=Part.BSplineSurface()
-        sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,False,degA,degB)
+        sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,periodicU,periodicV,degA,degB)
         shape=sf.toShape()
 
         self.setPinObject("Shape_out",shape)
@@ -3547,3 +3559,37 @@ def run_FreeCAD_false(self):
     self.outExec.call()    
 
 ##ab hier neu 03.12.
+
+def run_FreeCAD_FloatToy(self):
+    floats=[]
+    for i in range(10):
+        if i==0:
+            v=self.getData("float")
+        else:
+            v=self.getData("float"+str(i))
+        floats += [v]
+
+    self.setData("floats",floats)
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+    
+def run_FreeCAD_Tube(self):
+    floats=self.getData('parameter')
+    radius=self.getData('radius')
+
+    cc=self.getPinObject("backbone")
+    say("expected parameter range", cc.ParameterRange)
+    curve=cc.Curve
+    pts=[]
+    for f,r  in zip(floats,radius):
+        f *= 0.1
+        r *= 0.1
+        p=curve.value(f)
+        t=curve.tangent(f)[0]
+        n=curve.normal(f)
+        h=FreeCAD.Vector(0,0,1)
+        n=t.cross(h)
+        pts += [[p-h*r,p+n*r,p+h*r,p-n*r]]
+
+    self.setData("points",pts)
+    self.outExec.call()    

@@ -547,6 +547,8 @@ class FreeCAD_BSplineSurface(FreeCadNodeBase):
 
         self.createInputPin('maxDegreeU', 'IntPin', 3)
         self.createInputPin('maxDegreeV', 'IntPin', 3)
+        self.createInputPin('periodicU', 'BoolPin',)
+        self.createInputPin('periodicV', 'BoolPin',)
 
         self.shapeout = self.createOutputPin('Shape_out', 'FacePin')
         self.shapeout.description='BSpline Face'
