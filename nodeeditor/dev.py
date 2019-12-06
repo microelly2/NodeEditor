@@ -1098,7 +1098,7 @@ def run_FreeCAD_Hull(self,*args, **kwargs):
     #core calculation
     atime=time.time()
     tri = Delaunay(points)
-    say("time to caculate delaunay:{}".format(time.time()-atime)) 
+    say("time to calculate delaunay:{}".format(time.time()-atime)) 
 
     # say(tri.simplices)
 
@@ -1148,7 +1148,7 @@ def run_FreeCAD_Hull(self,*args, **kwargs):
                 w.buildFromPolesMultsKnots(np.array([[a,d],[a,c]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
                 colf += [w.toShape()]
             say("! time alpha:makefaces {}  simplex edges{}".format(time.time()-bbtime,bbtime-aatime)) 
-    say("time to caculate alpha:{}".format(time.time()-atime)) 
+    say("time to calculate alpha:{}".format(time.time()-atime)) 
 
 
     # restrict set if simplexes is flag simpleSimplex is set
