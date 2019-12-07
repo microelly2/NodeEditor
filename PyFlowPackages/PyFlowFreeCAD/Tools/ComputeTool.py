@@ -36,7 +36,7 @@ class ComputeTool(ShelfTool):
 
     @staticmethod
     def toolTip():
-        return "Preview of a node on/off"
+        return "call compute method for selected nodes"
 
     @staticmethod
     def getIcon():
@@ -54,3 +54,31 @@ class ComputeTool(ShelfTool):
              if n.getWrapper().isSelected():
                 say(n,n.x)
                 n.compute()
+
+
+class DeleteTool(ShelfTool):
+    """docstring for PreviewTool."""
+    def __init__(self):
+        super( DeleteTool, self).__init__()
+
+    @staticmethod
+    def toolTip():
+        return "Delete the selected nodes"
+
+    @staticmethod
+    def getIcon():
+        return QtGui.QIcon(RESOURCES_DIR + "delete.png")
+
+    @staticmethod
+    def name():
+        return str("DeleteTool")
+
+    def do(self):
+         nodes=FreeCAD.PF.graphManager.get().getAllNodes()
+         nodes2 = sorted(nodes, key=lambda node: node.x)
+         say("selected Nodes ...")
+         for n in nodes2:
+             if n.getWrapper().isSelected():
+                say(n,n.x)
+
+                n.kill()

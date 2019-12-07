@@ -25,25 +25,6 @@ if 1:
 
     def bake(self,*args,**kvargs):
         say("bake from gui not implemented - use for test icons")
-        say(self)
-        self.svgIcon.setScale(0.5)
-        self.svgIcon.setPos(-23, -23)
-        return
-        
-        t="/home/thomas/.FreeCAD/Mod/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/pin.svg"
-        t="/home/thomas/.FreeCAD/Mod/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/reduce.svg"
-        t="/home/thomas/.FreeCAD/Mod/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/FreeCAD_view3D.svg"
-        say("!!",t,"!!")
-        self.image=t
-        elementName = QtCore.QFileInfo(t).baseName()
-        say(elementName)
-
-        self.svgIcon.setElementId("XX_"+elementName)
-        self.svgIcon.setElementId("ALL")
-        self.svgIcon.setPos(-4, -46)
-        
-
-        say(self.image)
 
 
 #the add action
@@ -78,26 +59,20 @@ def addActions(self,RESOURCES_DIR):
 import os
 
 def loadimage(self,RESOURCES_DIR):
+	'''load the icon for a node'''
 
-        #self.headColorOverride = Colors.Gray
-        #self.color = Colors.DarkGray
-        say("UINODE getter    ",self._rawNode.__class__.__name__)
-        image=RESOURCES_DIR + "/"+ str(self._rawNode.__class__.__name__)+".svg"
-        if os.path.exists(image):
-            self.image = image
-            self.svgIcon.setElementId("ALL")
-        else:
-            self.image = RESOURCES_DIR + "/gear.svg"
+	image=RESOURCES_DIR + "/"+ str(self._rawNode.__class__.__name__)+".svg"
+	if os.path.exists(image):
+		self.image = image
+		self.svgIcon.setElementId("ALL")
 
-        self.svgIcon.setScale(0.5)
-        self.svgIcon.setPos(-23, -23)
+		self.svgIcon.setElementId("layer1")
+	else:
+		self.image = RESOURCES_DIR + "/Freecad.svg"
+		self.svgIcon.setElementId("layer1")
+
+	self.svgIcon.setScale(0.5)
+	self.svgIcon.setPos(-20, -20)
 
 
-
-'''
-say("self.image:",self.image)
-say(self.svgIcon)
-self.svgIcon.renderer().load(self.image)
-self.svgIcon.setElementId("ALL")
-'''
 

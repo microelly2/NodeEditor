@@ -75,12 +75,13 @@ for n in nodelist():
 # tools
 
 from PyFlow.Packages.PyFlowFreeCAD.Tools.PreviewTool import PreviewTool
-from PyFlow.Packages.PyFlowFreeCAD.Tools.ComputeTool import ComputeTool
+from PyFlow.Packages.PyFlowFreeCAD.Tools.ComputeTool import ComputeTool, DeleteTool
 
 _TOOLS = OrderedDict()
 
 _TOOLS[PreviewTool.__name__] = PreviewTool
 _TOOLS[ComputeTool.__name__] = ComputeTool
+_TOOLS[DeleteTool.__name__] = DeleteTool
 
 from PyFlow.Packages.PyFlowFreeCAD.Factories.UINodeFactory import createUINode
 
