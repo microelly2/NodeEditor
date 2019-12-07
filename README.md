@@ -42,12 +42,16 @@ A Node editor for FreeCAD using PyFLow
     OCC version: 7.3.0
     Locale: German/Germany (de_DE)
 
+
 Python2 in not longer supported. The nodeeditor now works with the original PyFlow@wonderworks-software without extra modifications.
 
+## Install
 
-PyFlow: https://github.com/wonderworks-software/PyFlow
-Qp.py from https://github.com/mottosso/Qt.py  
-blinker  
+Install the following packages into the local Module directory ~/.FreeCAD/Mod
+
+  - PyFlow from https://github.com/microelly2/PyFlow
+  - Qt.py from https://github.com/mottosso/Qt.py  
+  - NodeEditor from https://github.com/microelly2/NodeEditor
 
 
 ## Usage
