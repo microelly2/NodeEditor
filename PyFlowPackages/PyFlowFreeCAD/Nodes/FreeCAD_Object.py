@@ -1674,6 +1674,14 @@ class FreeCAD_Ref(FreeCadNodeBase):
         a=self.makebackref()
         if a != None:
             a.sources=[obj]
+        
+        try:
+            wr=self.getWrapper()
+            wr.setHeaderHtml("Ref: "+obj.Label)
+            self.setColor(b=0,a=0.4)
+        except:
+            pass
+
 
     @staticmethod
     def description():
@@ -2128,11 +2136,17 @@ class FreeCAD_Toy(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
-        self.trace = self.createInputPin('trace', 'BoolPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
+        self.trace = self.createInputPin('flag', 'BoolPin')
+        self.shapelist = self.createInputPin("ShapeList", 'ShapeListPin')
+        t = self.createInputPin("Shape", 'ShapePin')
+        t.enableOptions(PinOptions.AllowMultipleConnections)
+        t.disableOptions(PinOptions.SupportsOnlyArrays)
 
-        self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+
+
+
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+        self.shapeout = self.createOutputPin('points', 'VectorPin', structure=StructureType.Array)
 
         self.objname = self.createInputPin("objectname", 'StringPin')
         self.objname.setData(name)
@@ -2140,11 +2154,8 @@ class FreeCAD_Toy(FreeCadNodeBase):
         self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
         self.shapeOnly.recomputeNode=True
 
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.part = self.createOutputPin('Part', 'FCobjPin')
         self.objname = self.createInputPin("objectname", 'StringPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
+
         name="MyToy"
         self.objname.setData(name)
 
@@ -2446,6 +2457,67 @@ class FreeCAD_distToShape(FreeCadNodeBase):
         return 'Information'
 
 
+class FreeCAD_centerOfMass(FreeCadNodeBase):
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.shapelist = self.createInputPin("ShapeList", 'ShapeListPin')
+#        t = self.createInputPin("Shape", 'ShapePin')
+#        t.enableOptions(PinOptions.AllowMultipleConnections)
+#        t.disableOptions(PinOptions.SupportsOnlyArrays)
+
+        self.shapeout = self.createOutputPin('points', 'VectorPin', structure=StructureType.Array)
+
+
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_Toy.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+class FreeCAD_listOfShapes(FreeCadNodeBase):
+    '''
+    create a list of shapes from  single vectors
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createOutputPin('ShapeList', 'ShapeListPin')
+
+        self.pas=self.createInputPin('Shape', 'ShapePin')
+        self.pas.enableOptions(PinOptions.AllowMultipleConnections)
+        self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
+
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_listOfVectors.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+
+
 #------------------------
 
 
@@ -2495,5 +2567,7 @@ def nodelist():
                 FreeCAD_Transformation,
                 FreeCAD_Reduce,
                 FreeCAD_IndexToList,
+                FreeCAD_centerOfMass,
+                FreeCAD_listOfShapes,
 
         ]

@@ -321,6 +321,7 @@ class PyFlow ( Workbench ):
 
 
     def Initialize(self):
+        
 
         try: # some methods from curve wb
             import ZebraTool
@@ -328,7 +329,10 @@ class PyFlow ( Workbench ):
             import GeomInfo
         except: pass
 
+
         cmds= ['ZebraTool','GeomInfo']
+        #Gui.activateWorkbench("DraftWorkbench")        
+        #cmds +=['Draft_Move','Draft_Rotate','Draft_Point','Draft_ToggleGrid']
 
         self.appendMenu("Tools", cmds)
         self.appendToolbar("Tools", cmds)

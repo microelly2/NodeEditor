@@ -313,7 +313,7 @@ class FreeCAD_FloatToy(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        for i in range(10):
+        for i in range(11):
             a=self.createInputPin('float', 'FloatPin',i)
             a.recomputeNode=True
 
@@ -325,7 +325,12 @@ class FreeCAD_FloatToy(FreeCadNodeBase):
         a.recomputeNode=True
         a.description="this parameter is added to the floats"
 
+        a=self.createInputPin('limit', 'IntPin',10)
+        a.recomputeNode=True
+        a.description="maximum count of floats in use "
 
+        a=self.createInputPin('trailer', 'FloatPin',structure=StructureType.Array)
+        a.description="these floats are appended to get larger arrays" 
 
         a=self.createOutputPin('floats', 'FloatPin',structure=StructureType.Array)
         

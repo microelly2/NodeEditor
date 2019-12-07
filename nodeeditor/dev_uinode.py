@@ -26,6 +26,10 @@ if 1:
     def bake(self,*args,**kvargs):
         say("bake from gui not implemented - use for test icons")
         say(self)
+        self.svgIcon.setScale(0.5)
+        self.svgIcon.setPos(-23, -23)
+        return
+        
         t="/home/thomas/.FreeCAD/Mod/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/pin.svg"
         t="/home/thomas/.FreeCAD/Mod/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/reduce.svg"
         t="/home/thomas/.FreeCAD/Mod/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/FreeCAD_view3D.svg"
@@ -36,6 +40,8 @@ if 1:
 
         self.svgIcon.setElementId("XX_"+elementName)
         self.svgIcon.setElementId("ALL")
+        self.svgIcon.setPos(-4, -46)
+        
 
         say(self.image)
 
@@ -82,6 +88,10 @@ def loadimage(self,RESOURCES_DIR):
             self.svgIcon.setElementId("ALL")
         else:
             self.image = RESOURCES_DIR + "/gear.svg"
+
+        self.svgIcon.setScale(0.5)
+        self.svgIcon.setPos(-23, -23)
+
 
 
 '''

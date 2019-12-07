@@ -619,7 +619,7 @@ def run_FreeCAD_Tripod(self,*args, **kwargs):
 
 def run_FreeCAD_uIso(self,*args, **kwargs):
 
-    f=self.getPinObject('Face')
+    f=self.getPinObject('Face_in')
     if f.__class__.__name__  == 'Shape':
         f=f.Face1
     sf=f.Surface
@@ -629,7 +629,7 @@ def run_FreeCAD_uIso(self,*args, **kwargs):
 
     uu=umin+(umax-umin)*0.1*u
     c=sf.uIso(uu)
-    self.setPinObject('Edge',c.toShape())
+    self.setPinObject('Edge_out',c.toShape())
 
     if self.getData('display'):
         obj=self.getObject()
@@ -1925,7 +1925,7 @@ def run_FreeCAD_BSplineCurve(self, *args, **kwargs):
         sf=Part.BSplineCurve()
 
         poles=np.array(dat)
-        say(poles)
+        #say(poles)
         (countA,_)=poles.shape
         degA=min(countA-1,3,self.getPinByName("maxDegree").getData())
 
@@ -2173,11 +2173,26 @@ def run_FreeCAD_approximateBSpline(self):
 >>> 
 '''
 def run_FreeCAD_interpolateBSpline(self):
-    shin=self.getPinObject("Shape_in")
-    shin=shin.toNurbs().Face1
-    sf=shin.Surface
     points=self.getData("points")
     say("interpolate for {} points".format(len(points)))
+
+    shin=self.getPinObject("Shape_in")
+    if shin is None:
+        bs2d = Part.BSplineCurve()
+        tol=max(self.getData("tolerance"),1.)
+        #+# todo: problem with tolerance parameter - how to use it ?
+
+        bs2d.interpolate(points,PeriodicFlag=False)
+        self.setPinObject("Shape_out",bs2d.toShape())
+        self.outExec.call()
+        return
+
+    
+    
+    
+    shin=shin.toNurbs().Face1
+    sf=shin.Surface
+    
     uvs=[]
     pts2da=[sf.parameter(p) for p in points]
     pts2d=[]
@@ -3561,19 +3576,28 @@ def run_FreeCAD_false(self):
 ##ab hier neu 03.12.
 
 def run_FreeCAD_FloatToy(self):
+    #+# todo add scale and start parameter proc
     floats=[]
+    start=self.getData("start")
+    scale=self.getData("scale")
     for i in range(10):
         if i==0:
             v=self.getData("float")
         else:
             v=self.getData("float"+str(i))
-        floats += [v]
+        floats += [v*scale+start]
+
+    trailer=self.getData("trailer")
+    say("trailer",trailer)
+    floats += trailer
+    say("len floats",len(floats))
 
     self.setData("floats",floats)
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
     
 def run_FreeCAD_Tube(self):
+    #+# todo better normal for 3d curve
     floats=self.getData('parameter')
     radius=self.getData('radius')
 
@@ -3586,10 +3610,69 @@ def run_FreeCAD_Tube(self):
         r *= 0.1
         p=curve.value(f)
         t=curve.tangent(f)[0]
-        n=curve.normal(f)
-        h=FreeCAD.Vector(0,0,1)
-        n=t.cross(h)
+        if 0:
+            h=FreeCAD.Vector(0,0,1)
+            n=t.cross(h)
+        else:
+            n=curve.normal(f)
+            h=n.cross(t)
+            
         pts += [[p-h*r,p+n*r,p+h*r,p-n*r]]
+    
+    # aufrichten normale
+    z=pts[0]
+    pts2 =[z]
+    for i in range(len(pts)-1):
+        a=z
+        b=pts[i+1]
+        sums=[]
+        for j in range(4):
+            sums +=[sum([(a[k-j]-b[k]).Length for k in range(4)])]
+        say(sums.index(min(sums)))
+        index=sums.index(min(sums))
+        z=b[index:]+b[:index]
+        pts2 += [z]
+        
+    self.setData("points",pts2)
+    self.outExec.call()    
 
+
+
+def run_FreeCAD_centerOfMass(self):
+    #shape=self.getPinObject("Shape")
+    if 0:
+        t=self.getPinByName("Shape")
+
+        outArray = []
+        ySortedPins = sorted(t.affected_by, key=lambda pin: pin.owningNode().y)
+        for i in ySortedPins:
+            outArray.append(i.owningNode().getPinObject(i.name))
+
+    else:
+        outArray=self.getPinObjectsA("ShapeList")
+    
+    say(outArray)    
+        
+    pts=[f.CenterOfMass for f in outArray]
     self.setData("points",pts)
+    self.outExec.call()    
+
+
+
+def run_FreeCAD_listOfShapes(self):
+    
+    say()
+    say("list of vectors dump ...")
+    say("Hack recompute input nodes is active")
+    ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
+    b=[]
+    for i in ySortedPins:
+        # hack to get current values #+# todo debug
+        # i.owningNode().compute()
+        vv=i.owningNode().getPinObject(i.name)
+        say(i.name,vv)
+        b += [vv]
+    say(b)
+    self.setPinObjects("ShapeList",b)
+    self.setColor(a=0.7)
     self.outExec.call()    
