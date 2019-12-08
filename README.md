@@ -13,25 +13,38 @@ When integrated, the result is a visual Node Editor.
 
 ## Screencasts
 
-## v0.22
+#### v0.22
 
-  - https://youtu.be/7FInafkuuEI facedraw with pyflow
-  - https://youtu.be/zy8wqJsP9VI crooked stairs with treads
-  - https://youtu.be/8PUBl8KmUx0 mapping geom2d to surface
-  - https://youtu.be/PbRHFuk1ojk alpha shape
+  - facedraw with pyflow ([clip](https://youtu.be/7FInafkuuEI))
+  - crooked stairs with treads ([clip](https://youtu.be/zy8wqJsP9VI))
+  - mapping geom2d to surface ([clip](https://youtu.be/8PUBl8KmUx0))
+  - alpha shape ([clip](https://youtu.be/PbRHFuk1ojk))
 
-### v0.0.6
+<details>
+  <summary><b>Expand this section to see more screencasts</b></summary>
 
-  - https://youtu.be/fCelpH6e7Xc generator for vector array, grids and bspline surfaces
-  - https://youtu.be/H2B6_yldrj8 from  vectors to vectorlist to vectorarray to surface
-  - https://youtu.be/w5iJYJGBAQE from vectors to vectorlist to polygon
-  - https://youtu.be/g5ZAEO5CPWQ polygon with input pins for vectors 
+### Important Note
+To view the latest PyFlow/NodeEditor development screencasts go to either @microelly2's:  
 
-### first steps
+* website: http://freecadbuch.de/doku.php?id=pyflow
+* YouTube PyFlow [playlist](https://www.youtube.com/watch?v=RO3m7oK3AN8&list=PLIxaznuCUATKBEV6bkRLySstKxbGxrmlr)
 
-  - v0.0.4  https://youtu.be/XaBEMbWZxAM
-  - v0.0.3  https://youtu.be/9B2AxDQQDeg  
-  - v0.0.1  https://youtu.be/39VoYv0OTNU  
+Here are some highlight selections:
+
+#### v0.0.6
+
+  - generator for vector array, grids and bspline surfaces ([clip](https://youtu.be/fCelpH6e7Xc))
+  - from  vectors to vectorlist to vectorarray to surface ([clip](https://youtu.be/H2B6_yldrj8))
+  - from vectors to vectorlist to polygon ([clip](https://youtu.be/w5iJYJGBAQE))
+  - polygon with input pins for vectors ([clip](https://youtu.be/g5ZAEO5CPWQ))
+
+#### first steps
+
+  - v0.0.4 ([clip](https://youtu.be/XaBEMbWZxAM))
+  - v0.0.3 ([clip](https://youtu.be/9B2AxDQQDeg))
+  - v0.0.1 ([clip](https://youtu.be/39VoYv0OTNU))
+
+</details>
 
 ## Requirements
 
