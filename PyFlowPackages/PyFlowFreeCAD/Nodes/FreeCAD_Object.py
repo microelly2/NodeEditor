@@ -794,14 +794,14 @@ class FreeCAD_Ref(FreeCadNodeBase):
 
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin('Reload Shapes', 'ExecPin', None, self.compute)
-        self.inExec.description="force a reload of shape when the shape has chanched  inside FreeCAD"
+        self.inExec.description="force a reload of shape when the shape has changed inside FreeCAD"
 
         self.inExec = self.createInputPin('Adapt Selection', 'ExecPin', None, self.refresh)
         self.inExec.description="set the reference to another subshape which must be selected in FreeCAD before adapt is called"
 
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.objname = self.createInputPin("objectname", 'String')
-        self.objname.description="name of the part used for reference, this parameter is changed automaticly by the adapt button."
+        self.objname.description="name of the part used for reference, this parameter is changed automatically by the adapt button."
         self.objname.setData(name)
         self.objname="name of the FreeCAD object"
 

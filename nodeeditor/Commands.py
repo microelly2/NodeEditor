@@ -1612,8 +1612,8 @@ def getdescription(pin):
     if not pin.description.endswith(' instance'):
         return pin.description
     descriptions = {
-        'u':'coordiate in uv space',
-        'v':'2nd coordiate in uv space',
+		'u':'coordinate in uv space',
+		'v':'2nd coordinate in uv space',
         'Shape_out': 'resulting shape',
         'Compound_out': 'resulting shape as compound',
         'Shape_in': 'reference shape',
