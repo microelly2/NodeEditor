@@ -60,8 +60,14 @@ git clone https://github.com/microelly2/NodeEditor
 
 **Important Note**: Addon is still heavily developed and is shown here as a proof-of-concept for the time being.  
 1. Start FreeCAD
-2. 
-3. 
+2. Select PyFlow workbench from the workbench dropdown list
+3. In the FreeCAD python console test the installation of the required modules
+  ```python
+  # add code snippet here
+
+
+  ```
+4. 
 
 ## Documentation
 Documentation will start here http://freecadbuch.de/doku.php?id=pyflow
