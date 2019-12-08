@@ -64,8 +64,16 @@ Specifically:
     OCC version: 7.3.0
     Locale: German/Germany (de_DE)
 
+### Other Dependencies
 
-Python2 in not longer supported. The nodeeditor now works with the original PyFlow@wonderworks-software without extra modifications.
+* @microelly2's fork of PyFlow: https://github.com/microelly2/PyFlow  
+  * The original PyFlow repo is at https://github.com/wonderworks-software/PyFlow
+* [Qt.py](https://github.com/mottosso/Qt.py) a 'minimal Python 2 & 3 shim around all Qt bindings - PySide, PySide2, PyQt4 and PyQt5'
+* The FreeCAD NodeEditor from this repository: https://github.com/microelly2/NodeEditor
+
+### Important Notes
+* Python2 in not longer supported.  
+* FreeCAD NodeEditor is compatible with the original PyFlow@wonderworks-software without extra modifications (though we recommend using [@microelly2's fork](https://github.com/microelly2/PyFlow) nonetheless)
 
 ## Install
 
