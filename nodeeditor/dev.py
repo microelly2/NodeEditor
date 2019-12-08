@@ -3676,3 +3676,16 @@ def run_FreeCAD_listOfShapes(self):
     self.setPinObjects("ShapeList",b)
     self.setColor(a=0.7)
     self.outExec.call()    
+
+
+def run_shelfToy(self):
+    ''' the implemetnation of the toy shelf tool'''
+    
+    nodes=FreeCAD.PF.graphManager.get().getAllNodes()
+    nodes2 = sorted(nodes, key=lambda node: node.x)
+    say("selected Nodes ...")
+    for n in nodes2:
+     if n.getWrapper().isSelected():
+        say(n,n.x)
+
+    say("no action")

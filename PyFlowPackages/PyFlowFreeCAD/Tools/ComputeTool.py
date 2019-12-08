@@ -26,6 +26,10 @@ from Qt.QtWidgets import QFileDialog
 
 from nodeeditor.say import *
 
+import sys
+if sys.version_info[0] !=2:
+    from importlib import reload
+
 import os
 RESOURCES_DIR = os.path.dirname(os.path.realpath(__file__)) + "/res/"
 
@@ -82,3 +86,34 @@ class DeleteTool(ShelfTool):
                 say(n,n.x)
 
                 n.kill()
+
+class ToyTool(ShelfTool):
+    """docstring for PreviewTool."""
+    def __init__(self):
+        super( ToyTool, self).__init__()
+
+    @staticmethod
+    def toolTip():
+        return "Toy for Developer"
+
+    @staticmethod
+    def getIcon():
+        return QtGui.QIcon(RESOURCES_DIR + "toy.png")
+
+    @staticmethod
+    def name():
+        return str("ToyTool")
+
+    def do(self):
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        nodeeditor.dev.run_shelfToy(self)
+
+
+
+def toollist():
+    return [
+               ComputeTool,
+               DeleteTool,
+               ToyTool,
+    ]

@@ -1,5 +1,6 @@
 PACKAGE_NAME = 'PyFlowFreeCAD'
 
+
 from collections import OrderedDict
 from PyFlow.UI.UIInterfaces import IPackage
 
@@ -73,15 +74,15 @@ for n in nodelist():
 
 
 # tools
-
-from PyFlow.Packages.PyFlowFreeCAD.Tools.PreviewTool import PreviewTool
-from PyFlow.Packages.PyFlowFreeCAD.Tools.ComputeTool import ComputeTool, DeleteTool
-
 _TOOLS = OrderedDict()
 
+from PyFlow.Packages.PyFlowFreeCAD.Tools.PreviewTool import PreviewTool
 _TOOLS[PreviewTool.__name__] = PreviewTool
-_TOOLS[ComputeTool.__name__] = ComputeTool
-_TOOLS[DeleteTool.__name__] = DeleteTool
+
+from PyFlow.Packages.PyFlowFreeCAD.Tools.ComputeTool import toollist
+for t in toollist():
+	_TOOLS[t.__name__] = t
+
 
 from PyFlow.Packages.PyFlowFreeCAD.Factories.UINodeFactory import createUINode
 
