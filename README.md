@@ -88,13 +88,13 @@ Install the following packages into the local Module directory ~/.FreeCAD/Mod
 Addon is still heavily developed and is shown here as a proof-of-concept for the time being.  
 
 ## Documentation
-Documentation will start here http://freecadbuch.de/doku.php?id=pyflow
+Documentation is evolving at http://freecadbuch.de/doku.php?id=pyflow
 
 ## Feedback
-For feedback, questions, discussions, improvements etc... on this Addon, please use the [dedicated FreeCAD forum thread](https://forum.freecadweb.org/viewtopic.php?f=8&t=36299).
+For any feedback, questions, discussions, improvements etc... about this Addon, please use the [dedicated FreeCAD forum thread](https://forum.freecadweb.org/viewtopic.php?f=8&t=36299).
 
 ## Author
 [@microelly2](https://github.com/microelly2)  
 
 ## License
-MIT License
+MIT License (see [LICENSE](./LICENSE))
