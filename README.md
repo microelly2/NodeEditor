@@ -35,7 +35,9 @@ When integrated, the result is a visual Node Editor.
 
 ## Requirements
 
-    The current master works for this version of FreeCAD.
+The FreeCAD NodeEditor current master branch works on the FreeCAD [AppImage](https://www.freecadweb.org/wiki/AppImage) v0.19.18403 or greater.  
+Specifically:  
+
     OS: Ubuntu 14.04.6 LTS (Unity/ubuntu)
     Word size of OS: 64-bit
     Word size of FreeCAD: 64-bit
