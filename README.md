@@ -1,34 +1,56 @@
 # FreeCAD Node Editor
-A Node editor for FreeCAD using PyFLow
+A visual node editor for FreeCAD based on [PyFlow](https://wonderworks-software.github.io/PyFlow).
 
-## Screenshots
 ![v0.0.3 screenshot](https://user-images.githubusercontent.com/4140247/60964703-fd265580-a2e1-11e9-906b-7dd91a754785.png)
+
+## Status
+Under heavy development (Alpha)
+
+## About
+[FreeCAD](https://www.freecadweb.org) is an open source 3D CAD/CAM solution with a Python API.  
+[PyFlow](https://wonderworks-software.github.io/PyFlow) is a visual scripting framework built in Python.  
+When integrated, the result is a visual Node Editor.
 
 ## Screencasts
 
-## v0.22
+#### v0.22
 
-  - https://youtu.be/7FInafkuuEI facedraw with pyflow
-  - https://youtu.be/zy8wqJsP9VI crooked stairs with treads
-  - https://youtu.be/8PUBl8KmUx0 mapping geom2d to surface
-  - https://youtu.be/PbRHFuk1ojk alpha shape
+  - facedraw with pyflow ([clip](https://youtu.be/7FInafkuuEI))
+  - crooked stairs with treads ([clip](https://youtu.be/zy8wqJsP9VI))
+  - mapping geom2d to surface ([clip](https://youtu.be/8PUBl8KmUx0))
+  - alpha shape ([clip](https://youtu.be/PbRHFuk1ojk))
 
-### v0.0.6
+<details>
+  <summary><b>Expand this section to see more screencasts</b></summary>
 
-  - https://youtu.be/fCelpH6e7Xc generator for vector array, grids and bspline surfaces
-  - https://youtu.be/H2B6_yldrj8 from  vectors to vectorlist to vectorarray to surface
-  - https://youtu.be/w5iJYJGBAQE from vectors to vectorlist to polygon
-  - https://youtu.be/g5ZAEO5CPWQ polygon with input pins for vectors 
+### Important Note
+To view the latest PyFlow/NodeEditor development screencasts go to either @microelly2's:  
 
-### first steps
+* website: http://freecadbuch.de/doku.php?id=pyflow
+* YouTube PyFlow [playlist](https://www.youtube.com/watch?v=RO3m7oK3AN8&list=PLIxaznuCUATKBEV6bkRLySstKxbGxrmlr)
 
-  - v0.0.4  https://youtu.be/XaBEMbWZxAM
-  - v0.0.3  https://youtu.be/9B2AxDQQDeg  
-  - v0.0.1  https://youtu.be/39VoYv0OTNU  
+Here are some highlight selections:
+
+#### v0.0.6
+
+  - generator for vector array, grids and bspline surfaces ([clip](https://youtu.be/fCelpH6e7Xc))
+  - from  vectors to vectorlist to vectorarray to surface ([clip](https://youtu.be/H2B6_yldrj8))
+  - from vectors to vectorlist to polygon ([clip](https://youtu.be/w5iJYJGBAQE))
+  - polygon with input pins for vectors ([clip](https://youtu.be/g5ZAEO5CPWQ))
+
+#### first steps
+
+  - v0.0.4 ([clip](https://youtu.be/XaBEMbWZxAM))
+  - v0.0.3 ([clip](https://youtu.be/9B2AxDQQDeg))
+  - v0.0.1 ([clip](https://youtu.be/39VoYv0OTNU))
+
+</details>
 
 ## Requirements
 
-    The current master works for this version of FreeCAD.
+The FreeCAD NodeEditor current master branch works on the FreeCAD [AppImage](https://www.freecadweb.org/wiki/AppImage) v0.19.18403 or greater.  
+Specifically:  
+
     OS: Ubuntu 14.04.6 LTS (Unity/ubuntu)
     Word size of OS: 64-bit
     Word size of FreeCAD: 64-bit
@@ -42,8 +64,16 @@ A Node editor for FreeCAD using PyFLow
     OCC version: 7.3.0
     Locale: German/Germany (de_DE)
 
+### Other Dependencies
 
-Python2 in not longer supported. The nodeeditor now works with the original PyFlow@wonderworks-software without extra modifications.
+* @microelly2's fork of PyFlow: https://github.com/microelly2/PyFlow  
+  * The original PyFlow repo is at https://github.com/wonderworks-software/PyFlow
+* [Qt.py](https://github.com/mottosso/Qt.py) a 'minimal Python 2 & 3 shim around all Qt bindings - PySide, PySide2, PyQt4 and PyQt5'
+* The FreeCAD NodeEditor from this repository: https://github.com/microelly2/NodeEditor
+
+### Important Notes
+* Python2 in not longer supported.  
+* FreeCAD NodeEditor is compatible with the original PyFlow@wonderworks-software without extra modifications (though we recommend using [@microelly2's fork](https://github.com/microelly2/PyFlow) nonetheless)
 
 ## Install
 
@@ -70,13 +100,13 @@ git clone https://github.com/microelly2/NodeEditor
 4. 
 
 ## Documentation
-Documentation will start here http://freecadbuch.de/doku.php?id=pyflow
+Documentation is evolving at http://freecadbuch.de/doku.php?id=pyflow
 
 ## Feedback
-For feedback, questions, discussions, improvements etc... on this Addon, please use the [dedicated FreeCAD forum thread](https://forum.freecadweb.org/viewtopic.php?f=8&t=36299).
+For any feedback, questions, discussions, improvements etc... about this Addon, please use the [dedicated FreeCAD forum thread](https://forum.freecadweb.org/viewtopic.php?f=8&t=36299).
 
 ## Author
 [@microelly2](https://github.com/microelly2)  
 
 ## License
-MIT License
+MIT License (see [LICENSE](./LICENSE))
