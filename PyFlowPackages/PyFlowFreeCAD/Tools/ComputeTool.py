@@ -18,6 +18,8 @@ from nine import str
 from PyFlow.UI.Tool.Tool import ShelfTool
 from PyFlow.Core.Common import Direction
 
+import FreeCADGui
+
 
 
 
@@ -110,10 +112,35 @@ class ToyTool(ShelfTool):
         nodeeditor.dev.run_shelfToy(self)
 
 
+class FreeCADTool(ShelfTool):
+    """docstring for PreviewTool."""
+    def __init__(self):
+        super( FreeCADTool, self).__init__()
+
+    @staticmethod
+    def toolTip():
+        return "FreeCAD mainWindow"
+
+    @staticmethod
+    def getIcon():
+        return QtGui.QIcon(RESOURCES_DIR + "freecad.png")
+
+    @staticmethod
+    def name():
+        return str("FreeCADTool")
+
+    def do(self):
+        mw=FreeCADGui.getMainWindow()
+        mw.hide()
+        mw.show()
+
+
 
 def toollist():
     return [
                ComputeTool,
                DeleteTool,
+               
+               FreeCADTool,
                ToyTool,
     ]

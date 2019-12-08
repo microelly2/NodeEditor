@@ -232,8 +232,6 @@ if FreeCAD.GuiUp:
 
     current += [c3bI(["nodeeditor"], always, 'Commands', 'shutdown',icon=None)]
     if devmode():
-        pass
-    if 1:
         current += [c3bI(["nodeeditor"], always, 'Commands', 'test_AA',icon="/../icons/AA")]
         current += [c3bI(["nodeeditor"], always, 'Commands', 'test_BB',icon="/../icons/BB")]
         current += [c3bI(["nodeeditor"], always, 'Commands', 'test_CC',icon="/../icons/CC")]
@@ -243,20 +241,20 @@ if FreeCAD.GuiUp:
         current += [c3bI(["nodeeditor"], always, 'Commands', 'T2',icon=None)]
         current += [c3bI(["nodeeditor"], always, 'Commands', 'T3',icon=None)]
 
+    current += [c3bI(["nodeeditor"], always, 'Commands', 'show PyFlow',icon="/../icons/pyflow.png")]
     current += [c3bI(["nodeeditor"], always, 'Commands', 'hide PyFlow',icon=None)]
-    current += [c3bI(["nodeeditor"], always, 'Commands', 'show PyFlow',icon=None)]
     current += [c3bI(["nodeeditor"], always, 'Commands', 'save Graph',icon=None)]
     current += [c3bI(["nodeeditor"], always, 'Commands', 'load Graph',icon=None)]
     current += [c3bI(["nodeeditor"], always, 'Commands', 'clear Graph',icon=None)]
 
-    current += [c3bI(["nodeeditor"], always, 'Commands', 'create Blinker',icon=None)]
-    current += [c3bI(["nodeeditor"], always, 'Commands', 'create Receiver',icon=None)]
+    current += [c3bI(["nodeeditor"], always, 'Commands', 'create Blinker',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/freecad_blinker.svg')]
+    current += [c3bI(["nodeeditor"], always, 'Commands', 'create Receiver',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/freecad_receiver.svg')]
 
     if devmode():
-        current += [c3bI(["nodeeditor"], always, 'Commands', 'save All',icon=None)]
-        current += [c3bI(["nodeeditor"], always, 'Commands', 'load All',icon=None)]
+        _current += [c3bI(["nodeeditor"], always, 'Commands', 'save All',icon=None)]
+        _current += [c3bI(["nodeeditor"], always, 'Commands', 'load All',icon=None)]
     #   current += [c3bI(["nodeeditor"], always, 'Commands', 'load All 2',icon=None)]
-        current += [c3bI(["nodeeditor"], always, 'Commands', 'load File',icon=None)]
+        _current += [c3bI(["nodeeditor"], always, 'Commands', 'load File',icon=None)]
     #   current += [c3bI(["nodeeditor"], always, 'Commands', 'unload modules',icon=None)]
         _current += [c3bI(["nodeeditor"], always, 'Commands', 'PyFlowtoDockWidget',icon=None)]
 
