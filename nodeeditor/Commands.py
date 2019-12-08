@@ -1619,8 +1619,13 @@ def T3():
 
 
 			try:
+				
+				
 				say("=====FC"+c[7:]+"=====")
-
+				RESOURCES_DIR="/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/" 
+				image=RESOURCES_DIR + "/"+ c.lower()+".svg"
+				if os.path.exists(image):
+					say("{{:icons_pyflow:"+c.lower()+".svg|}}")
 				say("/*")
 				node = classNodes[c]("nodeName")
 				say("*/")
@@ -1698,6 +1703,8 @@ def T3():
 		for c in doclevel[k]:
 			say("[[nodes::{}]]".format(c[8:]))
 			say("[[start#fc_{}|/°/  ]]".format(c[8:]))
+
+#https://raw.githubusercontent.com/microelly2/NodeEditor/master/PyFlowPackages/PyFlowFreeCAD/UI/FreeCAD_Box.svg
 
 
 def reset():

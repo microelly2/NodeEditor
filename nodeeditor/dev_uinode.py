@@ -61,7 +61,7 @@ import os
 def loadimage(self,RESOURCES_DIR):
 	'''load the icon for a node'''
 
-	image=RESOURCES_DIR + "/"+ str(self._rawNode.__class__.__name__)+".svg"
+	image=RESOURCES_DIR + "/"+ str(self._rawNode.__class__.__name__).lower()+".svg"
 	if os.path.exists(image):
 		self.image = image
 		self.svgIcon.setElementId("ALL")
