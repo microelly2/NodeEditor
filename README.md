@@ -47,15 +47,21 @@ Python2 in not longer supported. The nodeeditor now works with the original PyFl
 
 ## Install
 
-Install the following packages into the local Module directory ~/.FreeCAD/Mod
+Install the following packages into the local Module directory `~/.FreeCAD/Mod`
 
-  - PyFlow from https://github.com/microelly2/PyFlow
-  - Qt.py from https://github.com/mottosso/Qt.py  
-  - NodeEditor from https://github.com/microelly2/NodeEditor
-
+```bash
+cd ~/.FreeCAD/Mod
+git clone https://github.com/microelly2/PyFlow
+git clone https://github.com/mottosso/Qt.py
+git clone https://github.com/microelly2/NodeEditor
+```
 
 ## Usage
-Addon is still heavily developed and is shown here as a proof-of-concept for the time being.  
+
+**Important Note**: Addon is still heavily developed and is shown here as a proof-of-concept for the time being.  
+1. Start FreeCAD
+2. 
+3. 
 
 ## Documentation
 Documentation will start here http://freecadbuch.de/doku.php?id=pyflow
