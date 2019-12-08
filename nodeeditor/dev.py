@@ -3688,4 +3688,40 @@ def run_shelfToy(self):
      if n.getWrapper().isSelected():
         say(n,n.x)
 
-    say("no action")
+    mw=FreeCADGui.getMainWindow()
+    say(mw)
+    mw.hide()
+    mw.show()
+    say("!no action")
+
+
+
+def run_PF_APP_WindowMinimized(app,event):
+    '''triggered from PyFlow.App'''
+
+    FreeCAD.savePFData = pfwrap.getInstance().graphManager.get().serialize()
+
+    
+
+def run_PF_APP_WindowNOMinimized(app,event):
+    '''triggered from PyFlow.App'''
+
+    import nodeeditor.pfwrap as pfwrap
+
+    pf=pfwrap.getInstance()
+    for node in pfwrap.getInstance().graphManager.get().getAllNodes():
+        node.kill()
+    pfwrap.deleteInstance()
+    del(FreeCAD.PF)
+    try:
+       pf.hide()
+    except:
+        pass
+
+    pf=pfwrap.getInstance()
+    pf.show()
+    instance=pfwrap.getInstance()
+    pf.graphManager.get().clear()
+    pf.loadFromData(FreeCAD.savePFData)
+    
+    say("DONE")
