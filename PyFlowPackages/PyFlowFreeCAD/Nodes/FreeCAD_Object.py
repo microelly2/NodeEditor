@@ -1416,7 +1416,7 @@ class FreeCAD_Compound(FreeCadNodeBase):
 
 
 
-class FreeCAD_Plot(NodeBase):
+class FreeCAD_Plot(FreeCadNodeBase):
     '''
     dummy for tests
     '''
@@ -2144,6 +2144,8 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
         t = self.createInputPin("ROT", 'RotationPin',(8,9,0))
         t = self.createOutputPin("ROT_out", 'RotationPin',(3,4,5))
+        t = self.createInputPin("PM", 'PlacementPin',(8,9,0))
+        t = self.createOutputPin("PM_out", 'PlacementPin',(3,4,5))
 
 
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')

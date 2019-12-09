@@ -1194,18 +1194,19 @@ def createAllNodesforTests():
     nn += nodelist()
 
     from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
-    nn += nodelist()[0:12]
-    # 12 plot show fdheler
-    nn += nodelist()[13:]
+    nn += nodelist()
 
     from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
     nn += nodelist()[0:1]
     # tripod placement reduce fehler 
-    nn += nodelist()[3:12]
+    nn += nodelist()[2:12]
     # 12 13 14 
     nn += nodelist()[15:]
 
+    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
+    nn = nodelist()[1:2] # placement 
     
+
     
     x=0
     y=0

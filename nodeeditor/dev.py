@@ -3728,9 +3728,28 @@ def run_PF_APP_WindowNOMinimized(app,event):
 
 
 def run_FreeCAD_Toy(self):
-    say("!!",self.getData("ROT"))
-    self.setData("ROT_out",self.getData("ROT"))
-    self.setData("ROT_out",FreeCAD.Rotation(5,6,7))
-    self.setData("ROT_out",[5,6,7])
+    if 0:
+        say("!!",self.getData("ROT"))
+        self.setData("ROT_out",self.getData("ROT"))
+        self.setData("ROT_out",FreeCAD.Rotation(5,6,7))
+        self.setData("ROT_out",[5,6,7])
+
+    say("!! PM in",self.getData("PM"))
+    yy=self.getData("PM")
+    say("---------------------------",yy)
+    return
+    say(yy.__class__.__name__)
+    try:
+        pmin=FreeCAD.Placement(FreeCAD.Matrix(yy))
+        say("pmin",pmin)
+    except:
+        pass
+    
+    #self.setData("PM_out",self.getData("PM"))
+    #self.setData("PM_out",))
+    pm=FreeCAD.Placement(FreeCAD.Matrix(5,6,7,6,7,8,9,1,2))
+    say(pm)
+    self.setData("PM_out",list(pm.toMatrix().A))
+
     sayl()
     

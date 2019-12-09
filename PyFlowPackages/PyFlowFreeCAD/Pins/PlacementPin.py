@@ -1,6 +1,9 @@
 from FreeCAD import Placement
 from nodeeditor.say import *
 
+class MPlacement(Placement):
+    pass
+
 import json
 
 from PyFlow.Core import PinBase
@@ -9,8 +12,10 @@ from PyFlow.Core.Common import *
 
 class PlacementEncoder(json.JSONEncoder):
     def default(self, vec3):
+        
         if isinstance(vec3, Placement):
-            return {Placement.__name__: []}
+            return {Placement.__name__: list(vec3.toMatrix().A)}
+        return {Placement.__name__: list(vec3.toMatrix().A)}
         json.JSONEncoder.default(self, vec3)
 
 
@@ -19,15 +24,15 @@ class PlacementDecoder(json.JSONDecoder):
         super(PlacementDecoder, self).__init__(object_hook=self.object_hook, *args, **kwargs)
 
     def object_hook(self, vec3Dict):
-        return Placement()
-        #return Placement(vec3Dict[Placement.__name__])
+        return vec3Dict[Placement.__name__]
+        return Placement(*vec3Dict[Placement.__name__])
 
 
 class PlacementPin(PinBase):
     """doc string for FloatPlacementPin"""
     def __init__(self, name, parent, direction, **kwargs):
         super(PlacementPin, self).__init__(name, parent, direction, **kwargs)
-        self.setDefaultValue(Placement())
+        self.setDefaultValue([])
 
     @staticmethod
     def IsValuePin():
@@ -43,7 +48,7 @@ class PlacementPin(PinBase):
 
     @staticmethod
     def pinDataTypeHint():
-        return 'FloatPlacementPin', Placement()
+        return 'PlacementPin', []
 
     @staticmethod
     def jsonEncoderClass():
@@ -55,7 +60,7 @@ class PlacementPin(PinBase):
 
     @staticmethod
     def internalDataStructure():
-        return Placement
+        return MPlacement
 
     @staticmethod
     def processData(data):
