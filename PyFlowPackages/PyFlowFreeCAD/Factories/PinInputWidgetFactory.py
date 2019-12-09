@@ -485,7 +485,9 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
         #+# todo
         #return RotationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'PlacementPin':
-        return PlacementInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
+        return None
+        #+# todo
+        #return PlacementInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'ArrayPin':
         return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'FCobjPin':

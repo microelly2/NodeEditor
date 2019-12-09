@@ -1196,32 +1196,32 @@ def createAllNodesforTests():
     from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
     nn += nodelist()
 
-    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
-    nn += nodelist()[0:1]
-    # tripod placement reduce fehler 
-    nn += nodelist()[2:12]
-    # 12 13 14 
-    nn += nodelist()[15:]
-
-    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
-    nn = nodelist()[1:2] # placement 
     
+    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
+    nn += nodelist()
+  
 
     
-    x=0
-    y=0
+    x0=-300
+    x=x0
+    y=-400
     nodes={}
     
     for i,n in enumerate(nn):
-        say("-----------",i, n.__name__)
+        #if i>13:break
+        FreeCADGui.updateGui()
         name=n.__name__
+        if name=="FreeCAD_Tread":
+            say("ignore", name)
+            continue 
+        say("-----------",i, n.__name__)
         node=pfwrap.createNode('PyFlowFreeCAD',name,name)
         node.setPosition(x,y)
         gg.addNode(node)
         nodes[name] =node
         x+=200
         if x>= 2000:
-            x=0
+            x=x0
             y+= 300
 
     refresh_gui()

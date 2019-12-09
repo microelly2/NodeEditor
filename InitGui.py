@@ -242,13 +242,14 @@ if FreeCAD.GuiUp:
         current += [c3bI(["nodeeditor"], always, 'Commands', 'T3',icon=None)]
 
     current += [c3bI(["nodeeditor"], always, 'Commands', 'show PyFlow',icon="/../icons/pyflow.png")]
-    current += [c3bI(["nodeeditor"], always, 'Commands', 'hide PyFlow',icon=None)]
+    _current += [c3bI(["nodeeditor"], always, 'Commands', 'hide PyFlow',icon=None)]
     current += [c3bI(["nodeeditor"], always, 'Commands', 'save Graph',icon=None)]
     current += [c3bI(["nodeeditor"], always, 'Commands', 'load Graph',icon=None)]
     current += [c3bI(["nodeeditor"], always, 'Commands', 'clear Graph',icon=None)]
 
-    current += [c3bI(["nodeeditor"], always, 'Commands', 'create Blinker',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/freecad_blinker.svg')]
-    current += [c3bI(["nodeeditor"], always, 'Commands', 'create Receiver',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/freecad_receiver.svg')]
+    if devmode():
+        _current += [c3bI(["nodeeditor"], always, 'Commands', 'create Blinker',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/freecad_blinker.svg')]
+        _current += [c3bI(["nodeeditor"], always, 'Commands', 'create Receiver',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/freecad_receiver.svg')]
 
     if devmode():
         _current += [c3bI(["nodeeditor"], always, 'Commands', 'save All',icon=None)]
@@ -261,7 +262,7 @@ if FreeCAD.GuiUp:
     if devmode():
         #test scenes
         _current += [c3bI(["scenes"], always, 'Commands', 'create Polygon From Coordinate Lists with numpy',icon=None)]
-        _current += [c3bI(["scenes"], always, 'Commands', 'create Object With All Properties',icon=None)]
+        
         _current += [c3bI(["scenes"], always, 'Commands', 'PartExplorer SubshapeIndex and Plot',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'draw a double sinus curve',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'create a VectorArray to play',icon=None)]
@@ -275,9 +276,9 @@ if FreeCAD.GuiUp:
         _current += [c3bI(["scenes"], always, 'Commands', 'QtEnvironment',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'crossbeam example',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'play with FreeCAD_Array',icon=None)]
+        _current += [c3bI(["tests"], always, 'Commands', 'create Object With All Properties',icon=None)]
 
 
-        _current += [c3bI(["tests"], always, 'Commands', 'create All Nodes for Tests',icon=None)]
         _current += [c3bI(["tests"], always, 'Commands', 'run Test for All Nodes',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'view3D Ref and LOD',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'view3D Example',icon=None)]
@@ -286,10 +287,11 @@ if FreeCAD.GuiUp:
         _current += [c3bI(["scenes"], always, 'Commands', 'Voronoi for Pointcloud',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'Geom2d Nodes',icon=None)]
 
-    current += [c3bI(["scenes"], always, 'Commands', 'createBePlane',icon=None)]
-    current += [c3bI(["scenes"], always, 'Commands', 'create some parts',icon=None)]
-    current += [c3bI(["scenes"], always, 'Commands', 'display Tools',icon=None)]
-    current += [c3bI(["scenes"], always, 'Commands', 'display Preferences Window',icon=None)]
+    _current += [c3bI(["tests"], always, 'Commands', 'create All Nodes for Tests',icon=None)]
+    current += [c3bI(["tools"], always, 'Commands', 'createBePlane',icon=None)]
+    current += [c3bI(["tools"], always, 'Commands', 'create some parts',icon=None)]
+    current += [c3bI(["tools"], always, 'Commands', 'display Tools',icon=None)]
+    _current += [c3bI(["tools"], always, 'Commands', 'display Preferences Window',icon=None)]
 
 #   _current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 #   _current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]

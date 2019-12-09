@@ -3037,7 +3037,10 @@ def run_FreeCAD_Blinker(self):
 
 
     def looper(j):
-        j=self.getData("loops")
+        try:
+            j=self.getData("loops")
+        except:
+            return
         say("################# vSTART Looper",j)
         for i in range(j):
             if self.stopped:
