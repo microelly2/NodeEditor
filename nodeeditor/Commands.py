@@ -1746,7 +1746,7 @@ def T3():
         say("====={}=====".format(k))
         for c in kats[k]:
             say("[[nodes::{}]]".format(c[8:]))
-            say("[[start#fc_{}|/°/  ]]".format(c[8:]))
+            say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
 
     say("======Nodes by doc level======")
     kl=list(doclevel.keys())
@@ -1756,7 +1756,7 @@ def T3():
         say("====={}=====".format(k))
         for c in doclevel[k]:
             say("[[nodes::{}]]".format(c[8:]))
-            say("[[start#fc_{}|/°/  ]]".format(c[8:]))
+            say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
     
     say("number of nodes {}".format(len(cnks)))
 
