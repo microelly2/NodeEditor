@@ -1846,3 +1846,18 @@ def test_BB():
 def test_CC():     
     allnodes=createAllNodesforTests()
     
+
+
+def createnodewithallpins():
+    import  PyFlow.Packages.PyFlowFreeCAD
+    pincs=PyFlow.Packages.PyFlowFreeCAD.PyFlowFreeCAD.GetPinClasses()
+  
+
+    instance=pfwrap.getInstance()
+    clearGraph()
+    gg=pfwrap.getGraphManager().getAllGraphs()[0]
+    toy = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Toy","aToy")
+    gg.addNode(toy)
+
+    say(toy)
+    refresh_gui()    

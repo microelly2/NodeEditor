@@ -3731,6 +3731,8 @@ def run_PF_APP_WindowNOMinimized(app,event):
 
 
 def run_FreeCAD_Toy(self):
+    sayl()
+    return
     if 0:
         say("!!",self.getData("ROT"))
         self.setData("ROT_out",self.getData("ROT"))

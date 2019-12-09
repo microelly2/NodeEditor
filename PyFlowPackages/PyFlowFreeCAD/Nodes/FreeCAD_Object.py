@@ -2134,6 +2134,7 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        '''
         self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
 
         self.trace = self.createInputPin('flag', 'BoolPin')
@@ -2161,6 +2162,25 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
         name="MyToy"
         self.objname.setData(name)
+        '''
+        
+        import  PyFlow.Packages.PyFlowFreeCAD
+        pincs=PyFlow.Packages.PyFlowFreeCAD.PyFlowFreeCAD.GetPinClasses()
+    
+
+        for p in pincs:
+            say("!",p)
+            self.createInputPin(str(p)+"_in",str(p))
+            self.createOutputPin(str(p)+"_out",str(p))
+
+        import  PyFlow.Packages.PyFlowBase
+        pincs=PyFlow.Packages.PyFlowBase.PyFlowBase.GetPinClasses()
+    
+
+        for p in pincs:
+            say("!",p)
+            self.createInputPin(str(p)+"_in",str(p))
+            self.createOutputPin(str(p)+"_out",str(p))
 
 
     @staticmethod

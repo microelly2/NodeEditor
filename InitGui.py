@@ -288,6 +288,7 @@ if FreeCAD.GuiUp:
         _current += [c3bI(["scenes"], always, 'Commands', 'Geom2d Nodes',icon=None)]
 
     _current += [c3bI(["tests"], always, 'Commands', 'create All Nodes for Tests',icon=None)]
+    _current += [c3bI(["tests"], always, 'Commands', 'create node with all pins',icon=None)]
     current += [c3bI(["tools"], always, 'Commands', 'createBePlane',icon=None)]
     current += [c3bI(["tools"], always, 'Commands', 'create some parts',icon=None)]
     current += [c3bI(["tools"], always, 'Commands', 'display Tools',icon=None)]
