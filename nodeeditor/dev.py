@@ -3725,3 +3725,12 @@ def run_PF_APP_WindowNOMinimized(app,event):
     pf.loadFromData(FreeCAD.savePFData)
     
     say("DONE")
+
+
+def run_FreeCAD_Toy(self):
+    say("!!",self.getData("ROT"))
+    self.setData("ROT_out",self.getData("ROT"))
+    self.setData("ROT_out",FreeCAD.Rotation(5,6,7))
+    self.setData("ROT_out",[5,6,7])
+    sayl()
+    

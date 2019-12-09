@@ -2142,7 +2142,8 @@ class FreeCAD_Toy(FreeCadNodeBase):
         t.enableOptions(PinOptions.AllowMultipleConnections)
         t.disableOptions(PinOptions.SupportsOnlyArrays)
 
-
+        t = self.createInputPin("ROT", 'RotationPin',(8,9,0))
+        t = self.createOutputPin("ROT_out", 'RotationPin',(3,4,5))
 
 
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')

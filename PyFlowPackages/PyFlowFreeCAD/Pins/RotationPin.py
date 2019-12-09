@@ -7,12 +7,20 @@ import json
 from PyFlow.Core import PinBase
 from PyFlow.Core.Common import *
 
+class MRotation(Rotation):
+    
+    def __init__(self, *args,**kvargs):
+        say("MRotation kv",kvargs)
+        say("MRO args",args)
+        super(MRotation, self).__init__(*args,**kvargs)
+        say("MRotation ---------------- done")
+    pass
 
 class RotationEncoder(json.JSONEncoder):
     def default(self, vec3):
         if isinstance(vec3, Rotation):
-            return {Rotation.__name__: []}
-        json.JSONEncoder.default(self, vec3)
+            return {Rotation.__name__: vec3.toEuler()}
+        json.JSONEncoder.default(self, vec3.toEuler())
 
 
 class RotationDecoder(json.JSONDecoder):
@@ -20,15 +28,14 @@ class RotationDecoder(json.JSONDecoder):
         super(RotationDecoder, self).__init__(object_hook=self.object_hook, *args, **kwargs)
 
     def object_hook(self, vec3Dict):
-        return Rotation()
-        #return Rotation(vec3Dict[Rotation.__name__])
+        return Rotation(*vec3Dict[Rotation.__name__])
 
 
 class RotationPin(PinBase):
     """doc string for FloatRotationPin"""
     def __init__(self, name, parent, direction, **kwargs):
         super(RotationPin, self).__init__(name, parent, direction, **kwargs)
-        self.setDefaultValue(FreeCAD.Rotation())
+        self.setDefaultValue([0,0,0])
 
     @staticmethod
     def IsValuePin():
@@ -44,7 +51,7 @@ class RotationPin(PinBase):
 
     @staticmethod
     def pinDataTypeHint():
-        return 'RotationPin', Rotation()
+        return 'RotationPin', list(Rotation(0,0,0).toEuler())
 
     @staticmethod
     def jsonEncoderClass():
@@ -56,7 +63,7 @@ class RotationPin(PinBase):
 
     @staticmethod
     def internalDataStructure():
-        return Rotation
+        return MRotation
 
     @staticmethod
     def processData(data):

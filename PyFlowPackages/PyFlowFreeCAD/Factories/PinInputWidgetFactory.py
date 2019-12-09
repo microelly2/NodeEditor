@@ -481,7 +481,9 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     if dataType == 'VectorPin':
         return VectorInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'RotationPin':
-        return RotationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
+        return None
+        #+# todo
+        #return RotationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'PlacementPin':
         return PlacementInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'ArrayPin':
