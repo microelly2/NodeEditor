@@ -93,11 +93,26 @@ git clone https://github.com/microelly2/NodeEditor
 2. Select PyFlow workbench from the workbench dropdown list
 3. In the FreeCAD python console test the installation of the required modules
   ```python
-  # add code snippet here
+import Qt
+>>> Qt
+#<module 'Qt' from '/home/me/.FreeCAD/Mod.PyFlow/Qt.py-master/Qt.py'>
+print(Qt)
+#<module 'Qt' from '/home/me/.FreeCAD/Mod.PyFlow/Qt.py-master/Qt.py'>
+import blinker
+print(blinker)
+#<module 'blinker' from '/usr/local/lib/python3.4/dist-packages/blinker/__init__.py'>
+import PyFlow
+print(PyFlow)
+#<module 'PyFlow' from '/home/me/.FreeCAD/Mod.PyFlow/PyFlow/PyFlow/__init__.py'>
+import numpy
+print(numpy)
+#<module 'numpy' from '/tmp/.mount_FreeCAjzH7MR/usr/lib/python3.7/site-packages/numpy/__init__.py'>
+import nodeeditor
+```
+4. Open the PyFlow Workbench
+5. run the Script "create all Nodes for Test"  from Menu tests
+6. run the Script "run Test for All Nodes"  from Menu tests
 
-
-  ```
-4. 
 
 ## Documentation
 Documentation is evolving at http://freecadbuch.de/doku.php?id=pyflow
