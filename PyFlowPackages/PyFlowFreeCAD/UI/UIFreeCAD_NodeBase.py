@@ -6,7 +6,7 @@ from nodeeditor.say import *
 from PyFlow.UI.Utils.stylesheet import Colors
 
 import os
-RESOURCES_DIR=os.path.dirname(__file__)
+RESOURCES_DIR=os.path.dirname(__file__)+"/icons/"
 
 import sys
 if sys.version_info[0] !=2:
