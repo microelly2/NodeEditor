@@ -68,7 +68,7 @@ def loadimage(self,RESOURCES_DIR):
 
 		self.svgIcon.setElementId("layer1")
 	else:
-		self.image = RESOURCES_DIR + "/Freecad.svg"
+		self.image = RESOURCES_DIR + "/freecad.svg"
 		self.svgIcon.setElementId("layer1")
 
 	self.svgIcon.setScale(0.5)

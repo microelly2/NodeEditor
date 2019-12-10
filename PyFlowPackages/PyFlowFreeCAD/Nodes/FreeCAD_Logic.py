@@ -371,7 +371,7 @@ class FreeCAD_Tube(FreeCadNodeBase):
 
     @staticmethod
     def category():
-        return 'Information'
+        return 'Construction'
 
 
 

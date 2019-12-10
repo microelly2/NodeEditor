@@ -145,8 +145,8 @@ class FreeCAD_uIso(FreeCadNodeBase):
         description="Face reference"
         a=self.createInputPin('u', 'FloatPin',5)
         a.recomputeNode=True
-        self.createInputPin("display", 'BoolPin', True).description="option for display edge as part"
-        self.createOutputPin('Edge_out', 'ShapePin').description="Shape for the curve"
+        #self.createInputPin("display", 'BoolPin', True).description="option for display edge as part"
+        self.createOutputPin('Shape_out', 'EdgePin').description="Shape for the curve"
 
 
     @staticmethod
@@ -178,8 +178,7 @@ class FreeCAD_vIso(FreeCadNodeBase):
         self.createInputPin('Face_in', 'ShapePin')
         a=self.createInputPin('v', 'FloatPin',5)
         a.recomputeNode=True
-        self.createInputPin("display", 'BoolPin', True).description="option for display edge as part"
-        self.createOutputPin('Edge_out', 'ShapePin').description="Shape for the curve"
+        self.createOutputPin('Shape_out', 'EdgePin').description="Shape for the curve"
 
 
     @staticmethod
@@ -212,7 +211,7 @@ class FreeCAD_uvGrid(FreeCadNodeBase):
 #        self.createInputPin("display", 'BoolPin', True)
         self.createOutputPin('uEdges', 'ShapeListPin').description="list of uIso curve edges"
         self.createOutputPin('vEdges', 'ShapeListPin').description="list of vIso curve edges"
-        self.createOutputPin('Compound_out', 'ShapePin').description="all curves as compound"
+        self.createOutputPin('Shape_out', 'ShapePin').description="all curves as compound"
 
     @staticmethod
     def description():
@@ -249,13 +248,14 @@ class FreeCAD_Voronoi(FreeCadNodeBase):
         a.recomputeNode=True
         a.setInputWidgetVariant("MyINPUTVARIANT")
 
-        a=self.createInputPin("flipArea", 'BoolPin', True)
-        a.recomputeNode=True
         self.createInputPin("indB", 'IntPin', True)
         self.createOutputPin('uEdges', 'ShapeListPin')
         self.createOutputPin('vEdges', 'ShapeListPin')
         self.createInputPin('uList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
         self.createInputPin('vList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
+
+        a=self.createInputPin("flipArea", 'BoolPin', True)
+        a.recomputeNode=True
 
         self.createOutputPin('Points', 'ShapePin')
         self.createOutputPin('convexHull', 'ShapePin')

@@ -490,10 +490,10 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
         #return PlacementInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'ArrayPin':
         return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
-    if dataType == 'FCobjPin':
-        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
-    if dataType == 'ShapePin':
-        return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
+    #if dataType == 'FCobjPin':
+    #    return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
+    #if dataType == 'ShapePin':
+    #    return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'EnumerationPin':
         return EnumerationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     return None

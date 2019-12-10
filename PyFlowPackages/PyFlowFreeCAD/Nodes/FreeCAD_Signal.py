@@ -44,7 +44,7 @@ class FreeCAD_Blinker(FreeCadNodeBase):
         a=self.createInputPin('sleep', 'FloatPin',10)
         a.annotationDescriptionDict={ "ValueRange":(0.,300.)}
 
-        a=self.createInputPin('loops', 'IntPin',20)
+        a=self.createInputPin('loops', 'IntPin',1)
         a.annotationDescriptionDict={ "ValueRange":(0.,100.)}
 
 
@@ -81,7 +81,7 @@ class FreeCAD_Receiver(FreeCadNodeBase):
         self.createOutputPin('senderName', 'StringPin')
         self.createOutputPin('senderMessage', 'StringPin')
         self.createOutputPin('senderObject', 'FCobjPin')
-        self.signal=self.createInputPin('autoSubscribe', 'BoolPin', True)
+        self.signal=self.createInputPin('autoSubscribe', 'BoolPin', False)
 
         
     def subscribe(self, *args, **kwargs):
@@ -93,9 +93,15 @@ class FreeCAD_Receiver(FreeCadNodeBase):
         @send_data.connect
         def receive_data(sender, **kw):
             print("%r: caught signal from %r, data %r" % (self.name,sender, kw))
+            print ("SENDER",sender)
             
-            self.sender = sender
-            self.kw = kw
+            try:
+                self.sender = sender
+                self.kw = kw
+            except:
+                print("PROBLEME mit sendern")
+                return
+            
             self.setData("senderName",sender)
             self.setData("senderMessage",self.kw['message'])
             self.setData("senderObject",self.kw['obj'])

@@ -1214,13 +1214,18 @@ def createAllNodesforTests():
         if name=="FreeCAD_Tread":
             say("ignore", name)
             continue 
+
+        # if i>170 or i<70: continue
+            
+
+
         say("-----------",i, n.__name__)
         node=pfwrap.createNode('PyFlowFreeCAD',name,name)
         node.setPosition(x,y)
         gg.addNode(node)
         nodes[name] =node
         x+=200
-        if x>= 2000:
+        if x>= 2400:
             x=x0
             y+= 300
 
@@ -1237,7 +1242,11 @@ def runTestforAllNodes():
     nodes=FreeCAD.gg.getNodesList()
     errors=[]
 
-    for node in nodes:
+    for i,node in enumerate(nodes):
+        # 15,16,17, machr rekursive call #ä#+#
+        #if i not in [15,16,17]: continue
+        #if i not in [16]: continue
+        if node.name in ['FreeCAD_topo']:continue
         try:
             say(node)
             node.compute()
@@ -1861,3 +1870,9 @@ def createnodewithallpins():
 
     say(toy)
     refresh_gui()    
+
+
+
+def reset():
+    ''' startup nach restart FreeCAD'''
+    allnodes=createAllNodesforTests()

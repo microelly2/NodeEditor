@@ -259,26 +259,35 @@ def run_FreeCAD_VectorArray(self,*args, **kwargs):
 
 
 
-def run_Plot_compute(self,*args, **kwargs):
+def run_FreeCAD_Plot(self,*args, **kwargs):
 
     import matplotlib.pyplot as plt
+    
+    sayl()
+    mode=self.getData("Figure")
+    say("mode",mode)
 
-    if self.f2.getData():
-        plt.figure(2)
+    if mode=="Figure1":
+        fig=plt.figure(1)
 
-    elif self.f3.getData():
-        plt.figure(3)
+    elif mode=="Figure2":
+        fig=plt.figure(2)
+
+    elif mode=="Figure3":
+        fig=plt.figure(3)
+
     else:
-        plt.figure(1)
+        fig=plt.figure(4)
 
-#   plt.close()
+    #plt.close()
+    plt.clf()
     plt.title(self.getName())
 
     x=self.xpin.getData()
     y=self.ypin.getData()
 
-    #say(x)
-    #say(y)
+    say(x)
+    say(y)
     say(len(x),len(y))
 
 
@@ -291,9 +300,8 @@ def run_Plot_compute(self,*args, **kwargs):
 
         y=np.array(y)
 
-        if not self.f3.getData():
-            plt.plot(x, y, 'bx')
-        plt.plot(x, y , 'b-')
+        if not  mode=="Figure3":
+             plt.plot(x, y , 'b-')
 
 
     x2=self.xpin2.getData()
@@ -302,13 +310,15 @@ def run_Plot_compute(self,*args, **kwargs):
     if x2  !=  None and y2  !=  None:
         x2=np.array(x2)
         y2=np.array(y2)
-        if self.f3.getData():
+        if not mode=="Figure3":
             plt.plot(x2, y2 , 'r-')
         else:
             plt.plot(x2, y2, 'ro')
 
 
     plt.show()
+    fig.canvas.draw()
+    fig.canvas.flush_events()
 
 
 
@@ -574,6 +584,7 @@ def run_visualize(self,*args, **kwargs):
 def run_FreeCAD_Tripod(self,*args, **kwargs):
     sayl()
     f=self.getPinObject('Shape')
+    if f is None: return
     if f.__class__.__name__  == 'Shape':
         f=f.Face1
     #if f.__class__.__name__  == 'Face':
@@ -620,6 +631,7 @@ def run_FreeCAD_Tripod(self,*args, **kwargs):
 def run_FreeCAD_uIso(self,*args, **kwargs):
 
     f=self.getPinObject('Face_in')
+    if f is None: return
     if f.__class__.__name__  == 'Shape':
         f=f.Face1
     sf=f.Surface
@@ -640,7 +652,8 @@ def run_FreeCAD_uIso(self,*args, **kwargs):
 
 def run_FreeCAD_vIso(self,*args, **kwargs):
 
-    f=self.getPinObject('Face')
+    f=self.getPinObject('Face_in')
+    if f is None: return
     if f.__class__.__name__  == 'Shape':
         f=f.Face1
     sf=f.Surface
@@ -661,6 +674,7 @@ def run_FreeCAD_vIso(self,*args, **kwargs):
 def run_FreeCAD_uvGrid(self,*args, **kwargs):
 
     f=self.getPinObject('Face_in')
+    if f is None: return
     if f.__class__.__name__  == 'Shape':
         f=f.Face1
     sf=f.Surface
@@ -945,7 +959,7 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
     #for ix, r in  enumerate(vor.ridge_vertices):
     for ix, r in  enumerate(vor.regions):
         pts=[vertexes[v] for v in r if v  !=  -1]
-        say(ix,len(r),len(pts))
+        #say(ix,len(r),len(pts))
         #if ix  != pos:
         #   continue
         uvedgesA=[]
@@ -962,7 +976,7 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
                 if check (xa,ya,xb,yb):
                     pa=FreeCAD.Vector(xa,ya)
                     pb=FreeCAD.Vector(xb,yb)
-                    say()
+                    #say()
                     uvedges += [(xa,ya,xb,yb)]
                     uvedgesA += [(xa,ya,xb,yb)]
                     #col2 += [Part.makePolygon([pa,pb])]
@@ -971,7 +985,7 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
                     if check (xa,ya,xb,yb):
                         pa=FreeCAD.Vector(xa,ya)
                         pb=FreeCAD.Vector(xb,yb)
-                        say()
+                        #say()
                         #uvedges += [(xa,ya,xb,yb)]
                         uvedgesA += [(xa,ya,xb,yb)]
                         #col2 += [Part.makePolygon([pa,pb])]
@@ -979,9 +993,9 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
                         say("Err",xa,ya,xb,yb)
         try:
             uuu=uvedgesA+[(uvedgesA[-1][2],uvedgesA[-1][3],uvedgesA[0][0],uvedgesA[0][1])]
-            say(uuu[0])
-            say(uuu[-1])
-            say("--")
+            #say(uuu[0])
+            #say(uuu[-1])
+            #say("--")
         except:
             pass
 
@@ -998,11 +1012,12 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
     #
     # regions filled 
     #
-    say("vor.regions",vor.regions)
+    #say("vor.regions",vor.regions)
+
     for ix, r in  enumerate(vor.regions):
         pts=[vertexes[v] for v in r if v  !=  -1]
         if ix==self.getData('indA'):
-            say(ix,r)
+            #say(ix,r)
             if len(pts)<=2:
                 say("zuwenig punkte")
             else:
@@ -1013,7 +1028,7 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
                         cc=FreeCAD.ActiveDocument.addObject("Part::Feature","regionFilled")
                     cc.Shape=shapes[0]
                     if self.getData('flipArea'):
-                        say(shapes)
+                        #say(shapes)
                         cc.Shape=shapes[1]
             break
 
@@ -1021,7 +1036,7 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
     from scipy.spatial import Delaunay
 
     tri = Delaunay(pointsa)
-    say(tri.simplices)
+    #say(tri.simplices)
     points=[FreeCAD.Vector(p[0],p[1]) for p in points]
 
     #
@@ -1090,6 +1105,7 @@ def run_FreeCAD_Hull(self,*args, **kwargs):
 
     # get the point cloud
     shape=self.getPinObject("Shape")
+    if shape is None: return
     points=[v.Point for v in shape.Vertexes]
 
     # threshold parameter for alpha hull
@@ -1385,7 +1401,7 @@ def run_FreeCAD_2DArcOfCircle(self,*args, **kwargs):
     u=self.getData("uLocation")*0.1
     v=self.getData("vLocation")*0.1
     #r=self.getData("radius")*0.1
-    r=self.getData("MajorRadius")*0.1
+    r=self.getData("radius")*0.1
 
     u=umin+u*(umax-umin)
     v=vmin+v*(vmax-vmin)
@@ -1519,7 +1535,7 @@ def run_FreeCAD_Simplex(self,*args, **kwargs):
     for tol in range(100):
         colf2=[c.copy() for c in colf]
         try:
-            say ("try tolerance",tol)
+            # say ("try tolerance",tol)
             for f in colf2:
                 f.Tolerance=tol
             sh=Part.Shell(colf2)
@@ -1644,6 +1660,7 @@ def run_FreeCAD_Discretize(self,*args, **kwargs):
     count=self.getData("count")
     edge=self.getPinObject("Wire")
     say(edge)
+    if edge is None: return
     ptsa=edge.discretize(count)
 
     self.setPinObject("Shape_out",Part.makePolygon(ptsa))
@@ -1691,6 +1708,7 @@ def run_FreeCAD_Offset(self,produce=False, **kwargs):
     count=self.getData("count")
     edge=self.getPinObject("Wire")
     say(edge)
+    if edge is None: return
     pts=edge.discretize(count*10)
     # Part.show(Part.makePolygon(pts))
     face=self.getPinObject("Shape")
@@ -1788,7 +1806,7 @@ def run_FreeCAD_Offset(self,produce=False, **kwargs):
 
 def run_FreeCAD_FillEdge(self,produce=False, **kwargs):
    
-
+    return #+# muss mparametriz werden
     wire=FreeCAD.ActiveDocument.BePlane.Shape.Wires[0]
     #_=Part.makeFilledFace(Part.__sortEdges__([App.ActiveDocument.Shape004.Shape.Edge2, ]))
     _=Part.makeFilledFace(wire.Edges)
@@ -1819,7 +1837,7 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
     for tol in range(1000):
         colf2=[c.copy() for c in colf]
         try:
-            say ("try tolerance",tol)
+            #say ("try tolerance",tol)
             for f in colf2:
                 f.Tolerance=tol
             sh=Part.Shell(colf2)
@@ -1842,6 +1860,7 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
 # autum 19
 def run_FreeCAD_Destruct_BSpline(self,bake=False, **kwargs):
     shape=self.getPinObject("Shape_in")
+    if shape is None: return
     c=shape.Curve
     say(c)
     self.setData("knots",c.getKnots())
@@ -1855,6 +1874,7 @@ def run_FreeCAD_Destruct_BSpline(self,bake=False, **kwargs):
 
 def run_FreeCAD_Destruct_BSplineSurface(self,bake=False, **kwargs):
     shape=self.getPinObject("Shape_in")
+    if shape is None: return
     c=shape.Surface
     say(c)
     FreeCAD.c=c
@@ -1921,11 +1941,12 @@ def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
 def run_FreeCAD_BSplineCurve(self, *args, **kwargs):
 
         dat=self.arrayData.getData()
+        if len(dat)==0:             return
         dat=np.array(dat)
         sf=Part.BSplineCurve()
 
         poles=np.array(dat)
-        #say(poles)
+
         (countA,_)=poles.shape
         degA=min(countA-1,3,self.getPinByName("maxDegree").getData())
 
@@ -2121,6 +2142,8 @@ def run_FreeCAD_bakery(self):
 '''
 def run_FreeCAD_approximateBSpline(self):
     shin=self.getPinObject("Shape_in")
+    say(shin)
+    if shin is None: return
     shin=shin.toNurbs().Face1
     sf=shin.Surface
     points=self.getData("points")
@@ -2175,6 +2198,7 @@ def run_FreeCAD_approximateBSpline(self):
 def run_FreeCAD_interpolateBSpline(self):
     points=self.getData("points")
     say("interpolate for {} points".format(len(points)))
+    if len(points)<2:return
 
     shin=self.getPinObject("Shape_in")
     if shin is None:
@@ -2219,7 +2243,8 @@ def run_FreeCAD_swept(self):
     trackpoints=self.getData("trackPoints")
 #   say(trackpoints)
     path=self.getPinObject("Path")
-#   say(path)
+
+    if path is None: return
     pts=path.discretize(l+1)
 #   say(pts)
     centerAxis=self.getData("centerAxis")
@@ -2298,6 +2323,7 @@ def run_FreeCAD_handrail(self):
     borderB=self.getPinObject("borderB")
 
     edge=path
+    if edge is None: return
     curv=edge.Curve
     pts=edge.discretize(anz)
     allc=[]
@@ -2394,6 +2420,7 @@ def run_FreeCAD_Bender(self):
     poles=FreeCAD.ActiveDocument.Shape.Shape.Face1.Surface.getPoles()
     shapein=self.getPinObject("Shape_in")
     say(shapein)
+    if shapein is None: return
     poles=shapein.Surface.getPoles()
     poles=np.array(poles)
 
@@ -2498,6 +2525,7 @@ def run_FreeCAD_ConnectPoles(self):
 
 
     elif ovl == 0:
+        if len(ws)==0: return
         poles=np.concatenate(ws)
     
     if 1:
@@ -2537,6 +2565,7 @@ def run_FreeCAD_FlipSwapArray(self):
     say("flipswap")
     say(self.name)
     polesA=np.array(self.getData('poles_in'))
+    if len(polesA.shape)!=2: return
     poles=polesA.swapaxes(0,1)
     self.setData('poles_out',poles.tolist())
     self.outExec.call()
@@ -2717,7 +2746,11 @@ def run_FreeCAD_conny(self):
 
     # find neighbors chain of edges 
     e=0 # starting edge
-    ee=neighbor[e][0]
+    try:
+        ee=neighbor[e][0]
+    except:
+        say("keine daten abbruch")
+        return
     chain=[e,ee]
     for i in range(14):
         if neighbor[ee][0] not in chain:
@@ -2946,6 +2979,7 @@ def run_FreeCAD_randomizePolygon(self,*args, **kwargs):
     sayl()
     edge=self.getPinObject("Shape_in")
     say(edge)
+    if edge is None: return
     pts=[v.Point for v in edge.Vertexes]
     say(len(pts))
     ke=self.getData("factorEnds")
@@ -3094,8 +3128,11 @@ def run_FreeCAD_Blinker(self):
 
 def run_FreeCAD_Receiver(self):
 
-    say("Data:",self.kw)
-    say("Sender:",self.sender)
+    try:
+        say("Data:",self.kw)
+        say("Sender:",self.sender)
+    except:
+        say("no sender data and name avaiable")
     #self.setData("signalName",self.sender)
     #self.setData("senderMessage",self.kw['message'])
     self.setColor(b=0,a=0.4)
@@ -3172,6 +3209,7 @@ def run_FreeCAD_figureOnFace(self):
     ca=np.array(self.getData("pattern"))
 
     #todo reshape auf flach
+    if ca.shape[0]==0: return
     if len(ca.shape)==2:
         ca=ca.reshape(1,ca.shape[0],3)
 
@@ -3333,21 +3371,7 @@ def run_FreeCAD_Polygon2(self):
             except:
                 return
 
-            say("shape",shape)
-            self.setPinObject("Shape_out",shape)
-
-            if self.shapeout.hasConnections():
-                self.postCompute()
-
-            if self.shapeOnly.getData():
-                cc=self.getObject()
-                self.postCompute()
-            else:
-                cc=self.getObject()
-                if cc  !=  None:
-                    cc.Label=self.objname.getData()
-                    cc.Shape=shape
-                    self.postCompute(cc)
+        self.setPinObject("Shape_out",shape)
 
         if self._preview:
             self.preview()
@@ -3393,7 +3417,7 @@ def run_FreeCAD_moveVectors(self):
             b3=[v+mv for v in av]
             b2 += [b3]
     else:
-        b2=[v+mv for v in b]
+        b2=[v+mv for v in vv]
 
     self.setData("vectors_out",b2)
     self.setColor(g=0,a=0.4)
@@ -3472,6 +3496,7 @@ def run_FreeCAD_IndexToList(self):
     for i in pins:
         outArray.append(i.owningNode().getData(i.name))
     arr=np.array(outArray).flatten()
+    if len(arr)==0:return
     m=max(arr)
     flags=np.zeros(m+1)
     for p in arr:
@@ -3506,6 +3531,41 @@ def run_FreeCAD_lessThan(self):
     self.setData("lessThan",rc)
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
+
+def run_FreeCAD_moreThan(self):
+    values=self.getData("values")
+    threshold=self.getData("treshold")
+    rc=[]
+    for v in values:
+        say(v, v>threshold)
+        rc += [v>threshold]
+    self.setData("moreThan",rc)
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+def run_FreeCAD_equal(self):
+    values=self.getData("values")
+    threshold=self.getData("value")
+    rc=[]
+    for v in values:
+        say(v, v ==threshold)
+        rc += [v == threshold]
+    self.setData("equal",rc)
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
+def run_FreeCAD_nearly(self):
+    values=self.getData("values")
+    threshold=self.getData("value")
+    tol=self.getData("tolerance")
+    rc=[]
+    for v in values:
+        #say(v, v ==threshold)
+        rc += [v >= threshold -tol and  v <= threshold + tol]
+    self.setData("nearly",rc)
+    self.setColor(b=0,a=0.4)
+    self.outExec.call()    
+
 
 def run_FreeCAD_and(self):
     a=self.getData("a")
@@ -3554,6 +3614,8 @@ def run_FreeCAD_or(self):
  
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
+
+
 
 def run_FreeCAD_not(self):
     a=self.getData("a")
@@ -3605,6 +3667,9 @@ def run_FreeCAD_Tube(self):
     radius=self.getData('radius')
 
     cc=self.getPinObject("backbone")
+    if cc is None:
+        say("no backbone curve abort")
+        return
     say("expected parameter range", cc.ParameterRange)
     curve=cc.Curve
     pts=[]
@@ -3731,30 +3796,52 @@ def run_PF_APP_WindowNOMinimized(app,event):
 
 
 def run_FreeCAD_Toy(self):
-    sayl()
-    return
-    if 0:
-        say("!!",self.getData("ROT"))
-        self.setData("ROT_out",self.getData("ROT"))
-        self.setData("ROT_out",FreeCAD.Rotation(5,6,7))
-        self.setData("ROT_out",[5,6,7])
+    self.setNodename("HfdUHU"+str(time.time()))
+    self.setImage("freecad_cone")
+   
 
-    say("!! PM in",self.getData("PM"))
-    yy=self.getData("PM")
-    say("---------------------------",yy)
     return
-    say(yy.__class__.__name__)
-    try:
-        pmin=FreeCAD.Placement(FreeCAD.Matrix(yy))
-        say("pmin",pmin)
-    except:
-        pass
-    
-    #self.setData("PM_out",self.getData("PM"))
-    #self.setData("PM_out",))
-    pm=FreeCAD.Placement(FreeCAD.Matrix(5,6,7,6,7,8,9,1,2))
-    say(pm)
-    self.setData("PM_out",list(pm.toMatrix().A))
 
-    sayl()
-    
+
+
+def run_FreeCAD_Object(self, *args, **kwargs):
+
+        say("-------------------------------")
+        say ("in compute",self.getName(),"objname is",self.objname.getData())
+        nl=len(self.getName())
+        pps=self.getOrderedPins()
+        say(pps)
+        say("lllllllllllll")
+        for p in pps:
+            try:
+                print((str(p.getName()[nl+1:]),p.getData()))
+            except:  pass
+        obn=self.objname.getData()
+        FreeCAD.ActiveDocument.recompute()
+        obj=FreeCAD.ActiveDocument.getObject(obn)
+        self.fob=obj
+        sayl("vor store ")
+        obj.purgeTouched()
+        self.store()
+        sayl("oioio")
+        try:
+            sh=obj.Shape
+            self.setPinObject("Shape_out",sh)
+        except:
+            pass # no shape
+        sayl("kk")
+        self.outExec.call()
+
+        say("vorbr")
+        a=self.makebackref()
+        say("nach backref")
+        if a != None:
+            a.sources=[obj]
+
+
+        a.purgeTouched()
+        say("Reference", a.Name)
+        
+        if self._preview:
+            self.preview()
+

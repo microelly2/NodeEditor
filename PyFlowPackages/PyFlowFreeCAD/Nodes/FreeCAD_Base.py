@@ -347,6 +347,12 @@ class FreeCadNodeBase(NodeBase):
         wr.headColor=QtGui.QColor.fromRgbF(r,g,b,a)
         wr.update()
 
+    def setImage(self,imagename="freecad"):
+        import os
+        image= os.path.dirname(__file__)+"/../UI/icons/"+imagename+".svg"
+        wr=self.getWrapper()
+        wr.image=image
+        wr.svgIcon.setElementId("layer1")
 
 
 # example shape
