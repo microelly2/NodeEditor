@@ -279,7 +279,7 @@ if FreeCAD.GuiUp:
         _current += [c3bI(["tests"], always, 'Commands', 'create Object With All Properties',icon=None)]
 
 
-        _current += [c3bI(["tests"], always, 'Commands', 'run Test for All Nodes',icon=None)]
+        current += [c3bI(["tests"], always, 'Commands', 'run Test for All Nodes',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'view3D Ref and LOD',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'view3D Example',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'LOD Demo',icon=None)]
@@ -287,7 +287,7 @@ if FreeCAD.GuiUp:
         _current += [c3bI(["scenes"], always, 'Commands', 'Voronoi for Pointcloud',icon=None)]
         _current += [c3bI(["scenes"], always, 'Commands', 'Geom2d Nodes',icon=None)]
 
-    _current += [c3bI(["tests"], always, 'Commands', 'create All Nodes for Tests',icon=None)]
+    current += [c3bI(["tests"], always, 'Commands', 'create All Nodes for Tests',icon=None)]
     _current += [c3bI(["tests"], always, 'Commands', 'create node with all pins',icon=None)]
     current += [c3bI(["tools"], always, 'Commands', 'createBePlane',icon=None)]
     current += [c3bI(["tools"], always, 'Commands', 'create some parts',icon=None)]
@@ -383,4 +383,5 @@ static char * nurbs_xpm[] = {
 
 
 FreeCADGui.addWorkbench(PyFlow(toolbars, __vers__))
+
 

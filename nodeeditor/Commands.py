@@ -1626,6 +1626,9 @@ def getdescription(pin):
 
 
 def T3():
+    '''
+    create nodes documentation for wiki
+    '''
     clearReportView()
     packs=pfwrap.getNodesClasses()
     keys=list(packs.keys())

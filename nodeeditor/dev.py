@@ -3796,11 +3796,23 @@ def run_PF_APP_WindowNOMinimized(app,event):
 
 
 def run_FreeCAD_Toy(self):
-    self.setNodename("HfdUHU"+str(time.time()))
+    self.setNodename("HU"+str(time.time()))
     self.setImage("freecad_cone")
-   
 
-    return
+    pml=[1,2,3,4,5,6,7,8,10,11,12,12,14,15,16,]
+    tt=FreeCAD.Placement(FreeCAD.Matrix(*pml))
+    pm2=self.getPinPlacement("PlacementPin_in")
+    say("got",pm2)
+
+    self.setPinPlacement("PlacementPin_out",tt.multiply(pm2))
+    self.outExec.call()
+    self.setColor()
+    
+
+
+
+
+
 
 
 

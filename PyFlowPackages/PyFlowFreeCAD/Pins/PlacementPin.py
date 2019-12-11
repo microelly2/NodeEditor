@@ -65,3 +65,24 @@ class PlacementPin(PinBase):
     @staticmethod
     def processData(data):
         return PlacementPin.internalDataStructure()(data)
+
+
+    def getPlacement(self):
+        #say("getTransformation method")
+        arrin=self.getData()
+        say("got key:",arrin)
+        pm=FreeCAD.Placement(FreeCAD.Matrix(*arrin))
+        say(pm)
+        return(pm)
+        
+        if arrin  !=  None:
+            s=store.store().get(arrin)
+            return s
+        else:
+            return None
+
+    def setPlacement(self,placement):
+        #store.store().add(str(self.uid),Transformation)
+        say("set --",placement)
+        self.setData(list(str(placement.toMatrix().A)))
+
