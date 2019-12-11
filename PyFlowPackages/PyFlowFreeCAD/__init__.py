@@ -52,7 +52,35 @@ from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import FreeCAD_Placem
 _NODES = {
     FreeCAD_Placement.__name__: FreeCAD_Placement,
 }
+'''
+# Liste der Module neu
++Geom2D
+BSpline
+Combination
+Construction
+Conversion
+Curves
++Details
+Development*
++Document
+Generator
++HighLevel
++Information
++Logic
++numpy*
++Placement
++Points
++Primitive
++Projection
++Rotation
++Sensor
++Signal
+Surface
++Vector
+VectorArray2
+Voronoi
 
+'''
 if 1:
     from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
     for n in nodelist():
