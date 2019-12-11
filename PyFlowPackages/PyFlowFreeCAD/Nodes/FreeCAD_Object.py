@@ -1,3 +1,4 @@
+'''
 import numpy as np
 import random
 import functools
@@ -18,12 +19,10 @@ from PyFlow.Packages.PyFlowBase.Nodes import FLOW_CONTROL_COLOR
 import nodeeditor.store as store
 from nodeeditor.say import *
 
+'''
+from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
 
-
-import sys
-if sys.version_info[0] !=2:
-    from importlib import reload
 
 
 
@@ -2032,6 +2031,8 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
         for p in pincs:
             say("!",p)
+            if p in ["AnyPin","ArrayPin"]:continue
+            
             self.createInputPin(str(p)+"_in",str(p))
             self.createOutputPin(str(p)+"_out",str(p))
 
@@ -2039,8 +2040,10 @@ class FreeCAD_Toy(FreeCadNodeBase):
         pincs=PyFlow.Packages.PyFlowBase.PyFlowBase.GetPinClasses()
     
 
+        #return
         for p in pincs:
             say("!",p)
+            if p in ["AnyPin","ArrayPin"]:continue
             self.createInputPin(str(p)+"_in",str(p))
             self.createOutputPin(str(p)+"_out",str(p))
 
@@ -2413,6 +2416,25 @@ class FreeCAD_listOfShapes(FreeCadNodeBase):
         return 'Conversion'
 
 
+class FreeCAD_listOfRotations(FreeCadNodeBase):
+    '''
+    create a list of rotations from  lists of data
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createInputPin('axes', 'VectorPin',structure=StructureType.Array)
+        self.createInputPin('centers', 'VectorPin',structure=StructureType.Array)
+        self.createInputPin('angles', 'FloatPin',structure=StructureType.Array)
+
+        self.createOutputPin('Rotations', 'RotationPin',structure=StructureType.Array)
+
 
 
 #------------------------
@@ -2466,5 +2488,6 @@ def nodelist():
                 FreeCAD_IndexToList,
                 FreeCAD_centerOfMass,
                 FreeCAD_listOfShapes,
+                FreeCAD_listOfRotations,
 
         ]

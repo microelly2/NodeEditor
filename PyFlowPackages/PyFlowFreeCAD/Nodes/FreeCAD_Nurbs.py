@@ -1,3 +1,4 @@
+'''
 import numpy as np
 import random
 import functools
@@ -20,6 +21,8 @@ import nodeeditor.store as store
 from nodeeditor.utils import *
 from nodeeditor.say import *
 
+'''
+from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
 
 

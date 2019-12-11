@@ -1,3 +1,4 @@
+'''
 import numpy as np
 import random
 import functools
@@ -18,12 +19,19 @@ from PyFlow.Packages.PyFlowBase.Nodes import FLOW_CONTROL_COLOR
 import nodeeditor.store as store
 from nodeeditor.say import *
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+
 
 
 import sys
 if sys.version_info[0] !=2:
     from importlib import reload
+'''
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+sayl()
+say("got HUGO:",hugo)
 
 
 
