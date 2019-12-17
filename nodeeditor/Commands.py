@@ -740,6 +740,14 @@ def loadGraph(store=None):
         data=store
         instance.loadFromData(data)
 
+    for n in FreeCAD.PF.graphManager.get().getAllNodes():
+        yid="ID_"+str(n.uid)
+        yid=yid.replace('-','_')
+        a=FreeCAD.ActiveDocument.getObject(yid)
+        if a != None:
+            FreeCAD.ActiveDocument.removeObject(yid)
+            n._preview = True
+
 
 
 def saveGraph(storage = True):
@@ -1601,7 +1609,7 @@ def clearReportView(name="noname"):
     #FreeCAD.Console.PrintWarning("Cleared Report view " +str(now)+" by " + name+"\n")
 
 def getdescription(pin):
-    if pin.description != 'NO Comments':
+    if not pin.description.endswith(' instance'):
         return pin.description
     descriptions = {
         'u':'coordiate in uv space',
@@ -1622,156 +1630,7 @@ def getdescription(pin):
     try:
         return descriptions[pin.name]
     except:
-        return ''
-
-
-def T3():
-    '''
-    create nodes documentation for wiki
-    '''
-    clearReportView()
-    packs=pfwrap.getNodesClasses()
-    keys=list(packs.keys())
-    keys.sort()
-    for p in keys:
-        if p == 'PyFlowBase':
-            continue
-        pack=packs[p]
-        say("======"+p+"======")
-        classNodes = pack.GetNodeClasses()
-        cnks=list(classNodes.keys())
-        cnks.sort()
-        kats={}
-        doclevel={}
-        for c in cnks:
-            if c[7:] in ['PinsTest']:
-                continue 
-
-            if c in [
-            'FreeCAD_2DArcOfCircle', 
-            'FreeCAD_2DArcOfEllipse', 'FreeCAD_2DArcOfParabola', 'FreeCAD_2DCircle', 'FreeCAD_2DEllipse', 'FreeCAD_2DGeometry', 
-            'FreeCAD_Array', 
-            'FreeCAD_BSplineCurve', 
-            'FreeCAD_BSplineSurface', 
-            'FreeCAD_Bar', 
-            'FreeCAD_Boolean', 
-            'FreeCAD_Box', 
-            'FreeCAD_Compound', 
-            'FreeCAD_Cone',
-            'FreeCAD_Console', 
-            'FreeCAD_Destruct_BSpline', 'FreeCAD_Destruct_BSplineSurface', 'FreeCAD_Destruct_Shape', 
-            'FreeCAD_Discretize', 
-            'FreeCAD_Edge', 'FreeCAD_Face', 
-            'FreeCAD_FillEdge', 'FreeCAD_Foo', 
-            'FreeCAD_Hull', 'FreeCAD_LOD', 'FreeCAD_Object', 'FreeCAD_Offset', 
-            'FreeCAD_Parallelprojection', 'FreeCAD_Part', 'FreeCAD_PartExplorer', 
-            'FreeCAD_Perspectiveprojection', 'FreeCAD_PinsTest', 'FreeCAD_Placement', 
-            'FreeCAD_Plot', 'FreeCAD_Polygon', 'FreeCAD_Polygon2', 'FreeCAD_Quadrangle', 
-            #'FreeCAD_Ref', 'FreeCAD_RefList', 
-            'FreeCAD_ShapeIndex', 'FreeCAD_Simplex', 
-            'FreeCAD_Solid', 
-            'FreeCAD_Sphere', 
-            'FreeCAD_Toy', 'FreeCAD_Tread', 
-            'FreeCAD_Tripod', 'FreeCAD_UVprojection', 'FreeCAD_VectorArray', 
-            'FreeCAD_Voronoi', 
-            'FreeCAD_YYY', 
-            'FreeCAD_uIso', 
-            'FreeCAD_uvGrid', 
-            'FreeCAD_vIso', 
-            #'FreeCAD_view3D'
-            ]:
-                pass
-                #continue
-            
-
-
-            try:
-                
-                
-                say("=====FC"+c[7:]+"=====")
-                RESOURCES_DIR="/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/" 
-                image=RESOURCES_DIR + "/"+ c.lower()+".svg"
-                if os.path.exists(image):
-                    say("{{:icons_pyflow:"+c.lower()+".svg|}}")
-                say("/*")
-                node = classNodes[c]("nodeName")
-                say("*/")
-                
-#               if node.dok != 2: continue
-                try:
-                    doclevel[node.dok]  += [c]
-                except:
-                    doclevel[node.dok]  = [c]
-
-                # say(c,node)
-                # say("-----") # horiz linie
-                #say(node.__doc__)
-                docs=node.__doc__
-                for s in docs.split('\n'):
-                    say("  "+s.lstrip())
-                
-                say("[[nodes::{}|More ...]]\n\n".format(c[8:]))
-                FreeCAD.n=node
-                try:
-                    kats[node.category()] +=  [c]
-                except:
-                    kats[node.category()] =  [c]
-
-                say("===INPUT PINS===")
-                for pin in node.getOrderedPins():
-                    if str(pin.direction) != 'PinDirection.Input':
-                        continue
-                    if pin.name in ['inExec','outExec']:
-                        continue
-                    say("**__"+pin.name+"__** ")
-                    #say(pin.direction)
-                    #say(pin.name)
-                    #say()
-                    say("[["+pin.__class__.__name__+"]]")
-                    des=getdescription(pin)
-                    if des !='':
-                        say(des)
-                    say()
-                say("===OUTPUT PINS===")
-                for pin in node.getOrderedPins():
-                    if str(pin.direction) != 'PinDirection.Output':
-                        continue
-
-                    if pin.name in ['inExec','outExec']:
-                        continue
-                    say("**__"+pin.name+"__** ")
-                    #say(pin.direction)
-                    #say(pin.name)
-                    say("[[" + pin.__class__.__name__ + "]]")
-                    des=getdescription(pin)
-                    if des  != '':
-                        say(des)
-
-                    say()
-                    FreeCAD.pin=pin
-            except:
-                sayErr("problem for ",c)
-#   sayl("t3 done")
-    say("======Nodes by category======")
-    kl=list(kats.keys())
-    kl.sort()
-    for k in kl:
-        say("====={}=====".format(k))
-        for c in kats[k]:
-            say("[[nodes::{}]]".format(c[8:]))
-            say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
-
-    say("======Nodes by doc level======")
-    kl=list(doclevel.keys())
-    kl.sort()
-
-    for k in kl:
-        say("====={}=====".format(k))
-        for c in doclevel[k]:
-            say("[[nodes::{}]]".format(c[8:]))
-            say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
-    
-    say("number of nodes {}".format(len(cnks)))
+        return pin.description
 
 def reset():
     '''refrehs graph gui'''
@@ -1879,3 +1738,156 @@ def createnodewithallpins():
 def reset():
     ''' startup nach restart FreeCAD'''
     allnodes=createAllNodesforTests()
+
+
+
+def T1():
+    
+    for n in FreeCAD.PF.graphManager.get().getAllNodes():
+        yid="ID_"+str(n.uid)
+        yid=yid.replace('-','_')
+        a=FreeCAD.ActiveDocument.getObject(yid)
+        if a != None:
+            FreeCAD.ActiveDocument.removeObject(yid)
+            n._preview = True
+    
+
+
+def createNewNodeDocu():
+    createNodeDocu(True)
+
+def T3():
+    createNewNodeDocu()
+
+def createNodeDocu(onlyNew=False):
+    '''
+    create nodes documentation for wiki
+    '''
+    clearReportView()
+    packs=pfwrap.getNodesClasses()
+    keys=list(packs.keys())
+    keys.sort()
+    for p in keys:
+        if p == 'PyFlowBase':
+            continue
+        pack=packs[p]
+        say("======"+p+"======")
+        classNodes = pack.GetNodeClasses()
+        cnks=list(classNodes.keys())
+        cnks.sort()
+        kats={}
+        doclevel={}
+        for c in cnks:
+            if c[7:] in ['PinsTest']:
+                continue 
+
+            # di 17.12.
+            sels= ['centerOfMass','distToShape','IndexToList','Reduce']
+            sels+=['Transformation','repeatPattern','scaleVectors','moveVectors','listOfVectors']
+            sels+=['Object','Box','Cone','Sphere','Quadrangle']
+            sels+=['Object','Quadrangle']
+            sels=['Polygon','Console','VectorArray','BSplineCurve','BSplineSurface']
+            
+            sels=["Plot","ShapeIndex","ShapeExplorer",  "Compound",  "Edge", "Face",]
+
+            tt="FreeCAD_Parallelprojection,FreeCAD_Perspectiveprojection,FreeCAD_UVprojection,"
+
+            sels=[t[8:] for t in tt.split(',')]
+            sels=['Blinker','Receiver']
+            
+            
+            if onlyNew and c[8:] not in sels:
+                continue
+ 
+
+
+            try:
+                
+                
+                say("=====FC"+c[7:]+"=====")
+                RESOURCES_DIR="/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/icons" 
+                image=RESOURCES_DIR + "/"+ c.lower()+".svg"
+                if os.path.exists(image):
+                    say("{{:icons_pyflow:"+c.lower()+".svg|}}")
+                say("/*")
+                node = classNodes[c]("nodeName")
+                say("*/")
+                
+#               if node.dok != 2: continue
+                try:
+                    doclevel[node.dok]  += [c]
+                except:
+                    doclevel[node.dok]  = [c]
+
+                # say(c,node)
+                # say("-----") # horiz linie
+                #say(node.__doc__)
+                docs=node.__doc__
+                for s in docs.split('\n'):
+                    say("  "+s.lstrip())
+                
+                say("[[nodes::{}|More ...]]\n\n".format(c[8:]))
+                FreeCAD.n=node
+                try:
+                    kats[node.category()] +=  [c]
+                except:
+                    kats[node.category()] =  [c]
+
+                say("===INPUT PINS===")
+                for pin in node.getOrderedPins():
+                    if str(pin.direction) != 'PinDirection.Input':
+                        continue
+                    if pin.name in ['inExec','outExec']:
+                        continue
+                    say("**__"+pin.name+"__** ")
+                    #say(pin.direction)
+                    #say(pin.name)
+                    #say()
+                    say("[["+pin.__class__.__name__+"]]")
+                    des=getdescription(pin)
+                    if des !='':
+                        say(des)
+                    say()
+                say("===OUTPUT PINS===")
+                for pin in node.getOrderedPins():
+                    if str(pin.direction) != 'PinDirection.Output':
+                        continue
+
+                    if pin.name in ['inExec','outExec']:
+                        continue
+                    say("**__"+pin.name+"__** ")
+                    #say(pin.direction)
+                    #say(pin.name)
+                    say("[[" + pin.__class__.__name__ + "]]")
+                    des=getdescription(pin)
+                    if des  != '':
+                        say(des)
+
+                    say()
+                    FreeCAD.pin=pin
+            except:
+                sayErr("problem for ",c)
+#   sayl("t3 done")
+    say("======Nodes by category======")
+    kl=list(kats.keys())
+    kl.sort()
+    for k in kl:
+        say("====={}=====".format(k))
+        for c in kats[k]:
+            say("[[nodes::{}]]".format(c[8:]))
+            say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
+
+    if onlyNew:
+        say("======Nodes by doc level======")
+        kl=list(doclevel.keys())
+        kl.sort()
+
+        for k in kl:
+            say("====={}=====".format(k))
+            for c in doclevel[k]:
+                say("[[nodes::{}]]".format(c[8:]))
+                say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
+        
+        say("number of nodes {}".format(len(cnks)))
+
+    

@@ -179,6 +179,6 @@ def nodelist():
                 
                 FreeCAD_Blinker,
                 FreeCAD_Receiver,
-                FreeCAD_Async,
+                #FreeCAD_Async, #wozu??
 
         ]

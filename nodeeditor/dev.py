@@ -641,11 +641,11 @@ def run_FreeCAD_uIso(self,*args, **kwargs):
 
     uu=umin+(umax-umin)*0.1*u
     c=sf.uIso(uu)
-    self.setPinObject('Edge_out',c.toShape())
+    self.setPinObject('Shape_out',c.toShape())
 
-    if self.getData('display'):
-        obj=self.getObject()
-        obj.Shape=c.toShape()
+    #if self.getData('display'):
+    #    obj=self.getObject()
+    #    obj.Shape=c.toShape()
 
     self.outExec.call()
 
@@ -663,11 +663,11 @@ def run_FreeCAD_vIso(self,*args, **kwargs):
 
     vv=vmin+(vmax-vmin)*0.1*v
     c=sf.vIso(vv)
-    self.setPinObject('Edge',c.toShape())
+    self.setPinObject('Shape_out',c.toShape())
 
-    if self.getData('display'):
-        obj=self.getObject()
-        obj.Shape=c.toShape()
+    #if self.getData('display'):
+    #    obj=self.getObject()
+    #    obj.Shape=c.toShape()
 
     self.outExec.call()
 
@@ -1819,8 +1819,8 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
     #say(shapes)
     #return
     
-    
     yPins = self.getPinByName("Shapes").affected_by
+    
     outArray=[]
     for pin in yPins:
         k=str(pin.uid)
@@ -1948,14 +1948,23 @@ def run_FreeCAD_BSplineCurve(self, *args, **kwargs):
         poles=np.array(dat)
 
         (countA,_)=poles.shape
-        degA=min(countA-1,3,self.getPinByName("maxDegree").getData())
+        degA=min(countA-1,13,self.getPinByName("maxDegree").getData())
 
-        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-        knotA=range(len(multA))
+        periodic=self.getData("periodic")
+        #periodic=True
+        if not periodic:
+            multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+            knotA=range(len(multA))
 
+        else:
+            multA=[1]*(countA+1)
+            knotA=range(len(multA))
+
+            
         sf=Part.BSplineCurve()
-        sf.buildFromPolesMultsKnots(poles,multA,knotA,False,degA)
+        sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)
         shape=sf.toShape()
+
 
         shape=sf.toShape()
         
@@ -2565,8 +2574,10 @@ def run_FreeCAD_FlipSwapArray(self):
     say("flipswap")
     say(self.name)
     polesA=np.array(self.getData('poles_in'))
-    if len(polesA.shape)!=2: return
+    say("shape",polesA.shape)
+    if len(polesA.shape)<2: return
     poles=polesA.swapaxes(0,1)
+    say(poles.shape)
     self.setData('poles_out',poles.tolist())
     self.outExec.call()
 
@@ -3645,12 +3656,14 @@ def run_FreeCAD_FloatToy(self):
     floats=[]
     start=self.getData("start")
     scale=self.getData("scale")
-    for i in range(10):
+    limit=self.getData("limit")
+    for i in range(limit):
         if i==0:
             v=self.getData("float")
         else:
             v=self.getData("float"+str(i))
         floats += [v*scale+start]
+    
 
     trailer=self.getData("trailer")
     say("trailer",trailer)
@@ -3809,10 +3822,16 @@ def run_FreeCAD_Toy(self):
     self.setColor()
     
 
+def run_FreeCAD_Toy(self):
+    rots=self.getPinRotations("RotationPin_in")
+    say(rots)
 
+    pms=self.getPinPlacements("PlacementPin_in")
+    say(pms)
 
-
-
+def run_FreeCAD_Toy(self):
+    sh=self.getPinObject("ShapePin_in")
+    self.setData("VectorPin_out",[sh.CenterOfMass])
 
 
 
@@ -3857,3 +3876,143 @@ def run_FreeCAD_Object(self, *args, **kwargs):
         if self._preview:
             self.preview()
 
+
+
+
+   
+
+def run_FreeCAD_listOfPlacements(self):
+
+    if len(self.getPinByName("axes").affected_by) >0:
+        axes=self.getData("axes")
+    else: axes=[]
+
+    if len(self.getPinByName("centers").affected_by) >0:
+        centers=self.getData("centers")
+    else:centers=[]
+
+    if len(self.getPinByName("moves").affected_by) >0:
+        moves=self.getData("moves")
+    else:
+        moves=[]
+
+    if len(self.getPinByName("angles").affected_by) >0:        
+        angles=self.getData("angles")
+    else:
+        angles=[]
+        
+    ll=max(len(axes),len(centers),len(moves),len(angles))
+
+    if 1:
+        if ll>len(centers):
+            centers += [FreeCAD.Vector(0,0,0)]*(ll-len(centers))
+
+        if ll>len(axes):
+            axes += [FreeCAD.Vector(0,0,1)]*(ll-len(axes))
+
+        if ll>len(moves):
+            moves += [FreeCAD.Vector(0,0,0)]*(ll-len(moves))
+
+        if ll>len(angles):
+            angles += [10]*(ll-len(angles))
+    
+    
+    rots=[]
+    for m,ax,an,ce in zip(moves,axes,angles,centers):
+        rots += [FreeCAD.Placement(m,FreeCAD.Rotation(ax,an),ce)]
+    
+    self.setPinPlacements("Placements",rots)
+
+    self.outExec.call()
+    self.setColor()
+
+def pinHasData(self,pinname):
+    return len(self.getPinByName(pinname).affected_by) >0
+
+def run_FreeCAD_applyPlacements(self):
+
+    comp=[]
+    s=Part.makeBox(200,1000,200)
+    pms=self.getPinPlacements("Placements")
+    if pinHasData(self,"Shape_in"):
+        s=self.getPinObject("Shape_in")
+    else:
+        s=None
+    
+
+
+    if  s is not None:
+        
+        # say(pms)
+        for p in pms:
+            ss=s.copy()
+            ss.Placement=p
+            comp += [ss]
+        
+        self.setPinObject("Shape_out",Part.Compound(comp))
+    
+    
+    else:
+        if pinHasData(self,"Shapes"):
+            ss=self.getPinObjectsA("Shapes")
+        else:
+            ss=[]
+        say(ss)
+        if len(ss)>0:
+            shapes=[s.copy() for s in ss]
+            for s,pm in zip(shapes,pms):
+                s.Placement=pm
+            self.setPinObject("Shape_out",Part.Compound(shapes))
+        else:
+            say("POINTS---------")
+            points=self.getData('points')
+            say(np.array(points).shape)
+            if len(np.array(points).shape) == 2:
+                points_out=[pm.multVec(FreeCAD.Vector(*p)) for (p,pm) in zip(points,pms)]
+
+            elif len(np.array(points).shape) == 3:
+                points_out=[[pm.multVec(FreeCAD.Vector(*p)) for p in ps] for ps,pm in zip(points,pms)]
+            else:
+                say("no points abbruch")
+                return
+            self.setData("points_out",points_out)
+
+    self.outExec.call()
+    self.setColor()
+
+
+def run_FreeCAD_repeat(self):
+    
+    s=self.getData("in")
+    #say(s)
+    count=self.getData("count")
+    #say('##')
+    t=[s]*count
+    #say(t)
+    self.setData("out",t)
+    #self.setData("Shapes",[s]*count)
+    self.outExec.call()
+    sayl()
+    self.setColor()
+
+
+
+def run_FreeCAD_Index(self):
+    vecs=self.getData("list")
+    self.setData("item",vecs[self.getData('index')])
+    self.outExec.call()
+    self.setColor()
+    
+    
+
+def run_FreeCAD_Zip(self):
+    x=self.getData("x")
+    y=self.getData("y")
+    z=self.getData("z")
+    
+    zz= [FreeCAD.Vector(x,y,z) for x,y,z in zip(x,y,z)]
+    say("len",len(zz))
+    self.setData("vectors_out",zz)
+
+    self.outExec.call()
+    self.setColor()

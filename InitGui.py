@@ -294,7 +294,10 @@ if FreeCAD.GuiUp:
     current += [c3bI(["tools"], always, 'Commands', 'display Tools',icon=None)]
     _current += [c3bI(["tools"], always, 'Commands', 'display Preferences Window',icon=None)]
 
-#   _current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
+	if devmode():
+		current += [c3bI(["scenes"], always, 'Commands', 'create NewNode Docu',icon=None)]
+		current += [c3bI(["scenes"], always, 'Commands', 'create Node Docu',icon=None)]
+   
 #   _current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 #   _current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]
 #   _current += [c3bI(["scenes"], always, 'Commands', '',icon=None)]

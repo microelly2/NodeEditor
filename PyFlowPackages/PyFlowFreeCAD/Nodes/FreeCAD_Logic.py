@@ -31,7 +31,7 @@ from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
 sayl()
-say("got HUGO:",hugo)
+
 
 
 
@@ -277,6 +277,7 @@ class FreeCAD_false(FreeCadNodeBase):
     def category():
         return 'Logic'
 
+
 class FreeCAD_BoolToy(FreeCadNodeBase):
     '''
     boolean toy - make a flag list of 4 values
@@ -352,34 +353,6 @@ class FreeCAD_FloatToy(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_Tube(FreeCadNodeBase):
-    '''
-    calculate the points for a parametric tube along a backbone curve
-    '''
-
-    dok = 4
-    def __init__(self, name="MyToy"):
-
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
-        a=self.createInputPin('backbone', 'ShapePin')
-        a.description="backbone curve for the tube"
-        a=self.createInputPin('parameter', 'FloatPin',structure=StructureType.Array)
-        a.description="u parameter of the position of the ribs"
-        a=self.createInputPin('radius', 'FloatPin',structure=StructureType.Array)
-        a.description="radius/size of the rib rings"
-        a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
-        a.description="array of poles for the postprocessing bspline surface"
-
-    @staticmethod
-    def description():
-        return FreeCAD_BoolToy.__doc__
-
-    @staticmethod
-    def category():
-        return 'Construction'
 
 
 
@@ -397,9 +370,9 @@ def nodelist():
                 FreeCAD_not,
                 FreeCAD_true,
                 FreeCAD_false,
+
                 FreeCAD_BoolToy,
                 FreeCAD_FloatToy,
-                FreeCAD_Tube,
                 
         ]
 

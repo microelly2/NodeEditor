@@ -33,6 +33,7 @@ class FreeCAD_Box( FreeCadNodeBase):
     erzeuge einer Part.Box
     '''
 
+    dok=4
     def __init__(self, name="MyBox"):
 
         super(self.__class__, self).__init__(name)
@@ -106,7 +107,8 @@ class FreeCAD_Box( FreeCadNodeBase):
 
 class FreeCAD_Cone(FreeCadNodeBase):
     '''erzeuge eines Part.Kegel'''
-
+    
+    dok=4
     def __init__(self, name="MyCone"):
 
         super(self.__class__, self).__init__(name)
@@ -164,6 +166,7 @@ class FreeCAD_Cone(FreeCadNodeBase):
 class FreeCAD_Sphere(FreeCadNodeBase):
     '''erzeuge einer Part.Kurgel'''
 
+    dok=4
     def __init__(self, name="MySphere"):
 
         super(self.__class__, self).__init__(name)
@@ -219,10 +222,11 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 
 class FreeCAD_Quadrangle(FreeCadNodeBase):
     '''
-    erzeuge einer BSpline Flaeche degree 1
+    create a Bspline Surface of degree 1
     by 4 points
     '''
 
+    dok=4
     def __init__(self, name="MyQuadrangle"):
 
         super(self.__class__, self).__init__(name)
@@ -293,12 +297,14 @@ class FreeCAD_Quadrangle(FreeCadNodeBase):
 
 
 
-class FreeCAD_Polygon2(FreeCadNodeBase):
+class FreeCAD_Polygon(FreeCadNodeBase):
     '''
     erzeuge eines Streckenzugs
     input pin for a list of vectors
     '''
 
+    dok=4
+    
     def __init__(self, name="MyPolygon"):
 
         super(self.__class__, self).__init__(name)
@@ -311,6 +317,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
         self.points = self.createInputPin('points', 'VectorPin',[], structure=StructureType.Array)
+        self.points.description="list of points as array"
         self.points.setData([FreeCAD.Vector(0,0,0),FreeCAD.Vector(10,0,0)])
 
 
@@ -320,7 +327,7 @@ class FreeCAD_Polygon2(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_Polygon2.__doc__
+        return FreeCAD_Polygon.__doc__
 
     @staticmethod
     def category():
@@ -446,36 +453,43 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 
 
 class FreeCAD_BSplineSurface(FreeCadNodeBase):
-    '''BSpline Surface'''
+    '''
+    BSpline Surface 
+    create a default bspline surface from poles and degrees
+    '''
 
+    dok=4
     @staticmethod
-    def description():
-        return '''create a default bspline surface from poles and degrees'''
 
+    def description():
+        return ''''''
 
     def __init__(self, name="MyBSplineSurface"):
 
         super(self.__class__, self).__init__(name)
 
-
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
 
         self.arrayData = self.createInputPin('poles', 'VectorPin', structure=StructureType.Array)
         self.arrayData.description="Array of poles vectors"
         self.arrayData.enableOptions(PinOptions.AllowMultipleConnections)
         self.arrayData.disableOptions(PinOptions.SupportsOnlyArrays)
 
-        self.createInputPin('maxDegreeU', 'IntPin', 3)
-        self.createInputPin('maxDegreeV', 'IntPin', 3)
-        self.createInputPin('periodicU', 'BoolPin',)
-        self.createInputPin('periodicV', 'BoolPin',)
+        a=self.createInputPin('maxDegreeU', 'IntPin', 3)
+        a.description="maximum degree for u"
+        
+        a=self.createInputPin('maxDegreeV', 'IntPin', 3)
+        a.description="maximum degree for v"
+        
+        a=self.createInputPin('periodicU', 'BoolPin',)
+        a.description="is surface periodic in u direction"
+        
+        a=self.createInputPin('periodicV', 'BoolPin',)
+        a.description="is surface periodic in v direction"
 
         self.shapeout = self.createOutputPin('Shape_out', 'FacePin')
         self.shapeout.description='BSpline Face'
-#        self.createOutputPin('geometry', 'ShapePin').\
-#        description='BSpline Surface geometry'
 
     @staticmethod
     def description():
@@ -491,12 +505,12 @@ class FreeCAD_BSplineSurface(FreeCadNodeBase):
 
 
 class FreeCAD_BSplineCurve(FreeCadNodeBase):
-    '''BSpline Curve'''
+    '''
+    BSpline Curve
+    create a default bspline surface from poles and degrees
+    '''
 
-    @staticmethod
-    def description():
-        return '''create a default bspline surface from poles and degrees'''
-
+    dok=4
 
     def __init__(self, name="MyBSplineCurve"):
 
@@ -508,10 +522,15 @@ class FreeCAD_BSplineCurve(FreeCadNodeBase):
 
         self.shapeout = self.createOutputPin('Shape_out', 'EdgePin')
         self.arrayData = self.createInputPin('poles', 'VectorPin', structure=StructureType.Array)
-        self.createInputPin('maxDegree', 'IntPin', 3)
-
         self.arrayData.enableOptions(PinOptions.AllowMultipleConnections)
         self.arrayData.disableOptions(PinOptions.SupportsOnlyArrays)
+
+        a=self.createInputPin('maxDegree', 'IntPin', 3)
+        a.description="degree of the curve (default is 3)"
+        a=self.createInputPin('periodic', 'BoolPin',)
+        a.description="is curve periodic"
+    
+
 
 
     @staticmethod
@@ -529,8 +548,12 @@ class FreeCAD_BSplineCurve(FreeCadNodeBase):
 
 
 class FreeCAD_VectorArray(FreeCadNodeBase):
-    '''Array of Vectors Surface'''
+    '''
+    Array of Vectors 
+    and a generated default BSplineSurface
+    '''
 
+    dok=4
     def __init__(self, name="MyVectorArray"):
 
         super(self.__class__, self).__init__(name)
@@ -540,19 +563,46 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
 
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
-        self.createInputPin("vecA", 'VectorPin',FreeCAD.Vector(20,0,0))
-        self.createInputPin("vecB", 'VectorPin',FreeCAD.Vector(0,10,0))
-        self.createInputPin("vecC", 'VectorPin')
-        self.createInputPin("vecBase", 'VectorPin')
-        self.createInputPin("countA", 'IntPin',5)
-        self.createInputPin("countB", 'IntPin',8)
-        self.createInputPin("countC", 'IntPin',1)
-        self.createInputPin("randomX", 'FloatPin',5)
-        self.createInputPin("randomY", 'FloatPin',5)
-        self.createInputPin("randomZ", 'FloatPin',5)
-        self.createInputPin("degreeA", 'IntPin',3)
-        self.createInputPin("degreeB", 'IntPin',3)
-        self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
+        a=self.createInputPin("vecA", 'VectorPin',FreeCAD.Vector(20,0,0))
+        a.description="step vector for the first dimension"
+        
+        a=self.createInputPin("vecB", 'VectorPin',FreeCAD.Vector(0,10,0))
+        a.description="step vector for the 2nd dimension"
+        
+        a=self.createInputPin("vecC", 'VectorPin')
+        a.description="step vector for the 3rd dimension"
+        
+        a=self.createInputPin("vecBase", 'VectorPin')
+        a.description="starting point of the array"
+        
+        a=self.createInputPin("countA", 'IntPin',5)
+        a.description="number of elements in the first direction"
+        
+        a=self.createInputPin("countB", 'IntPin',8)
+        a.description="number of elements in the 2nd direction"
+        
+        a=self.createInputPin("countC", 'IntPin',1)
+        a.description="if c>1 a 3 dimensional arry of vector is created"
+        
+        a=self.createInputPin("randomX", 'FloatPin',5)
+        a.description="adds some randomness onto the x coordinates of the points"
+        
+        a=self.createInputPin("randomY", 'FloatPin',5)
+        a.description="adds some randomness onto the y coordinates of the points"
+        
+        a=self.createInputPin("randomZ", 'FloatPin',5)
+        a.description="adds some randomness onto the z coordinates of the points"
+        
+
+        a=self.createInputPin("degreeA", 'IntPin',3)
+        a.description="degree of the generated surface in u direction, degreeA = 0 means wire model"
+        
+        a=self.createInputPin("degreeB", 'IntPin',3)
+        a.description="degree of the generated surface in u direction, degreeB = 0 means wire model"
+        
+        a=self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
+        a.description="2 or 3 dimensional array of vectors"
+        
 
 
     @staticmethod
@@ -576,6 +626,7 @@ class FreeCAD_Object(FreeCadNodeBase):
     load and save objects in FreeCAD document
     '''
 
+    dok=4
     def __init__(self, name="MyObject"):
         super(self.__class__, self).__init__(name)
 
@@ -583,24 +634,14 @@ class FreeCAD_Object(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-#        self.trace = self.createInputPin('trace', 'BoolPin')
-#        self.randomize = self.createInputPin("randomize", 'BoolPin')
-
-#        self.part = self.createOutputPin('Part', 'FCobjPin')
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
         self.objname = self.createInputPin("objectname", 'StringPin')
         self.objname.setData("Box")
 
-#        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-#        self.shapeOnly.recomputeNode=True
-
 
         self.createInputPin('Reload_from_FC', 'ExecPin', None, self.reload)
         self.createInputPin('Store_to_FC', 'ExecPin', None, self.store,)
-#        for i in range(7):
-#            self.createOutputPin('dummy', 'ExecPin')
-
 
 
 
@@ -688,6 +729,8 @@ class FreeCAD_Console(FreeCadNodeBase):
     '''
     write to FreeCAD.Console
     '''
+    
+    dok=4
     def __init__(self, name="Console"):
         super(self.__class__, self).__init__(name)
 
@@ -696,6 +739,7 @@ class FreeCAD_Console(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.entity = self.createInputPin('entity', 'AnyPin',[], structure=StructureType.Multi)
+        self.entity.description="data to print"
         self.entity.setData([FreeCAD.Vector(),FreeCAD.Vector()])
 
 
@@ -721,9 +765,10 @@ class FreeCAD_Console(FreeCadNodeBase):
 
 class FreeCAD_ShapeExplorer(FreeCadNodeBase):
     '''
-    dummy for tests
+    information about a shape
     '''
 
+    dok=3
     def __init__(self, name="MyPartExplorer"):
 
         super(self.__class__, self).__init__(name)
@@ -732,22 +777,17 @@ class FreeCAD_ShapeExplorer(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-#        self.trace = self.createInputPin('trace', 'BoolPin')
-#        self.randomize = self.createInputPin("randomize", 'BoolPin')
-
-#        self.part = self.createOutputPin('Part', 'FCobjPin')
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
-#        self.objname = self.createInputPin("objectname", 'StringPin')
-#        self.objname.setData(name)
-
-#        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-#        self.shapeOnly.recomputeNode=True
-
         self.part = self.createInputPin('Shape_in', 'ShapePin')
+
         self.outArray = self.createOutputPin('Points', 'VectorPin', structure=StructureType.Array)
+        self.outArray.description="the coodinates of the vertexes as vectors"
+        
         a=self.createOutputPin('Faces', 'ShapeListPin')
+        a.description="the list of faces"
         b=self.createOutputPin('Edges', 'ShapeListPin')
+        b.description="the list of edges"
 
         self.pinsk={
                 'Volume':'FloatPin',
@@ -755,17 +795,13 @@ class FreeCAD_ShapeExplorer(FreeCadNodeBase):
                 'Length':'FloatPin',
                 'BoundBox': None,
                 'CenterOfMass':'VectorPin',
-#               #'Edges','Faces','Vertexes','Compounds','Wires','Shells',
 #               #'PrincipalProperties','StaticMoments',
                 'Mass':'FloatPin',
                 'ShapeType':'StringPin',
-#
         }
 
-        say(self.pinsk)
         for p in list(self.pinsk.keys()):
             if self.pinsk[p]  !=  None:
-                say(p,self.pinsk[p])
                 self.createOutputPin(p, self.pinsk[p])
 
         self.part.recomputeNode=True
@@ -791,14 +827,6 @@ class FreeCAD_ShapeExplorer(FreeCadNodeBase):
         self.setData('Points',points)
         self.setPinObjects("Edges",shape.Edges)
         self.setPinObjects("Faces",shape.Faces)
-
-        # testweise lesen
-        if 0:
-            edges=self.getPinObjects("Edges")
-            Part.show(Part.Compound(edges[:-1]))
-
-            edges=self.getPinObjects("Faces")
-            Part.show(Part.Compound(edges[:4]))
 
         # output of the pins
         for t in self.getOrderedPins():
@@ -846,10 +874,11 @@ class FreeCAD_ShapeExplorer(FreeCadNodeBase):
 
 class FreeCAD_ShapeIndex(FreeCadNodeBase):
     '''
-    dummy for tests
+    selection of a shape by its index in a list of shapes
     '''
 
 
+    dok=3
     def __init__(self, name="MyShapeIndex"):
         super(self.__class__, self).__init__(name)
 
@@ -857,34 +886,22 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.trace = self.createInputPin('trace', 'BoolPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
+#        self.objname = self.createInputPin("objectname", 'StringPin')
+#        self.objname.setData(name)
 
-        self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
 
-        self.objname = self.createInputPin("objectname", 'StringPin')
-        self.objname.setData(name)
-
-        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-        self.shapeOnly.recomputeNode=True
-
-        p=self.createInputPin('Shapes', 'AnyPin')
-        p.recomputeNode=True
+        p=self.createInputPin('Shapes', 'ShapeListPin')
+        p.description="list of shapes #+#"
         p=self.createInputPin('index', 'IntPin')
         p.recomputeNode=True
+        p.description ="index of the shape"
 
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
 
     def compute(self, *args, **kwargs):
 
-#       import nodeeditor.dev
-#       reload (nodeeditor.dev)
-#       nodeeditor.dev.run_ShapeIndex_compute(self,*args, **kwargs)
-#   def run_ShapeIndex_compute(self,*args, **kwargs):
 
-        sayl()
         subshapes=self.getPinObjects("Shapes")
         if len(subshapes) == 0:
             sayW("no subshapes")
@@ -894,8 +911,9 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
             shape=subshapes[self.getData('index')]
         except:
             shape=Part.Shape()
-        say(subshapes)
-        say(self.getData('index'))
+
+#        say(subshapes)
+#        say(self.getData('index'))
         self.setPinObject("Shape",subshapes[self.getData('index')])
         self.outExec.call()
 
@@ -924,6 +942,7 @@ class FreeCAD_Face(FreeCadNodeBase):
     or a shapePin
     '''
 
+    dok=4
     def __init__(self, name="MyFace"):
         super(self.__class__, self).__init__(name)
 
@@ -983,6 +1002,8 @@ class FreeCAD_Edge(FreeCadNodeBase):
     or a shapePin
     '''
 
+    dok=4
+    
     def __init__(self, name="MyEdge"):
         super(self.__class__, self).__init__(name)
 
@@ -1037,10 +1058,12 @@ class FreeCAD_Edge(FreeCadNodeBase):
 class FreeCAD_Destruct_Shape(FreeCadNodeBase):
     '''
     get the edges, faces and points of a shape
-    there can be a reference to a FreeCAD object by its name
-    or a shapePin
+    there can be a reference to a FreeCAD object 
+    by its name or a shapePin
     '''
 
+    dok=4
+    
     def __init__(self, name="MyDestruction"):
         super(self.__class__, self).__init__(name)
 
@@ -1102,9 +1125,10 @@ class FreeCAD_Destruct_Shape(FreeCadNodeBase):
 
 class FreeCAD_Parallelprojection(FreeCadNodeBase):
     '''
-    dummy for tests
+    parallal projection of an edge onto a face
     '''
 
+    dok=4
     def __init__(self, name="MyParallelProjection"):
         super(self.__class__, self).__init__(name)
 
@@ -1115,10 +1139,15 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
 
-        p=self.createInputPin('face', 'AnyPin')
-        p=self.createInputPin('edge', 'AnyPin')
+        p=self.createInputPin('face', 'ShapePin')
+        p.description="the target face for projection"
+        
+        p=self.createInputPin('edge', 'ShapePin')
+        p.description="the edge which is projected"
+        
         p=self.createInputPin('direction', 'VectorPin',FreeCAD.Vector(0,0,1))
         p.recomputeNode=True
+        p.description="direction of the projection light"
 
 
     def compute(self, *args, **kwargs):
@@ -1147,25 +1176,27 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
 
 class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
     '''
-    dummy for tests
+    perspective projection of an edge onto a face
     '''
 
+    dok=4
     def __init__(self, name="MyPerspectiveProjection"):
         super(self.__class__, self).__init__(name)
-
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
-
-
-        p=self.createInputPin('face', 'AnyPin')
-        p=self.createInputPin('edge', 'AnyPin')
+        p=self.createInputPin('face', 'ShapePin')
+        p.description="the target face for projection"
+        
+        p=self.createInputPin('edge', 'ShapePin')
+        p.description="the edge which is projected"
+        
         p=self.createInputPin('center', 'VectorPin',FreeCAD.Vector(0,0,1000))
         p.recomputeNode=True
+        p.description="center of projection, position of the point light"
 
 
     def compute(self, *args, **kwargs):
@@ -1193,9 +1224,13 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
 
 class FreeCAD_UVprojection(FreeCadNodeBase):
     '''
-    dummy for tests
+    uv projection of an edge onto a face
+    the curve is discretized,
+    the points are mapped 
+    and a interpolated curve is computed
     '''
 
+    dok=4
     def __init__(self, name="MyUVProjection"):
         super(self.__class__, self).__init__(name)
 
@@ -1205,10 +1240,16 @@ class FreeCAD_UVprojection(FreeCadNodeBase):
 
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
-        p=self.createInputPin('face', 'AnyPin')
-        p=self.createInputPin('edge', 'AnyPin')
-        #p=self.createInputPin('direction', 'VectorPin',FreeCAD.Vector(0,0,1))
+        p=self.createInputPin('face', 'ShapePin')
+        p.description="the target face for projection"
+        
+        p=self.createInputPin('edge', 'ShapePin')
+        p.description="the edge which is projected"
+
         p=self.createInputPin('pointCount', 'IntPin',20)
+        p.description="number of points of the edge used for constructing the curve"
+
+    # zum aufpolstern #+# trennen in zweite node!
         p=self.createInputPin('inverse', 'BoolPin')
         p=self.createInputPin('Extrusion', 'BoolPin')
         p=self.createInputPin('ExtrusionUp', 'FloatPin',100)
@@ -1240,10 +1281,13 @@ class FreeCAD_UVprojection(FreeCadNodeBase):
         return []
 
 
+
 class FreeCAD_Compound(FreeCadNodeBase):
     '''
     compound of a list of shapes
     '''
+
+    dok=4
 
     def __init__(self, name="MyCompound"):
         super(self.__class__, self).__init__(name)
@@ -1255,17 +1299,9 @@ class FreeCAD_Compound(FreeCadNodeBase):
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
 
 
-        #self.shapes=self.createInputPin('Shapes', 'AnyPin', None,  supportedPinDataTypes=["ShapePin", "FCobjPin"])
         self.shapes=self.createInputPin('Shapes', 'ShapePin', None)
         self.shapes.enableOptions(PinOptions.AllowMultipleConnections)
         self.shapes.disableOptions(PinOptions.SupportsOnlyArrays)
-
-#        p=self.createInputPin('ShapeList', 'ShapeListPin', [])
-#        p.enableOptions(PinOptions.AllowMultipleConnections)
-#        p.disableOptions(PinOptions.SupportsOnlyArrays)
-#        p.recomputeNode=True
-
-
 
 
     @staticmethod
@@ -1284,9 +1320,10 @@ class FreeCAD_Compound(FreeCadNodeBase):
 
 class FreeCAD_Plot(FreeCadNodeBase):
     '''
-    dummy for tests
+    display matplotlib windows with data
     '''
 
+    dok= 4
     def __init__(self, name="MyPlot"):
         super(self.__class__, self).__init__(name)
 
@@ -1301,28 +1338,18 @@ class FreeCAD_Plot(FreeCadNodeBase):
         self.xpin2=self.createInputPin('x2', 'FloatPin', structure=StructureType.Array)
         self.ypin2=self.createInputPin('y2', 'FloatPin', structure=StructureType.Array)
 
-        #self.f2=self.createInputPin('Figure2', 'BoolPin')
-        #self.f3=self.createInputPin('Figure3', 'BoolPin')
+        self.xpin.description="x values for the first curve"
+        self.ypin.description="y values for the first curve"
+        self.xpin2.description="x values for the 2nd curve"
+        self.ypin2.description="y values for the 2nd curve"
+        
 
         self.mode = self.createInputPin('Figure', 'EnumerationPin')
         self.mode.values=["Figure1","Figure2","Figure3","Figure4"]
         self.mode.setData("Figure1")
         self.mode.recomputeNode=True
-
-
-    def Xcompute(self, *args, **kwargs):
-
-        sayl()
-
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_Plot_compute(self,*args, **kwargs)
-
-        self.outExec.call()
-
-        if self._preview:
-            self.preview()
-
+        self.mode.description="Selector for the window name, there a re at most 4 diagram windows possible"
+        
 
     @staticmethod
     def description():
@@ -1342,10 +1369,12 @@ class FreeCAD_Plot(FreeCadNodeBase):
 class FreeCAD_Ref(FreeCadNodeBase):
     '''
     a reference to the shape or subobjects of a FreeCAD part
-    select a part or some subobjects oof the same object. than a node with pins for all
-    these selected details is created
+    select a part or some subobjects oof the same object. 
+    Than a node with pins for all
+    these selected details is created.
     '''
 
+    dok=4
     def __init__(self, name="MyReference",**kvargs):
         try:
             s=FreeCADGui.Selection.getSelection()[0]
@@ -1357,12 +1386,16 @@ class FreeCAD_Ref(FreeCadNodeBase):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin('Reload Shapes', 'ExecPin', None, self.compute)
         self.inExec.description="force a reload of shape when the shape has chanched  inside FreeCAD"
+
         self.inExec = self.createInputPin('Adapt Selection', 'ExecPin', None, self.refresh)
         self.inExec.description="set the reference to another subshape which must be selected in FreeCAD before adapt is called"
+
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.objname = self.createInputPin("objectname", 'StringPin')
         self.objname.description="name of the part used for reference, this parameter is changed automaticly by the adapt button."
         self.objname.setData(name)
+        self.objname="name of the FreeCAD object"
+
         self._refpins = []
 
         try:
@@ -1708,6 +1741,7 @@ class FreeCAD_LOD(FreeCadNodeBase):
     Level of Detail switch
     '''
 
+    dok=4
     def __init__(self, name="MyLOD",**kvargs):
 
         super(self.__class__, self).__init__(name)
@@ -1754,7 +1788,7 @@ class FreeCAD_view3D(FreeCadNodeBase):
     create an instance in 3D space of FreeCAD, show the shape
     '''
 
-    dok = 2
+    dok = 4
     def __init__(self, name="MyView3D",**kvargs):
 
         super(self.__class__, self).__init__(name)
@@ -1768,22 +1802,6 @@ class FreeCAD_view3D(FreeCadNodeBase):
         self.createInputPin('Shape_in', 'ShapePin').\
         description= "shape to display"
 
-    @timer
-    def Xcompute(self, *args, **kwargs):
-
-        name=self.getData('name')
-        Shape=self.getPinObject('Shape_in')
-        workspace=self.getData('Workspace')
-        mode='1'
-        wireframe=False
-        transparency=50
-        #+#todo make the parameters to pins
-
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_view3d(self,name,Shape,workspace,mode,wireframe,transparency)
-
-        self.outExec.call()
 
     @staticmethod
     def description():
@@ -2109,6 +2127,8 @@ class FreeCAD_figureOnFace(FreeCadNodeBase):
 class FreeCAD_listOfVectors(FreeCadNodeBase):
     '''
     create a list of vectors from  single vectors
+    the order of the vector is defined by
+    the y coordiante of the vector nodes
     '''
 
     dok = 4
@@ -2153,6 +2173,7 @@ class FreeCAD_moveVectors(FreeCadNodeBase):
 
         self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
         self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
+        a.description="__mover__ is added to all __vectors__"
 
         a=self.createInputPin('mover', 'VectorPin')
         a.recomputeNode=True
@@ -2200,7 +2221,9 @@ class FreeCAD_scaleVectors(FreeCadNodeBase):
 
 class FreeCAD_repeatPattern(FreeCadNodeBase):
     '''
-    repeat a pattern along a vectors list - each vector of vectors is a start position of a copy of the pattern vectors
+    repeat a pattern along a vectors list 
+    each vector of vectors is a start position 
+    of a copy of the pattern vectors
     '''
 
     dok = 4
@@ -2214,7 +2237,7 @@ class FreeCAD_repeatPattern(FreeCadNodeBase):
         a=self.createInputPin('pattern', 'VectorPin', structure=StructureType.Array)
         a.description="list of vectors which define a figure"
         self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
-        a.description="list of starting points  of the copoes of the figure pattern"
+        a.description="list of starting points  for the copies of the figure pattern"
 
         a=self.createOutputPin('pattern_out', 'VectorPin', structure=StructureType.Array)
         a.description="list of pattern lists"
@@ -2302,7 +2325,8 @@ class FreeCAD_Reduce(FreeCadNodeBase):
 
 class FreeCAD_IndexToList(FreeCadNodeBase):
     '''
-    create a flag list with 1 for the numbers and 0 for the others
+    create a flag list with 1 for the numbers 
+    and 0 for the others
     '''
 
     dok = 4
@@ -2316,7 +2340,7 @@ class FreeCAD_IndexToList(FreeCadNodeBase):
         a=self.createInputPin('index', 'IntPin')
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
-        a.description="numbers where the flag should be 1 (the others are 0"
+        a.description="numbers where the flag should be 1 (the others are 0)"
         a=self.createOutputPin('flags', 'BoolPin',structure=StructureType.Array)
         a.description="list of 0's and 1's"
 
@@ -2331,10 +2355,11 @@ class FreeCAD_IndexToList(FreeCadNodeBase):
 
 class FreeCAD_distToShape(FreeCadNodeBase):
     '''
-    list of distances of a target shape to a list of shapes
+    list of distances from  a list of shapes 
+    to a target shape
     '''
 
-    dok = 0
+    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2344,9 +2369,12 @@ class FreeCAD_distToShape(FreeCadNodeBase):
 
 
         a=self.createInputPin('shapes', 'ShapeListPin')
+        a.description="list of shapes"
         a=self.createInputPin('target', 'ShapePin')
+        a.description="target shape"
 
         a=self.createOutputPin('distance', 'FloatPin',structure=StructureType.Array)
+        a.description="distances"
 
     @staticmethod
     def description():
@@ -2358,28 +2386,28 @@ class FreeCAD_distToShape(FreeCadNodeBase):
 
 
 class FreeCAD_centerOfMass(FreeCadNodeBase):
+    '''
+    center of mass for a list of shapes
+    '''
 
+    dok=4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
-
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.shapelist = self.createInputPin("ShapeList", 'ShapeListPin')
-#        t = self.createInputPin("Shape", 'ShapePin')
-#        t.enableOptions(PinOptions.AllowMultipleConnections)
-#        t.disableOptions(PinOptions.SupportsOnlyArrays)
+        self.shapelist.description="list of shapes to discover" 
 
         self.shapeout = self.createOutputPin('points', 'VectorPin', structure=StructureType.Array)
-
-
+        self.shapeout.description="the centers of mass for the shapes in __ShapeList__"
 
 
     @staticmethod
     def description():
-        return FreeCAD_Toy.__doc__
+        return FreeCAD_centerOfMass.__doc__
 
     @staticmethod
     def category():
@@ -2388,7 +2416,7 @@ class FreeCAD_centerOfMass(FreeCadNodeBase):
 
 class FreeCAD_listOfShapes(FreeCadNodeBase):
     '''
-    create a list of shapes from  single vectors
+    create a list of shapes from single shapes
     '''
 
     dok = 4
@@ -2399,26 +2427,28 @@ class FreeCAD_listOfShapes(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createOutputPin('ShapeList', 'ShapeListPin')
+        a=self.createOutputPin('ShapeList', 'ShapeListPin')
+        a.description="the ordered list of the input shapes"
 
         self.pas=self.createInputPin('Shape', 'ShapePin')
+        self.pas.description="the shapes are ordered by thy y coordinate of the nodes"
         self.pas.enableOptions(PinOptions.AllowMultipleConnections)
         self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
 
 
-
     @staticmethod
     def description():
-        return FreeCAD_listOfVectors.__doc__
+        return FreeCAD_listOfShapes.__doc__
 
     @staticmethod
     def category():
         return 'Conversion'
 
 
-class FreeCAD_listOfRotations(FreeCadNodeBase):
+
+class FreeCAD_listOfPlacements(FreeCadNodeBase):
     '''
-    create a list of rotations from  lists of data
+    create a list of placements from  lists of data
     '''
 
     dok = 4
@@ -2429,56 +2459,218 @@ class FreeCAD_listOfRotations(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('axes', 'VectorPin',structure=StructureType.Array)
-        self.createInputPin('centers', 'VectorPin',structure=StructureType.Array)
-        self.createInputPin('angles', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('moves', 'VectorPin',structure=StructureType.Array)
+        a.description="moving vectors/base vector property of the placements, default is (0,0,0) "
+        
+        a=self.createInputPin('axes', 'VectorPin',structure=StructureType.Array)
+        a.description="rotation axes, default is (0,0,1)"
+        
+        a=self.createInputPin('angles', 'FloatPin',structure=StructureType.Array)
+        a.description="rotation angles in degree, default is 0"
+        
+        
+        a=self.createInputPin('centers', 'VectorPin',structure=StructureType.Array)
+        a.description="rotation centers, default is (0,0,0)"
 
-        self.createOutputPin('Rotations', 'RotationPin',structure=StructureType.Array)
+        a=self.createOutputPin('Placements', 'PlacementPin',structure=StructureType.Array)
+        a.description="list of placements created from given lists, the length is defined by the longest input list, the values for the other list are filled with default values"
 
+    @staticmethod
+    def description():
+        return FreeCAD_listOfPlacements.__doc__
+
+
+
+class FreeCAD_applyPlacements(FreeCadNodeBase):
+    '''
+    apply a list of placements to 
+    a shape or a list of shapes 
+    or a list of vectors(polygon)
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description="a list of vectors which define a poylgon pattern"
+
+        a=self.createInputPin('Shapes', 'ShapeListPin')   
+        a.description="a list of shapes,  the n. shape will get the n. placement"
+
+        a=self.createInputPin('Shape_in', 'ShapePin')   
+        a.description="a single shape, there will be a copy of this shape for each placement"
+        
+        a=self.createInputPin('Placements', 'PlacementPin',structure=StructureType.Array)
+        a.description="the list of placement which are applied to the shape, shapelist or points"
+
+        a=self.createOutputPin('Shape_out', 'ShapePin')   
+
+        a=self.createOutputPin('points_out', 'VectorPin',structure=StructureType.Array)
+        a.description="the result if the input was the __points__ pin"
+
+    @staticmethod
+    def description():
+        return FreeCAD_applyPlacements.__doc__
+
+
+
+class FreeCAD_repeat(FreeCadNodeBase):
+    '''
+    list of the same element repeated
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('in', 'AnyPin',constraint='1')   
+        a.description="element to repeat"
+        a=self.createOutputPin('out', 'AnyPin',structure=StructureType.Array,constraint='1')
+        a.description="count repetitions of elment in" 
+        a=self.createInputPin('count', 'IntPin',2) 
+        a.description="how often to repeat element in"
+          
+        a=self.createOutputPin('Shapes', 'ShapeListPin')
+        a.description="list of shapes if input element is a shape"
+        
+    @staticmethod
+    def description():
+        return FreeCAD_repeat.__doc__
+
+
+
+class FreeCAD_Index(FreeCadNodeBase):
+    '''
+    returns item with a given index from a list
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('list', 'AnyPin',structure=StructureType.Array,constraint='1')
+        a.description="a list"
+        
+        a=self.createInputPin('index', 'IntPin',2)
+        a.recomputeNode=True
+        a.description='position of the item in the list starting with 0'
+        a=self.createOutputPin('item', 'AnyPin',constraint='1')
+        a.description="element of list at index position"
+        
+
+    @staticmethod
+    def description():
+        return FreeCAD_Index.__doc__
 
 
 #------------------------
 
 
+class FreeCAD_Zip(FreeCadNodeBase):
+    '''
+    create a list of vectors from the lists of coordinates
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('x', 'FloatPin',structure=StructureType.Array)
+        a.description='list of x coordinates'
+
+        a=self.createInputPin('y', 'FloatPin',structure=StructureType.Array)
+        a.description='list of y coordinates'
+
+        a=self.createInputPin('z', 'FloatPin',structure=StructureType.Array)
+        a.description='list of z coordinates'
+
+        a=self.createOutputPin('vectors_out', 'VectorPin',structure=StructureType.Array)
+        a.description='list of created vectors'
+
+    @staticmethod
+    def description():
+        return FreeCAD_Zip.__doc__
+
+class FreeCAD_Tube(FreeCadNodeBase):
+    '''
+    calculate the points for a parametric tube along a backbone curve
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('backbone', 'ShapePin')
+        a.description="backbone curve for the tube"
+        a=self.createInputPin('parameter', 'FloatPin',structure=StructureType.Array)
+        a.description="u parameter of the position of the ribs"
+        a=self.createInputPin('radius', 'FloatPin',structure=StructureType.Array)
+        a.description="radius/size of the rib rings"
+        a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description="array of poles for the postprocessing bspline surface"
+
+    @staticmethod
+    def description():
+        return FreeCAD_Tube.__doc__
+
+    @staticmethod
+    def category():
+        return 'Construction'
+
+
 
 def nodelist():
     return [
-#                FreeCAD_Foo,
                 FreeCAD_Toy,
-#               FreeCAD_Bar,
                 FreeCAD_Object,
                 FreeCAD_Box,
                 FreeCAD_Cone,
                 FreeCAD_Sphere,
                 FreeCAD_Quadrangle,
-#                FreeCAD_Polygon,
-                FreeCAD_Polygon2,
-#                FreeCAD_Array,
+
+                FreeCAD_Polygon,
                 FreeCAD_Console,
                 FreeCAD_VectorArray,
                 FreeCAD_Boolean,
                 FreeCAD_BSplineSurface,
                 FreeCAD_BSplineCurve,
+
                 FreeCAD_Plot,
                 FreeCAD_ShapeIndex,
                 FreeCAD_ShapeExplorer,
                 FreeCAD_Compound,
                 FreeCAD_Edge,
-                FreeCAD_Face,
+                FreeCAD_Face, 
+
                 FreeCAD_Parallelprojection,
                 FreeCAD_Perspectiveprojection,
                 FreeCAD_UVprojection,
-#                FreeCAD_Part,
                 FreeCAD_Ref,
-                FreeCAD_RefList,
+                
                 FreeCAD_LOD,
                 FreeCAD_view3D,
                 FreeCAD_Destruct_Shape,
-                FreeCAD_bakery,
-                FreeCAD_topo,
-                FreeCAD_conny,
-                FreeCAD_randomizePolygon,
-                FreeCAD_figureOnFace,
+
                 FreeCAD_listOfVectors,
                 FreeCAD_moveVectors,
                 FreeCAD_scaleVectors,
@@ -2486,8 +2678,23 @@ def nodelist():
                 FreeCAD_Transformation,
                 FreeCAD_Reduce,
                 FreeCAD_IndexToList,
+                FreeCAD_distToShape,
                 FreeCAD_centerOfMass,
                 FreeCAD_listOfShapes,
-                FreeCAD_listOfRotations,
+                FreeCAD_listOfPlacements,
+                FreeCAD_applyPlacements,
+                FreeCAD_repeat,
+                FreeCAD_Index,
+                FreeCAD_Zip,#ok bis hier
+                
+                FreeCAD_Tube,
 
+                # noch zu dokumentieren ##############################
+                FreeCAD_bakery,
+                FreeCAD_topo,
+                FreeCAD_conny,
+                FreeCAD_randomizePolygon,
+                FreeCAD_figureOnFace,
+
+                # FreeCAD_RefList, muss noch programmiert werden
         ]

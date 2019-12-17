@@ -3,7 +3,6 @@
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 
 sayl()
-say("got HUGO:",hugo)
 
 
 # method only for get runtime
@@ -70,7 +69,7 @@ class FreeCadNodeBase(NodeBase):
         else:
             try:
                 shape=self.getPinObject("Shape_out")
-                FreeCAD.Console.PrintError("update Shape for "+name+"\n")
+                #FreeCAD.Console.PrintError("update Shape for "+name+"\n")
                 
                 if a== None:
                     a=FreeCAD.ActiveDocument.addObject("Part::Feature",name)
@@ -299,8 +298,22 @@ class FreeCadNodeBase(NodeBase):
         yy=placement.toMatrix().A 
         self.setData(pinName,list(yy))
 
+    def getPinPlacements(self,pinName):
+        pmks=self.getData(pinName)
+        return [FreeCAD.Placement(FreeCAD.Matrix(*pmk)) for pmk in pmks]
     
- 
+    def setPinPlacements(self,pinName,placements):
+        yy=[list(placement.toMatrix().A) for placement in placements]
+        self.setData(pinName,yy)
+
+    def setPinRotations(self,pinName,rotations):
+        self.setData(pinName,[list(r.toEuler()) for r in rotations])
+    
+    def getPinRotations(self,pinName):
+        rin=self.getData(pinName)
+        rots=[FreeCAD.Rotation(*r) for r in rin]
+        return rots
+
  
             
     def reset(self,*args, **kwargs):

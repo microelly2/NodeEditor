@@ -1,4 +1,7 @@
+*.FC*
+/PyFlowPackages/PyFlowFreeCAD/Nodes/FreeCAD_Nurbs_trash.py
 /PyFlowPackages/PyFlowFreeCAD/UI/FreeCAD_icons/*
+/PyFlowPackages/PyFlowFreeCAD/UI/grasshopper/*
 /PyFlowPackages/PyFlowFreeCAD/Tools/res/compute.svg
 /makefile
 /nodeeditor/dragger_vorlage_lang.py
