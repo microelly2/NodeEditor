@@ -1891,3 +1891,34 @@ def createNodeDocu(onlyNew=False):
         say("number of nodes {}".format(len(cnks)))
 
     
+
+
+def T3(): # docfun():
+
+    clearReportView()
+    packages = GET_PACKAGES()
+    for pn in packages:
+        say(pn)
+        lib = packages[pn].GetFunctionLibraries()
+        say(lib)
+        for l in lib:
+            ll = lib[l]
+            say(ll)
+            for fn in ll.getFunctions():
+                fun=ll.getFunctions()[fn]
+                
+                say("--",fun.__name__)
+                say(fun.__doc__)
+                say()
+
+            
+    return
+    libs = packages[packageName].GetFunctionLibraries()[libName]
+    defFoos = lib.getFunctions()
+    fun = NodeBase.initializeFromFunction(defFoos[functionName])
+
+    
+    return
+    #defFoos = lib.getFunctions()
+
+    packs=pfwrap.getNodesClasses()

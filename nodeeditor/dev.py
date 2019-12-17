@@ -3360,7 +3360,7 @@ def run_FreeCAD_repeatPattern(self):
     self.outExec.call()    
 
 
-def run_FreeCAD_Polygon2(self):
+def run_FreeCAD_Polygon(self):
     
             # recursion stopper
         if self.Called:
@@ -3833,6 +3833,8 @@ def run_FreeCAD_Toy(self):
     sh=self.getPinObject("ShapePin_in")
     self.setData("VectorPin_out",[sh.CenterOfMass])
 
+def run_FreeCAD_Toy(self):
+    sayl()
 
 
 def run_FreeCAD_Object(self, *args, **kwargs):

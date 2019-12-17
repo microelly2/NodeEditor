@@ -367,22 +367,22 @@ class Numpy(FunctionLibraryBase):
 
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', None, 
+    @IMPLEMENT_NODE(returns=('FloatPin', None, 
             {'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}),
             meta={'Category': 'numpy|array',  'Keywords': []},)
-    def subarray(data=('AnyPin', None),umin=('IntPin',0),umax=('IntPin',0),vmin=('IntPin',0),vmax=('IntPin',0)):
+    def subarray(data=('FloatPin', None),umin=('IntPin',0),umax=('IntPin',0),vmin=('IntPin',0),vmax=('IntPin',0)):
         '''
         returns data[umin:umax,vmin:vmax]
         '''
 
         if umax != 0 and vmax != 0:
-            return np.flipud(np.array(data))[umin:umax,vmin:vmax]
+            return np.flipud(np.array(data))[umin:umax,vmin:vmax].tolist()
         elif umax != 0:
-            return np.flipud(np.array(data))[umin:umax,vmin:]
+            return np.flipud(np.array(data))[umin:umax,vmin:].tolist()
         elif vmax != 0:
-            return np.flipud(np.array(data))[umin:,vmin:vmax]
+            return np.flipud(np.array(data))[umin:,vmin:vmax].tolist()
         else:
-            return np.flipud(np.array(data))[umin:,vmin:]
+            return np.flipud(np.array(data))[umin:,vmin:].tolist()
 
     '''
     Tiling arrays
@@ -398,54 +398,54 @@ class Numpy(FunctionLibraryBase):
     '''
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', None, 
+    @IMPLEMENT_NODE(returns=('FloatPin', None, 
             {'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}),
             meta={'Category': 'numpy|array',  'Keywords': []},)
-    def flipud(data=('AnyPin', None)):
+    def flipud(data=('FloatPin', None)):
         '''
         fliplr(data)    Flip array in the up/down  direction.
         '''
-        return np.flipud(np.array(data))
+        return np.flipud(np.array(data)).tolist()
 
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', None, 
+    @IMPLEMENT_NODE(returns=('FloatPin', None, 
             {'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}),
             meta={'Category': 'numpy|array',  'Keywords': []},)
-    def fliplr(data=('AnyPin', None)):
+    def fliplr(data=('FloatPin', None)):
         '''
         fliplr(data)    Flip array in the left/right direction.
         '''
-        return np.fliplr(np.array(data))
+        return np.fliplr(np.array(data)).tolist()
 
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', None, 
+    @IMPLEMENT_NODE(returns=('FloatPin', None, 
             {'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}),
             meta={'Category': 'numpy|array',  'Keywords': []},)
-    def reshape(data=('AnyPin', None),a=('IntPin',0),b=('IntPin',0),c=('IntPin',0)):
+    def reshape(data=('FloatPin', [1,2,3,4]),a=('IntPin',2),b=('IntPin',2),c=('IntPin',0)):
         '''
         reshape(data, (a [,b {,c]]))    Gives a new shape to an array without changing its data.
         '''
         if c  !=  0 :
-            return np.reshape(np.array(data), (a,b,c))
+            return np.reshape(np.array(data), (a,b,c)).tolist()
         elif b  !=  0 :
-            return np.reshape(np.array(data), (a,b))
+            return np.reshape(np.array(data), (a,b)).tolist()
         elif a  !=  0 :
-            return np.reshape(np.array(data), (a))
+            return np.reshape(np.array(data), (a)).tolist()
         else:
             raise Exception("no valid shape")
 
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', None, 
+    @IMPLEMENT_NODE(returns=('FloatPin', None, 
             {'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}),
             meta={'Category': 'numpy|array',  'Keywords': []},)
-    def roll(data=('AnyPin', None),shift=('IntPin',1),axis=('IntPin',0)):
+    def roll(data=('FloatPin', None),shift=('IntPin',1),axis=('IntPin',0)):
         '''
         roll(a, shift[, axis])  Roll array elements along a given axis. 
         '''
-        return np.roll(np.array(data), shift, axis=axis)
+        return np.roll(np.array(data), shift, axis=axis).tolist()
 
 
 #-------------------------
@@ -453,51 +453,51 @@ class Numpy(FunctionLibraryBase):
 #-------------numpy lib starts here -------------------------
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [], {'constraint': '1'}), meta={'Category': 'numpy|array', 'Keywords': ['list','interval']})
+    @IMPLEMENT_NODE(returns=('FloatPin', [], {'constraint': '1'}), meta={'Category': 'numpy|array', 'Keywords': ['list','interval']})
     def linSpace(start=('FloatPin',0.),stop=('FloatPin',10), num=('IntPin', 50)):
         """create a linear Space"""
 
         x1 = np.linspace(start, stop, num, endpoint=True)
-        return list(x1)
+        say("linspace",x1)
+        return x1.tolist()
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|random', 'Keywords': ['list','random']})
+    @IMPLEMENT_NODE(returns=('FloatPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|random', 'Keywords': ['list','random']})
     def randomList(size=('IntPin', 50)):
         """create a random list"""
         
         x1 = np.random.random(size)
-        return list(x1)
+        return x1.tolist()
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|random', 'Keywords': ['list','random']})
+    @IMPLEMENT_NODE(returns=('FloatPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|random', 'Keywords': ['list','random']})
     def onesList(size=('IntPin', 50)):
         """create a list of ones"""
         
         x1 = np.ones(size)
-        return list(x1)
+        return x1.tolist()
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|random', 'Keywords': ['list','random']})
+    @IMPLEMENT_NODE(returns=('FloatPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|random', 'Keywords': ['list','random']})
     def zerosList(size=('IntPin', 50)):
         """create a list of zeros"""
         
         x1 = np.zeros(size)
-        return list(x1)
+        return x1.tolist()
 
 
     @staticmethod
     @IMPLEMENT_NODE(returns=('VectorPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|array', 'Keywords': ['list','random']})
-    def zip(x=('AnyPin', [0]),y=('AnyPin', [1]),z=('AnyPin', [2])) :
+    def zip(x=('FloatPin', [0]),y=('FloatPin', [1]),z=('FloatPin', [2])) :
         """combine """
         
         res=np.array([x,y,z]).swapaxes(0,1)
         points=[FreeCAD.Vector(list(a)) for a in res]    
         return points
 
-
     @staticmethod
     @IMPLEMENT_NODE(returns=('RotationPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|array', 'Keywords': ['list','random']})
-    def zipRotation(x=('AnyPin', [0]),y=('AnyPin', [1]),z=('AnyPin', [2]),angle=('AnyPin', [2])) :
+    def zipRotation(x=('FloatPin', [0]),y=('FloatPin', [1]),z=('FloatPin', [2]),angle=('FloatPin', [2])) :
         """combine """
         
         res=np.array([x,y,z]).swapaxes(0,1)
@@ -506,7 +506,7 @@ class Numpy(FunctionLibraryBase):
 
     @staticmethod
     @IMPLEMENT_NODE(returns=('RotationPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|array', 'Keywords': ['list','random']})
-    def zipPlacement(Base=('AnyPin', []),Rotation=('AnyPin', [])) :
+    def zipPlacement(Base=('FloatPin', []),Rotation=('FloatPin', [])) :
         """combine """
         
         pms=[FreeCAD.Placement(base,rot) for base,rot in zip(Base,Rotation)]    
@@ -514,101 +514,122 @@ class Numpy(FunctionLibraryBase):
 
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
-    def scale(data=('AnyPin', [0]),factor=('FloatPin', 1.)) :
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
+    def scale(data=('FloatPin', [0]),factor=('FloatPin', 1.)) :
         """multiply datalist with factor """
         
-        return list(np.array(data)*factor)
+        return (np.array(data)*factor).tolist()
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
-    def linearTrafo(data=('AnyPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 0.)) :
-        """a*x + b """
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
+    def round(data=('FloatPin', [0]),decimals=('IntPin', 1)) :
+        """multiply datalist with factor """
         
-        return list(np.array(data)*a +b)
+        return np.round(np.array(data),decimals).tolist()
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
-    def sin(data=('AnyPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 1.),c=('FloatPin', 0.)) :
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
+    def linearTrafo(data=('FloatPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 0.)) :
+        """
+        a*x + b
+        """
+        
+        return (np.array(data)*a +b).tolist()
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
+    def sin(data=('FloatPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 1.),c=('FloatPin', 0.)) :
         """a*sin(b*x+c)"""
         
-        return list(a*np.sin(np.array(data)*b +c))
+        return (a*np.sin(np.array(data)*b +c)).tolist()
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
-    def cos(data=('AnyPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 1.),c=('FloatPin', 0.)) :
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
+    def cos(data=('FloatPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 1.),c=('FloatPin', 0.)) :
         """a*cos(b*x+c)"""
         
         return list(a*np.cos(np.array(data)*b +c))
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
-    def tan(data=('AnyPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 1.),c=('FloatPin', 1.)) :
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
+    def tan(data=('FloatPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 1.),c=('FloatPin', 1.)) :
         """a*tan(b*x+c)"""
         
         return list(a*np.tan(np.array(data)*b +c))
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
-    def arctan(data=('AnyPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 1.),c=('FloatPin', 1.)) :
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
+    def arctan(data=('FloatPin', [0]),a=('FloatPin', 1.),b=('FloatPin', 1.),c=('FloatPin', 1.)) :
         """arctan(x)"""
         
         return list(np.arctan(np.array(data)))
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
-    def arctan2(y=('AnyPin', [0]),x=('AnyPin', [0])) :
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
+    def arctan2(y=('FloatPin', [0]),x=('FloatPin', [0])) :
         """arctan2(y,x)"""
         
         return list(np.arctan2(np.array(y),np.array(x)))
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
-    def rad2deg(radians=('AnyPin', [0])) :
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
+    def rad2deg(radians=('FloatPin', [0])) :
         """radians to degree"""
         
         return list(np.rad2deg(np.array(radians)))
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['degree','radian','angle']})
-    def deg2rad(degree=('AnyPin', [0])) :
-        """degree to radians"""
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['degree','radian','angle']})
+    def deg2rad(degree=('FloatPin', [0])) :
+        """
+        degree to radians
+        """
         
         return list(np.deg2rad(np.array(degree)))
 
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
-    def unwrap(radians=('AnyPin', [0])) :
-        """Unwrap by changing deltas between values to 2*pi complement.
-Unwrap radian phase p by changing absolute jumps greater than discont to their 2*pi complement along the given axis."""
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|trigonometry', 'Keywords': ['list','scale','multiply']})
+    def unwrap(radians=('FloatPin', [0])) :
+        """
+        Unwrap by changing deltas between values to 2*pi complement.
+        Unwrap radian phase p by changing absolute jumps greater than discont to their 2*pi complement along the given axis.
+        """
         
         return list(np.unwrap(np.array(radians)))
 
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|interpolate', 'Keywords': ['list','scale','multiply']})
-    def interp_lin(x=('AnyPin', [0,0.5,1.,1.5]),xp=('AnyPin', [0,1,2]),yp=('AnyPin', [0.,2.,0.]),) :
-        """One-dimensional linear interpolation.
-
-Returns the one-dimensional piecewise linear interpolant to a function with given discrete data points (xp, fp), evaluated at x."""
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|interpolate', 'Keywords': ['list','scale','multiply']})
+    def interp_lin(x=('FloatPin', [0,0.5,1.,1.5]),xp=('FloatPin', [0,1,2]),yp=('FloatPin', [0.,2.,0.]),) :
+        """
+    One-dimensional linear interpolation.
+    Returns the one-dimensional piecewise linear interpolant 
+    to a function with given discrete data points (xp, fp), 
+    evaluated at x.
+        """
         
         return list(np.interp(x,xp,yp))
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
-    def add(x=('AnyPin', [0,1]),y=('AnyPin', [0,2])) :
-        """"""
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
+    def add(x=('FloatPin', [0,1]),y=('FloatPin', [0,2])) :
+        """
+        """
         
         return list(np.array(x)+np.array(y))
 
 
     @staticmethod
-    @IMPLEMENT_NODE(returns=('AnyPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|interpolate', 'Keywords': ['list','scale','multiply']})
-    def interp_cubic(x=('AnyPin', [0,0.5,1.,1.5]),xp=('AnyPin', [0,1,2]),yp=('AnyPin', [0.,2.,0.]),) :
-        """Interpolate a 1-D function.
-
-x and y are arrays of values used to approximate some function f: y = f(x). This class returns a function whose call method uses interpolation to find the value of new points."""
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|interpolate', 'Keywords': ['list','scale','multiply']})
+    def interp_cubic(x=('FloatPin', [0,0.5,1.,1.5]),xp=('FloatPin', [0,1,2]),yp=('FloatPin', [0.,2.,0.]),) :
+        """
+    Interpolate a 1-D function.
+    xp and yp are arrays of values used to approximate some function 
+    f: y = f(x). 
+    This class returns a function whose call method 
+    uses interpolation to find the value of new points x.
+        """
         from scipy import interpolate
         f = interpolate.interp1d(xp, yp,kind='cubic')
         y = f(np.array(x)) 
