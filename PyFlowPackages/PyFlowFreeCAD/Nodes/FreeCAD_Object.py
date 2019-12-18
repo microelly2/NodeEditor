@@ -2650,7 +2650,8 @@ class FreeCAD_ImportFile(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('filename', 'StringPin')
+        a=self.createInputPin('filename', 'StringPin','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
+        
         a=self.createInputPin('force', 'BoolPin',True)
         a=self.createOutputPin('data', 'FloatPin',structure=StructureType.Array)
         a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)

@@ -476,7 +476,7 @@ def f4(self):
     say("nothing to do, done")
 
 
-def run_FreeCAD_view3D(self, *args, **kwargs):
+def run_FreeCAD_View3D(self, *args, **kwargs):
 
     name=self.getData('name')
     Shape=self.getPinObject('Shape_in')
@@ -628,7 +628,7 @@ def run_FreeCAD_Tripod(self,*args, **kwargs):
 
 
 
-def run_FreeCAD_uIso(self,*args, **kwargs):
+def run_FreeCAD_UIso(self,*args, **kwargs):
 
     f=self.getPinObject('Face_in')
     if f is None: return
@@ -650,7 +650,7 @@ def run_FreeCAD_uIso(self,*args, **kwargs):
     self.outExec.call()
 
 
-def run_FreeCAD_vIso(self,*args, **kwargs):
+def run_FreeCAD_VIso(self,*args, **kwargs):
 
     f=self.getPinObject('Face_in')
     if f is None: return
@@ -671,7 +671,7 @@ def run_FreeCAD_vIso(self,*args, **kwargs):
 
     self.outExec.call()
 
-def run_FreeCAD_uvGrid(self,*args, **kwargs):
+def run_FreeCAD_UVGrid(self,*args, **kwargs):
 
     f=self.getPinObject('Face_in')
     if f is None: return
@@ -2149,7 +2149,7 @@ def run_FreeCAD_bakery(self):
     Note : Continuity of the spline defaults to C2. However, it may not be applied if
     it conflicts with other parameters ( especially DegMax ).
 '''
-def run_FreeCAD_approximateBSpline(self):
+def run_FreeCAD_ApproximateBSpline(self):
     shin=self.getPinObject("Shape_in")
     say(shin)
     if shin is None: return
@@ -2204,7 +2204,7 @@ def run_FreeCAD_approximateBSpline(self):
 
 >>> 
 '''
-def run_FreeCAD_interpolateBSpline(self):
+def run_FreeCAD_InterpolateBSpline(self):
     points=self.getData("points")
     say("interpolate for {} points".format(len(points)))
     if len(points)<2:return
@@ -2984,7 +2984,7 @@ def aa():
     self.outExec.call()
 
 
-def run_FreeCAD_randomizePolygon(self,*args, **kwargs):
+def run_FreeCAD_RandomizePolygon(self,*args, **kwargs):
 #    return
 #def u():
     sayl()
@@ -3215,7 +3215,7 @@ def run_FreeCAD_Async(self):
 
 
 
-def run_FreeCAD_figureOnFace(self):
+def run_FreeCAD_FigureOnFace(self):
 
     ca=np.array(self.getData("pattern"))
 
@@ -3333,7 +3333,7 @@ def run_FreeCAD_figureOnFace(self):
     self.setColor()
     self.outExec.call()    
     
-def run_FreeCAD_repeatPattern(self):
+def run_FreeCAD_RepeatPattern(self):
 
     b=self.getData("pattern")
     apts=self.getData("vectors")
@@ -3390,7 +3390,7 @@ def run_FreeCAD_Polygon(self):
         #self.Called=False
 
 
-def run_FreeCAD_listOfVectors(self):
+def run_FreeCAD_ListOfVectors(self):
     
     say()
     say("list of vectors dump ...")
@@ -3416,7 +3416,7 @@ def run_FreeCAD_listOfVectors(self):
     self.outExec.call()    
     
     
-def run_FreeCAD_moveVectors(self):
+def run_FreeCAD_MoveVectors(self):
     #+# todo anpassen 1 2 3 dimensionale arrays
 
     vv=self.getData("vectors")
@@ -3434,7 +3434,7 @@ def run_FreeCAD_moveVectors(self):
     self.setColor(g=0,a=0.4)
     self.outExec.call()    
 
-def run_FreeCAD_scaleVectors(self):
+def run_FreeCAD_ScaleVectors(self):
     #+# todo anpassen 1 2 3 dimensionale arrays
 
     vv=self.getData("vectors")
@@ -3520,7 +3520,7 @@ def run_FreeCAD_IndexToList(self):
     
 ## ab hier neu 02.12.
 
-def run_FreeCAD_distToShape(self):
+def run_FreeCAD_DistToShape(self):
     
     eids=self.getPinObjectsA("shapes")
     target=self.getPinObject("target")
@@ -3532,7 +3532,7 @@ def run_FreeCAD_distToShape(self):
     self.outExec.call()    
 
 
-def run_FreeCAD_lessThan(self):
+def run_FreeCAD_LessThan(self):
     values=self.getData("values")
     threshold=self.getData("threshold")
     rc=[]
@@ -3543,7 +3543,7 @@ def run_FreeCAD_lessThan(self):
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
-def run_FreeCAD_moreThan(self):
+def run_FreeCAD_MoreThan(self):
     values=self.getData("values")
     threshold=self.getData("treshold")
     rc=[]
@@ -3554,7 +3554,7 @@ def run_FreeCAD_moreThan(self):
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
-def run_FreeCAD_equal(self):
+def run_FreeCAD_Equal(self):
     values=self.getData("values")
     threshold=self.getData("value")
     rc=[]
@@ -3565,7 +3565,7 @@ def run_FreeCAD_equal(self):
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
-def run_FreeCAD_nearly(self):
+def run_FreeCAD_Nearly(self):
     values=self.getData("values")
     threshold=self.getData("value")
     tol=self.getData("tolerance")
@@ -3578,7 +3578,7 @@ def run_FreeCAD_nearly(self):
     self.outExec.call()    
 
 
-def run_FreeCAD_and(self):
+def run_FreeCAD_And(self):
     a=self.getData("a")
     b=self.getData("b")
     flags=[va and vb for va,vb in zip(a,b)]
@@ -3614,7 +3614,7 @@ def run_FreeCAD_BoolToy(self):
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
-def run_FreeCAD_or(self):
+def run_FreeCAD_Or(self):
     a=self.getData("a")
     b=self.getData("b")
     flags = [va or vb for va,vb in zip(a,b)]
@@ -3628,7 +3628,7 @@ def run_FreeCAD_or(self):
 
 
 
-def run_FreeCAD_not(self):
+def run_FreeCAD_Not(self):
     a=self.getData("a")
     flags=[not va for va in a]
     self.setData("not",flags)
@@ -3639,12 +3639,12 @@ def run_FreeCAD_not(self):
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
-def run_FreeCAD_true(self):
+def run_FreeCAD_True(self):
     self.setData("true",[True]*self.getData("count"))
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
 
-def run_FreeCAD_false(self):
+def run_FreeCAD_False(self):
     self.setData("false",[False]*self.getData("count"))
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
@@ -3719,7 +3719,7 @@ def run_FreeCAD_Tube(self):
 
 
 
-def run_FreeCAD_centerOfMass(self):
+def run_FreeCAD_CenterOfMass(self):
     #shape=self.getPinObject("Shape")
     if 0:
         t=self.getPinByName("Shape")
@@ -3740,7 +3740,7 @@ def run_FreeCAD_centerOfMass(self):
 
 
 
-def run_FreeCAD_listOfShapes(self):
+def run_FreeCAD_ListOfShapes(self):
     
     say()
     say("list of vectors dump ...")
@@ -3883,7 +3883,7 @@ def run_FreeCAD_Object(self, *args, **kwargs):
 
    
 
-def run_FreeCAD_listOfPlacements(self):
+def run_FreeCAD_ListOfPlacements(self):
 
     if len(self.getPinByName("axes").affected_by) >0:
         axes=self.getData("axes")
@@ -3931,7 +3931,7 @@ def run_FreeCAD_listOfPlacements(self):
 def pinHasData(self,pinname):
     return len(self.getPinByName(pinname).affected_by) >0
 
-def run_FreeCAD_applyPlacements(self):
+def run_FreeCAD_ApplyPlacements(self):
 
     comp=[]
     s=Part.makeBox(200,1000,200)
@@ -3983,7 +3983,7 @@ def run_FreeCAD_applyPlacements(self):
     self.setColor()
 
 
-def run_FreeCAD_repeat(self):
+def run_FreeCAD_Repeat(self):
     
     s=self.getData("in")
     #say(s)
@@ -4019,7 +4019,7 @@ def run_FreeCAD_Zip(self):
     self.outExec.call()
     self.setColor()
 
-def run_FreeCAD_importFile(self):
+def run_FreeCAD_ImportFile(self):
     sayl()
 
     import os, time
@@ -4028,7 +4028,7 @@ def run_FreeCAD_importFile(self):
     except:
         self.last=time.time()
         
-    filename='/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv'
+    filename=self.getData('filename')
     
     (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(filename)
     #say(os.stat(filename))
@@ -4059,12 +4059,12 @@ def run_FreeCAD_importFile(self):
     self.setColor()
 
     if 0: # tessellation tests temp
-    tt=FreeCAD.ActiveDocument.BePlane.Shape.Face1
-    ta=time.time()
-    zz=tt.tessellate(0.1)
-    say("Tessellate",len(str(zz)))
-    
-    say(time.time()-ta)
+        tt=FreeCAD.ActiveDocument.BePlane.Shape.Face1
+        ta=time.time()
+        zz=tt.tessellate(0.1)
+        say("Tessellate",len(str(zz)))
+        
+        say(time.time()-ta)
     
 
     
