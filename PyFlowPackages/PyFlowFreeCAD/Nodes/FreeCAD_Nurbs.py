@@ -134,7 +134,7 @@ class FreeCAD_Mouse(FreeCadNodeBase):
 
 
 
-class FreeCAD_uIso(FreeCadNodeBase):
+class FreeCAD_UIso(FreeCadNodeBase):
     '''
     uIso curve on a surface
     '''
@@ -154,7 +154,7 @@ class FreeCAD_uIso(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_uIso.__doc__
+        return FreeCAD_UIso.__doc__
 
     @staticmethod
     def category():
@@ -168,7 +168,7 @@ class FreeCAD_uIso(FreeCadNodeBase):
 import traceback
 import inspect
 
-class FreeCAD_vIso(FreeCadNodeBase):
+class FreeCAD_VIso(FreeCadNodeBase):
     '''
     vIso curve on a surface
     '''
@@ -186,7 +186,7 @@ class FreeCAD_vIso(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_vIso.__doc__
+        return FreeCAD_VIso.__doc__
 
     @staticmethod
     def category():
@@ -197,7 +197,7 @@ class FreeCAD_vIso(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_uvGrid(FreeCadNodeBase):
+class FreeCAD_UVGrid(FreeCadNodeBase):
     '''
     uIso and vIso curves grid
     '''
@@ -218,7 +218,7 @@ class FreeCAD_uvGrid(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_uvGrid.__doc__
+        return FreeCAD_UVGrid.__doc__
 
     @staticmethod
     def category():
@@ -1016,7 +1016,7 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
         nodeeditor.dev.run_FreeCAD_Collect_Vectors(self,mode="refresh")
         self.outExec.call()
 
-class FreeCAD_approximateBSpline(FreeCadNodeBase):
+class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
     '''
     create an approximated BSpline for **points** on face **Shape_in**
     '''
@@ -1038,7 +1038,7 @@ class FreeCAD_approximateBSpline(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_approximateBSpline.__doc__
+        return FreeCAD_ApproximateBSpline.__doc__
 
     @staticmethod
     def category():
@@ -1049,7 +1049,7 @@ class FreeCAD_approximateBSpline(FreeCadNodeBase):
         return ['Approximate','Curve','Nurbs','Projection']
 
 
-class FreeCAD_interpolateBSpline(FreeCadNodeBase):
+class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
     '''
     create an interpolated BSpline for **points** on face **Shape_in**
     '''
@@ -1098,7 +1098,7 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_interpolateBSpline.__doc__
+        return FreeCAD_InterpolateBSpline.__doc__
 
     @staticmethod
     def category():
@@ -1169,7 +1169,7 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
         nodeeditor.dev.run_FreeCAD_Collect_Vectors(self,mode="refresh")
         self.outExec.call()
 
-class FreeCAD_approximateBSpline(FreeCadNodeBase):
+class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
     '''
     create an approximated BSpline for **points** on face **Shape_in**
     '''
@@ -1191,7 +1191,7 @@ class FreeCAD_approximateBSpline(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_approximateBSpline.__doc__
+        return FreeCAD_ApproximateBSpline.__doc__
 
     @staticmethod
     def category():
@@ -1202,7 +1202,7 @@ class FreeCAD_approximateBSpline(FreeCadNodeBase):
         return ['Approximate','Curve','Nurbs','Projection']
 
 
-class FreeCAD_interpolateBSpline(FreeCadNodeBase):
+class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
     '''
     create an interpolated BSpline for **points** on face **Shape_in**
     '''
@@ -1224,7 +1224,7 @@ class FreeCAD_interpolateBSpline(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_interpolateBSpline.__doc__
+        return FreeCAD_InterpolateBSpline.__doc__
 
     @staticmethod
     def category():
@@ -1475,8 +1475,8 @@ def nodelist():
                 FreeCAD_Mouse,
                 FreeCAD_Tripod,
 #                FreeCAD_YYY,
-                FreeCAD_uIso, FreeCAD_vIso,
-                FreeCAD_uvGrid,
+                FreeCAD_UIso, FreeCAD_VIso,
+                FreeCAD_UVGrid,
                 FreeCAD_Voronoi,
                 FreeCAD_Hull,
 
@@ -1497,8 +1497,8 @@ def nodelist():
                 FreeCAD_Destruct_BSpline,
                 FreeCAD_Destruct_BSplineSurface,
                 FreeCAD_Collect_Vectors,
-                FreeCAD_approximateBSpline,
-                FreeCAD_interpolateBSpline,
+                FreeCAD_ApproximateBSpline,
+                FreeCAD_InterpolateBSpline,
 
                 FreeCAD_swept,
                 FreeCAD_handrail,

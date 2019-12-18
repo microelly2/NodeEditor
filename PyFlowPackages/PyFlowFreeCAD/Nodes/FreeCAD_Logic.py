@@ -35,7 +35,7 @@ sayl()
 
 
 
-class FreeCAD_lessThan(FreeCadNodeBase):
+class FreeCAD_LessThan(FreeCadNodeBase):
     '''
     compare a list of floats with a threshold
     '''
@@ -56,13 +56,13 @@ class FreeCAD_lessThan(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_lessThan.__doc__
+        return FreeCAD_LessThan.__doc__
 
     @staticmethod
     def category():
         return 'Logic'
 
-class FreeCAD_moreThan(FreeCadNodeBase):
+class FreeCAD_MoreThan(FreeCadNodeBase):
     '''
     compare a list of floats with a treshold
     '''
@@ -83,14 +83,14 @@ class FreeCAD_moreThan(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_moreThan.__doc__
+        return FreeCAD_MoreThan.__doc__
 
     @staticmethod
     def category():
         return 'Logic'
 
 
-class FreeCAD_equal(FreeCadNodeBase):
+class FreeCAD_Equal(FreeCadNodeBase):
     '''
     compare a list of floats with a treshold
     '''
@@ -111,14 +111,14 @@ class FreeCAD_equal(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_equal.__doc__
+        return FreeCAD_Equal.__doc__
 
     @staticmethod
     def category():
         return 'Logic'
 
 
-class FreeCAD_nearly(FreeCadNodeBase):
+class FreeCAD_Nearly(FreeCadNodeBase):
     '''
     compare a list of floats with a threshold
     '''
@@ -142,14 +142,14 @@ class FreeCAD_nearly(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_nearly.__doc__
+        return FreeCAD_Nearly.__doc__
 
     @staticmethod
     def category():
         return 'Logic'
 
 
-class FreeCAD_and(FreeCadNodeBase):
+class FreeCAD_And(FreeCadNodeBase):
     '''
     booloan and of two boolean lists
     '''
@@ -169,14 +169,14 @@ class FreeCAD_and(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_and.__doc__
+        return FreeCAD_And.__doc__
 
     @staticmethod
     def category():
         return 'Logic'
 
 
-class FreeCAD_or(FreeCadNodeBase):
+class FreeCAD_Or(FreeCadNodeBase):
     '''
     booloan or of two boolean lists
     '''
@@ -196,14 +196,14 @@ class FreeCAD_or(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_or.__doc__
+        return FreeCAD_Or.__doc__
 
     @staticmethod
     def category():
         return 'Logic'
 
 
-class FreeCAD_not(FreeCadNodeBase):
+class FreeCAD_Not(FreeCadNodeBase):
     '''
     boolean not of a boolean list
     '''
@@ -221,14 +221,14 @@ class FreeCAD_not(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_not.__doc__
+        return FreeCAD_Not.__doc__
 
     @staticmethod
     def category():
         return 'Logic'
 
 
-class FreeCAD_true(FreeCadNodeBase):
+class FreeCAD_True(FreeCadNodeBase):
     '''
     boolean true  lists
     '''
@@ -246,14 +246,14 @@ class FreeCAD_true(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_true.__doc__
+        return FreeCAD_True.__doc__
 
     @staticmethod
     def category():
         return 'Logic'
 
 
-class FreeCAD_false(FreeCadNodeBase):
+class FreeCAD_False(FreeCadNodeBase):
     '''
     boolean false lists
     '''
@@ -271,7 +271,7 @@ class FreeCAD_false(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_false.__doc__
+        return FreeCAD_False.__doc__
 
     @staticmethod
     def category():
@@ -360,16 +360,16 @@ class FreeCAD_FloatToy(FreeCadNodeBase):
 
 def nodelist():
     return [
-                FreeCAD_lessThan,
-                FreeCAD_moreThan,
-                FreeCAD_equal,
-                FreeCAD_nearly,
+                FreeCAD_LessThan,
+                FreeCAD_MoreThan,
+                FreeCAD_Equal,
+                FreeCAD_Nearly,
 
-                FreeCAD_and,
-                FreeCAD_or,
-                FreeCAD_not,
-                FreeCAD_true,
-                FreeCAD_false,
+                FreeCAD_And,
+                FreeCAD_Or,
+                FreeCAD_Not,
+                FreeCAD_True,
+                FreeCAD_False,
 
                 FreeCAD_BoolToy,
                 FreeCAD_FloatToy,

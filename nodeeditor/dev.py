@@ -4018,3 +4018,53 @@ def run_FreeCAD_Zip(self):
 
     self.outExec.call()
     self.setColor()
+
+def run_FreeCAD_importFile(self):
+    sayl()
+
+    import os, time
+    try:
+        self.last
+    except:
+        self.last=time.time()
+        
+    filename='/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv'
+    
+    (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(filename)
+    #say(os.stat(filename))
+
+    if not self.getData('force') and self.last > mtime:
+        sayErr("---------------not new")
+        return
+        
+    self.last = time.time()
+
+    f=open(filename,"r")
+    contents =f.read()
+    ls=contents.splitlines()
+    rr=[]
+    vs=[]
+    for l in ls:
+        try:
+            rr += [[float(a) for a in l.split(' ')]]
+            ff=[float(a) for a in l.split(' ')]
+        except:
+            pass
+        vs += [FreeCAD.Vector(*ff[:3])]
+        
+    self.setData('data',rr)
+    self.setData('points',vs)
+    say(vs)
+    self.outExec.call()
+    self.setColor()
+
+    if 0: # tessellation tests temp
+    tt=FreeCAD.ActiveDocument.BePlane.Shape.Face1
+    ta=time.time()
+    zz=tt.tessellate(0.1)
+    say("Tessellate",len(str(zz)))
+    
+    say(time.time()-ta)
+    
+
+    

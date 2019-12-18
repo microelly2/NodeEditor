@@ -1783,7 +1783,7 @@ class FreeCAD_LOD(FreeCadNodeBase):
 
 
 
-class FreeCAD_view3D(FreeCadNodeBase):
+class FreeCAD_View3D(FreeCadNodeBase):
     '''
     create an instance in 3D space of FreeCAD, show the shape
     '''
@@ -1805,7 +1805,7 @@ class FreeCAD_view3D(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_view3D.__doc__
+        return FreeCAD_View3D.__doc__
 
     @staticmethod
     def category():
@@ -1893,7 +1893,7 @@ class FreeCAD_topo(FreeCadNodeBase):
 
 
 
-class FreeCAD_conny(FreeCadNodeBase):
+class FreeCAD_Conny(FreeCadNodeBase):
     '''
     connect edges and close gaps, create a filled face 
     '''
@@ -1947,7 +1947,7 @@ class FreeCAD_conny(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_conny.__doc__
+        return FreeCAD_Conny.__doc__
 
     @staticmethod
     def category():
@@ -1958,7 +1958,7 @@ class FreeCAD_conny(FreeCadNodeBase):
         return ['Edge','FilledFace',]
 
 
-class FreeCAD_randomizePolygon(FreeCadNodeBase):
+class FreeCAD_RandomizePolygon(FreeCadNodeBase):
     '''
     add some randomness to a polygon
     '''
@@ -1989,7 +1989,7 @@ class FreeCAD_randomizePolygon(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_randomizePolygon.__doc__
+        return FreeCAD_RandomizePolygon.__doc__
 
     @staticmethod
     def category():
@@ -2077,7 +2077,7 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
 
 
-class FreeCAD_figureOnFace(FreeCadNodeBase):
+class FreeCAD_FigureOnFace(FreeCadNodeBase):
     '''
     map figures pattens onto a surface
     '''
@@ -2114,7 +2114,7 @@ class FreeCAD_figureOnFace(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_figureOnFace.__doc__
+        return FreeCAD_FigureOnFace.__doc__
 
     @staticmethod
     def category():
@@ -2124,7 +2124,7 @@ class FreeCAD_figureOnFace(FreeCadNodeBase):
 ## \/ okay
 
 
-class FreeCAD_listOfVectors(FreeCadNodeBase):
+class FreeCAD_ListOfVectors(FreeCadNodeBase):
     '''
     create a list of vectors from  single vectors
     the order of the vector is defined by
@@ -2149,7 +2149,7 @@ class FreeCAD_listOfVectors(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_listOfVectors.__doc__
+        return FreeCAD_ListOfVectors.__doc__
 
     @staticmethod
     def category():
@@ -2158,7 +2158,7 @@ class FreeCAD_listOfVectors(FreeCadNodeBase):
 
 
 
-class FreeCAD_moveVectors(FreeCadNodeBase):
+class FreeCAD_MoveVectors(FreeCadNodeBase):
     '''
     move a list of vectors
     '''
@@ -2181,14 +2181,14 @@ class FreeCAD_moveVectors(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_moveVectors.__doc__
+        return FreeCAD_MoveVectors.__doc__
 
     @staticmethod
     def category():
         return 'Projection'
 
 
-class FreeCAD_scaleVectors(FreeCadNodeBase):
+class FreeCAD_ScaleVectors(FreeCadNodeBase):
     '''
     scale list of vectors
     '''
@@ -2211,7 +2211,7 @@ class FreeCAD_scaleVectors(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_scaleVectors.__doc__
+        return FreeCAD_ScaleVectors.__doc__
 
     @staticmethod
     def category():
@@ -2219,7 +2219,7 @@ class FreeCAD_scaleVectors(FreeCadNodeBase):
 
 
 
-class FreeCAD_repeatPattern(FreeCadNodeBase):
+class FreeCAD_RepeatPattern(FreeCadNodeBase):
     '''
     repeat a pattern along a vectors list 
     each vector of vectors is a start position 
@@ -2248,7 +2248,7 @@ class FreeCAD_repeatPattern(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_repeatPattern.__doc__
+        return FreeCAD_RepeatPattern.__doc__
 
     @staticmethod
     def category():
@@ -2353,7 +2353,7 @@ class FreeCAD_IndexToList(FreeCadNodeBase):
         return 'Conversion'
 
 
-class FreeCAD_distToShape(FreeCadNodeBase):
+class FreeCAD_DistToShape(FreeCadNodeBase):
     '''
     list of distances from  a list of shapes 
     to a target shape
@@ -2378,14 +2378,14 @@ class FreeCAD_distToShape(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_distToShape.__doc__
+        return FreeCAD_DistToShape.__doc__
 
     @staticmethod
     def category():
         return 'Information'
 
 
-class FreeCAD_centerOfMass(FreeCadNodeBase):
+class FreeCAD_CenterOfMass(FreeCadNodeBase):
     '''
     center of mass for a list of shapes
     '''
@@ -2407,14 +2407,14 @@ class FreeCAD_centerOfMass(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_centerOfMass.__doc__
+        return FreeCAD_CenterOfMass.__doc__
 
     @staticmethod
     def category():
         return 'Information'
 
 
-class FreeCAD_listOfShapes(FreeCadNodeBase):
+class FreeCAD_ListOfShapes(FreeCadNodeBase):
     '''
     create a list of shapes from single shapes
     '''
@@ -2438,7 +2438,7 @@ class FreeCAD_listOfShapes(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_listOfShapes.__doc__
+        return FreeCAD_ListOfShapes.__doc__
 
     @staticmethod
     def category():
@@ -2446,7 +2446,7 @@ class FreeCAD_listOfShapes(FreeCadNodeBase):
 
 
 
-class FreeCAD_listOfPlacements(FreeCadNodeBase):
+class FreeCAD_ListOfPlacements(FreeCadNodeBase):
     '''
     create a list of placements from  lists of data
     '''
@@ -2477,11 +2477,11 @@ class FreeCAD_listOfPlacements(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_listOfPlacements.__doc__
+        return FreeCAD_ListOfPlacements.__doc__
 
 
 
-class FreeCAD_applyPlacements(FreeCadNodeBase):
+class FreeCAD_ApplyPlacements(FreeCadNodeBase):
     '''
     apply a list of placements to 
     a shape or a list of shapes 
@@ -2515,11 +2515,11 @@ class FreeCAD_applyPlacements(FreeCadNodeBase):
 
     @staticmethod
     def description():
-        return FreeCAD_applyPlacements.__doc__
+        return FreeCAD_ApplyPlacements.__doc__
 
 
 
-class FreeCAD_repeat(FreeCadNodeBase):
+class FreeCAD_Repeat(FreeCadNodeBase):
     '''
     list of the same element repeated
     '''
@@ -2544,7 +2544,7 @@ class FreeCAD_repeat(FreeCadNodeBase):
         
     @staticmethod
     def description():
-        return FreeCAD_repeat.__doc__
+        return FreeCAD_Repeat.__doc__
 
 
 
@@ -2638,6 +2638,24 @@ class FreeCAD_Tube(FreeCadNodeBase):
         return 'Construction'
 
 
+class FreeCAD_ImportFile(FreeCadNodeBase):
+    '''
+
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('filename', 'StringPin')
+        a=self.createInputPin('force', 'BoolPin',True)
+        a=self.createOutputPin('data', 'FloatPin',structure=StructureType.Array)
+        a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+
+
 
 def nodelist():
     return [
@@ -2668,22 +2686,22 @@ def nodelist():
                 FreeCAD_Ref,
                 
                 FreeCAD_LOD,
-                FreeCAD_view3D,
+                FreeCAD_View3D,
                 FreeCAD_Destruct_Shape,
 
-                FreeCAD_listOfVectors,
-                FreeCAD_moveVectors,
-                FreeCAD_scaleVectors,
-                FreeCAD_repeatPattern,
+                FreeCAD_ListOfVectors,
+                FreeCAD_MoveVectors,
+                FreeCAD_ScaleVectors,
+                FreeCAD_RepeatPattern,
                 FreeCAD_Transformation,
                 FreeCAD_Reduce,
                 FreeCAD_IndexToList,
-                FreeCAD_distToShape,
-                FreeCAD_centerOfMass,
-                FreeCAD_listOfShapes,
-                FreeCAD_listOfPlacements,
-                FreeCAD_applyPlacements,
-                FreeCAD_repeat,
+                FreeCAD_DistToShape,
+                FreeCAD_CenterOfMass,
+                FreeCAD_ListOfShapes,
+                FreeCAD_ListOfPlacements,
+                FreeCAD_ApplyPlacements,
+                FreeCAD_Repeat,
                 FreeCAD_Index,
                 FreeCAD_Zip,#ok bis hier
                 
@@ -2692,9 +2710,12 @@ def nodelist():
                 # noch zu dokumentieren ##############################
                 FreeCAD_bakery,
                 FreeCAD_topo,
-                FreeCAD_conny,
-                FreeCAD_randomizePolygon,
-                FreeCAD_figureOnFace,
+                
+                FreeCAD_Conny,
+                FreeCAD_RandomizePolygon,
+                FreeCAD_FigureOnFace,
 
                 # FreeCAD_RefList, muss noch programmiert werden
+                FreeCAD_ImportFile,
+
         ]

@@ -248,8 +248,8 @@ if FreeCAD.GuiUp:
     current += [c3bI(["nodeeditor"], always, 'Commands', 'clear Graph',icon=None)]
 
     if devmode():
-        _current += [c3bI(["nodeeditor"], always, 'Commands', 'create Blinker',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/freecad_blinker.svg')]
-        _current += [c3bI(["nodeeditor"], always, 'Commands', 'create Receiver',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/freecad_receiver.svg')]
+        _current += [c3bI(["nodeeditor"], always, 'Commands', 'create Blinker',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/icons/freecad_blinker.svg')]
+        _current += [c3bI(["nodeeditor"], always, 'Commands', 'create Receiver',icon='/../PyFlowPackages/PyFlowFreeCAD/UI/icons/freecad_receiver.svg')]
 
     if devmode():
         _current += [c3bI(["nodeeditor"], always, 'Commands', 'save All',icon=None)]
