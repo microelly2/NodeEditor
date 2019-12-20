@@ -2370,6 +2370,9 @@ class FreeCAD_DistToShape(FreeCadNodeBase):
 
         a=self.createInputPin('shapes', 'ShapeListPin')
         a.description="list of shapes"
+        a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description="list of points"
+
         a=self.createInputPin('target', 'ShapePin')
         a.description="target shape"
 
@@ -2643,7 +2646,7 @@ class FreeCAD_ImportFile(FreeCadNodeBase):
 
     '''
 
-    dok = 4
+    dok = 0
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -2655,6 +2658,56 @@ class FreeCAD_ImportFile(FreeCadNodeBase):
         a=self.createInputPin('force', 'BoolPin',True)
         a=self.createOutputPin('data', 'FloatPin',structure=StructureType.Array)
         a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+
+
+class FreeCAD_Elevation(FreeCadNodeBase):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        #a=self.createInputPin('filename', 'StringPin','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
+        
+        a=self.createInputPin('force', 'BoolPin',True)
+        #a=self.createOutputPin('data', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a=self.createOutputPin('poles', 'VectorPin',structure=StructureType.Array)
+
+        # node definition
+        
+        self.mode = self.createInputPin('mode', 'EnumerationPin')
+        self.mode.values=['linear', 'thin_plate', 'cubic', 'inverse', 'multiquadric', 'gaussian', 'quintic', ]
+        self.mode.setData("cubic")
+        self.mode.recomputeNode=True
+
+        a=self.createInputPin('gridCount', 'IntPin',10)
+        a.recomputeNode=True
+        a.annotationDescriptionDict={ "ValueRange":(3,30)}
+        a.setInputWidgetVariant("Simple2")
+        
+        a=self.createInputPin('bound', 'FloatPin',0)
+        a.setInputWidgetVariant("Simple")
+       
+
+
+        a=self.createInputPin('noise', 'IntPin',1)
+        a.annotationDescriptionDict={ "ValueRange":(0,4)}
+        a.setInputWidgetVariant("Simple2")
+       
+        
+        a=self.createInputPin('Rbf', 'BoolPin',True)
+        
+        # a.setInputWidgetVariant("Simple")
+        # self.length2.setInputWidgetVariant("Simple2")
+        # a.annotationDescriptionDict={ "A":23,"ValueRange":(10.,20.)}
+        # self.length2.annotationDescriptionDict={ "A":23,"Step":2. }
+
 
 
 
@@ -2718,5 +2771,6 @@ def nodelist():
 
                 # FreeCAD_RefList, muss noch programmiert werden
                 FreeCAD_ImportFile,
+                FreeCAD_Elevation,
 
         ]

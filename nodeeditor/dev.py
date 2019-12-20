@@ -364,7 +364,7 @@ def run_perspective_projection_compute(self,*args, **kwargs):
     store.store().list()
     d=self.getPinByName('direction').getData()
     say("direction",d)
-    shape=f.makeParallelProjection(e,d)
+    shape=f.makePerspectiveProjection(e,d)
     cc=self.getObject()
     if cc  !=  None:
         cc.Label=self.objname.getData()
@@ -698,7 +698,7 @@ def run_FreeCAD_UVGrid(self,*args, **kwargs):
 
     self.setPinObjects('uEdges',us)
     self.setPinObjects('vEdges',vs)
-    self.setPinObject('Compound_out',Part.Compound(us+vs))
+    self.setPinObject('Shape_out',Part.Compound(us+vs))
     self.outExec.call()
 
 
@@ -3523,10 +3523,15 @@ def run_FreeCAD_IndexToList(self):
 def run_FreeCAD_DistToShape(self):
     
     eids=self.getPinObjectsA("shapes")
+    if len(eids)==0:
+       points=self.getData('points')
+       eids=[Part.Point(p).toShape() for p in points]
+    
     target=self.getPinObject("target")
     dists=[]
     for s in eids:
         dists += [target.distToShape(s)[0]]
+
     self.setData("distance",dists)
     self.setColor(b=0,a=0.4)
     self.outExec.call()    
@@ -4046,8 +4051,10 @@ def run_FreeCAD_ImportFile(self):
     vs=[]
     for l in ls:
         try:
-            rr += [[float(a) for a in l.split(' ')]]
-            ff=[float(a) for a in l.split(' ')]
+            if l.startswith('#'):
+                continue
+            rr += [[float(a) for a in l.split('\t')]]
+            ff=[float(a) for a in l.split('\t')]
         except:
             pass
         vs += [FreeCAD.Vector(*ff[:3])]
@@ -4066,5 +4073,230 @@ def run_FreeCAD_ImportFile(self):
         
         say(time.time()-ta)
     
+#----------------------------------------------------------------------------
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.interpolate
+
+def interpolate(x,y,z, gridsize,mode='thin_plate',rbfmode=True,shape=None):
+
+    mode=str(mode)
+    grids=gridsize
+
+
+    dx=np.max(x)-np.min(x)
+    dy=np.max(y)-np.min(y)
+
+    if dx>dy:
+        gridx=grids
+        gridy=int(round(dy/dx*grids))
+    else:
+        gridy=grids
+        gridx=int(round(dx/dy*grids))
+
+    if shape != None:
+        (gridy,gridx)=shape
+
+    xi, yi = np.linspace(np.min(x), np.max(x), gridx), np.linspace(np.min(y), np.max(y), gridy)
+    xi, yi = np.meshgrid(xi, yi)
+
+
+    if rbfmode:
+        rbf = scipy.interpolate.Rbf(x, y, z, function=mode)
+        rbf2 = scipy.interpolate.Rbf( y,x, z, function=mode)
+    else:
+        sayErr("interp2d nicht implementiert")
+        x=np.array(x)
+        y=np.array(y)
+        z=np.array(z)
+        xi, yi = np.linspace(np.min(x), np.max(x), gridx), np.linspace(np.min(y), np.max(y), gridy)
+
+        rbf = scipy.interpolate.interp2d(x, y, z, kind=mode)
+        rbf2 = scipy.interpolate.interp2d(y, x, z, kind=mode)
+
+    zi=rbf2(yi,xi)
+    return [rbf,xi,yi,zi]
+
+def showFace(rbf,rbf2,x,y,gridsize,shapeColor,bound):
+
+    grids=gridsize
+
+    ws=[]
+
+    pts2=[]
+    xi, yi = np.linspace(np.min(x), np.max(x), grids), np.linspace(np.min(y), np.max(y), grids)
+
+    for ix in xi:
+        points=[]
+        for iy in yi:
+            iz=float(rbf(ix,iy))
+
+#---------------------- special hacks #+#
+            if bound>0:
+                if iz > bound: iz = bound
+                if iz < -bound: iz = -bound
+
+
+            points.append(FreeCAD.Vector(ix,iy,iz))
+
+        pts2.append(points)
+
+    return pts2
+
 
     
+def createElevationGrid(pts,mode='thin_plate',rbfmode=True,source=None,gridCount=20,zfactor=1,bound=10**5,matplot=False):
+    
+    modeColor={
+    'linear' : ( 1.0, 0.3, 0.0),
+    'thin_plate' : (0.0, 1.0, 0.0),
+    'cubic' : (0.0, 1.0, 1.0),
+    'inverse' : (1.0, 1.0, 0.0),
+    'multiquadric' : (1.0, .0, 1.0),
+    'gaussian' : (1.0, 1.0, 1.0),
+    'quintic' :(0.5,1.0, 0.0)
+    }
+
+
+    k=0.0001
+    k=0
+    pts2=[p+FreeCAD.Vector(random.random(),random.random(),random.random())*k for p in pts]
+    pts=pts2
+
+    #say("points",pts)
+    x=np.array(pts)[:,0]
+    y=np.array(pts)[:,1]
+    z=np.array(pts)[:,2]
+    say(x)
+    say(y)
+    say(z)
+    say("----------")
+    
+    #x=np.array(x)
+    #y=np.array(y)
+    #z=np.array(z)
+
+    gridsize=gridCount
+
+    rbf,xi,yi,zi1 = interpolate(x,y,z, gridsize,mode,rbfmode)
+    
+    # hilfsebene
+    xe=[10,-10,10,-10]
+    ye=[10,-9,10,-10]
+    ze=[0,0,0,0]
+
+
+    #rbf2,xi2,yi2,zi2 = interpolate(xe,ye,ze, gridsize,mode,rbfmode,zi1.shape)
+    rbf2=0
+    #zi=zi1-zi2
+    zi=zi1
+
+    try: color=modeColor[mode]
+    except: color=(1.0,0.0,0.0)
+
+    xmin=np.min(x)
+    ymin=np.min(y)
+
+    points=showFace(rbf,rbf2,x,y,gridsize,color,bound)
+    say("XXXX points",points)
+
+ 
+    return points
+    #App.ActiveDocument.ActiveObject.Label=mode + " ZFaktor " + str(zfactor) + " #"
+    #rc=App.ActiveDocument.ActiveObject
+
+
+    #if matplot: showHeightMap(x,y,z,zi)
+    #return rc
+
+    # interpolation for image
+    #gridsize=400
+    #rbf,xi,yi,zi = interpolate(x,y,z, gridsize,mode,rbfmode)
+    #rbf2,xi2,yi2,zi2 = interpolate(xe,ye,ze, gridsize,mode,rbfmode,zi.shape)
+    #return [rbf,rbf2,x,y,z,zi,zi2]
+    
+
+def run_FreeCAD_Elevation(self):
+    points=self.getData('points')
+    say(points)
+    nb=createElevationGrid(points)
+    self.setData("poles",nb)
+    self.outExec.call()
+    self.setColor()
+
+  
+    #----------------------------------------------------------------------------
+
+import numpy as np
+import scipy.interpolate
+    
+def createElevationGrid(pts,mode='thin_plate',rbfmode=True,gridCount=20,bound=0,noise=0.0001):
+    
+    modeColor={
+    'linear' : ( 1.0, 0.3, 0.0),
+    'thin_plate' : (0.0, 1.0, 0.0),
+    'cubic' : (0.0, 1.0, 1.0),
+    'inverse' : (1.0, 1.0, 0.0),
+    'multiquadric' : (1.0, .0, 1.0),
+    'gaussian' : (1.0, 1.0, 1.0),
+    'quintic' :(0.5,1.0, 0.0)
+    }
+
+    # add some noise to avoid singualr matrixes
+    if noise==0:
+        noisefactor=0
+    else:
+        noisefactor=10**(-4+noise)
+    
+    pts2=[p+FreeCAD.Vector(random.random(),random.random(),random.random())*noisefactor for p in pts]
+
+    x=np.array(pts2)[:,0]
+    y=np.array(pts2)[:,1]
+    z=np.array(pts2)[:,2]
+
+    if rbfmode:
+        rbf = scipy.interpolate.Rbf(x, y, z, function=mode)
+    else:
+        rbf = scipy.interpolate.interp2d(x, y, z, kind=mode)
+
+    # calculate output point grid
+    xia, yia = np.linspace(np.min(x), np.max(x), gridCount), np.linspace(np.min(y), np.max(y), gridCount)
+
+    pts3=[]
+    for ix in xia:
+        points=[]
+        for iy in yia:
+            iz=float(rbf(ix,iy))
+            if bound>0:
+                if iz > bound: iz = bound
+                if iz < -bound: iz = -bound
+            points.append(FreeCAD.Vector(ix,iy,iz))
+
+        pts3.append(points)
+
+    return pts3
+    
+
+def run_FreeCAD_Elevation(self):
+
+    # get the data from the pyflow node
+    points=self.getData('points')
+    gridCount=self.getData('gridCount')
+    
+    bound=self.getData('bound')
+    noise=self.getData('noise')
+    rbfmode=self.getData('Rbf')
+    mode=self.getData('mode')
+
+    #say(points)
+    # run the calculation
+    poles=createElevationGrid(points,mode=mode,rbfmode=rbfmode,gridCount=gridCount,bound=bound,noise=noise)
+
+    # store the ruesult to the outputpin and start postprocessing
+    self.setData("poles",poles)
+    self.outExec.call()
+    self.setColor()
+
+
