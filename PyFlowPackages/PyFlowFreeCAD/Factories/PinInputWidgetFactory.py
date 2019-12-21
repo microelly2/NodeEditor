@@ -20,46 +20,7 @@ FLOAT_DECIMALS = 5
 import numpy as np
 from nodeeditor.say import *
 
-
-class EnumerationInputWidget(InputWidgetSingle):
-    """
-    String list selection input widget
-    """
-
-    def __init__(self, parent=None, **kwds):
-        super(EnumerationInputWidget, self).__init__(parent=parent, **kwds)
-
-        self.le = QComboBox(self)
-        self.setWidget(self.le)
-        self.le.currentIndexChanged.connect(lambda:self.dataSetCallback(self.le.currentText()))
-
-
-    def blockWidgetSignals(self, bLocked):
-        self.le.blockSignals(bLocked)
-
-    def setWidgetValue(self, val):
-        try:
-            ix=self.pin._rawPin.values.index(val)
-        except:
-            ix=0
-        self.le.setCurrentIndex(ix)
-
-    def runpin(self):
-        '''set data from sel.pin._rawPin'''
-        d=self.pin._rawPin._data
-        for i,item in enumerate(self.pin._rawPin.values):
-            self.le.addItem(item)
-        try:
-            ix=self.pin._rawPin.values.index(d)
-        except:
-            ix=0
-        self.le.setCurrentIndex(ix)
-        sayl("call dev.run_enum")
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_enum(self)
-
-
+from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 
 
 class Array(object):
@@ -379,6 +340,7 @@ class MyInputWidget(InputWidgetSingle):
     def setWidgetValue(self, val):
         self.le.setText(str(val))
 
+
 # alter slider funtionalitaet
 class FloatInputWidgetSimpleSlider(InputWidgetSingle):
     """
@@ -405,6 +367,7 @@ class FloatInputWidgetSimpleSlider(InputWidgetSingle):
 
     def setMinimum(self, min):
         self.sb.setMinimum(min)
+
 
 
 
@@ -437,10 +400,10 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     factory method
     '''
     #say("widgetvariant",widgetVariant,dataType)
-    if dataType == 'FloatPin':
-        say("float pin")
+    if dataType == 'FloatPin' or dataType == 'Float':
+        say("FreeCAD -- float pin", widgetVariant)
+
         if widgetVariant == "Simple2":
-            say("simple2 gefunden")
             return FloatInputWidgetSimple(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
         if widgetVariant == "Slider":
@@ -461,7 +424,8 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
 
 
 
-    if dataType == 'IntPin':
+    if dataType == 'IntPin' or dataType == 'Integer':
+        sayl('integer pin in FreeCAD')
         say("widgetvariant",widgetVariant,dataType)
 #        if widgetVariant == "SimpleSlider":
 #            return IntInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
@@ -494,6 +458,4 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     #    return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     #if dataType == 'ShapePin':
     #    return ArrayInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
-    if dataType == 'EnumerationPin':
-        return EnumerationInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     return None

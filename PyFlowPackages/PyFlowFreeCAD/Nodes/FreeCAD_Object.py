@@ -365,10 +365,15 @@ class FreeCAD_Boolean(FreeCadNodeBase):
         self.shape1 = self.createInputPin('Shape_in1', 'ShapePin')
         self.shape2 = self.createInputPin('Shape_in2', 'ShapePin')
 
-        self.mode = self.createInputPin('mode', 'EnumerationPin')
-        self.mode.values=["fuse","cut","common","fragments"]
+        self.mode = self.createInputPin('mode', 'StringPin')
+        self.mode.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":["fuse","cut","common","fragments"]
+            }
+        self.mode.setInputWidgetVariant("EnumWidget")
         self.mode.setData("fuse")
         self.mode.recomputeNode=True
+
 
         self.volume = self.createOutputPin('Volume', 'FloatPin')
 
@@ -1344,8 +1349,12 @@ class FreeCAD_Plot(FreeCadNodeBase):
         self.ypin2.description="y values for the 2nd curve"
         
 
-        self.mode = self.createInputPin('Figure', 'EnumerationPin')
-        self.mode.values=["Figure1","Figure2","Figure3","Figure4"]
+        self.mode = self.createInputPin('Figure', 'StringPin')
+        self.mode.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":["Figure1","Figure2","Figure3","Figure4"]
+            }
+        self.mode.setInputWidgetVariant("EnumWidget")
         self.mode.setData("Figure1")
         self.mode.recomputeNode=True
         self.mode.description="Selector for the window name, there a re at most 4 diagram windows possible"
@@ -2378,6 +2387,7 @@ class FreeCAD_DistToShape(FreeCadNodeBase):
 
         a=self.createOutputPin('distance', 'FloatPin',structure=StructureType.Array)
         a.description="distances"
+        
 
     @staticmethod
     def description():
@@ -2679,12 +2689,15 @@ class FreeCAD_Elevation(FreeCadNodeBase):
         a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
         a=self.createOutputPin('poles', 'VectorPin',structure=StructureType.Array)
 
-        # node definition
-        
-        self.mode = self.createInputPin('mode', 'EnumerationPin')
-        self.mode.values=['linear', 'thin_plate', 'cubic', 'inverse', 'multiquadric', 'gaussian', 'quintic', ]
+        self.mode = self.createInputPin('mode', 'StringPin')
+        self.mode.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":['linear', 'thin_plate', 'cubic', 'inverse', 'multiquadric', 'gaussian', 'quintic']
+            }
+        self.mode.setInputWidgetVariant("EnumWidget")
         self.mode.setData("cubic")
         self.mode.recomputeNode=True
+
 
         a=self.createInputPin('gridCount', 'IntPin',10)
         a.recomputeNode=True
@@ -2692,23 +2705,21 @@ class FreeCAD_Elevation(FreeCadNodeBase):
         a.setInputWidgetVariant("Simple2")
         
         a=self.createInputPin('bound', 'FloatPin',0)
-        a.setInputWidgetVariant("Simple")
+        a.setInputWidgetVariant("Simple3")
        
 
 
         a=self.createInputPin('noise', 'IntPin',1)
         a.annotationDescriptionDict={ "ValueRange":(0,4)}
         a.setInputWidgetVariant("Simple2")
-       
+  
         
         a=self.createInputPin('Rbf', 'BoolPin',True)
+        #a=self.createInputPin('trafo2', 'TransformationPin2')
         
-        # a.setInputWidgetVariant("Simple")
-        # self.length2.setInputWidgetVariant("Simple2")
-        # a.annotationDescriptionDict={ "A":23,"ValueRange":(10.,20.)}
-        # self.length2.annotationDescriptionDict={ "A":23,"Step":2. }
 
-
+        a=self.createInputPin('fcint', 'Integer',1)
+        a=self.createInputPin('fcfloat', 'Float',1)
 
 
 def nodelist():

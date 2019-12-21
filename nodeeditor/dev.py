@@ -4291,6 +4291,8 @@ def run_FreeCAD_Elevation(self):
     mode=self.getData('mode')
 
     #say(points)
+    sayl("Abburch")
+    return
     # run the calculation
     poles=createElevationGrid(points,mode=mode,rbfmode=rbfmode,gridCount=gridCount,bound=bound,noise=noise)
 
@@ -4300,3 +4302,11 @@ def run_FreeCAD_Elevation(self):
     self.setColor()
 
 
+
+
+def run_TEST(self,val):
+    sayl("TTTTTTTTTTTTTTTTTTTTTTTT")
+    say(val)
+    say(self)
+    FreeCAD.s=self
+    

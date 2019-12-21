@@ -187,40 +187,6 @@ class ShapeListPin(FCobjPin):
         return data
 
 
-class EnumSelection():
-    pass
-
-
-class EnumerationPin(FCobjPin):
-    """doc string for FloatFCobjPin"""
-    def __init__(self, name, parent, direction, **kwargs):
-        super(EnumerationPin, self).__init__(name, parent, direction, **kwargs)
-        self.values=["tic","tac","toe"]
-        self.setDefaultValue(self.values[0])
-
-    @staticmethod
-    def IsValuePin():
-        return True
-
-    @staticmethod
-    def supportedDataTypes():
-        return ('ShapePin',None)
-
-    @staticmethod
-    def color():
-        return (150, 150, 0, 255)
-
-    @staticmethod
-    def pinDataTypeHint():
-        return 'EnumerationPin', None
-
-    @staticmethod
-    def internalDataStructure():
-        return EnumSelection
-
-    @staticmethod
-    def processData(data):
-        return data
 
 
 class Array():
@@ -326,9 +292,70 @@ class TransformationPin(FCobjPin):
 
 
 
+
+from PyFlow.Core import PinBase
+from PyFlow.Core.Common import *
+
+from PyFlow.Packages.PyFlowBase.Pins.BoolPin import BoolPin
+from PyFlow.Packages.PyFlowBase.Pins.ExecPin import ExecPin
 from PyFlow.Packages.PyFlowBase.Pins.FloatPin import FloatPin
+from PyFlow.Packages.PyFlowBase.Pins.IntPin import IntPin
+from PyFlow.Packages.PyFlowBase.Pins.StringPin import StringPin
+
+
+
+class IntegerD(int):
+    pass
+class FloatD(float):
+    pass
+
+
+class Integer(IntPin):
+    """Integer pin with dialog autoupdate """
+
+    @staticmethod
+    def internalDataStructure():
+        return IntegerD
+
+    @staticmethod
+    def processData(data):
+        return IntegerD(data)
+
+    def setData(self, data):
+        sayl("XXXXXXXXXXX set Data")
+        super().setData(data)
+                #hack me - Calling execution pin
+        try:
+            if not self.hasConnections():
+                self.owningNode().compute()
+        except:
+            pass
+        #hack end
+
+        say("DONNE")
+
+
+class Float(PinBase):
+    """Float pin with dialog autoupdate """
+
+    @staticmethod
+    def internalDataStructure():
+        return FloatD
+
+    @staticmethod
+    def processData(data):
+        return FloatD(data)
+
+
+    def setData(self, data):
+       sayl("set Data")
+       super().setData(data)
+       say("DONNE")
+
 
 
 
 def nodelist():
-    return [EnumerationPin,ShapePin,FacePin,EdgePin,ShapeListPin,FCobjPin,ArrayPin,TransformationPin]
+    pins = [ShapePin,FacePin,EdgePin,ShapeListPin,FCobjPin,ArrayPin,TransformationPin ]
+    pins += [Integer,Float]
+    return pins

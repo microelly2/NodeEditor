@@ -38,8 +38,17 @@ def getInstance():
 	try: INITIALIZE()
 	except: pass
 
-	from PyFlow.App import PyFlow
-	instance = PyFlow.instance(None,"standalone")
+	if 0:
+		from PyFlow.App import PyFlow
+		instance = PyFlow.instance(None,"standalone")
+	else:
+		from nodeeditor.freecad_pyflowapp import FreeCADPyFlow
+		sayl("---------get FreeCADPyFlow-------------------")
+		instance = FreeCADPyFlow.instance(None,"standalone")
+		say(instance)
+		
+
+
 
 	t=instance.windowTitle()
 	if not t.startswith("FreeCAD NodeEditor"):
