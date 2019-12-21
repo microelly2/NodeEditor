@@ -645,5 +645,18 @@ class Numpy(FunctionLibraryBase):
         """   
         return max(x)
 
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('FloatPin', 0,))
+    def min(x=('FloatPin', [0,0.5,1.,1.5])) :
+        """
+        """   
+        return min(x)
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('FloatPin', 0,))
+    def sum(x=('FloatPin', [0,0.5,1.,1.5])) :
+        """
+        """   
+        return sum(x)
 
 
