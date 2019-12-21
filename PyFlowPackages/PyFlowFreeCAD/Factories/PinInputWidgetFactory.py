@@ -400,6 +400,21 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     factory method
     '''
     #say("widgetvariant",widgetVariant,dataType)
+    
+    if dataType == 'StringPin' or dataType=='String':
+        if widgetVariant == DEFAULT_WIDGET_VARIANT:
+            return StringInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+        elif widgetVariant == "PathWidget":
+            return PathInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+        elif widgetVariant == "EnumWidget":
+            return EnumInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+        elif widgetVariant == "ObjectPathWIdget":
+            return ObjectPathWIdget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+    if dataType == 'BoolPin' or dataType=='Boolean':
+        return BoolInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+
+    
+    
     if dataType == 'FloatPin' or dataType == 'Float':
         say("FreeCAD -- float pin", widgetVariant)
 

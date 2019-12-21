@@ -40,17 +40,15 @@ class FreeCAD_Tripod(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        self.createInputPin('name', 'StringPin','view3d')
-        a=self.createInputPin('u', 'FloatPin',0)
-        a.recomputeNode=True
-        a=self.createInputPin('v', 'FloatPin',0)
-        a.recomputeNode=True
+        self.createInputPin('name', 'String','view3d')
+        a=self.createInputPin('u', 'Float',0)
+        a=self.createInputPin('v', 'Float',0)
         self.createInputPin('Shape', 'ShapePin')
         self.createOutputPin('position', 'VectorPin')
         self.createOutputPin('placement', 'PlacementPin' )
-        self.createInputPin("display", 'BoolPin', True)
-        self.createInputPin("directionNormale", 'BoolPin', False)
-        self.createInputPin("curvatureMode", 'BoolPin', True)
+        self.createInputPin("display", 'Boolean', True)
+        self.createInputPin("directionNormale", 'Boolean', False)
+        self.createInputPin("curvatureMode", 'Boolean', True)
         
 
 
@@ -92,7 +90,7 @@ class FreeCAD_Mouse(FreeCadNodeBase):
        
        self.createOutputPin('selectedFace', 'ShapePin')
        self.selectedFaceChanged = self.createOutputPin("selectedFaceChanged", 'ExecPin')
-       self.createInputPin("zIndex", 'IntPin')
+       self.createInputPin("zIndex", 'Integer')
        
        
 
@@ -146,9 +144,7 @@ class FreeCAD_UIso(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Face_in', 'ShapePin').\
         description="Face reference"
-        a=self.createInputPin('u', 'FloatPin',5)
-        a.recomputeNode=True
-        #self.createInputPin("display", 'BoolPin', True).description="option for display edge as part"
+        a=self.createInputPin('u', 'Float',5)
         self.createOutputPin('Shape_out', 'EdgePin').description="Shape for the curve"
 
 
@@ -179,8 +175,7 @@ class FreeCAD_VIso(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Face_in', 'ShapePin')
-        a=self.createInputPin('v', 'FloatPin',5)
-        a.recomputeNode=True
+        a=self.createInputPin('v', 'Float',5)
         self.createOutputPin('Shape_out', 'EdgePin').description="Shape for the curve"
 
 
@@ -207,11 +202,9 @@ class FreeCAD_UVGrid(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Face_in', 'ShapePin')
-        a=self.createInputPin('uCount', 'IntPin',5)
-        a.recomputeNode=True
-        a=self.createInputPin('vCount', 'IntPin',5)
-        a.recomputeNode=True
-#        self.createInputPin("display", 'BoolPin', True)
+        a=self.createInputPin('uCount', 'Integer',5)
+        a=self.createInputPin('vCount', 'Integer',5)
+
         self.createOutputPin('uEdges', 'ShapeListPin').description="list of uIso curve edges"
         self.createOutputPin('vEdges', 'ShapeListPin').description="list of vIso curve edges"
         self.createOutputPin('Shape_out', 'ShapePin').description="all curves as compound"
@@ -242,23 +235,18 @@ class FreeCAD_Voronoi(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Face', 'ShapePin')
-#       a=self.createInputPin('uCount', 'IntPin',5)
-#       a.recomputeNode=True
-#       a=self.createInputPin('vCount', 'IntPin',5)
-#       a.recomputeNode=True
-        self.createInputPin("useLines", 'BoolPin', True)
-        a=self.createInputPin("indA", 'IntPin', True)
-        a.recomputeNode=True
+        self.createInputPin("useLines", 'Boolean', True)
+        a=self.createInputPin("indA", 'Integer', True)
+
         a.setInputWidgetVariant("MyINPUTVARIANT")
 
-        self.createInputPin("indB", 'IntPin', True)
+        self.createInputPin("indB", 'Integer', True)
         self.createOutputPin('uEdges', 'ShapeListPin')
         self.createOutputPin('vEdges', 'ShapeListPin')
-        self.createInputPin('uList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
-        self.createInputPin('vList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
+        self.createInputPin('uList', 'Float', structure=StructureType.Array,defaultValue=None)
+        self.createInputPin('vList', 'Float', structure=StructureType.Array,defaultValue=None)
 
-        a=self.createInputPin("flipArea", 'BoolPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("flipArea", 'Boolean', True)
 
         self.createOutputPin('Points', 'ShapePin')
         self.createOutputPin('convexHull', 'ShapePin')
@@ -290,25 +278,21 @@ class FreeCAD_Hull(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Shape', 'ShapePin')
-        self.createInputPin("singleSimplex", 'BoolPin', True)
+        self.createInputPin("singleSimplex", 'Boolean', True)
 
-        a=self.createInputPin("simplex", 'IntPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("simplex", 'Integer', True)
         a.description="index of the displayd simplex if singleSimplex is set"
-#       a.setInputWidgetVariant("MyINPUTVARIANT")
 
-        a=self.createInputPin("showFaces", 'BoolPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("showFaces", 'Boolean', True)
         a.description="display alpha and convex hull by faces" 
 
-        a=self.createInputPin("alpha", 'IntPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("alpha", 'Integer', True)
 
         self.createOutputPin('uEdges', 'ShapeListPin')
         self.createOutputPin('vEdges', 'ShapeListPin')
-        self.createInputPin('uList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
-        self.createInputPin('vList', 'FloatPin', structure=StructureType.Array,defaultValue=None)
-        #self.createOutputPin('edges', 'FloatPin', structure=StructureType.Array,defaultValue=None)
+        self.createInputPin('uList', 'Float', structure=StructureType.Array,defaultValue=None)
+        self.createInputPin('vList', 'Float', structure=StructureType.Array,defaultValue=None)
+        #self.createOutputPin('edges', 'Float', structure=StructureType.Array,defaultValue=None)
         self.createOutputPin('Points', 'ShapePin')
         self.createOutputPin('convexHull', 'ShapePin')
         self.createOutputPin('delaunayTriangles', 'ShapePin')
@@ -341,14 +325,10 @@ class FreeCAD_2DGeometry(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Shape', 'ShapePin')
 
-        a=self.createInputPin("ua", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("va", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("ub", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("vb", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("ua", 'Float', True)
+        a=self.createInputPin("va", 'Float', True)
+        a=self.createInputPin("ub", 'Float', True)
+        a=self.createInputPin("vb", 'Float', True)
 
         self.createOutputPin('Shape_out', 'ShapePin')
         self.createOutputPin('geometry', 'ShapePin') #.description='edges or faces compound of the alpha hull'
@@ -379,12 +359,9 @@ class FreeCAD_2DCircle(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Shape', 'ShapePin')
 
-        a=self.createInputPin("u", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("v", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("radius", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("u", 'Float', True)
+        a=self.createInputPin("v", 'Float', True)
+        a=self.createInputPin("radius", 'Float', True)
 
         self.createOutputPin('Shape_out', 'ShapePin')
         self.createOutputPin('geometry', 'ShapePin') #.description='edges or faces compound of the alpha hull'
@@ -414,19 +391,13 @@ class FreeCAD_2DEllipse(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Shape', 'ShapePin')
 
-        a=self.createInputPin("uLocation", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("vLocation", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("uLocation", 'Float', True)
+        a=self.createInputPin("vLocation", 'Float', True)
 
-        a=self.createInputPin("direction", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("direction", 'Float', True)
 
-        a=self.createInputPin("MajorRadius", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("MinorRadius", 'FloatPin', True)
-        a.recomputeNode=True
-        
+        a=self.createInputPin("MajorRadius", 'Float', True)
+        a=self.createInputPin("MinorRadius", 'Float', True)
 
         self.createOutputPin('Shape_out', 'ShapePin')
         self.createOutputPin('geometry', 'ShapePin') #.description='edges or faces compound of the alpha hull'
@@ -456,24 +427,16 @@ class FreeCAD_2DArcOfEllipse(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Shape', 'ShapePin')
 
-        a=self.createInputPin("uLocation", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("vLocation", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("uLocation", 'Float', True)
+        a=self.createInputPin("vLocation", 'Float', True)
 
-        a=self.createInputPin("direction", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("direction", 'Float', True)
 
-        a=self.createInputPin("MajorRadius", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("MinorRadius", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("MajorRadius", 'Float', True)
+        a=self.createInputPin("MinorRadius", 'Float', True)
 
-        a=self.createInputPin("startAngle", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("endAngle", 'FloatPin', True)
-        a.recomputeNode=True
-        
+        a=self.createInputPin("startAngle", 'Float', True)
+        a=self.createInputPin("endAngle", 'Float', True)
 
         self.createOutputPin('Shape_out', 'ShapePin')
         self.createOutputPin('geometry', 'ShapePin') #.description='edges or faces compound of the alpha hull'
@@ -503,24 +466,16 @@ class FreeCAD_2DArcOfParabola(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createInputPin('Shape', 'ShapePin')
 
-        a=self.createInputPin("uLocation", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("vLocation", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("uLocation", 'Float', True)
+        a=self.createInputPin("vLocation", 'Float', True)
 
-        a=self.createInputPin("direction", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("direction", 'Float', True)
 
-        a=self.createInputPin("MajorRadius", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("MinorRadius", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("MajorRadius", 'Float', True)
+        a=self.createInputPin("MinorRadius", 'Float', True)
 
-        a=self.createInputPin("startAngle", 'FloatPin', True)
-        a.recomputeNode=True
-        a=self.createInputPin("endAngle", 'FloatPin', True)
-        a.recomputeNode=True
-        
+        a=self.createInputPin("startAngle", 'Float', True)
+        a=self.createInputPin("endAngle", 'Float', True)
 
         self.createOutputPin('Shape_out', 'ShapePin')
         self.createOutputPin('geometry', 'ShapePin') #.description='edges or faces compound of the alpha hull'
@@ -556,24 +511,20 @@ class FreeCAD_2DArcOfCircle(FreeCadNodeBase):
         self.createInputPin('Shape', 'ShapePin').\
         description="Face1 of this shape defines the uv space for the arc representation, default is the xy plane"
 
-        a=self.createInputPin("uLocation", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("uLocation", 'Float', True)
         a.description="first coordinate of the center"
-        a=self.createInputPin("vLocation", 'FloatPin', True)
-        a.recomputeNode=True
+
+        a=self.createInputPin("vLocation", 'Float', True)
         a.description="2nd coordinate of the center"
 
-        a=self.createInputPin("radius", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("radius", 'Float', True)
         a.description="radius of the circle"
 
-        a=self.createInputPin("startAngle", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("startAngle", 'Float', True)
         a.description="angle of the starting point of the arc"
-        a=self.createInputPin("endAngle", 'FloatPin', True)
-        a.recomputeNode=True
+
+        a=self.createInputPin("endAngle", 'Float', True)
         a.description="angle of the ending point of the arc"
-        
 
         self.createOutputPin('Shape_out', 'ShapePin').\
             description="the projection of the geometry onto the Face1 of Shape_in"
@@ -606,21 +557,16 @@ class FreeCAD_Simplex(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         
-        a=self.createInputPin("noise", 'FloatPin', True)
-        a.recomputeNode=True
+        a=self.createInputPin("noise", 'Float', True)
 
         a=self.createInputPin("pointA", 'VectorPin', True)
-        a.recomputeNode=True
         a.setData(Vector(0,0,0))
 
         a=self.createInputPin("pointB", 'VectorPin', True)
-        a.recomputeNode=True
         a.setData(Vector(10,0,0))
         a=self.createInputPin("pointC", 'VectorPin', True)
-        a.recomputeNode=True
         a.setData(Vector(0,10,0))
         a=self.createInputPin("pointD", 'VectorPin', True)
-        a.recomputeNode=True
         a.setData(Vector(0,0,10))
 
         self.createOutputPin('Shape_out', 'ShapePin')
@@ -652,7 +598,7 @@ class FreeCAD_Tread(FreeCadNodeBase):
         self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin("noise", 'FloatPin', 1)
+        a=self.createInputPin("noise", 'Float', 1)
 
         a=[1,2,3,4,5,6,7,8]
         for i in range(8):
@@ -708,7 +654,7 @@ class FreeCAD_Discretize(FreeCadNodeBase):
 #        self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin("count", 'IntPin', True)
+        a=self.createInputPin("count", 'Integer', True)
         a=self.createInputPin("Wire", 'ShapePin', True)
 
         self.createOutputPin('Shape_out', 'ShapePin')
@@ -746,11 +692,11 @@ class FreeCAD_Offset(FreeCadNodeBase):
         self.inExec = self.createInputPin('produce', 'ExecPin', None, self.produce)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin("count", 'IntPin', True)
+        a=self.createInputPin("count", 'Integer', True)
         a=self.createInputPin("Wire", 'ShapePin', True)
         a=self.createInputPin("Shape", 'ShapePin', True)
-        a=self.createInputPin("offset", 'FloatPin', True)
-        a=self.createInputPin("height", 'FloatPin', True)
+        a=self.createInputPin("offset", 'Float', True)
+        a=self.createInputPin("height", 'Float', True)
 
         self.createOutputPin('Shape_out', 'ShapePin')
         self.createOutputPin('Compound_out', 'ShapePin') # Faces compound without tolerance
@@ -826,15 +772,10 @@ class FreeCAD_Solid(FreeCadNodeBase):
         self.inExec = self.createInputPin('bake', 'ExecPin', None, self.bake)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        #a=self.createInputPin("count", 'IntPin', True)
-        #a=self.createInputPin("Wire", 'ShapePin', True)
         a=self.createInputPin("Shapes", 'ShapePin',structure=StructureType.Array)
         a=self.createInputPin("Faces", 'FacePin',structure=StructureType.Array)
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
-
-        #a=self.createInputPin("offset", 'FloatPin', True)
-        #a=self.createInputPin("height", 'FloatPin', True)
 
         self.createOutputPin('Shape_out', 'ShapePin')
         self.createOutputPin('Compound_out', 'ShapePin') # Faces compound without tolerance
@@ -852,20 +793,12 @@ class FreeCAD_Solid(FreeCadNodeBase):
     def keywords():
         return []
 
-#   def produce(self,**kvargs):
-#       self.compute(produce=True)
-
-    def Xproduce(self, *args, **kwargs):
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_FreeCAD_Offset(self,produce=True)
-
-# autum 2019 ...
 
 class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
     '''
     provides the parameters of a bspline edge object
     '''
+
     dok=2 
     def __init__(self, name="MyDestruct"):
         super(self.__class__, self).__init__(name)
@@ -877,14 +810,14 @@ class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
 
         self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="list of the poles vectors"
-        self.createOutputPin('knots', 'FloatPin',structure=StructureType.Array).\
+        self.createOutputPin('knots', 'Float',structure=StructureType.Array).\
         description="list of the knots"
-        self.createOutputPin('mults', 'IntPin',structure=StructureType.Array).\
+        self.createOutputPin('mults', 'Integer',structure=StructureType.Array).\
         description="list of the multiplicities"
-        self.createOutputPin('degree', 'IntPin').\
+        self.createOutputPin('degree', 'Integer').\
         description="degree of the curve"
         
-        self.createOutputPin('periodic', 'BoolPin').\
+        self.createOutputPin('periodic', 'Boolean').\
         description="flag, wheter the curve is periodic/closed or open"
         
 
@@ -906,6 +839,7 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
     '''
     provides the parameters of a bspline surface object
     '''
+
     dok=2 
     def __init__(self, name="MyDestruct"):
         super(self.__class__, self).__init__(name)
@@ -918,24 +852,24 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
 
         self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="array of the poles vectors"
-        self.createOutputPin('uknots', 'FloatPin',structure=StructureType.Array).\
+        self.createOutputPin('uknots', 'Float',structure=StructureType.Array).\
         description="list of the uknots"
-        self.createOutputPin('umults', 'IntPin',structure=StructureType.Array).\
+        self.createOutputPin('umults', 'Integer',structure=StructureType.Array).\
         description="list of the umultiplicities"
-        self.createOutputPin('udegree', 'IntPin').\
+        self.createOutputPin('udegree', 'Integer').\
         description="udegree of the surface"
         
-        self.createOutputPin('uperiodic', 'BoolPin').\
+        self.createOutputPin('uperiodic', 'Boolean').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
         
-        self.createOutputPin('vknots', 'FloatPin',structure=StructureType.Array).\
+        self.createOutputPin('vknots', 'Float',structure=StructureType.Array).\
         description="list of the vknots"
-        self.createOutputPin('vmults', 'IntPin',structure=StructureType.Array).\
+        self.createOutputPin('vmults', 'Integer',structure=StructureType.Array).\
         description="list of the umultiplicities"
-        self.createOutputPin('vdegree', 'IntPin').\
+        self.createOutputPin('vdegree', 'Integer').\
         description="udegree of the surface"
         
-        self.createOutputPin('vperiodic', 'BoolPin').\
+        self.createOutputPin('vperiodic', 'Boolean').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
 
 
@@ -952,16 +886,11 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
         return []
 
 
-
-
-# ---------
-#
-
-
 class FreeCAD_Collect_Vectors(FreeCadNodeBase):
     '''
     collect vectors to a list
     '''
+
     dok=2 
     def __init__(self, name="MyCollection"):
         super(self.__class__, self).__init__(name)
@@ -977,9 +906,9 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
 #        self.pp.enableOptions(PinOptions.AllowMultipleConnections)
 #        self.pp.disableOptions(PinOptions.SupportsOnlyArrays)
 
-        self.createInputPin("maxSize",'IntPin',100).\
+        self.createInputPin("maxSize",'Integer',100).\
         description="maximum length of the points list, if more points are gotten older points are dropped"
-        self.createInputPin("reduce",'IntPin',0).\
+        self.createInputPin("reduce",'Integer',0).\
         description="create only a discretized list of the polygon with this size"
 
         a=self.createOutputPin('points', 'VectorPin', structure=StructureType.Array)
@@ -1020,7 +949,9 @@ class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
     '''
     create an approximated BSpline for **points** on face **Shape_in**
     '''
+
     dok=2 
+
     def __init__(self, name="MyApproximation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1028,7 +959,7 @@ class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
-        self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
+        self.tolerance=self.createInputPin("tolerance",'Float',100.)
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')
         #+# todo: more parameters for approximate
@@ -1053,7 +984,9 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
     '''
     create an interpolated BSpline for **points** on face **Shape_in**
     '''
+
     dok=2 
+
     def __init__(self, name="MyInterpolation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1061,38 +994,33 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
-        self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
+        self.tolerance=self.createInputPin("tolerance",'Float',100.)
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')
         #+# todo: more parameters for approximate
         self.createOutputPin('Shape_out', 'ShapePin')
         self.tolerance.recomputeNode=True
 
-
-
-
-
-
         self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="array of the poles vectors"
-        self.createOutputPin('uknots', 'FloatPin',structure=StructureType.Array).\
+        self.createOutputPin('uknots', 'Float',structure=StructureType.Array).\
         description="list of the uknots"
-        self.createOutputPin('umults', 'IntPin',structure=StructureType.Array).\
+        self.createOutputPin('umults', 'Integer',structure=StructureType.Array).\
         description="list of the umultiplicities"
-        self.createOutputPin('udegree', 'IntPin').\
+        self.createOutputPin('udegree', 'Integer').\
         description="udegree of the surface"
         
-        self.createOutputPin('uperiodic', 'BoolPin').\
+        self.createOutputPin('uperiodic', 'Boolean').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
         
-        self.createOutputPin('vknots', 'FloatPin',structure=StructureType.Array).\
+        self.createOutputPin('vknots', 'Float',structure=StructureType.Array).\
         description="list of the vknots"
-        self.createOutputPin('vmults', 'IntPin',structure=StructureType.Array).\
+        self.createOutputPin('vmults', 'Integer',structure=StructureType.Array).\
         description="list of the umultiplicities"
-        self.createOutputPin('vdegree', 'IntPin').\
+        self.createOutputPin('vdegree', 'Integer').\
         description="udegree of the surface"
         
-        self.createOutputPin('vperiodic', 'BoolPin').\
+        self.createOutputPin('vperiodic', 'Boolean').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
 
 
@@ -1109,16 +1037,13 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
         return ['Interpolate','Curve','Nurbs','Projection']
 
 
-
-# ---------
-#
-
-
 class FreeCAD_Collect_Vectors(FreeCadNodeBase):
     '''
     collect vectors to a list
     '''
+
     dok=2 
+
     def __init__(self, name="MyCollection"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1130,9 +1055,9 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
 
         self.createInputPin('point', 'VectorPin').\
         description="list of collected vectors"
-        self.createInputPin("maxSize",'IntPin',100).\
+        self.createInputPin("maxSize",'Integer',100).\
         description="maximum length of the points list, if more points are gotten older points are dropped"
-        self.createInputPin("reduce",'IntPin',0).\
+        self.createInputPin("reduce",'Integer',0).\
         description="create only a discretized list of the polygon with this size"
 
         a=self.createOutputPin('points', 'VectorPin', structure=StructureType.Array)
@@ -1173,7 +1098,9 @@ class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
     '''
     create an approximated BSpline for **points** on face **Shape_in**
     '''
+
     dok=2 
+
     def __init__(self, name="MyApproximation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1181,7 +1108,7 @@ class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
-        self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
+        self.tolerance=self.createInputPin("tolerance",'Float',100.)
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')
         #+# todo: more parameters for approximate
@@ -1206,7 +1133,9 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
     '''
     create an interpolated BSpline for **points** on face **Shape_in**
     '''
+
     dok=2 
+
     def __init__(self, name="MyInterpolation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1214,7 +1143,7 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
-        self.tolerance=self.createInputPin("tolerance",'FloatPin',100.)
+        self.tolerance=self.createInputPin("tolerance",'Float',100.)
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')
         #+# todo: more parameters for approximate
@@ -1239,7 +1168,9 @@ class FreeCAD_swept(FreeCadNodeBase):
     '''
     sweptpath step generator
     '''
+
     dok=2 
+
     def __init__(self, name="MyInterpolation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1248,17 +1179,15 @@ class FreeCAD_swept(FreeCadNodeBase):
         self.createInputPin('trackPoints', 'VectorPin', structure=StructureType.Array)
         self.createInputPin('centerAxis', 'VectorPin')
 
-        
-
         self.createInputPin("Path",'ShapePin')
 
         #+# todo: more parameters for approximate
         self.createOutputPin('Shape_out', 'ShapePin')
 
-        a=self.createInputPin('steps', 'IntPin',200)
+        a=self.createInputPin('steps', 'Integer',200)
         a.setInputWidgetVariant("SimpleSlider")
         
-        self.step=self.createInputPin('step', 'IntPin',0)
+        self.step=self.createInputPin('step', 'Integer',0)
         self.step.recomputeNode=True
         self.createOutputPin('Car_out', 'ShapePin')
         self.createOutputPin('tracks_out', 'ShapePin')
@@ -1280,6 +1209,7 @@ class FreeCAD_handrail(FreeCadNodeBase):
     '''
     staircase handrail
     '''
+
     def __init__(self, name="MyInterpolation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
@@ -1292,18 +1222,15 @@ class FreeCAD_handrail(FreeCadNodeBase):
 
         self.createOutputPin('Shape_out', 'ShapePin')
 
-        a=self.createInputPin('steps', 'IntPin',13)
+        a=self.createInputPin('steps', 'Integer',13)
         a.setInputWidgetVariant("SimpleSlider")
-        a.recomputeNode=True
         
-        a=self.createInputPin('heightStair', 'FloatPin',250)
+        a=self.createInputPin('heightStair', 'Float',250)
         a.setInputWidgetVariant("SimpleSlider")
-        a.recomputeNode=True
         
-        a=self.createInputPin('heightBorder', 'FloatPin',70)
+        a=self.createInputPin('heightBorder', 'Float',70)
         a.setInputWidgetVariant("SimpleSlider")
-        a.recomputeNode=True
-       
+      
 
     @staticmethod
     def description():
@@ -1344,18 +1271,15 @@ class FreeCAD_Bender(FreeCadNodeBase):
         self.createInputPin("Shape_in",'ShapePin')
         self.createOutputPin('Shape_out', 'ShapePin')
 
-        a=self.createInputPin('a', 'IntPin',13)
+        a=self.createInputPin('a', 'Integer',13)
         a.setInputWidgetVariant("SimpleSlider")
-        a.recomputeNode=True
 
-        a=self.createInputPin('b', 'IntPin',13)
+        a=self.createInputPin('b', 'Integer',13)
         a.setInputWidgetVariant("SimpleSlider")
-        a.recomputeNode=True
 
-        a=self.createInputPin('c', 'IntPin',13)
+        a=self.createInputPin('c', 'Integer',13)
         a.setInputWidgetVariant("SimpleSlider")
-        a.recomputeNode=True
-        
+       
        
 
     @staticmethod
@@ -1389,25 +1313,21 @@ class FreeCAD_ConnectPoles(FreeCadNodeBase):
         a=self.createOutputPin('poles_out', 'VectorPin', structure=StructureType.Array)
         a.description="2 dim array of vectors as base for a grid or bspline surface"
         
-        self.createOutputPin('umults_out', 'FloatPin',structure=StructureType.Array).\
+        self.createOutputPin('umults_out', 'Float',structure=StructureType.Array).\
         description="list of the multiplicities in the first axis depends on overlay"
-
 
         a=self.createOutputPin('Shape_out', 'ShapePin')
         a.description="a BSplineSurface degree 3 to visualize the poles array"
 
-        a=self.createInputPin('tangentA', 'FloatPin',0)
+        a=self.createInputPin('tangentA', 'Float',0)
         a.description="force of the tangents of the first array" 
-        a.recomputeNode=True
         
-        a=self.createInputPin('tangentB', 'FloatPin',0)
+        a=self.createInputPin('tangentB', 'Float',0)
         a.description="force of the tangents of the 2nd array" 
-        a.recomputeNode=True
 
-        a=self.createInputPin('overlay', 'IntPin',0)
+        a=self.createInputPin('overlay', 'Integer',0)
         a.description="0 = concatenate, 1 = calculate mean of the last and first row of two arrays, 2 = add tangent support between the faces"
         #a.setInputWidgetVariant("SimpleSlider")
-        a.recomputeNode=True
 
     @staticmethod
     def description():
@@ -1442,16 +1362,13 @@ class FreeCAD_FlipSwapArray(FreeCadNodeBase):
         a=self.createOutputPin('Shape_out', 'ShapePin')
         a.description="a BSplineSurface degree 3 to visualize the poles array"
 
-        a=self.createInputPin('swap', 'BoolPin',0)
-        a.recomputeNode=True
+        a=self.createInputPin('swap', 'Boolean',0)
         a.description="Flag for swap axes of the array"
 
-        a=self.createInputPin('flipu', 'BoolPin',0)
-        a.recomputeNode=True
+        a=self.createInputPin('flipu', 'Boolean',0)
         a.description="Flag for invert u direction of the array"
 
-        a=self.createInputPin('flipv', 'BoolPin',0)
-        a.recomputeNode=True
+        a=self.createInputPin('flipv', 'Boolean',0)
         a.description="Flag for invert v direction of the array"
 
 

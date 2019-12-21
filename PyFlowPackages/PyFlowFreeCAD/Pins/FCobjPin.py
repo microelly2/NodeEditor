@@ -297,18 +297,60 @@ from PyFlow.Core import PinBase
 from PyFlow.Core.Common import *
 
 from PyFlow.Packages.PyFlowBase.Pins.BoolPin import BoolPin
-from PyFlow.Packages.PyFlowBase.Pins.ExecPin import ExecPin
 from PyFlow.Packages.PyFlowBase.Pins.FloatPin import FloatPin
 from PyFlow.Packages.PyFlowBase.Pins.IntPin import IntPin
 from PyFlow.Packages.PyFlowBase.Pins.StringPin import StringPin
 
-
-
 class IntegerD(int):
+    pass
+
+class BooleanD():
+    pass
+
+class StringD(str):
     pass
 class FloatD(float):
     pass
 
+# ghneralised data setter
+def setDataG(self,data):
+    say("setDataG",self.name)
+    super(self.__class__, self).setData(data)
+    try:
+        if  self.direction == PinDirection.Input and not self.hasConnections():
+            self.owningNode().compute()
+    except:
+        pass
+
+
+class String(StringPin):
+    """String pin with dialog autoupdate """
+
+    @staticmethod
+    def internalDataStructure():
+        return StringD
+
+    @staticmethod
+    def processData(data):
+        return StringD(data)
+
+    def setData(self, data):
+        setDataG(self, data)
+
+
+class Boolean(BoolPin):
+    """String pin with dialog autoupdate """
+
+    @staticmethod
+    def internalDataStructure():
+        return BooleanD
+
+    @staticmethod
+    def processData(data):
+        return bool(data)
+
+    def setData(self, data):
+        setDataG(self, data)
 
 class Integer(IntPin):
     """Integer pin with dialog autoupdate """
@@ -322,21 +364,12 @@ class Integer(IntPin):
         return IntegerD(data)
 
     def setData(self, data):
-        sayl("XXXXXXXXXXX set Data")
-        super().setData(data)
-                #hack me - Calling execution pin
-        try:
-            if not self.hasConnections():
-                self.owningNode().compute()
-        except:
-            pass
-        #hack end
-
-        say("DONNE")
+        setDataG(self, data)
 
 
-class Float(PinBase):
+class Float(FloatPin):
     """Float pin with dialog autoupdate """
+
 
     @staticmethod
     def internalDataStructure():
@@ -346,16 +379,14 @@ class Float(PinBase):
     def processData(data):
         return FloatD(data)
 
-
     def setData(self, data):
-       sayl("set Data")
-       super().setData(data)
-       say("DONNE")
+        setDataG(self, data)
 
+       
 
 
 
 def nodelist():
     pins = [ShapePin,FacePin,EdgePin,ShapeListPin,FCobjPin,ArrayPin,TransformationPin ]
-    pins += [Integer,Float]
+    pins += [Integer,Float,Boolean,String]
     return pins

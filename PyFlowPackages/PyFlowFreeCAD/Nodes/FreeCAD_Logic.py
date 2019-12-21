@@ -47,11 +47,10 @@ class FreeCAD_LessThan(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
-        a=self.createInputPin('threshold', 'FloatPin')
-        a.recomputeNode=True
+        a=self.createInputPin('values', 'Float',structure=StructureType.Array)
+        a=self.createInputPin('threshold', 'Float')
 
-        a=self.createOutputPin('lessThan', 'BoolPin',structure=StructureType.Array)
+        a=self.createOutputPin('lessThan', 'Boolean',structure=StructureType.Array)
         
 
     @staticmethod
@@ -74,11 +73,10 @@ class FreeCAD_MoreThan(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
-        a=self.createInputPin('treshold', 'FloatPin')
-        a.recomputeNode=True
+        a=self.createInputPin('values', 'Float',structure=StructureType.Array)
+        a=self.createInputPin('treshold', 'Float')
 
-        a=self.createOutputPin('moreThan', 'BoolPin',structure=StructureType.Array)
+        a=self.createOutputPin('moreThan', 'Boolean',structure=StructureType.Array)
         
 
     @staticmethod
@@ -102,11 +100,10 @@ class FreeCAD_Equal(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
-        a=self.createInputPin('value', 'FloatPin')
-        a.recomputeNode=True
+        a=self.createInputPin('values', 'Float',structure=StructureType.Array)
+        a=self.createInputPin('value', 'Float')
 
-        a=self.createOutputPin('equal', 'BoolPin',structure=StructureType.Array)
+        a=self.createOutputPin('equal', 'Boolean',structure=StructureType.Array)
         
 
     @staticmethod
@@ -130,14 +127,11 @@ class FreeCAD_Nearly(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('values', 'FloatPin',structure=StructureType.Array)
-        a=self.createInputPin('value', 'FloatPin')
-        a.recomputeNode=True
+        a=self.createInputPin('values', 'Float',structure=StructureType.Array)
+        a=self.createInputPin('value', 'Float')
+        a=self.createInputPin('tolerance', 'Float',0.1)
 
-        a=self.createInputPin('tolerance', 'FloatPin',0.1)
-        a.recomputeNode=True
-
-        a=self.createOutputPin('nearly', 'BoolPin',structure=StructureType.Array)
+        a=self.createOutputPin('nearly', 'Boolean',structure=StructureType.Array)
         
 
     @staticmethod
@@ -161,9 +155,9 @@ class FreeCAD_And(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('a', 'BoolPin',structure=StructureType.Array)
-        a=self.createInputPin('b', 'BoolPin',structure=StructureType.Array)
-        a=self.createOutputPin('and', 'BoolPin',structure=StructureType.Array)
+        a=self.createInputPin('a', 'Boolean',structure=StructureType.Array)
+        a=self.createInputPin('b', 'Boolean',structure=StructureType.Array)
+        a=self.createOutputPin('and', 'Boolean',structure=StructureType.Array)
         
         a.description="elementwisewise a and b "
 
@@ -188,9 +182,9 @@ class FreeCAD_Or(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('a', 'BoolPin',structure=StructureType.Array)
-        a=self.createInputPin('b', 'BoolPin',structure=StructureType.Array)
-        a=self.createOutputPin('or', 'BoolPin',structure=StructureType.Array)
+        a=self.createInputPin('a', 'Boolean',structure=StructureType.Array)
+        a=self.createInputPin('b', 'Boolean',structure=StructureType.Array)
+        a=self.createOutputPin('or', 'Boolean',structure=StructureType.Array)
         
         a.description="elementwisewise a or b "
 
@@ -215,8 +209,8 @@ class FreeCAD_Not(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('a', 'BoolPin',structure=StructureType.Array)
-        a=self.createOutputPin('not', 'BoolPin',structure=StructureType.Array)
+        a=self.createInputPin('a', 'Boolean',structure=StructureType.Array)
+        a=self.createOutputPin('not', 'Boolean',structure=StructureType.Array)
         
 
     @staticmethod
@@ -240,8 +234,8 @@ class FreeCAD_True(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('count', 'IntPin',3)
-        a=self.createOutputPin('true', 'BoolPin',structure=StructureType.Array)
+        a=self.createInputPin('count', 'Integer',3)
+        a=self.createOutputPin('true', 'Boolean',structure=StructureType.Array)
         
 
     @staticmethod
@@ -265,8 +259,8 @@ class FreeCAD_False(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('count', 'IntPin',3)
-        a=self.createOutputPin('false', 'BoolPin',structure=StructureType.Array)
+        a=self.createInputPin('count', 'Integer',3)
+        a=self.createOutputPin('false', 'Boolean',structure=StructureType.Array)
         
 
     @staticmethod
@@ -290,14 +284,10 @@ class FreeCAD_BoolToy(FreeCadNodeBase):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        a=self.createInputPin('flagA', 'BoolPin')
-        a.recomputeNode=True
-        a=self.createInputPin('flagB', 'BoolPin')
-        a.recomputeNode=True
-        a=self.createInputPin('flagC', 'BoolPin')
-        a.recomputeNode=True
-        a=self.createInputPin('flagD', 'BoolPin')
-        a.recomputeNode=True
+        a=self.createInputPin('flagA', 'Boolean')
+        a=self.createInputPin('flagB', 'Boolean')
+        a=self.createInputPin('flagC', 'Boolean')
+        a=self.createInputPin('flagD', 'Boolean')
         a=self.createOutputPin('flags', 'BoolPin',structure=StructureType.Array)
         
 
@@ -323,25 +313,21 @@ class FreeCAD_FloatToy(FreeCadNodeBase):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         for i in range(11):
-            a=self.createInputPin('float', 'FloatPin',i)
-            a.recomputeNode=True
+            a=self.createInputPin('float', 'Float',i)
 
-        a=self.createInputPin('scale', 'FloatPin',1)
-        a.recomputeNode=True
+        a=self.createInputPin('scale', 'Float',1)
         a.description="all floats are multiplied with this parameter"
 
-        a=self.createInputPin('start', 'FloatPin',0)
-        a.recomputeNode=True
+        a=self.createInputPin('start', 'Float',0)
         a.description="this parameter is added to the floats"
 
-        a=self.createInputPin('limit', 'IntPin',10)
-        a.recomputeNode=True
+        a=self.createInputPin('limit', 'Integer',10)
         a.description="maximum count of floats in use "
 
-        a=self.createInputPin('trailer', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('trailer', 'Float',structure=StructureType.Array)
         a.description="these floats are appended to get larger arrays" 
 
-        a=self.createOutputPin('floats', 'FloatPin',structure=StructureType.Array)
+        a=self.createOutputPin('floats', 'Float',structure=StructureType.Array)
         
 
     @staticmethod
