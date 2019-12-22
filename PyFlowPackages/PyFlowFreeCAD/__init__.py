@@ -81,24 +81,37 @@ VectorArray2
 Voronoi
 
 '''
-if 1:
-    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
-    for n in nodelist():
-        _NODES[ n.__name__]=n
+nodelistcol=[]
 
+
+
+	
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
+nodelistcol += nodelist()
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
-for n in nodelist():
-    _NODES[ n.__name__]=n
-
+nodelistcol += nodelist()
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic import nodelist
-for n in nodelist():
-	_NODES[ n.__name__]=n
+nodelistcol += nodelist()
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
-for n in nodelist():
-    _NODES[ n.__name__]=n
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_2D import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitives import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel import nodelist
+nodelistcol += nodelist()
+
+for n in nodelistcol:
+	_NODES[ n.__name__]=n
 
 
 # tools
@@ -110,6 +123,10 @@ _TOOLS[PreviewTool.__name__] = PreviewTool
 from PyFlow.Packages.PyFlowFreeCAD.Tools.ComputeTool import toollist
 for t in toollist():
 	_TOOLS[t.__name__] = t
+
+
+
+
 
 
 from PyFlow.Packages.PyFlowFreeCAD.Factories.UINodeFactory import createUINode

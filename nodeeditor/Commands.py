@@ -1888,7 +1888,8 @@ def createNodeDocu(onlyNew=False):
                 say("[[nodes::{}]]".format(c[8:]))
                 say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
         
-        say("number of nodes {}".format(len(cnks)))
+    say()
+    say("number of nodes {}".format(len(cnks)))
 
     
 
@@ -1897,28 +1898,79 @@ def T3(): # docfun():
 
     clearReportView()
     packages = GET_PACKAGES()
+    kats={}
     for pn in packages:
-        say(pn)
+        
+        if str(pn).startswith('PyFlowBase'):
+            continue
+        #say("!",pn)
         lib = packages[pn].GetFunctionLibraries()
-        say(lib)
+        #say(lib)
         for l in lib:
             ll = lib[l]
-            say(ll)
+            say("======={}=======".format(ll.__class__.__name__))
             for fn in ll.getFunctions():
                 fun=ll.getFunctions()[fn]
                 
-                say("--",fun.__name__)
-                say(fun.__doc__)
-                say()
-
+                say("====={}======".format(fun.__name__))
+                docs=fun.__doc__
+                if docs is not None:
+                    for s in docs.split('\n'):
+                        say("  "+s.lstrip())
+                #say("/*")
+                node=pfwrap.createFunction(pn,l,fn)
+                #say("*/")
             
-    return
-    libs = packages[packageName].GetFunctionLibraries()[libName]
-    defFoos = lib.getFunctions()
-    fun = NodeBase.initializeFromFunction(defFoos[functionName])
+                try:
+                    kats[node.category()] +=  [fn]
+                except:
+                    kats[node.category()] =  [fn]
 
-    
-    return
-    #defFoos = lib.getFunctions()
+                say("===INPUT PINS===")
+                for pin in node.getOrderedPins():
+                    if str(pin.direction) != 'PinDirection.Input':
+                        continue
+                    if pin.name in ['inExec','outExec']:
+                        continue
+                    say("**__"+pin.name+"__** ")
+                    #say(pin.direction)
+                    #say(pin.name)
+                    #say()
+                    say("[["+pin.__class__.__name__+"]], ")
+                    #des=getdescription(pin)
+                    #if des !='':
+                    #    say(des)
+                    #say()
+                say("===OUTPUT PINS===")
+                for pin in node.getOrderedPins():
+                    if str(pin.direction) != 'PinDirection.Output':
+                        continue
 
-    packs=pfwrap.getNodesClasses()
+                    if pin.name in ['inExec','outExec']:
+                        continue
+                    say("**__"+pin.name+"__** ")
+                    #say(pin.direction)
+                    #say(pin.name)
+                    say("[[" + pin.__class__.__name__ + "]], ")
+                    des=getdescription(pin)
+                    #if des  != '':
+                    #    say(des)
+
+                    #say()
+
+
+
+    say("======Nodes by category======")
+    kl=list(kats.keys())
+    kl.sort()
+    nc=0
+    for k in kl:
+        say("====={}=====".format(k))
+        for c in kats[k]:
+            nc += 1
+            say("[[nodes::{}]]".format(c))
+            say("[[nodes#fc_{}|/°/  ]]".format(c))
+
+
+    say()
+    say("number of nodes {}".format(nc))            

@@ -161,7 +161,7 @@ class FreeCADPyFlow(PyFlow):
     # hack - save and restore data when pyflow main window is minimized and comes back
     def changeEvent(self, event):
         
-        sayl()
+        #sayl()
         if event.type() == QtCore.QEvent.WindowStateChange:
             if self.windowState() & QtCore.Qt.WindowMinimized:
                 import nodeeditor.dev
