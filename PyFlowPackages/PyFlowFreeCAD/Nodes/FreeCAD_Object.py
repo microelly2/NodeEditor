@@ -30,7 +30,7 @@ class FreeCAD_Boolean(FreeCadNodeBase):
         self.mode.setInputWidgetVariant("EnumWidget")
         self.mode.setData("fuse")
 
-        self.volume = self.createOutputPin('Volume', 'Float')
+        self.volume = self.createOutputPin('Volume', 'FloatPin')
 
 
     @timer
@@ -1706,7 +1706,7 @@ class FreeCAD_IndexToList(FreeCadNodeBase):
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
         a.description="numbers where the flag should be 1 (the others are 0)"
-        a=self.createOutputPin('flags', 'Boolean',structure=StructureType.Array)
+        a=self.createOutputPin('flags', 'BoolPin',structure=StructureType.Array)
         a.description="list of 0's and 1's"
 
     @staticmethod
@@ -1741,7 +1741,7 @@ class FreeCAD_DistToShape(FreeCadNodeBase):
         a=self.createInputPin('target', 'ShapePin')
         a.description="target shape"
 
-        a=self.createOutputPin('distance', 'Float',structure=StructureType.Array)
+        a=self.createOutputPin('distance', 'FloatPin',structure=StructureType.Array)
         a.description="distances"
         
 
@@ -2022,7 +2022,6 @@ class FreeCAD_Elevation(FreeCadNodeBase):
         #a=self.createInputPin('filename', 'String','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
         
         a=self.createInputPin('force', 'Boolean',True)
-        #a=self.createOutputPin('data', 'Float',structure=StructureType.Array)
         a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
         a=self.createOutputPin('poles', 'VectorPin',structure=StructureType.Array)
 

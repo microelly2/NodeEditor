@@ -13,7 +13,8 @@ import nodeeditor.store as store
 class FCobjPin(PinBase):
     """doc string for FloatFCobjPin"""
     def __init__(self, name, parent, direction, **kwargs):
-        super(FCobjPin, self).__init__(name, parent, direction, **kwargs)
+        #super(FCobjPin, self).__init__(name, parent, direction, **kwargs)
+        super(FCobjPin, self).__init__(name, parent, direction,)
         self.setDefaultValue(None)
 
     def __repr__(self):
@@ -327,6 +328,10 @@ class String(StringPin):
     """String pin with dialog autoupdate """
 
     @staticmethod
+    def supportedDataTypes():
+        return ('StringPin','String')
+
+    @staticmethod
     def internalDataStructure():
         return StringD
 
@@ -340,6 +345,10 @@ class String(StringPin):
 
 class Boolean(BoolPin):
     """String pin with dialog autoupdate """
+
+    @staticmethod
+    def supportedDataTypes():
+        return ('BoolPin', 'Boolean','IntPin','Integer')
 
     @staticmethod
     def internalDataStructure():
@@ -356,6 +365,10 @@ class Integer(IntPin):
     """Integer pin with dialog autoupdate """
 
     @staticmethod
+    def supportedDataTypes():
+        return ('FloatPin', 'IntPin','Float','Integer')
+
+    @staticmethod
     def internalDataStructure():
         return IntegerD
 
@@ -369,6 +382,16 @@ class Integer(IntPin):
 
 class Float(FloatPin):
     """Float pin with dialog autoupdate """
+
+    @staticmethod
+    def pinDataTypeHint():
+        '''data type index and default value'''
+        return 'FloatPin', 0.0
+
+    @staticmethod
+    def supportedDataTypes():
+        return ('FloatPin', 'IntPin','Float','Integer')
+
 
 
     @staticmethod

@@ -209,7 +209,6 @@ class FreeCAD_Hull(FreeCadNodeBase):
         self.createOutputPin('vEdges', 'ShapeListPin')
         self.createInputPin('uList', 'Float', structure=StructureType.Array,defaultValue=None)
         self.createInputPin('vList', 'Float', structure=StructureType.Array,defaultValue=None)
-        #self.createOutputPin('edges', 'Float', structure=StructureType.Array,defaultValue=None)
         self.createOutputPin('Points', 'ShapePin')
         self.createOutputPin('convexHull', 'ShapePin')
         self.createOutputPin('delaunayTriangles', 'ShapePin')
@@ -401,14 +400,14 @@ class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
 
         self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="list of the poles vectors"
-        self.createOutputPin('knots', 'Float',structure=StructureType.Array).\
+        self.createOutputPin('knots', 'FloatPin',structure=StructureType.Array).\
         description="list of the knots"
-        self.createOutputPin('mults', 'Integer',structure=StructureType.Array).\
+        self.createOutputPin('mults', 'IntPin',structure=StructureType.Array).\
         description="list of the multiplicities"
-        self.createOutputPin('degree', 'Integer').\
+        self.createOutputPin('degree', 'IntPin').\
         description="degree of the curve"
         
-        self.createOutputPin('periodic', 'Boolean').\
+        self.createOutputPin('periodic', 'BoolPin').\
         description="flag, wheter the curve is periodic/closed or open"
         
 
@@ -443,24 +442,24 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
 
         self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="array of the poles vectors"
-        self.createOutputPin('uknots', 'Float',structure=StructureType.Array).\
+        self.createOutputPin('uknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the uknots"
-        self.createOutputPin('umults', 'Integer',structure=StructureType.Array).\
+        self.createOutputPin('umults', 'IntPin',structure=StructureType.Array).\
         description="list of the umultiplicities"
-        self.createOutputPin('udegree', 'Integer').\
+        self.createOutputPin('udegree', 'IntPin').\
         description="udegree of the surface"
         
-        self.createOutputPin('uperiodic', 'Boolean').\
+        self.createOutputPin('uperiodic', 'BoolPin').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
         
-        self.createOutputPin('vknots', 'Float',structure=StructureType.Array).\
+        self.createOutputPin('vknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the vknots"
-        self.createOutputPin('vmults', 'Integer',structure=StructureType.Array).\
+        self.createOutputPin('vmults', 'IntPin',structure=StructureType.Array).\
         description="list of the umultiplicities"
-        self.createOutputPin('vdegree', 'Integer').\
+        self.createOutputPin('vdegree', 'IntPin').\
         description="udegree of the surface"
         
-        self.createOutputPin('vperiodic', 'Boolean').\
+        self.createOutputPin('vperiodic', 'BoolPin').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
 
 
@@ -594,24 +593,24 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
 
         self.createOutputPin('poles', 'VectorPin', structure=StructureType.Array).\
         description="array of the poles vectors"
-        self.createOutputPin('uknots', 'Float',structure=StructureType.Array).\
+        self.createOutputPin('uknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the uknots"
-        self.createOutputPin('umults', 'Integer',structure=StructureType.Array).\
+        self.createOutputPin('umults', 'IntPin',structure=StructureType.Array).\
         description="list of the umultiplicities"
-        self.createOutputPin('udegree', 'Integer').\
+        self.createOutputPin('udegree', 'IntPin').\
         description="udegree of the surface"
         
-        self.createOutputPin('uperiodic', 'Boolean').\
+        self.createOutputPin('uperiodic', 'BoolPin').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
         
-        self.createOutputPin('vknots', 'Float',structure=StructureType.Array).\
+        self.createOutputPin('vknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the vknots"
-        self.createOutputPin('vmults', 'Integer',structure=StructureType.Array).\
+        self.createOutputPin('vmults', 'IntPin',structure=StructureType.Array).\
         description="list of the umultiplicities"
-        self.createOutputPin('vdegree', 'Integer').\
+        self.createOutputPin('vdegree', 'IntPin').\
         description="udegree of the surface"
         
-        self.createOutputPin('vperiodic', 'Boolean').\
+        self.createOutputPin('vperiodic', 'BoolPin').\
         description="flag, wheter the faceis periodic/closed or open in u direction"
 
 
@@ -774,7 +773,7 @@ class FreeCAD_ConnectPoles(FreeCadNodeBase):
         a=self.createOutputPin('poles_out', 'VectorPin', structure=StructureType.Array)
         a.description="2 dim array of vectors as base for a grid or bspline surface"
         
-        self.createOutputPin('umults_out', 'Float',structure=StructureType.Array).\
+        self.createOutputPin('umults_out', 'FloatPin',structure=StructureType.Array).\
         description="list of the multiplicities in the first axis depends on overlay"
 
         a=self.createOutputPin('Shape_out', 'ShapePin')

@@ -78,7 +78,7 @@ class FreeCAD_ImportFile(FreeCadNodeBase):
         a=self.createInputPin('filename', 'String','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
         
         a=self.createInputPin('force', 'Boolean',True)
-        a=self.createOutputPin('data', 'Float',structure=StructureType.Array)
+        a=self.createOutputPin('data', 'FloatPin',structure=StructureType.Array)
         a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
 
 
