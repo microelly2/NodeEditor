@@ -1974,3 +1974,56 @@ def T3(): # docfun():
 
     say()
     say("number of nodes {}".format(nc))            
+
+
+def getfun(fname):
+    packages = GET_PACKAGES()
+    kats={}
+    for pn in packages:
+        lib = packages[pn].GetFunctionLibraries()
+        for l in lib:
+            ll = lib[l]
+            for fn in ll.getFunctions():
+                fun=ll.getFunctions()[fn]
+                if fun.__name__ ==fname:
+                    return(pn,ll.__class__.__name__)
+    return(None,None)
+
+
+def T2():
+    ''' skript zum aufsetzen graph'''
+    
+    nodes=FreeCAD.PF.graphManager.get().getAllNodes()
+    say()
+    say('import nodeeditor.pfwrap as pfwrap')
+    say('instance=pfwrap.getInstance()')
+    say('gg=pfwrap.getGraphManager().getAllGraphs()[0]')
+
+    for ix, n in enumerate(nodes):
+        tt=str(n.__class__).split('.')
+        pn,ln=getfun(n.__class__.__name__)
+
+        if pn != None:
+             say("_{}=pfwrap.createFunction('{}','{}','{}')".format(n.name,pn,ln,n.__class__.__name__))
+        else:
+            say("_{}=pfwrap.createNode('{}','{}','{}')".format(n.name,tt[2],n.__class__.__name__,n.name))    
+            
+        say("_{}.setPosition({},{})".format(n.name,n.x,n.y))
+        say("gg.addNode(_{})".format(n.name))
+        say()
+    
+    say()
+    for ix, n in enumerate(nodes):
+            pins=n.getOrderedPins()
+            for pin in pins:
+                if pin.direction == PinDirection.Output:                 
+                    s=getConnectedPins(pin)
+                    if len(s)>0:
+                        for p in s:
+                            say("pfwrap.connect(_{},'{}',_{},'{}')".format(n.name,pin.name,p.owningNode().name,p.name))
+
+    say("nodeeditor.Commands.refresh_gui()")
+
+
+
+            
