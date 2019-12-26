@@ -25,6 +25,16 @@ class VectorDecoder(json.JSONDecoder):
     def object_hook(self, vec3Dict):
         return Vector(vec3Dict[Vector.__name__])
 
+def setDataG(self,data):
+    say("setDataG",self.name)
+    super(self.__class__, self).setData(data)
+    try:
+        if  self.direction == PinDirection.Input and not self.hasConnections():
+            self.owningNode().compute()
+    except:
+        pass
+
+
 
 class VectorPin(PinBase):
     """doc string for FloatVectorPin"""
@@ -63,3 +73,7 @@ class VectorPin(PinBase):
     @staticmethod
     def processData(data):
         return VectorPin.internalDataStructure()(data)
+
+    def setData(self, data):
+        setDataG(self, data)
+

@@ -4310,3 +4310,127 @@ def run_TEST(self,val):
     say(self)
     FreeCAD.s=self
     
+
+
+def run_FreeCAD_Camera(self):
+    '''
+    v=Gui.ActiveDocument.ActiveView
+    cam=v.getCameraNode()
+
+
+    cam.scaleHeight(23)
+
+    cam.viewBoundingBox
+
+
+    cam.pointAt
+    # SoCamera::pointAt(SbVec3f const &)
+
+
+     cam.position
+     
+    cam.position.get() -> string
+    cam.orientation.get()
+
+
+    cam.position.set("20 4 5")
+
+    v.setCamera("SoPerspectiveCamera")
+
+    cam.heightAngle.get()
+    '''
+  
+    from pivy import coin
+    v=FreeCADGui.ActiveDocument.ActiveView
+    
+    cam=v.getCameraNode()
+    say(cam.__class__.__name__)
+    typ=cam.__class__.__name__
+    
+
+    dx=self.getData('directionX')
+    dy=self.getData('directionY')
+    dz=self.getData('directionZ')
+    r=FreeCAD.Rotation(FreeCAD.Vector(0,0,-1),FreeCAD.Vector(dx,dy,dz))
+    cdir="{} {} {} {}".format(r.Axis.x,r.Axis.y,r.Axis.z,r.Angle)
+    cam.orientation.set(cdir)
+    say("direction",cam.orientation.get())
+    
+    
+    pos=self.getPinByName('position')
+    if 0 and len(pos.affected_by) == 0:
+        x=self.getData('positionX')
+        y=self.getData('positionY')
+        z=self.getData('positionZ')
+    else:
+         (x,y,z)=self.getData("position")   
+    
+
+
+    pos="{} {} {}".format(x,y,-z)
+    say("Position",pos)
+    cam.position.set(pos)
+
+    if typ != "SoPerspectiveCamera":
+        cam.height.set(str(z))
+    else:
+        say("angle",cam.heightAngle.get())
+        cam.heightAngle.set(str(self.getData("angle")/50))
+        #cam.widthAngle.set(str(self.getData("angle")/50))
+        say("angle",cam.heightAngle.get())
+        # das hat keinen einflass..
+        #say("aspect ratio",cam.aspectRatio.get())
+        #cam.aspectRatio.set("0.2")
+        
+    
+    
+
+    
+    
+    
+
+    if self.getData('usePointAt'):
+        pos=self.getPinByName('pointAt')
+        if 0 and len(pos.affected_by) == 0:
+            vec=coin.SbVec3f(self.getData('pointAtX'),self.getData('pointAtY'),self.getData('pointAtZ'))
+        else:
+            vec=coin.SbVec3f(*self.getData("pointAt" ) ) 
+        
+        cam.pointAt(vec)
+    
+
+    say("-----------------")
+    #cam.nearDistance.set('0')
+    #say("ND",cam.nearDistance.get())
+    cam.farDistance.set('10000')
+    #say("FD",cam.farDistance.get())
+    #say(v)
+    
+    if self.getData("trackimages"):
+        
+        fn=self.getData("trackName")
+        import os.path
+        from os import path
+        dn="/tmp/{}".format(fn)
+        dirname = os.path.dirname(dn) 
+        if not path.exists(dirname):
+            os.mkdir(dirname)
+        if self.getData("timestamp"):
+            tt=str(time.time())
+        else:
+            tt=''
+            
+        v.saveImage("/tmp/{}{}.png".format(fn,tt))
+        self.setData("image","/tmp/{}{}.png".format(fn,tt))
+
+    self.outExec.call()
+    self.setColor()
+  
+
+
+def run_FreeCAD_Counter(self):
+    self.setData("count", self.getData("count")+1)
+    self.outExec.call()
+    self.setColor()
+
+        

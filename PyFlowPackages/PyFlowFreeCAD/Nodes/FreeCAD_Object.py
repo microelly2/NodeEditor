@@ -2050,7 +2050,70 @@ class FreeCAD_Elevation(FreeCadNodeBase):
         a=self.createInputPin('Rbf', 'Boolean',True)
     
 
+class FreeCAD_Camera(FreeCadNodeBase):
+    '''
 
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        #a=self.createInputPin('filename', 'String','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
+        
+        #a=self.createInputPin('positionX', 'Float',0)
+        #a=self.createInputPin('positionY', 'Float',0)
+        #a=self.createInputPin('positionZ', 'Float',0)
+        a=self.createInputPin('position', 'VectorPin')
+        
+        a=self.createInputPin('directionX', 'Float',0)
+        a=self.createInputPin('directionY', 'Float',0)
+        a=self.createInputPin('directionZ', 'Float',0)
+        
+        a=self.createInputPin('usePointAt', 'Boolean',True)
+        #a=self.createInputPin('pointAtX', 'Float',0)
+        #a=self.createInputPin('pointAtY', 'Float',0)
+        a=self.createInputPin('angle', 'Float',0)
+    
+        a=self.createInputPin('pointAt', 'VectorPin')
+        
+        # geht nicht
+        #a=self.createInputPin('nearDistance', 'Float',0)
+        #a=self.createInputPin('farDistance', 'Float',1000)
+       
+        
+        #a=self.createInputPin('perspective', 'Boolean',True)
+        a=self.createInputPin('trackimages', 'BoolPin',False)
+        a=self.createInputPin('timestamp', 'BoolPin',False)
+        a=self.createInputPin('trackName', 'StringPin',"camera")
+        a=self.createOutputPin('image', 'StringPin')
+    
+class FreeCAD_Counter(FreeCadNodeBase):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.inExec = self.createInputPin('reset', 'ExecPin', None, self.freset)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+    
+        
+        a=self.createOutputPin('count', 'IntPin',0)
+        
+    
+    def freset(self,*args, **kwargs):
+        self.setData("count",0)
+        self.outExec.call()
+        self.setColor()
+
+        
 
 def nodelist():
     return [
@@ -2103,5 +2166,7 @@ def nodelist():
                 # FreeCAD_RefList, muss noch programmiert werden
                 #FreeCAD_ImportFile,
                 FreeCAD_Elevation,
+                FreeCAD_Camera,
+                FreeCAD_Counter,
 
         ]

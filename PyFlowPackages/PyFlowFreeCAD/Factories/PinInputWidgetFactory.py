@@ -413,7 +413,7 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     if dataType == 'BoolPin' or dataType=='Boolean':
         return BoolInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
-    
+     
     
     if dataType == 'FloatPin' or dataType == 'Float':
         say("FreeCAD -- float pin", widgetVariant)
@@ -433,10 +433,6 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
 
         
         return FloatInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
-
-
-
-
 
 
     if dataType == 'IntPin' or dataType == 'Integer':
