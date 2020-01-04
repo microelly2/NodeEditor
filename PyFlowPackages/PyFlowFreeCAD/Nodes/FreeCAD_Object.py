@@ -2069,11 +2069,12 @@ class FreeCAD_Camera(FreeCadNodeBase):
         #a=self.createInputPin('positionZ', 'Float',0)
         a=self.createInputPin('position', 'VectorPin')
         
-        a=self.createInputPin('directionX', 'Float',0)
-        a=self.createInputPin('directionY', 'Float',0)
-        a=self.createInputPin('directionZ', 'Float',0)
+        if 0:
+            a=self.createInputPin('directionX', 'Float',0)
+            a=self.createInputPin('directionY', 'Float',0)
+            a=self.createInputPin('directionZ', 'Float',0)
         
-        a=self.createInputPin('usePointAt', 'Boolean',True)
+            a=self.createInputPin('usePointAt', 'Boolean',True)
         #a=self.createInputPin('pointAtX', 'Float',0)
         #a=self.createInputPin('pointAtY', 'Float',0)
         a=self.createInputPin('angle', 'Float',0)
@@ -2114,6 +2115,58 @@ class FreeCAD_Counter(FreeCadNodeBase):
         self.setColor()
 
         
+class FreeCAD_Sleep(FreeCadNodeBase):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+        
+        a=self.createInputPin('sleep', 'IntPin',0)
+        
+class FreeCAD_Export(FreeCadNodeBase):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+        
+        a=self.createInputPin('Shape', 'ShapePin')
+        a=self.createInputPin('filename', 'StringPin')
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+    
+class FreeCAD_Import(FreeCadNodeBase):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+        
+        a=self.createInputPin('Shape', 'ShapePin')
+        a=self.createInputPin('filename', 'StringPin')
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+    
+    
+    
+
 
 def nodelist():
     return [
@@ -2168,5 +2221,8 @@ def nodelist():
                 FreeCAD_Elevation,
                 FreeCAD_Camera,
                 FreeCAD_Counter,
+                FreeCAD_Sleep,
+                FreeCAD_Export,
+                FreeCAD_Import,
 
         ]

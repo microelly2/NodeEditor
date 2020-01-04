@@ -4343,19 +4343,22 @@ def run_FreeCAD_Camera(self):
     from pivy import coin
     v=FreeCADGui.ActiveDocument.ActiveView
     
+    #FreeCADGui.activeDocument().activeView().setCameraType("Perspective")
+    
     cam=v.getCameraNode()
     say(cam.__class__.__name__)
     typ=cam.__class__.__name__
     
-
-    dx=self.getData('directionX')
-    dy=self.getData('directionY')
-    dz=self.getData('directionZ')
-    r=FreeCAD.Rotation(FreeCAD.Vector(0,0,-1),FreeCAD.Vector(dx,dy,dz))
-    cdir="{} {} {} {}".format(r.Axis.x,r.Axis.y,r.Axis.z,r.Angle)
-    cam.orientation.set(cdir)
-    say("direction",cam.orientation.get())
+    if 0:
+        dx=self.getData('directionX')
+        dy=self.getData('directionY')
+        dz=self.getData('directionZ')
+        r=FreeCAD.Rotation(FreeCAD.Vector(0,0,-1),FreeCAD.Vector(dx,dy,dz))
+        cdir="{} {} {} {}".format(r.Axis.x,r.Axis.y,r.Axis.z,r.Angle)
+        cam.orientation.set(cdir)
+        say("direction",cam.orientation.get())
     
+    cam.orientation.set("0 0 1 0")
     
     pos=self.getPinByName('position')
     if 0 and len(pos.affected_by) == 0:
@@ -4389,7 +4392,7 @@ def run_FreeCAD_Camera(self):
     
     
 
-    if self.getData('usePointAt'):
+    if 1:# self.getData('usePointAt'):
         pos=self.getPinByName('pointAt')
         if 0 and len(pos.affected_by) == 0:
             vec=coin.SbVec3f(self.getData('pointAtX'),self.getData('pointAtY'),self.getData('pointAtZ'))
@@ -4397,6 +4400,8 @@ def run_FreeCAD_Camera(self):
             vec=coin.SbVec3f(*self.getData("pointAt" ) ) 
         
         cam.pointAt(vec)
+        roll=0
+        cam.pointAt(vec,coin.SbVec3f(0,0.0+math.sin(math.pi*roll/180),0.0+math.cos(math.pi*roll/180)))
     
 
     say("-----------------")
@@ -4433,4 +4438,25 @@ def run_FreeCAD_Counter(self):
     self.outExec.call()
     self.setColor()
 
+     
+def run_FreeCAD_Export(self):
+    
         
+    a=self.getPinObject("Shape")
+    fn=self.getData("filename")
+    a.exportBrep(fn)
+    self.outExec.call()
+    self.setColor()
+
+    
+def run_FreeCAD_Import(self):
+    
+    fn=self.getData("filename")
+    a=Part.Shape()
+    a.importBrep(fn)
+    self.setPinObject("Shape_out",a)
+    #Part.show(a)
+    self.outExec.call()
+    self.setColor()
+    
+    
