@@ -1,6 +1,6 @@
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase, FreeCadNodeBase2
 
 class FreeCAD_Boolean(FreeCadNodeBase):
     '''boolean ops of two parts example'''
@@ -2130,26 +2130,9 @@ class FreeCAD_Sleep(FreeCadNodeBase):
         
         a=self.createInputPin('sleep', 'IntPin',0)
         
-class FreeCAD_Export(FreeCadNodeBase):
+class FreeCAD_Export(FreeCadNodeBase2):
     '''
-
-    '''
-
-    dok = 0
-    def __init__(self, name="MyToy"):
-
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-   
-        
-        a=self.createInputPin('Shape', 'ShapePin')
-        a=self.createInputPin('filename', 'StringPin')
-        a=self.createOutputPin('Shape_out', 'ShapePin')
-    
-class FreeCAD_Import(FreeCadNodeBase):
-    '''
-
+    export a shape into a file
     '''
 
     dok = 0
@@ -2161,11 +2144,78 @@ class FreeCAD_Import(FreeCadNodeBase):
    
         
         a=self.createInputPin('Shape', 'ShapePin')
+        a.description="shape to export"
         a=self.createInputPin('filename', 'StringPin')
-        a=self.createOutputPin('Shape_out', 'ShapePin')
+        a.description="path to the shape file"
+        
+        self.mode = self.createInputPin('mode', 'String')
+        self.mode.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":["BREP","Inventor"]
+            }
+        self.mode.setInputWidgetVariant("EnumWidget")
+        self.mode.setData("BREP")
+        self.mode.description="format of the file"
+
+    
+class FreeCAD_Import(FreeCadNodeBase2):
+    '''
+    import a shape from a file
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+        
+        a=self.createInputPin('filename', 'StringPin')
+        a.description="path to the shape file"
+        
+        
+        self.mode = self.createInputPin('mode', 'String')
+        self.mode.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":["BREP","Inventor"]
+            }
+        self.mode.setInputWidgetVariant("EnumWidget")
+        self.mode.setData("BREP")
+        self.mode.description="format of the file"
+
+        self.createOutputPin('Shape_out', 'ShapePin')
     
     
-    
+class FreeCAD_Expression(FreeCadNodeBase):
+    '''
+    evaluate  an expressions with at most 4 variables
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+        a=self.createInputPin('modules', 'StringPin')
+        a=self.createInputPin('expression', 'StringPin')
+        
+        a=self.createInputPin('a', 'AnyPin')
+        a.enableOptions(PinOptions.AllowAny)
+        a=self.createInputPin('b', 'AnyPin')
+        a.enableOptions(PinOptions.AllowAny)
+        a=self.createInputPin('c', 'AnyPin')
+        a.enableOptions(PinOptions.AllowAny)
+        a=self.createInputPin('d', 'AnyPin')
+        a.enableOptions(PinOptions.AllowAny)
+        
+        a=self.createOutputPin('string_out', 'StringPin')
+        a=self.createOutputPin('float_out', 'FloatPin', None)
+        a=self.createOutputPin('int_out', 'IntPin', None)
+        a=self.createOutputPin('bool_out', 'BoolPin', None)
+   
 
 
 def nodelist():
@@ -2224,5 +2274,6 @@ def nodelist():
                 FreeCAD_Sleep,
                 FreeCAD_Export,
                 FreeCAD_Import,
+                FreeCAD_Expression,
 
         ]

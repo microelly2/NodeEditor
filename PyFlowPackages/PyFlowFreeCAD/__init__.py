@@ -38,11 +38,14 @@ from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Rotation import Rotation
 from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Placement import Placement
 from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Numpy import Numpy
 
+from PyFlow.Packages.PyFlowFreeCAD.FunctionLibraries.Datetime import Datetime
+
 _FOO_LIBS = {
     Vector.__name__: Vector(PACKAGE_NAME),
     Rotation.__name__: Rotation(PACKAGE_NAME),
     Placement.__name__: Placement(PACKAGE_NAME),
     Numpy.__name__: Numpy(PACKAGE_NAME),
+    Datetime.__name__: Datetime(PACKAGE_NAME),
 }
 
 

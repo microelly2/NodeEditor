@@ -1796,9 +1796,8 @@ def createNodeDocu(onlyNew=False):
             sels=['Blinker','Receiver']
             
             
-            if onlyNew and c[8:] not in sels:
-                continue
- 
+            #if onlyNew and c[8:] not in sels:
+            #    continue
 
 
             try:
@@ -1894,7 +1893,7 @@ def createNodeDocu(onlyNew=False):
     
 
 
-def T3(): # docfun():
+def T3a(): # docfun():
 
     clearReportView()
     packages = GET_PACKAGES()

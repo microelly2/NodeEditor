@@ -4445,8 +4445,8 @@ def run_FreeCAD_Export(self):
     a=self.getPinObject("Shape")
     fn=self.getData("filename")
     a.exportBrep(fn)
-    self.outExec.call()
-    self.setColor()
+    #self.outExec.call()
+    #self.setColor()
 
     
 def run_FreeCAD_Import(self):
@@ -4456,7 +4456,35 @@ def run_FreeCAD_Import(self):
     a.importBrep(fn)
     self.setPinObject("Shape_out",a)
     #Part.show(a)
+    #self.outExec.call()
+    #self.setColor()
+    
+    
+def run_FreeCAD_Expression(self):
+
+    
+    modules=self.getData('modules')
+    modules=modules.split(',')
+    for m in modules:
+        if m=='': break
+        exec("import "+m)
+
+    expression=self.getData('expression')
+    a=self.getData('a')
+    b=self.getData('b')
+    c=self.getData('c')
+    d=self.getData('d')
+    v=eval(expression)
+
+    say("parameters a,b,c,d",a,b,c,d)
+    say(expression,v,v.__class__)
+    self.setData('string_out',str(v))
+    try:
+        self.setData('float_out',float(v))
+        self.setData('int_out',int(round(v)))
+    except: pass
+    
+    self.setData('bool_out',v)
+    
     self.outExec.call()
     self.setColor()
-    
-    

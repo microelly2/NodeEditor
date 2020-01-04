@@ -346,8 +346,9 @@ class FreeCadNodeBase(NodeBase):
             b = random.random()
             
         wr=self.getWrapper()
-        wr.headColor=QtGui.QColor.fromRgbF(r,g,b,a)
-        wr.update()
+        if wr is not None:
+            wr.headColor=QtGui.QColor.fromRgbF(r,g,b,a)
+            wr.update()
 
     def setImage(self,imagename="freecad"):
         import os
@@ -355,6 +356,39 @@ class FreeCadNodeBase(NodeBase):
         wr=self.getWrapper()
         wr.image=image
         wr.svgIcon.setElementId("layer1")
+
+
+class FreeCadNodeBase2(FreeCadNodeBase):
+    '''common methods for FreeCAD integration'''
+    
+    dok = 0
+    
+    def __init__(self, name="FreeCADNode",**kvargs):
+        
+        super(FreeCadNodeBase2, self).__init__(name)
+    
+    @timer
+    def compute(self, *args, **kwargs):
+        if self._debug:
+            say("--- Start",self.name)
+            self._started=time.time()
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        a=eval("nodeeditor.dev.run_{}(self)".format(self.__class__.__name__))
+        if self._debug: 
+            say("--- Done",self.name,round(time.time()-self._started,2))
+
+        self._started2=time.time()
+        self.outExec.call()
+        self.setColor()
+        if self._debug: 
+            say("--- Done Post",self.name,round(time.time()-self._started2,2))
+
+
+        if self._preview:
+            say("create preview")
+            self.preview()
+
 
 
 # example shape

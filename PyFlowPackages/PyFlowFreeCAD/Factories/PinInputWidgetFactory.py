@@ -395,11 +395,33 @@ class IntInputWidgetSimpleSlider(InputWidgetSingle):
 from PyFlow.Packages.PyFlowBase.Factories.PinInputWidgetFactory import *
 
 
+class MyNoWidget(InputWidgetSingle):
+    """
+    """
+
+    def __init__(self, parent=None, **kwds):
+        super(self.__class__, self).__init__(parent=parent, **kwds)
+        self.le = QLineEdit(self)
+        self.le.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+        self.setWidget(self.le)
+        #self.le.textChanged.connect(lambda val: self.dataSetCallback(val))
+        self.le.setEnabled(False)
+
+    def blockWidgetSignals(self, bLocked):
+        self.le.blockSignals(bLocked)
+
+    def setWidgetValue(self, val):
+        self.le.setText(str(val))
+
+
+
 def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WIDGET_VARIANT,  **kwds):
     '''
     factory method
     '''
     #say("widgetvariant",widgetVariant,dataType)
+    if widgetVariant == "NO":
+        return MyNoWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
     
     if dataType == 'StringPin' or dataType=='String':
         if widgetVariant == DEFAULT_WIDGET_VARIANT:
