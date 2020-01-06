@@ -92,7 +92,7 @@ class _PyFlowRef(FeaturePython):
 
     def myExecute(self,fp):
         if not fp.ViewObject.Visibility:
-            sayl(fp.Label,"hiden --no execute")
+            sayl(fp.Label,"hidden --no execute")
             return
         try:
             _=self.lastExec
@@ -193,7 +193,7 @@ class _Blinker(FeaturePython):
 
     def myExecute(self,fp):
         if not fp.ViewObject.Visibility:
-            sayl(fp.Label,"hiden --no execute")
+            sayl(fp.Label,"hidden --no execute")
             return
 
         import nodeeditor.dev
@@ -278,7 +278,7 @@ class _Receiver(FeaturePython):
 
     def myExecute(self,fp):
         if not fp.ViewObject.Visibility:
-            sayl(fp.Label,"hiden --no execute")
+            sayl(fp.Label,"hidden --no execute")
             return
 
         import nodeeditor.dev

@@ -63,7 +63,7 @@ class FreeCAD_LessThan(FreeCadNodeBase2):
 
 class FreeCAD_MoreThan(FreeCadNodeBase2):
     '''
-    compare a list of floats with a treshold
+    compare a list of floats with a threshold
     '''
 
     dok = 4
@@ -74,7 +74,7 @@ class FreeCAD_MoreThan(FreeCadNodeBase2):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         a=self.createInputPin('values', 'Float',structure=StructureType.Array)
-        a=self.createInputPin('treshold', 'Float')
+        a=self.createInputPin('threshold', 'Float')
 
         a=self.createOutputPin('moreThan', 'BoolPin',structure=StructureType.Array)
         
@@ -90,7 +90,7 @@ class FreeCAD_MoreThan(FreeCadNodeBase2):
 
 class FreeCAD_Equal(FreeCadNodeBase2):
     '''
-    compare a list of floats with a treshold
+    compare a list of floats with a threshold
     '''
 
     dok = 4
@@ -361,6 +361,3 @@ def nodelist():
                 FreeCAD_FloatToy,
                 
         ]
-
-
-

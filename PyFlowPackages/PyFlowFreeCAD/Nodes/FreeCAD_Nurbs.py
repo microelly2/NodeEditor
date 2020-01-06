@@ -198,7 +198,7 @@ class FreeCAD_Hull(FreeCadNodeBase2):
         self.createInputPin("singleSimplex", 'Boolean', True)
 
         a=self.createInputPin("simplex", 'Integer', True)
-        a.description="index of the displayd simplex if singleSimplex is set"
+        a.description="index of the displayed simplex if singleSimplex is set"
 
         a=self.createInputPin("showFaces", 'Boolean', True)
         a.description="display alpha and convex hull by faces" 
@@ -408,7 +408,7 @@ class FreeCAD_Destruct_BSpline(FreeCadNodeBase2):
         description="degree of the curve"
         
         self.createOutputPin('periodic', 'BoolPin').\
-        description="flag, wheter the curve is periodic/closed or open"
+        description="flag, whether the curve is periodic/closed or open"
         
 
 
@@ -450,7 +450,7 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase2):
         description="udegree of the surface"
         
         self.createOutputPin('uperiodic', 'BoolPin').\
-        description="flag, wheter the faceis periodic/closed or open in u direction"
+        description="flag, whether the face is periodic/closed or open in u direction"
         
         self.createOutputPin('vknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the vknots"
@@ -460,7 +460,7 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase2):
         description="udegree of the surface"
         
         self.createOutputPin('vperiodic', 'BoolPin').\
-        description="flag, wheter the faceis periodic/closed or open in u direction"
+        description="flag, whether the face is periodic/closed or open in u direction"
 
 
     @staticmethod
@@ -601,7 +601,7 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase2):
         description="udegree of the surface"
         
         self.createOutputPin('uperiodic', 'BoolPin').\
-        description="flag, wheter the faceis periodic/closed or open in u direction"
+        description="flag, whether the face is periodic/closed or open in u direction"
         
         self.createOutputPin('vknots', 'FloatPin',structure=StructureType.Array).\
         description="list of the vknots"
@@ -611,7 +611,7 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase2):
         description="udegree of the surface"
         
         self.createOutputPin('vperiodic', 'BoolPin').\
-        description="flag, wheter the faceis periodic/closed or open in u direction"
+        description="flag, whether the face is periodic/closed or open in u direction"
 
 
     @staticmethod
@@ -767,7 +767,7 @@ class FreeCAD_ConnectPoles(FreeCadNodeBase2):
 
         self.polesin=self.createInputPin("poles_in",'VectorPin', structure=StructureType.Array)
         self.polesin.enableOptions(PinOptions.AllowMultipleConnections)
-        self.polesin.description="connection for multiple 2 dimensional vectorarrays which sould be concatenated, they must have the same numver of rows"
+        self.polesin.description="connection for multiple 2 dimensional vectorarrays which should be concatenated, they must have the same number of rows"
 
 
         a=self.createOutputPin('poles_out', 'VectorPin', structure=StructureType.Array)

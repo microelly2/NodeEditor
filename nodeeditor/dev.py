@@ -160,7 +160,7 @@ def runraw(self):
             p1.setData(pinval)
             p2.setData(pinval)
         except:
-            say("probme seting",p)
+            say("problem setting",p)
         say("created:",p1)
 
         pins  += [p1,p2]
@@ -1853,7 +1853,7 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
 
 
 
-# autum 19
+# autumn 19
 def run_FreeCAD_Destruct_BSpline(self,bake=False, **kwargs):
     shape=self.getPinObject("Shape_in")
     if shape is None: return
@@ -3762,7 +3762,7 @@ def run_FreeCAD_ListOfShapes(self):
 
 
 def run_shelfToy(self):
-    ''' the implemetnation of the toy shelf tool'''
+    '''the implementation of the toy shelf tool'''
     
     nodes=FreeCAD.PF.graphManager.get().getAllNodes()
     nodes2 = sorted(nodes, key=lambda node: node.x)
