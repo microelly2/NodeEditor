@@ -4515,14 +4515,14 @@ def run_FreeCAD_Seam(self):
     avflip=self.getData("flipVA")
     aswap=self.getData("swapA")
     ta=self.getData("tangentA")
-    ta=(100+ta)/50
+    ta=(100+ta)/400
     
     fb=self.getPinObject("shapeB").Surface.copy()
     buflip=self.getData("flipUB")
     bvflip=self.getData("flipVB")
     bswap=self.getData("swapB")
     tb=self.getData("tangentB")
-    tb=(100+tb)/50
+    tb=(100+tb)/400
     seamonly=self.getData("seamonly")
   
 
@@ -4611,6 +4611,30 @@ def run_FreeCAD_Seam(self):
             pas[-1]*(1+ta)-pas[-2]*ta,pas[-1]*(1+2*ta)-pas[-2]*ta*2,
             pbs[0]*(1+2*tb)-pbs[1]*2*tb,pbs[0]*(1+tb)-pbs[1]*tb,pbs[0]]
 
+
+    say(np.array(poles).shape)
+    ae=[FreeCAD.Vector(*p) for p in pas[-1]]
+    ap=[FreeCAD.Vector(*p) for p in pas[-2]]
+    
+    be=[FreeCAD.Vector(*p) for p in pbs[0]]
+    bp=[FreeCAD.Vector(*p) for p in pbs[1]]
+    
+    lens=[(a-b).Length for a,b in zip(ae,be)]
+    say("-----------")
+    #say("lens",lens)
+    tas=[(e-p).normalize() for e,p in zip(ae,ap)]
+    tbs=[(e-p).normalize() for e,p in zip(be,bp)]
+    
+    #ta=0.3
+    #tb=0.3
+    say("ta tb",ta,tb)
+    
+    poles=[[a,a+tav*ta*l,a+tav*2*ta*l,b+tbv*2*tb*l,b+tbv*tb*l,b] for a,tav,tbv,b,l  in zip(ae,tas,tbs,be,lens)]
+    poles=np.array(poles).swapaxes(0,1)
+    say(np.array(poles).shape)
+
+
+
     say("----------------")
     poles=np.array(poles)
     say(poles[:,0])
@@ -4630,7 +4654,8 @@ def run_FreeCAD_Seam(self):
     ubknots=fb.getUKnots()
     ubmults=fb.getUMultiplicities()
 
-    if not seamonly:
+    say("seamonly",seamonly)
+    if seamonly:
 
         if ud<=3:
             um=[ud+1,1,1,ud+1]

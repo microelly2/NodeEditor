@@ -1876,6 +1876,9 @@ def createNodeDocu(onlyNew=False):
             say("[[nodes::{}]]".format(c[8:]))
             say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
 
+        say()
+        say("number of nodes:"+str(len(kats[k])))
+
     if onlyNew:
         say("======Nodes by doc level======")
         kl=list(doclevel.keys())
@@ -2013,8 +2016,12 @@ def T2():
         say("_{}.setPosition({},{})".format(n.name,n.x,n.y))
         say("gg.addNode(_{})".format(n.name))
         say()
+        say("#{}.setData(pinname,value)".format(n.name))
+        
+        say()
     
     say()
+    
     for ix, n in enumerate(nodes):
             pins=n.getOrderedPins()
             for pin in pins:
