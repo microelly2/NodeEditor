@@ -78,8 +78,19 @@ class FreeCAD_ImportFile(FreeCadNodeBase2):
         a=self.createInputPin('filename', 'String','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
         
         a=self.createInputPin('force', 'Boolean',True)
-        a=self.createOutputPin('data', 'FreeCadNodeBase22',structure=StructureType.Array)
+        a=self.createInputPin('separator', 'String',True)
+        a.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":["space","tabulator","comma","semicolon"]
+            }
+        a.setInputWidgetVariant("EnumWidget")
+        a.setData("tabulator")
+
+        
+        
+        a=self.createOutputPin('data', 'Float',structure=StructureType.Array)
         a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+        
 
 
 def nodelist():
