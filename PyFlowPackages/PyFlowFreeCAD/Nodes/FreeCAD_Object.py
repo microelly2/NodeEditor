@@ -2222,22 +2222,36 @@ class FreeCAD_Expression(FreeCadNodeBase2):
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
    
-        a=self.createInputPin('modules', 'StringPin')
-        a=self.createInputPin('expression', 'StringPin')
+        a=self.createInputPin('modules', 'StringPin','time')
+        a.description="required module names separated by comma"
+        a=self.createInputPin('expression', 'StringPin',time.time()+a)
+        a.description="expression with at most 4 variables a, b, c, d"
         
         a=self.createInputPin('a', 'AnyPin')
         a.enableOptions(PinOptions.AllowAny)
+        a.description="first parameter"
         a=self.createInputPin('b', 'AnyPin')
+        a.description="2nd parameter"
         a.enableOptions(PinOptions.AllowAny)
         a=self.createInputPin('c', 'AnyPin')
+        a.description="3. parameter"
         a.enableOptions(PinOptions.AllowAny)
         a=self.createInputPin('d', 'AnyPin')
         a.enableOptions(PinOptions.AllowAny)
+        a.description="last parameter"
         
         a=self.createOutputPin('string_out', 'StringPin')
+        a.description="result as string"
         a=self.createOutputPin('float_out', 'FloatPin', None)
+        a.description="result as float"
         a=self.createOutputPin('int_out', 'IntPin', None)
+        a.description="result as integer"
         a=self.createOutputPin('bool_out', 'BoolPin', None)
+        a.description="result as boolean"
+ 
+    @staticmethod
+    def description():
+        return FreeCAD_Expression.__doc__
  
    
 class FreeCAD_Seam(FreeCadNodeBase2):
