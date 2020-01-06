@@ -29,13 +29,13 @@ if sys.version_info[0] !=2:
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
 sayl()
 
 
 
 
-class FreeCAD_LessThan(FreeCadNodeBase):
+class FreeCAD_LessThan(FreeCadNodeBase2):
     '''
     compare a list of floats with a threshold
     '''
@@ -61,7 +61,7 @@ class FreeCAD_LessThan(FreeCadNodeBase):
     def category():
         return 'Logic'
 
-class FreeCAD_MoreThan(FreeCadNodeBase):
+class FreeCAD_MoreThan(FreeCadNodeBase2):
     '''
     compare a list of floats with a treshold
     '''
@@ -88,7 +88,7 @@ class FreeCAD_MoreThan(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_Equal(FreeCadNodeBase):
+class FreeCAD_Equal(FreeCadNodeBase2):
     '''
     compare a list of floats with a treshold
     '''
@@ -115,7 +115,7 @@ class FreeCAD_Equal(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_Nearly(FreeCadNodeBase):
+class FreeCAD_Nearly(FreeCadNodeBase2):
     '''
     compare a list of floats with a threshold
     '''
@@ -143,7 +143,7 @@ class FreeCAD_Nearly(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_And(FreeCadNodeBase):
+class FreeCAD_And(FreeCadNodeBase2):
     '''
     booloan and of two boolean lists
     '''
@@ -170,7 +170,7 @@ class FreeCAD_And(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_Or(FreeCadNodeBase):
+class FreeCAD_Or(FreeCadNodeBase2):
     '''
     booloan or of two boolean lists
     '''
@@ -197,7 +197,7 @@ class FreeCAD_Or(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_Not(FreeCadNodeBase):
+class FreeCAD_Not(FreeCadNodeBase2):
     '''
     boolean not of a boolean list
     '''
@@ -222,7 +222,7 @@ class FreeCAD_Not(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_True(FreeCadNodeBase):
+class FreeCAD_True(FreeCadNodeBase2):
     '''
     boolean true  lists
     '''
@@ -247,7 +247,7 @@ class FreeCAD_True(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_False(FreeCadNodeBase):
+class FreeCAD_False(FreeCadNodeBase2):
     '''
     boolean false lists
     '''
@@ -272,7 +272,7 @@ class FreeCAD_False(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_BoolToy(FreeCadNodeBase):
+class FreeCAD_BoolToy(FreeCadNodeBase2):
     '''
     boolean toy - make a flag list of 4 values
     '''
@@ -300,7 +300,7 @@ class FreeCAD_BoolToy(FreeCadNodeBase):
         return 'Logic'
 
 
-class FreeCAD_FloatToy(FreeCadNodeBase):
+class FreeCAD_FloatToy(FreeCadNodeBase2):
     '''
     float toy - make a list of 10 floats
     '''

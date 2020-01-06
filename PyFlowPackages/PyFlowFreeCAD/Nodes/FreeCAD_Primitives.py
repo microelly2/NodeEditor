@@ -1,7 +1,7 @@
 
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
 
 
 
@@ -9,7 +9,7 @@ from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeB
 
 
 
-class FreeCAD_Box( FreeCadNodeBase):
+class FreeCAD_Box( FreeCadNodeBase2):
     '''
     erzeuge einer Part.Box
     '''
@@ -83,7 +83,7 @@ class FreeCAD_Box( FreeCadNodeBase):
 
 
 
-class FreeCAD_Cone(FreeCadNodeBase):
+class FreeCAD_Cone(FreeCadNodeBase2):
     '''erzeuge eines Part.Kegel'''
     
     dok=4
@@ -138,7 +138,7 @@ class FreeCAD_Cone(FreeCadNodeBase):
 
 
 
-class FreeCAD_Sphere(FreeCadNodeBase):
+class FreeCAD_Sphere(FreeCadNodeBase2):
     '''erzeuge einer Part.Kurgel'''
 
     dok=4
@@ -190,7 +190,7 @@ class FreeCAD_Sphere(FreeCadNodeBase):
 
 
 
-class FreeCAD_Quadrangle(FreeCadNodeBase):
+class FreeCAD_Quadrangle(FreeCadNodeBase2):
     '''
     create a Bspline Surface of degree 1
     by 4 points
@@ -261,7 +261,7 @@ class FreeCAD_Quadrangle(FreeCadNodeBase):
 
 
 
-class FreeCAD_Polygon(FreeCadNodeBase):
+class FreeCAD_Polygon(FreeCadNodeBase2):
     '''
     erzeuge eines Streckenzugs
     input pin for a list of vectors
@@ -301,7 +301,7 @@ class FreeCAD_Polygon(FreeCadNodeBase):
         return ['Pointlist','Polygon','Part']
 
 
-class FreeCAD_BSplineSurface(FreeCadNodeBase):
+class FreeCAD_BSplineSurface(FreeCadNodeBase2):
     '''
     BSpline Surface 
     create a default bspline surface from poles and degrees
@@ -353,7 +353,7 @@ class FreeCAD_BSplineSurface(FreeCadNodeBase):
         return ['BSpline','Surface','Part']
 
 
-class FreeCAD_BSplineCurve(FreeCadNodeBase):
+class FreeCAD_BSplineCurve(FreeCadNodeBase2):
     '''
     BSpline Curve
     create a default bspline surface from poles and degrees
@@ -393,7 +393,7 @@ class FreeCAD_BSplineCurve(FreeCadNodeBase):
     def keywords():
         return ['BSpline','Curve','Part']
 
-class FreeCAD_Simplex(FreeCadNodeBase):
+class FreeCAD_Simplex(FreeCadNodeBase2):
     '''
     Tetraeder ..
     '''

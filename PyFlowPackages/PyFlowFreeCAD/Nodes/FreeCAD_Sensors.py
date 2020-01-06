@@ -1,10 +1,10 @@
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
 
 
 
-class FreeCAD_Mouse(FreeCadNodeBase):
+class FreeCAD_Mouse(FreeCadNodeBase2):
     '''
     a Mouse Sensor
     '''
@@ -63,7 +63,7 @@ class FreeCAD_Mouse(FreeCadNodeBase):
         return ['Mouse', 'Keyboard','Position' ]
 
 
-class FreeCAD_ImportFile(FreeCadNodeBase):
+class FreeCAD_ImportFile(FreeCadNodeBase2):
     '''
 
     '''
@@ -78,7 +78,7 @@ class FreeCAD_ImportFile(FreeCadNodeBase):
         a=self.createInputPin('filename', 'String','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
         
         a=self.createInputPin('force', 'Boolean',True)
-        a=self.createOutputPin('data', 'FloatPin',structure=StructureType.Array)
+        a=self.createOutputPin('data', 'FreeCadNodeBase22',structure=StructureType.Array)
         a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
 
 

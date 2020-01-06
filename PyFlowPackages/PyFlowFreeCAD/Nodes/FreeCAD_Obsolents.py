@@ -3,7 +3,7 @@
 
 
 
-class FreeCAD_Part(FreeCadNodeBase):
+class FreeCAD_Part(FreeCadNodeBase2):
     '''
     Part.show(aShape) see node view3D
     '''
@@ -53,7 +53,7 @@ class FreeCAD_Part(FreeCadNodeBase):
 
 
 
-class FreeCAD_YYY(FreeCadNodeBase):
+class FreeCAD_YYY(FreeCadNodeBase2):
     '''
     position on a surface or curve
     '''
@@ -91,7 +91,7 @@ class FreeCAD_YYY(FreeCadNodeBase):
         return ['Surface','position','Point','uv']
 
 
-class FreeCAD_Bar(FreeCadNodeBase):
+class FreeCAD_Bar(FreeCadNodeBase2):
     '''
     dummy for tests
     '''

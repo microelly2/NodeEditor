@@ -3,7 +3,7 @@
 
 
 
-class FreeCAD_PinsTest(FreeCadNodeBase):
+class FreeCAD_PinsTest(FreeCadNodeBase2):
     '''
     pins testcase: what is possible
     '''
@@ -83,7 +83,7 @@ class FreeCAD_PinsTest(FreeCadNodeBase):
 
 
 
-class FreeCAD_Foo(FreeCadNodeBase):
+class FreeCAD_Foo(FreeCadNodeBase2):
     '''
     dummy for tests
     '''
@@ -309,7 +309,7 @@ class FreeCAD_StorePins(NodeBase):
 
 
 
-class FreeCAD_Toy(FreeCadNodeBase):
+class FreeCAD_Toy(FreeCadNodeBase2):
     '''erzeuge eine zufallsBox'''
 
 
@@ -392,7 +392,7 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
 
 
-class FreeCAD_Array(FreeCadNodeBase):
+class FreeCAD_Array(FreeCadNodeBase2):
     '''
     test node for large arrays
 
@@ -459,7 +459,7 @@ class FreeCAD_Array(FreeCadNodeBase):
 
 
 
-class FreeCAD_Polygon(FreeCadNodeBase):
+class FreeCAD_Polygon(FreeCadNodeBase2):
     '''
     erzeuge eines Streckenzugs
     for each point there is an input pin,

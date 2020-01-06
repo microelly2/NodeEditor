@@ -1,10 +1,10 @@
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
 
 
 
-class FreeCAD_swept(FreeCadNodeBase):
+class FreeCAD_swept(FreeCadNodeBase2):
     '''
     sweptpath step generator
     '''
@@ -45,7 +45,7 @@ class FreeCAD_swept(FreeCadNodeBase):
     def keywords():
         return ["archi"]
 
-class FreeCAD_handrail(FreeCadNodeBase):
+class FreeCAD_handrail(FreeCadNodeBase2):
     '''
     staircase handrail
     '''
@@ -85,7 +85,7 @@ class FreeCAD_handrail(FreeCadNodeBase):
         return ['stair','rail','archi']
 
 
-class FreeCAD_Bender(FreeCadNodeBase):
+class FreeCAD_Bender(FreeCadNodeBase2):
     '''
     transforms the poles of a BSpline Surface **Shape_in** to the poles2 of the **Shape_out**
     
@@ -134,7 +134,7 @@ class FreeCAD_Bender(FreeCadNodeBase):
     def keywords():
         return ['transform','spline']
 
-class FreeCAD_FigureOnFace(FreeCadNodeBase):
+class FreeCAD_FigureOnFace(FreeCadNodeBase2):
     '''
     map figures pattens onto a surface
     '''
@@ -181,7 +181,7 @@ class FreeCAD_FigureOnFace(FreeCadNodeBase):
 ## \/ okay
 
 
-class FreeCAD_Tread(FreeCadNodeBase):
+class FreeCAD_Tread(FreeCadNodeBase2):
     '''
     Schindel oder Stufe
     '''

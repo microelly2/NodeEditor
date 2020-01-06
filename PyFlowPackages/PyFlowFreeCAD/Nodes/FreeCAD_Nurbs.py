@@ -1,12 +1,12 @@
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase, FreeCadNodeBase2
 
 
 #------------------------------------
 
 
-class FreeCAD_Tripod(FreeCadNodeBase):
+class FreeCAD_Tripod(FreeCadNodeBase2):
     '''
     position on a surface or curve
     '''
@@ -49,7 +49,7 @@ class FreeCAD_Tripod(FreeCadNodeBase):
 
 
 
-class FreeCAD_UIso(FreeCadNodeBase):
+class FreeCAD_UIso(FreeCadNodeBase2):
     '''
     uIso curve on a surface
     '''
@@ -81,7 +81,7 @@ class FreeCAD_UIso(FreeCadNodeBase):
 import traceback
 import inspect
 
-class FreeCAD_VIso(FreeCadNodeBase):
+class FreeCAD_VIso(FreeCadNodeBase2):
     '''
     vIso curve on a surface
     '''
@@ -109,7 +109,7 @@ class FreeCAD_VIso(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_UVGrid(FreeCadNodeBase):
+class FreeCAD_UVGrid(FreeCadNodeBase2):
     '''
     uIso and vIso curves grid
     '''
@@ -142,7 +142,7 @@ class FreeCAD_UVGrid(FreeCadNodeBase):
 
 
 
-class FreeCAD_Voronoi(FreeCadNodeBase):
+class FreeCAD_Voronoi(FreeCadNodeBase2):
     '''
     voronoi cells, delaunay triangulation on a surface for a given set of uv points  on this surface
     '''
@@ -185,7 +185,7 @@ class FreeCAD_Voronoi(FreeCadNodeBase):
 
 
 
-class FreeCAD_Hull(FreeCadNodeBase):
+class FreeCAD_Hull(FreeCadNodeBase2):
     '''
     delaynay triangulation, convex hull and alpha hull for a given set of points
     '''
@@ -234,7 +234,7 @@ class FreeCAD_Hull(FreeCadNodeBase):
 
 
 
-class FreeCAD_Discretize(FreeCadNodeBase):
+class FreeCAD_Discretize(FreeCadNodeBase2):
     '''
     '''
 
@@ -271,7 +271,7 @@ class FreeCAD_Discretize(FreeCadNodeBase):
         reload (nodeeditor.dev)
         nodeeditor.dev.run_FreeCAD_Tread(self,produce=True)
 
-class FreeCAD_Offset(FreeCadNodeBase):
+class FreeCAD_Offset(FreeCadNodeBase2):
     '''
     create a curve around a wire on a face with some offset
     '''
@@ -317,7 +317,7 @@ class FreeCAD_Offset(FreeCadNodeBase):
 
 
 
-class FreeCAD_FillEdge(FreeCadNodeBase):
+class FreeCAD_FillEdge(FreeCadNodeBase2):
     '''
     closed wire to face Part.makeFilledFace
     '''
@@ -351,7 +351,7 @@ class FreeCAD_FillEdge(FreeCadNodeBase):
 
 
 
-class FreeCAD_Solid(FreeCadNodeBase):
+class FreeCAD_Solid(FreeCadNodeBase2):
     '''
     make solid of faces
     '''
@@ -384,7 +384,7 @@ class FreeCAD_Solid(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
+class FreeCAD_Destruct_BSpline(FreeCadNodeBase2):
     '''
     provides the parameters of a bspline edge object
     '''
@@ -425,7 +425,7 @@ class FreeCAD_Destruct_BSpline(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase):
+class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase2):
     '''
     provides the parameters of a bspline surface object
     '''
@@ -535,7 +535,7 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
         nodeeditor.dev.run_FreeCAD_Collect_Vectors(self,mode="refresh")
         self.outExec.call()
 
-class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
+class FreeCAD_ApproximateBSpline(FreeCadNodeBase2):
     '''
     create an approximated BSpline for **points** on face **Shape_in**
     '''
@@ -570,7 +570,7 @@ class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
         return ['Approximate','Curve','Nurbs','Projection']
 
 
-class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
+class FreeCAD_InterpolateBSpline(FreeCadNodeBase2):
     '''
     create an interpolated BSpline for **points** on face **Shape_in**
     '''
@@ -627,7 +627,7 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
         return ['Interpolate','Curve','Nurbs','Projection']
 
 
-class FreeCAD_Collect_Vectors(FreeCadNodeBase):
+class FreeCAD_Collect_Vectors(FreeCadNodeBase2):
     '''
     collect vectors to a list
     '''
@@ -684,7 +684,7 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
         nodeeditor.dev.run_FreeCAD_Collect_Vectors(self,mode="refresh")
         self.outExec.call()
 
-class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
+class FreeCAD_ApproximateBSpline(FreeCadNodeBase2):
     '''
     create an approximated BSpline for **points** on face **Shape_in**
     '''
@@ -719,7 +719,7 @@ class FreeCAD_ApproximateBSpline(FreeCadNodeBase):
         return ['Approximate','Curve','Nurbs','Projection']
 
 
-class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
+class FreeCAD_InterpolateBSpline(FreeCadNodeBase2):
     '''
     create an interpolated BSpline for **points** on face **Shape_in**
     '''
@@ -755,7 +755,7 @@ class FreeCAD_InterpolateBSpline(FreeCadNodeBase):
 
 
 
-class FreeCAD_ConnectPoles(FreeCadNodeBase):
+class FreeCAD_ConnectPoles(FreeCadNodeBase2):
     '''
     concatenate vectorarrays with the same 2nd axis together along the first axis
     '''
@@ -802,7 +802,7 @@ class FreeCAD_ConnectPoles(FreeCadNodeBase):
         return ['matrix','vector','concatenate']
 
 
-class FreeCAD_FlipSwapArray(FreeCadNodeBase):
+class FreeCAD_FlipSwapArray(FreeCadNodeBase2):
     '''
     flip directions of the vector-array or swap its axes
     '''

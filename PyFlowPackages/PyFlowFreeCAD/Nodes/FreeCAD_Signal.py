@@ -21,10 +21,10 @@ from nodeeditor.say import *
 '''
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
 
 
-class FreeCAD_Blinker(FreeCadNodeBase):
+class FreeCAD_Blinker(FreeCadNodeBase2):
     '''
     blinker sender
     '''
@@ -62,7 +62,7 @@ class FreeCAD_Blinker(FreeCadNodeBase):
         self.stopped=True
 
 
-class FreeCAD_Receiver(FreeCadNodeBase):
+class FreeCAD_Receiver(FreeCadNodeBase2):
     '''
     blinker receiver
     '''
@@ -143,7 +143,7 @@ class FreeCAD_Receiver(FreeCadNodeBase):
         return ['Receiver']
 
 
-class FreeCAD_Async(FreeCadNodeBase):
+class FreeCAD_Async(FreeCadNodeBase2):
     '''
     
     '''

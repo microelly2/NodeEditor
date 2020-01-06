@@ -1,10 +1,10 @@
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
 
 # 
 
-class FreeCAD_Parallelprojection(FreeCadNodeBase):
+class FreeCAD_Parallelprojection(FreeCadNodeBase2):
     '''
     parallal projection of an edge onto a face
     '''
@@ -55,7 +55,7 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
+class FreeCAD_Perspectiveprojection(FreeCadNodeBase2):
     '''
     perspective projection of an edge onto a face
     '''
@@ -103,7 +103,7 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_UVprojection(FreeCadNodeBase):
+class FreeCAD_UVprojection(FreeCadNodeBase2):
     '''
     uv projection of an edge onto a face
     the curve is discretized,

@@ -1,10 +1,10 @@
 
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
 
 
-class FreeCAD_2DGeometry(FreeCadNodeBase):
+class FreeCAD_2DGeometry(FreeCadNodeBase2):
     '''
     2d Geometry object
     '''
@@ -38,7 +38,7 @@ class FreeCAD_2DGeometry(FreeCadNodeBase):
 
 
 
-class FreeCAD_2DCircle(FreeCadNodeBase):
+class FreeCAD_2DCircle(FreeCadNodeBase2):
     '''
     2d Geometry object
     '''
@@ -70,7 +70,7 @@ class FreeCAD_2DCircle(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_2DEllipse(FreeCadNodeBase):
+class FreeCAD_2DEllipse(FreeCadNodeBase2):
     '''
     2d Geometry object
     '''
@@ -106,7 +106,7 @@ class FreeCAD_2DEllipse(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_2DArcOfEllipse(FreeCadNodeBase):
+class FreeCAD_2DArcOfEllipse(FreeCadNodeBase2):
     '''
     2d Geometry object
     '''
@@ -145,7 +145,7 @@ class FreeCAD_2DArcOfEllipse(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_2DArcOfParabola(FreeCadNodeBase):
+class FreeCAD_2DArcOfParabola(FreeCadNodeBase2):
     '''
     2d Geometry object
     '''
@@ -184,7 +184,7 @@ class FreeCAD_2DArcOfParabola(FreeCadNodeBase):
         return []
 
 
-class FreeCAD_2DArcOfCircle(FreeCadNodeBase):
+class FreeCAD_2DArcOfCircle(FreeCadNodeBase2):
     '''
     2d Geometry object - arc of a circle
 
