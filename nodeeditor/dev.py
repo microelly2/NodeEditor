@@ -251,7 +251,7 @@ def run_FreeCAD_VectorArray(self,*args, **kwargs):
     # Fehler setzen
     #self.setError("raise Exception")
     
-    self.outExec.call()
+
 
 
 
@@ -523,7 +523,7 @@ def run_FreeCAD_View3D(self, *args, **kwargs):
     f.recompute()
     f.purgeTouched()
 
-    if 0:
+    if 1:
         if not wireframe:
             f.ViewObject.DisplayMode = "Flat Lines"
             f.ViewObject.ShapeColor = (random.random(),random.random(),1.)
@@ -531,7 +531,6 @@ def run_FreeCAD_View3D(self, *args, **kwargs):
             f.ViewObject.DisplayMode = "Wireframe"
             f.ViewObject.LineColor = (random.random(),random.random(),1.)
 
-    self.outExec.call()
 
 
 
@@ -624,9 +623,6 @@ def run_FreeCAD_Tripod(self,*args, **kwargs):
         obj.Shape=shape
 
 
-    self.outExec.call()
-
-
 
 def run_FreeCAD_UIso(self,*args, **kwargs):
 
@@ -647,7 +643,7 @@ def run_FreeCAD_UIso(self,*args, **kwargs):
     #    obj=self.getObject()
     #    obj.Shape=c.toShape()
 
-    self.outExec.call()
+
 
 
 def run_FreeCAD_VIso(self,*args, **kwargs):
@@ -669,7 +665,7 @@ def run_FreeCAD_VIso(self,*args, **kwargs):
     #    obj=self.getObject()
     #    obj.Shape=c.toShape()
 
-    self.outExec.call()
+
 
 def run_FreeCAD_UVGrid(self,*args, **kwargs):
 
@@ -699,7 +695,7 @@ def run_FreeCAD_UVGrid(self,*args, **kwargs):
     self.setPinObjects('uEdges',us)
     self.setPinObjects('vEdges',vs)
     self.setPinObject('Shape_out',Part.Compound(us+vs))
-    self.outExec.call()
+
 
 
 
@@ -1091,7 +1087,7 @@ def run_FreeCAD_Voronoi(self,*args, **kwargs):
     self.setPinObject("Points",shape)
 
 
-    self.outExec.call()
+
 
 
 
@@ -1201,7 +1197,7 @@ def run_FreeCAD_Hull(self,*args, **kwargs):
 
     # post process following nodes
     atime=time.time()
-    self.outExec.call()
+
     say("time for call view3dNodes:{}".format(time.time()-atime)) 
 
 
@@ -1275,7 +1271,7 @@ def run_FreeCAD_2DGeometry(self,*args, **kwargs):
     self.setPinObject("geometry",line)
     self.setPinObject("Shape_out",ee)
 
-    self.outExec.call()
+
     self.Lock=0
 
 
@@ -1306,7 +1302,7 @@ def run_FreeCAD_2DCircle(self,*args, **kwargs):
     self.setPinObject("geometry",line)
     self.setPinObject("Shape_out",ee)
 
-    self.outExec.call()
+
 
 
 def run_FreeCAD_2DEllipse(self,*args, **kwargs):
@@ -1343,7 +1339,7 @@ def run_FreeCAD_2DEllipse(self,*args, **kwargs):
     self.setPinObject("geometry",fig)
     self.setPinObject("Shape_out",ee)
 
-    self.outExec.call()
+
 
 
 def run_FreeCAD_2DArcOfEllipse(self,*args, **kwargs):
@@ -1385,7 +1381,7 @@ def run_FreeCAD_2DArcOfEllipse(self,*args, **kwargs):
     self.setPinObject("geometry",fig)
     self.setPinObject("Shape_out",ee)
 
-    self.outExec.call()
+
 
 def run_FreeCAD_2DArcOfCircle(self,*args, **kwargs):
 
@@ -1434,7 +1430,7 @@ def run_FreeCAD_2DArcOfCircle(self,*args, **kwargs):
     self.setPinObject("geometry",fig)
     self.setPinObject("Shape_out",ee)
 
-    self.outExec.call()
+
 
 def run_FreeCAD_2DArcOfParabola(self,*args, **kwargs):
 
@@ -1478,7 +1474,7 @@ def run_FreeCAD_2DArcOfParabola(self,*args, **kwargs):
     self.setPinObject("geometry",fig)
     self.setPinObject("Shape_out",ee)
 
-    self.outExec.call()
+
 
  
  
@@ -1551,7 +1547,7 @@ def run_FreeCAD_Simplex(self,*args, **kwargs):
         except:
             pass
 
-    self.outExec.call()
+
 
 
 
@@ -1601,7 +1597,7 @@ def run_FreeCAD_Tread(self,produce=False, **kwargs):
         except:
             pass
 
-    self.outExec.call()
+
 
 
 def run_FreeCAD_RefList(self,*args, **kwargs):
@@ -1669,7 +1665,7 @@ def run_FreeCAD_Discretize(self,*args, **kwargs):
         sc.buildFromPoles(ptsa)
         self.setPinObject("Shape_out",sc.toShape())
     
-    self.outExec.call()
+
     return
 
     pts=edge.discretize(count*10)
@@ -1800,7 +1796,7 @@ def run_FreeCAD_Offset(self,produce=False, **kwargs):
 
     self.setPinObject("Shape_out",Part.Compound([pol2,pol3,pol4]))
 
-    self.outExec.call()
+
 
 
 
@@ -1854,7 +1850,7 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
         except:
             pass
 
-    self.outExec.call()
+
 
 
 # autum 19
@@ -1869,7 +1865,7 @@ def run_FreeCAD_Destruct_BSpline(self,bake=False, **kwargs):
     self.setData("poles",c.getPoles())
     #self.setData("periodic",False)
     say("done")
-    self.outExec.call()
+
 
 
 def run_FreeCAD_Destruct_BSplineSurface(self,bake=False, **kwargs):
@@ -1891,7 +1887,7 @@ def run_FreeCAD_Destruct_BSplineSurface(self,bake=False, **kwargs):
     self.setData('poles',poles)
 
     say("done")
-    self.outExec.call()
+
 
 
 def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
@@ -1934,7 +1930,7 @@ def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
         shape=sf.toShape()
 
         self.setPinObject("Shape_out",shape)
-        self.outExec.call()
+    
 
 
 
@@ -1973,7 +1969,7 @@ def run_FreeCAD_BSplineCurve(self, *args, **kwargs):
         #cc.Shape=shape
 
         self.setPinObject("Shape_out",shape)
-        self.outExec.call()
+    
     
 
 
@@ -2004,7 +2000,7 @@ def run_FreeCAD_Compound(self, *args, **kwargs):
         shape=Part.Compound(outArray)
 
         self.setPinObject("Shape_out",shape)
-        self.outExec.call()
+    
 
 def run_FreeCAD_Collect_Vectors(self, mode=None):
     #say("collect",mode)
@@ -2038,6 +2034,7 @@ def run_FreeCAD_Collect_Vectors(self, mode=None):
     #say(len(self.points),len(pointsd))
     if not self.inRefresh.hasConnections():
         self.outExec.call()
+    
 
 
 
@@ -2115,7 +2112,7 @@ def run_FreeCAD_bakery(self):
         f.ViewObject.PointColor = color
 
     #f.ViewObject.Transparency = transparency
-    self.outExec.call()
+
     #say("E",time.time()-timeA)
 
 
@@ -2166,7 +2163,7 @@ def run_FreeCAD_ApproximateBSpline(self):
     tol=max(self.getData("tolerance"),1.)
     bs2d.approximate(pts2d,Tolerance=tol*0.001)
     self.setPinObject("Shape_out",bs2d.toShape(sf))
-    self.outExec.call()
+
 
 '''
 >>> print(bs2d.interpolate.__doc__)
@@ -2217,7 +2214,7 @@ def run_FreeCAD_InterpolateBSpline(self):
 
         bs2d.interpolate(points,PeriodicFlag=False)
         self.setPinObject("Shape_out",bs2d.toShape())
-        self.outExec.call()
+    
         return
 
     
@@ -2239,7 +2236,7 @@ def run_FreeCAD_InterpolateBSpline(self):
 
     bs2d.interpolate(pts2d,PeriodicFlag=False)
     self.setPinObject("Shape_out",bs2d.toShape(sf))
-    self.outExec.call()
+
 
 
 
@@ -2314,7 +2311,7 @@ def run_FreeCAD_swept(self):
     shape=Part.makePolygon(carend)
     #say(shape)
     self.setPinObject("Car_out",shape)
-    self.outExec.call()
+
 
 
     say(time.time()-ta)
@@ -2367,7 +2364,7 @@ def run_FreeCAD_handrail(self):
 
     shape=Part.Compound(comps)
     self.setPinObject("Shape_out",shape)
-    self.outExec.call()
+
 
 
 def createToy():
@@ -2485,7 +2482,7 @@ def run_FreeCAD_Bender(self):
 
     shape=Part.Compound(comps)
     self.setPinObject("Shape_out",shape)
-    self.outExec.call()
+
 
 
 def run_FreeCAD_ConnectPoles(self):
@@ -2561,7 +2558,7 @@ def run_FreeCAD_ConnectPoles(self):
     self.setData("umults_out",multA)
     say("connected")
     self.setData('poles_out',poles.tolist())
-    self.outExec.call()
+
  
     say(self.getWrapper())
     FreeCAD.b=self.getWrapper().getHeaderText()
@@ -2579,7 +2576,7 @@ def run_FreeCAD_FlipSwapArray(self):
     poles=polesA.swapaxes(0,1)
     say(poles.shape)
     self.setData('poles_out',poles.tolist())
-    self.outExec.call()
+
 
 
 def topokey(s):
@@ -2693,7 +2690,7 @@ def run_FreeCAD_topo(self):
     comp=Part.makeCompound(mods)
     #Part.show(comp)
     self.setPinObject("Shape_out",comp)
-    self.outExec.call()
+
 
 
 def run_FreeCAD_conny(self):
@@ -2878,7 +2875,7 @@ def run_FreeCAD_conny(self):
     #say("col",col)
     #say("gaps",gaps)
     self.setPinObject("gaps",Part.Compound(gaps))
-    self.outExec.call()
+
 
 
 
@@ -2981,7 +2978,7 @@ def aa():
          
             
     self.setPinObject("Shape_out",sh)
-    self.outExec.call()
+
 
 
 def run_FreeCAD_RandomizePolygon(self,*args, **kwargs):
@@ -3002,7 +2999,7 @@ def run_FreeCAD_RandomizePolygon(self,*args, **kwargs):
 
     self.setPinObject("Shape_out",Part.makePolygon(ptsa))
     self.setData("points_out",ptsa)
-    self.outExec.call()
+
     sayl("fewrtig-- ")
     return
 
@@ -3056,7 +3053,7 @@ def run_FreeCAD_Blinker(self):
             #for r in result:
             #    say(r[1])
 
-            self.outExec.call()
+        
             time.sleep(1+0.02*random.random())
             if self.getData("sleep") ==0:
                 say("ENDE",i)
@@ -3073,9 +3070,9 @@ def run_FreeCAD_Blinker(self):
         a=time.time()
         say("start  outExec.call",i)
         say('##example set color')
-        self.setColor()
+    
 
-        self.outExec.call()
+    
         say("Ende call ",i,time.time()-a)
 
 
@@ -3147,7 +3144,7 @@ def run_FreeCAD_Receiver(self):
     #self.setData("signalName",self.sender)
     #self.setData("senderMessage",self.kw['message'])
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 
 
@@ -3174,7 +3171,7 @@ def run_FreeCAD_Async(self):
     obj=self
 
     self.setData("message",self.name+" start")
-    self.outExec.call()
+
     self.setData("message","")
 
     from threading import Thread
@@ -3205,13 +3202,13 @@ def run_FreeCAD_Async(self):
             
         print ("-------------------Ende",self.name,anz,maxanz)
         self.setData("message",self.name+"  ENDE")
-        self.outExec.call()
+    
 
     for i in range(1):
         t = Thread(target=sleeper, args=(i,))
         t.start()
     
-    self.outExec.call()
+
 
 
 
@@ -3330,8 +3327,8 @@ def run_FreeCAD_FigureOnFace(self):
     self.setPinObject("Shape_out",Part.Compound(cols))
     self.setPinObjects("details",cols)
 
-    self.setColor()
-    self.outExec.call()    
+
+    
     
 def run_FreeCAD_RepeatPattern(self):
 
@@ -3357,7 +3354,7 @@ def run_FreeCAD_RepeatPattern(self):
     self.setData("pattern_out",c)
     self.setPinObject("Shape_out",cc)
     self.setColor(a=0.7)
-    self.outExec.call()    
+    
 
 
 def run_FreeCAD_Polygon(self):
@@ -3413,7 +3410,7 @@ def run_FreeCAD_ListOfVectors(self):
     b=[FreeCAD.Vector(*v) for v in b]
     self.setData("vectors",b)
     self.setColor(a=0.7)
-    self.outExec.call()    
+    
     
     
 def run_FreeCAD_MoveVectors(self):
@@ -3432,7 +3429,7 @@ def run_FreeCAD_MoveVectors(self):
 
     self.setData("vectors_out",b2)
     self.setColor(g=0,a=0.4)
-    self.outExec.call()    
+    
 
 def run_FreeCAD_ScaleVectors(self):
     #+# todo anpassen 1 2 3 dimensionale arrays
@@ -3453,7 +3450,7 @@ def run_FreeCAD_ScaleVectors(self):
 
     self.setData("vectors_out",b2)
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 ## ||
 ## \/ okay
@@ -3475,7 +3472,7 @@ def run_FreeCAD_Transformation(self):
 
     vv2=self.getPinByName("transformation")
     vv2.setTransformation(dat)
-    self.outExec.call()    
+    
 
 
 def run_FreeCAD_Reduce(self):
@@ -3497,7 +3494,7 @@ def run_FreeCAD_Reduce(self):
     say("!!rc=",rc)
     self.setPinObject("Shape_out",rc)
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 
 def run_FreeCAD_IndexToList(self):
@@ -3514,7 +3511,7 @@ def run_FreeCAD_IndexToList(self):
         flags[p]=1
     self.setData("flags",flags.tolist())
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
     
     
     
@@ -3534,7 +3531,7 @@ def run_FreeCAD_DistToShape(self):
 
     self.setData("distance",dists)
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 
 def run_FreeCAD_LessThan(self):
@@ -3546,7 +3543,7 @@ def run_FreeCAD_LessThan(self):
         rc += [v<threshold]
     self.setData("lessThan",rc)
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 def run_FreeCAD_MoreThan(self):
     values=self.getData("values")
@@ -3557,7 +3554,7 @@ def run_FreeCAD_MoreThan(self):
         rc += [v>threshold]
     self.setData("moreThan",rc)
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 def run_FreeCAD_Equal(self):
     values=self.getData("values")
@@ -3568,7 +3565,7 @@ def run_FreeCAD_Equal(self):
         rc += [v == threshold]
     self.setData("equal",rc)
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 def run_FreeCAD_Nearly(self):
     values=self.getData("values")
@@ -3580,7 +3577,7 @@ def run_FreeCAD_Nearly(self):
         rc += [v >= threshold -tol and  v <= threshold + tol]
     self.setData("nearly",rc)
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 
 def run_FreeCAD_And(self):
@@ -3593,7 +3590,7 @@ def run_FreeCAD_And(self):
     wr.setHeaderHtml("AND: "+flagstring(flags))
 
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 
 def flagstring(flags,lenf=10):
@@ -3617,7 +3614,7 @@ def run_FreeCAD_BoolToy(self):
     wr.setHeaderHtml(fstring)
  
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 def run_FreeCAD_Or(self):
     a=self.getData("a")
@@ -3629,7 +3626,7 @@ def run_FreeCAD_Or(self):
     wr.setHeaderHtml("OR: "+flagstring(flags))
  
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 
 
@@ -3642,17 +3639,17 @@ def run_FreeCAD_Not(self):
     wr.setHeaderHtml("NOT: "+flagstring(flags))
 
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 def run_FreeCAD_True(self):
     self.setData("true",[True]*self.getData("count"))
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 def run_FreeCAD_False(self):
     self.setData("false",[False]*self.getData("count"))
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
 
 ##ab hier neu 03.12.
 
@@ -3677,7 +3674,7 @@ def run_FreeCAD_FloatToy(self):
 
     self.setData("floats",floats)
     self.setColor(b=0,a=0.4)
-    self.outExec.call()    
+    
     
 def run_FreeCAD_Tube(self):
     #+# todo better normal for 3d curve
@@ -3720,7 +3717,7 @@ def run_FreeCAD_Tube(self):
         pts2 += [z]
         
     self.setData("points",pts2)
-    self.outExec.call()    
+    
 
 
 
@@ -3741,7 +3738,7 @@ def run_FreeCAD_CenterOfMass(self):
         
     pts=[f.CenterOfMass for f in outArray]
     self.setData("points",pts)
-    self.outExec.call()    
+    
 
 
 
@@ -3761,7 +3758,7 @@ def run_FreeCAD_ListOfShapes(self):
     say(b)
     self.setPinObjects("ShapeList",b)
     self.setColor(a=0.7)
-    self.outExec.call()    
+    
 
 
 def run_shelfToy(self):
@@ -3823,8 +3820,8 @@ def run_FreeCAD_Toy(self):
     say("got",pm2)
 
     self.setPinPlacement("PlacementPin_out",tt.multiply(pm2))
-    self.outExec.call()
-    self.setColor()
+
+
     
 
 def run_FreeCAD_Toy(self):
@@ -3868,7 +3865,7 @@ def run_FreeCAD_Object(self, *args, **kwargs):
         except:
             pass # no shape
         sayl("kk")
-        self.outExec.call()
+    
 
         say("vorbr")
         a=self.makebackref()
@@ -3930,8 +3927,8 @@ def run_FreeCAD_ListOfPlacements(self):
     
     self.setPinPlacements("Placements",rots)
 
-    self.outExec.call()
-    self.setColor()
+
+
 
 def pinHasData(self,pinname):
     return len(self.getPinByName(pinname).affected_by) >0
@@ -3984,8 +3981,8 @@ def run_FreeCAD_ApplyPlacements(self):
                 return
             self.setData("points_out",points_out)
 
-    self.outExec.call()
-    self.setColor()
+
+
 
 
 def run_FreeCAD_Repeat(self):
@@ -3998,17 +3995,17 @@ def run_FreeCAD_Repeat(self):
     #say(t)
     self.setData("out",t)
     #self.setData("Shapes",[s]*count)
-    self.outExec.call()
+
     sayl()
-    self.setColor()
+
 
 
 
 def run_FreeCAD_Index(self):
     vecs=self.getData("list")
     self.setData("item",vecs[self.getData('index')])
-    self.outExec.call()
-    self.setColor()
+
+
     
     
 
@@ -4021,8 +4018,8 @@ def run_FreeCAD_Zip(self):
     say("len",len(zz))
     self.setData("vectors_out",zz)
 
-    self.outExec.call()
-    self.setColor()
+
+
 
 def run_FreeCAD_ImportFile(self):
     sayl()
@@ -4062,8 +4059,8 @@ def run_FreeCAD_ImportFile(self):
     self.setData('data',rr)
     self.setData('points',vs)
     say(vs)
-    self.outExec.call()
-    self.setColor()
+
+
 
     if 0: # tessellation tests temp
         tt=FreeCAD.ActiveDocument.BePlane.Shape.Face1
@@ -4223,8 +4220,8 @@ def run_FreeCAD_Elevation(self):
     say(points)
     nb=createElevationGrid(points)
     self.setData("poles",nb)
-    self.outExec.call()
-    self.setColor()
+
+
 
   
     #----------------------------------------------------------------------------
@@ -4298,8 +4295,8 @@ def run_FreeCAD_Elevation(self):
 
     # store the ruesult to the outputpin and start postprocessing
     self.setData("poles",poles)
-    self.outExec.call()
-    self.setColor()
+
+
 
 
 
@@ -4428,36 +4425,48 @@ def run_FreeCAD_Camera(self):
         v.saveImage("/tmp/{}{}.png".format(fn,tt))
         self.setData("image","/tmp/{}{}.png".format(fn,tt))
 
-    self.outExec.call()
-    self.setColor()
+
+
   
 
 
 def run_FreeCAD_Counter(self):
     self.setData("count", self.getData("count")+1)
-    self.outExec.call()
-    self.setColor()
+
+
 
      
 def run_FreeCAD_Export(self):
-    
         
     a=self.getPinObject("Shape")
     fn=self.getData("filename")
-    a.exportBrep(fn)
-    #self.outExec.call()
-    #self.setColor()
-
+    mode=self.getData('mode')
+    if mode=='BREP':
+        a.exportBrep(fn)
+    elif  mode=='STEP':
+        a.exportStep("/tmp/a.step")
+    elif  mode=='Inventor':
+        fn="/tmp/a.iv"
+        s=a.writeInventor()   
+        f= open(fn,"w+")
+        f.write(s)
+        f.close()
+    
     
 def run_FreeCAD_Import(self):
     
     fn=self.getData("filename")
     a=Part.Shape()
-    a.importBrep(fn)
+    #a.importBrep(fn)
+    
+    mode=self.getData('mode')
+    if mode=='BREP':
+        a.importBrep(fn)
+    elif  mode=='STEP':
+        a.importStep(fn)
+
+
     self.setPinObject("Shape_out",a)
-    #Part.show(a)
-    #self.outExec.call()
-    #self.setColor()
     
     
 def run_FreeCAD_Expression(self):
@@ -4486,5 +4495,211 @@ def run_FreeCAD_Expression(self):
     
     self.setData('bool_out',v)
     
-    self.outExec.call()
-    self.setColor()
+
+
+
+
+def run_FreeCAD_Seam(self):
+    fa=self.getPinObject("shapeA").Surface#.copy()
+    auflip=self.getData("flipUA")
+    avflip=self.getData("flipVA")
+    aswap=self.getData("swapA")
+    ta=self.getData("tangentA")
+    ta=(100+ta)/50
+    
+    fb=self.getPinObject("shapeB").Surface#.copy()
+    buflip=self.getData("flipUB")
+    bvflip=self.getData("flipVB")
+    bswap=self.getData("swapB")
+    tb=self.getData("tangentB")
+    tb=(100+tb)/50
+    seamonly=self.getData("seamonly")
+    
+     
+     
+    #fa=App.ActiveDocument.view3d.Shape.Face1.Surface.copy()
+    #fb=App.ActiveDocument.view3d2.Shape.Face1.Surface.copy()
+
+    # daten holen und neu aufbauen
+    faud=fa.UDegree
+    favd=fa.VDegree
+
+    fbud=fb.UDegree
+    fbvd=fb.VDegree
+
+    ap=np.array(fa.getPoles())
+    bp=np.array(fb.getPoles())
+    favk=np.array(fa.getVKnots())
+    fbvk=np.array(fb.getVKnots())
+    fauk=np.array(fa.getUKnots())
+    fbuk=np.array(fb.getUKnots())
+
+    famu=np.array(fa.getUMultiplicities())
+    fbmu=np.array(fb.getUMultiplicities())
+    famv=np.array(fa.getVMultiplicities())
+    fbmv=np.array(fb.getVMultiplicities())
+
+
+    if auflip:
+        famv=famv[::-1]
+        #favk=favk[::-1]
+        #ap=ap[::-1]
+        ap=np.flipud(np.array(ap))
+
+        fa=Part.BSplineSurface()
+        fa.buildFromPolesMultsKnots(ap,famu,famv,fauk,favk,False,False,faud,favd)
+        #Part.show(fa.toShape())
+
+
+    if avflip:
+        famu=famu[::-1]
+        #favk=favk[::-1]
+        ap=np.fliplr(np.array(ap))
+
+        fa=Part.BSplineSurface()
+        fa.buildFromPolesMultsKnots(ap,famu,famv,fauk,favk,False,False,faud,favd)
+        #Part.show(fa.toShape())
+
+    if aswap:
+        fa=Part.BSplineSurface()
+        ap=ap.swapaxes(0,1)
+        fa.buildFromPolesMultsKnots(ap,famv,famu,favk,fauk,False,False,favd,faud)
+            
+
+    #------------------------
+
+    if buflip:
+        fbmv=fbmv[::-1]
+        #favk=favk[::-1]
+        #ap=ap[::-1]
+        bp=np.flipud(np.array(bp))
+
+        fb=Part.BSplineSurface()
+        fb.buildFromPolesMultsKnots(bp,fbmu,fbmv,fbuk,fbvk,False,False,fbud,fbvd)
+        #Part.show(fa.toShape())
+
+
+    if bvflip:
+        fbmu=fbmu[::-1]
+        #favk=favk[::-1]
+        bp=np.fliplr(np.array(bp))
+
+        fb=Part.BSplineSurface()
+        fb.buildFromPolesMultsKnots(bp,fbmu,fbmv,fbuk,fbvk,False,False,fbud,fbvd)
+        #Part.show(fa.toShape())
+
+    if bswap:
+        fb=Part.BSplineSurface()
+        bp=bp.swapaxes(0,1)
+        fb.buildFromPolesMultsKnots(bp,fbmv,fbmu,fbvk,fbuk,False,False,fbvd,fbud)
+
+
+
+
+
+    ud=max(fa.UDegree,fb.UDegree)
+    vd=max(fa.VDegree,fb.VDegree)
+
+    fa.increaseDegree(ud,vd)
+    fb.increaseDegree(ud,vd)
+
+
+    #import numpy as np
+
+
+    favk=np.array(fa.getVKnots())
+    fbvk=np.array(fb.getVKnots())
+
+    assert favk[0]==fbvk[0]
+
+    am=favk[-1]
+    bm=fbvk[-1]
+
+    famu=fa.getVMultiplicities()
+    fbmu=fb.getVMultiplicities()
+
+    for k,m in zip(favk,famu):
+        fb.insertVKnot(k*bm/am,m,0)
+
+    for k,m in zip(fbvk,fbmu):
+        fa.insertVKnot(k*am/bm,m,0)
+
+    #Part.show(fa.toShape())
+    #Part.show(fb.toShape())
+
+
+    pas=np.array(fa.getPoles())
+    pbs=np.array(fb.getPoles())
+
+    # nur seam
+    poles=[pas[-1],
+            pas[-1]*(1+ta)-pas[-2]*ta,pas[-1]*(1+2*ta)-pas[-2]*ta*2,
+            pbs[0]*(1+2*tb)-pbs[1]*2*tb,pbs[0]*(1+tb)-pbs[1]*tb,pbs[0]]
+
+    say("----------------")
+    poles=np.array(poles)
+    say(poles[:,0])
+    if FreeCAD.Vector(*poles[0,0])==FreeCAD.Vector(*poles[-1,0]):
+        say("Enden gleich")
+        poles[:,0]=poles[0,0]
+    if FreeCAD.Vector(*poles[0,-1])==FreeCAD.Vector(*poles[-1,-1]):
+        say("Enden gleich 2")
+        poles[:,-1]=poles[0,-1]
+
+
+
+    #print (poles.shape)
+
+
+    vknots=fa.getVKnots()
+    vmults=fa.getVMultiplicities()
+
+    uaknots=fa.getUKnots()
+    uamults=fa.getUMultiplicities()
+
+    ubknots=fb.getUKnots()
+    ubmults=fb.getUMultiplicities()
+
+
+
+
+    if ud<=3:
+        um=[ud+1,1,1,ud+1]
+
+    elif ud==4:
+        um=[5,1,5]
+
+    elif ud==5:
+        um=[6,6]
+
+
+    if not seamonly:
+        # g2
+        if ud<=3:
+            um2=[ud,1,1,ud]
+
+        elif ud==4:
+            um2=[4,1,4]
+
+        elif ud==5:
+            um2=[5,5]
+
+        poles=np.concatenate([pas[:-1],poles,pbs[1:]])
+        um=uamults[:-1]+um2+ubmults[1:]
+
+    ku=range(len(um))
+
+    degA=ud
+    degB=vd
+
+    #poles=poles.swapaxes(0,1)
+    sf=Part.BSplineSurface()
+    sf.buildFromPolesMultsKnots(poles,um,vmults,ku,vknots,False,False,degA,degB)
+    shape=sf.toShape()
+    self.setPinObject("Shape_out",shape)
+       
+
+
+
+        
+        

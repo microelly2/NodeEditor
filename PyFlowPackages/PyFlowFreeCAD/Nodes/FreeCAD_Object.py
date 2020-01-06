@@ -2,7 +2,7 @@
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase, FreeCadNodeBase2
 
-class FreeCAD_Boolean(FreeCadNodeBase):
+class FreeCAD_Boolean(FreeCadNodeBase2):
     '''boolean ops of two parts example'''
 
     def __init__(self, name="Fusion"):
@@ -111,7 +111,7 @@ class FreeCAD_Boolean(FreeCadNodeBase):
 
 
 
-class FreeCAD_VectorArray(FreeCadNodeBase):
+class FreeCAD_VectorArray(FreeCadNodeBase2):
     '''
     Array of Vectors 
     and a generated default BSplineSurface
@@ -185,7 +185,7 @@ class FreeCAD_VectorArray(FreeCadNodeBase):
 
 
 
-class FreeCAD_Object(FreeCadNodeBase):
+class FreeCAD_Object(FreeCadNodeBase2):
     '''
     load and save objects in FreeCAD document
     '''
@@ -288,7 +288,7 @@ class FreeCAD_Object(FreeCadNodeBase):
 
 
 
-class FreeCAD_Console(FreeCadNodeBase):
+class FreeCAD_Console(FreeCadNodeBase2):
     '''
     write to FreeCAD.Console
     '''
@@ -326,7 +326,7 @@ class FreeCAD_Console(FreeCadNodeBase):
 
 
 
-class FreeCAD_ShapeExplorer(FreeCadNodeBase):
+class FreeCAD_ShapeExplorer(FreeCadNodeBase2):
     '''
     information about a shape
     '''
@@ -435,7 +435,7 @@ class FreeCAD_ShapeExplorer(FreeCadNodeBase):
 
 
 
-class FreeCAD_ShapeIndex(FreeCadNodeBase):
+class FreeCAD_ShapeIndex(FreeCadNodeBase2):
     '''
     selection of a shape by its index in a list of shapes
     '''
@@ -498,7 +498,7 @@ class FreeCAD_ShapeIndex(FreeCadNodeBase):
 
 
 
-class FreeCAD_Face(FreeCadNodeBase):
+class FreeCAD_Face(FreeCadNodeBase2):
     '''
     select a face of a shape by its number
     there can be a reference to a FreeCAD object by its name
@@ -558,7 +558,7 @@ class FreeCAD_Face(FreeCadNodeBase):
 
 
 
-class FreeCAD_Edge(FreeCadNodeBase):
+class FreeCAD_Edge(FreeCadNodeBase2):
     '''
     select a edge of a shape by its number
     there can be a reference to a FreeCAD object by its name
@@ -618,7 +618,7 @@ class FreeCAD_Edge(FreeCadNodeBase):
         return ['Shape']
 
 
-class FreeCAD_Destruct_Shape(FreeCadNodeBase):
+class FreeCAD_Destruct_Shape(FreeCadNodeBase2):
     '''
     get the edges, faces and points of a shape
     there can be a reference to a FreeCAD object 
@@ -687,7 +687,7 @@ class FreeCAD_Destruct_Shape(FreeCadNodeBase):
 
 
 
-class FreeCAD_Compound(FreeCadNodeBase):
+class FreeCAD_Compound(FreeCadNodeBase2):
     '''
     compound of a list of shapes
     '''
@@ -723,7 +723,7 @@ class FreeCAD_Compound(FreeCadNodeBase):
 
 
 
-class FreeCAD_Plot(FreeCadNodeBase):
+class FreeCAD_Plot(FreeCadNodeBase2):
     '''
     display matplotlib windows with data
     '''
@@ -775,7 +775,7 @@ class FreeCAD_Plot(FreeCadNodeBase):
 #------------------------------------------------------------------
 
 
-class FreeCAD_Ref(FreeCadNodeBase):
+class FreeCAD_Ref(FreeCadNodeBase2):
     '''
     a reference to the shape or subobjects of a FreeCAD part
     select a part or some subobjects oof the same object. 
@@ -1029,7 +1029,7 @@ class FreeCAD_Ref(FreeCadNodeBase):
 
 #--------------------------------
 
-class FreeCAD_RefList(FreeCadNodeBase):
+class FreeCAD_RefList(FreeCadNodeBase2):
     '''
     a reference to a list of objects
     '''
@@ -1145,7 +1145,7 @@ class FreeCAD_RefList(FreeCadNodeBase):
 
 
 
-class FreeCAD_LOD(FreeCadNodeBase):
+class FreeCAD_LOD(FreeCadNodeBase2):
     '''
     Level of Detail switch
     '''
@@ -1192,7 +1192,7 @@ class FreeCAD_LOD(FreeCadNodeBase):
 
 
 
-class FreeCAD_View3D(FreeCadNodeBase):
+class FreeCAD_View3D(FreeCadNodeBase2):
     '''
     create an instance in 3D space of FreeCAD, show the shape
     '''
@@ -1225,7 +1225,7 @@ class FreeCAD_View3D(FreeCadNodeBase):
         return ['Part','Shape','Edge','Selection']
 
 
-class FreeCAD_bakery(FreeCadNodeBase):
+class FreeCAD_bakery(FreeCadNodeBase2):
     '''
     Part.show for a shape without parametric connection, the result is not overwritten but a new object is created 
     '''
@@ -1262,7 +1262,7 @@ class FreeCAD_bakery(FreeCadNodeBase):
         return ['Part','Shape',]
 
 
-class FreeCAD_topo(FreeCadNodeBase):
+class FreeCAD_topo(FreeCadNodeBase2):
     '''
     '''
 
@@ -1302,7 +1302,7 @@ class FreeCAD_topo(FreeCadNodeBase):
 
 
 
-class FreeCAD_Conny(FreeCadNodeBase):
+class FreeCAD_Conny(FreeCadNodeBase2):
     '''
     connect edges and close gaps, create a filled face 
     '''
@@ -1367,7 +1367,7 @@ class FreeCAD_Conny(FreeCadNodeBase):
         return ['Edge','FilledFace',]
 
 
-class FreeCAD_RandomizePolygon(FreeCadNodeBase):
+class FreeCAD_RandomizePolygon(FreeCadNodeBase2):
     '''
     add some randomness to a polygon
     '''
@@ -1410,7 +1410,7 @@ class FreeCAD_RandomizePolygon(FreeCadNodeBase):
 
 
 
-class FreeCAD_Toy(FreeCadNodeBase):
+class FreeCAD_Toy(FreeCadNodeBase2):
     '''
     methode zum spielen
     '''
@@ -1452,6 +1452,26 @@ class FreeCAD_Toy(FreeCadNodeBase):
         self.objname.setData(name)
         '''
         
+        a = self.createInputPin("Slider", 'IntPin')
+        a.setInputWidgetVariant("Slider")
+
+        a = self.createInputPin("Simple", 'IntPin')
+        a.setInputWidgetVariant("Simple") # unbeschraenkt
+
+        a = self.createInputPin("Default", 'IntPin')
+        
+        a = self.createInputPin("Slider", 'FloatPin')
+        a.setInputWidgetVariant("Slider")
+
+        a = self.createInputPin("Simple", 'FloatPin')
+        a.setInputWidgetVariant("Simple") # unbeschraenkt
+
+        a = self.createInputPin("Default", 'FloatPin')
+
+        
+        return
+        
+        
         import  PyFlow.Packages.PyFlowFreeCAD
         pincs=PyFlow.Packages.PyFlowFreeCAD.PyFlowFreeCAD.GetPinClasses()
     
@@ -1475,6 +1495,9 @@ class FreeCAD_Toy(FreeCadNodeBase):
             self.createOutputPin(str(p)+"_out",str(p))
 
 
+
+
+
     @staticmethod
     def description():
         return FreeCAD_Toy.__doc__
@@ -1488,7 +1511,7 @@ class FreeCAD_Toy(FreeCadNodeBase):
 
 
 
-class FreeCAD_ListOfVectors(FreeCadNodeBase):
+class FreeCAD_ListOfVectors(FreeCadNodeBase2):
     '''
     create a list of vectors from  single vectors
     the order of the vector is defined by
@@ -1522,7 +1545,7 @@ class FreeCAD_ListOfVectors(FreeCadNodeBase):
 
 
 
-class FreeCAD_MoveVectors(FreeCadNodeBase):
+class FreeCAD_MoveVectors(FreeCadNodeBase2):
     '''
     move a list of vectors
     '''
@@ -1553,7 +1576,7 @@ class FreeCAD_MoveVectors(FreeCadNodeBase):
         return 'Projection'
 
 
-class FreeCAD_ScaleVectors(FreeCadNodeBase):
+class FreeCAD_ScaleVectors(FreeCadNodeBase2):
     '''
     scale list of vectors
     '''
@@ -1584,7 +1607,7 @@ class FreeCAD_ScaleVectors(FreeCadNodeBase):
 
 
 
-class FreeCAD_RepeatPattern(FreeCadNodeBase):
+class FreeCAD_RepeatPattern(FreeCadNodeBase2):
     '''
     repeat a pattern along a vectors list 
     each vector of vectors is a start position 
@@ -1621,7 +1644,7 @@ class FreeCAD_RepeatPattern(FreeCadNodeBase):
 
 
 
-class FreeCAD_Transformation(FreeCadNodeBase):
+class FreeCAD_Transformation(FreeCadNodeBase2):
     '''
     affine transformation matrix
     '''
@@ -1658,7 +1681,7 @@ class FreeCAD_Transformation(FreeCadNodeBase):
         return 'Conversion'
 
 
-class FreeCAD_Reduce(FreeCadNodeBase):
+class FreeCAD_Reduce(FreeCadNodeBase2):
     '''
     select a sublist fo a list of shapes on  flag list selection
     '''
@@ -1688,7 +1711,7 @@ class FreeCAD_Reduce(FreeCadNodeBase):
         return 'Construction'
 
 
-class FreeCAD_IndexToList(FreeCadNodeBase):
+class FreeCAD_IndexToList(FreeCadNodeBase2):
     '''
     create a flag list with 1 for the numbers 
     and 0 for the others
@@ -1718,7 +1741,7 @@ class FreeCAD_IndexToList(FreeCadNodeBase):
         return 'Conversion'
 
 
-class FreeCAD_DistToShape(FreeCadNodeBase):
+class FreeCAD_DistToShape(FreeCadNodeBase2):
     '''
     list of distances from  a list of shapes 
     to a target shape
@@ -1754,7 +1777,7 @@ class FreeCAD_DistToShape(FreeCadNodeBase):
         return 'Information'
 
 
-class FreeCAD_CenterOfMass(FreeCadNodeBase):
+class FreeCAD_CenterOfMass(FreeCadNodeBase2):
     '''
     center of mass for a list of shapes
     '''
@@ -1783,7 +1806,7 @@ class FreeCAD_CenterOfMass(FreeCadNodeBase):
         return 'Information'
 
 
-class FreeCAD_ListOfShapes(FreeCadNodeBase):
+class FreeCAD_ListOfShapes(FreeCadNodeBase2):
     '''
     create a list of shapes from single shapes
     '''
@@ -1815,7 +1838,7 @@ class FreeCAD_ListOfShapes(FreeCadNodeBase):
 
 
 
-class FreeCAD_ListOfPlacements(FreeCadNodeBase):
+class FreeCAD_ListOfPlacements(FreeCadNodeBase2):
     '''
     create a list of placements from  lists of data
     '''
@@ -1849,7 +1872,7 @@ class FreeCAD_ListOfPlacements(FreeCadNodeBase):
 
 
 
-class FreeCAD_ApplyPlacements(FreeCadNodeBase):
+class FreeCAD_ApplyPlacements(FreeCadNodeBase2):
     '''
     apply a list of placements to 
     a shape or a list of shapes 
@@ -1887,7 +1910,7 @@ class FreeCAD_ApplyPlacements(FreeCadNodeBase):
 
 
 
-class FreeCAD_Repeat(FreeCadNodeBase):
+class FreeCAD_Repeat(FreeCadNodeBase2):
     '''
     list of the same element repeated
     '''
@@ -1916,7 +1939,7 @@ class FreeCAD_Repeat(FreeCadNodeBase):
 
 
 
-class FreeCAD_Index(FreeCadNodeBase):
+class FreeCAD_Index(FreeCadNodeBase2):
     '''
     returns item with a given index from a list
     '''
@@ -1946,7 +1969,7 @@ class FreeCAD_Index(FreeCadNodeBase):
 #------------------------
 
 
-class FreeCAD_Zip(FreeCadNodeBase):
+class FreeCAD_Zip(FreeCadNodeBase2):
     '''
     create a list of vectors from the lists of coordinates
     '''
@@ -1975,7 +1998,7 @@ class FreeCAD_Zip(FreeCadNodeBase):
     def description():
         return FreeCAD_Zip.__doc__
 
-class FreeCAD_Tube(FreeCadNodeBase):
+class FreeCAD_Tube(FreeCadNodeBase2):
     '''
     calculate the points for a parametric tube along a backbone curve
     '''
@@ -2007,7 +2030,7 @@ class FreeCAD_Tube(FreeCadNodeBase):
 
 
 
-class FreeCAD_Elevation(FreeCadNodeBase):
+class FreeCAD_Elevation(FreeCadNodeBase2):
     '''
 
     '''
@@ -2050,7 +2073,7 @@ class FreeCAD_Elevation(FreeCadNodeBase):
         a=self.createInputPin('Rbf', 'Boolean',True)
     
 
-class FreeCAD_Camera(FreeCadNodeBase):
+class FreeCAD_Camera(FreeCadNodeBase2):
     '''
 
     '''
@@ -2092,7 +2115,7 @@ class FreeCAD_Camera(FreeCadNodeBase):
         a=self.createInputPin('trackName', 'StringPin',"camera")
         a=self.createOutputPin('image', 'StringPin')
     
-class FreeCAD_Counter(FreeCadNodeBase):
+class FreeCAD_Counter(FreeCadNodeBase2):
     '''
 
     '''
@@ -2115,7 +2138,7 @@ class FreeCAD_Counter(FreeCadNodeBase):
         self.setColor()
 
         
-class FreeCAD_Sleep(FreeCadNodeBase):
+class FreeCAD_Sleep(FreeCadNodeBase2):
     '''
 
     '''
@@ -2187,7 +2210,7 @@ class FreeCAD_Import(FreeCadNodeBase2):
         self.createOutputPin('Shape_out', 'ShapePin')
     
     
-class FreeCAD_Expression(FreeCadNodeBase):
+class FreeCAD_Expression(FreeCadNodeBase2):
     '''
     evaluate  an expressions with at most 4 variables
     '''
@@ -2216,6 +2239,37 @@ class FreeCAD_Expression(FreeCadNodeBase):
         a=self.createOutputPin('int_out', 'IntPin', None)
         a=self.createOutputPin('bool_out', 'BoolPin', None)
    
+class FreeCAD_Seam(FreeCadNodeBase2):
+    '''
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+   
+        a=self.createInputPin('shapeA', 'ShapePin')
+        a=self.createInputPin('shapeB', 'ShapePin')
+        a=self.createInputPin('flipUA', 'Boolean')
+        a=self.createInputPin('flipVA', 'Boolean')
+        a=self.createInputPin('swapA', 'Boolean')
+        
+        a=self.createInputPin('flipUB', 'Boolean')
+        a=self.createInputPin('flipVB', 'Boolean')
+        a=self.createInputPin('swapB', 'Boolean')
+        
+        a=self.createInputPin('seamonly', 'Boolean',True)
+
+        a=self.createInputPin('tangentA', 'Integer',0)
+        a.setInputWidgetVariant("Slider")
+        
+        a=self.createInputPin('tangentB', 'Integer',0)
+        a.setInputWidgetVariant("Slider")
+
+        a=self.createOutputPin('Shape_out', 'ShapePin')
 
 
 def nodelist():
@@ -2275,5 +2329,5 @@ def nodelist():
                 FreeCAD_Export,
                 FreeCAD_Import,
                 FreeCAD_Expression,
-
+                FreeCAD_Seam,
         ]
