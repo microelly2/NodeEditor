@@ -4540,10 +4540,21 @@ def run_FreeCAD_Seam(self):
     fauk=np.array(fa.getUKnots())
     fbuk=np.array(fb.getUKnots())
 
+    favk -= favk[0]
+    fbvk -= fbvk[0]
+
+
+    
+    
     famu=np.array(fa.getUMultiplicities())
     fbmu=np.array(fb.getUMultiplicities())
     famv=np.array(fa.getVMultiplicities())
     fbmv=np.array(fb.getVMultiplicities())
+
+    fa=Part.BSplineSurface()
+    fa.buildFromPolesMultsKnots(ap,famu,famv,fauk,favk,False,False,faud,favd)
+    fb=Part.BSplineSurface()
+    fb.buildFromPolesMultsKnots(bp,fbmu,fbmv,fbuk,fbvk,False,False,fbud,fbvd)
 
 
     if auflip:
@@ -4580,8 +4591,8 @@ def run_FreeCAD_Seam(self):
         bp=bp.swapaxes(0,1)
         fb.buildFromPolesMultsKnots(bp,fbmv,fbmu,fbvk,fbuk,False,False,fbvd,fbud)
 
-    ud=max(fa.UDegree,fb.UDegree)
-    vd=max(fa.VDegree,fb.VDegree)
+    ud=max(fa.UDegree,fb.UDegree,3)
+    vd=max(fa.VDegree,fb.VDegree,3)
 
     fa.increaseDegree(ud,vd)
     fb.increaseDegree(ud,vd)
@@ -4589,6 +4600,10 @@ def run_FreeCAD_Seam(self):
     favk=np.array(fa.getVKnots())
     fbvk=np.array(fb.getVKnots())
 
+    say(favk)
+    say(fbvk)
+    sayl("############")
+    
     assert favk[0]==fbvk[0]
 
     am=favk[-1]
@@ -4688,7 +4703,28 @@ def run_FreeCAD_Seam(self):
     sf=Part.BSplineSurface()
     sf.buildFromPolesMultsKnots(poles,um,vmults,ku,vknots,False,False,degA,degB)
     shape=sf.toShape()
+    say(shape)
+    #Part.show(shape)
     self.setPinObject("Shape_out",shape)
        
 
+def run_FreeCAD_Nurbs(self):
+    
+    #shape=FreeCAD.ActiveDocument.Cone.Shape.Face1
+    #shape=FreeCAD.ActiveDocument.Sphere.Shape.Face1
+    shape=self.getPinObject("shape")
+    n=shape.toNurbs()
+    say(n.Faces)
+    say(n.Edges)
+    sf=n.Face1.Surface
+    ssff=Part.BSplineSurface()
+    ssff.buildFromPolesMultsKnots(sf.getPoles(),
+        sf.getUMultiplicities(), sf.getVMultiplicities(),
+        sf.getUKnots(),sf.getVKnots(),False,False,sf.UDegree,sf.VDegree)
+    
+    ff=ssff.toShape()
+    self.setPinObject("Shape_out",ff)
+    
+    
+    
 #

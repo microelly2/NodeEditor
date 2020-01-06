@@ -2303,6 +2303,25 @@ class FreeCAD_Seam(FreeCadNodeBase2):
     def description():
         return FreeCAD_Seam.__doc__
 
+class FreeCAD_Nurbs(FreeCadNodeBase2):
+    '''
+    converts faces to nurbs
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+   
+        a=self.createInputPin('shape', 'ShapePin')
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+    @staticmethod
+    def description():
+        return FreeCAD_Nurbs.__doc__
 
 
 def nodelist():
@@ -2363,4 +2382,5 @@ def nodelist():
                 FreeCAD_Import,
                 FreeCAD_Expression,
                 FreeCAD_Seam,
+                FreeCAD_Nurbs,
         ]
