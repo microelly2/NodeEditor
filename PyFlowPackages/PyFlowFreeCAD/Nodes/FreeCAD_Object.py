@@ -2238,9 +2238,11 @@ class FreeCAD_Expression(FreeCadNodeBase2):
         a=self.createOutputPin('float_out', 'FloatPin', None)
         a=self.createOutputPin('int_out', 'IntPin', None)
         a=self.createOutputPin('bool_out', 'BoolPin', None)
+ 
    
 class FreeCAD_Seam(FreeCadNodeBase2):
     '''
+    create a seam bspline face between two bspline surfaces with tangent constraint
     '''
 
     dok = 0
@@ -2252,24 +2254,41 @@ class FreeCAD_Seam(FreeCadNodeBase2):
    
    
         a=self.createInputPin('shapeA', 'ShapePin')
+        a.description="first bspline face"
         a=self.createInputPin('shapeB', 'ShapePin')
+        a.description="2nd bspline face"
+        
         a=self.createInputPin('flipUA', 'Boolean')
+        a.description="invert u direction of 1st face"
         a=self.createInputPin('flipVA', 'Boolean')
+        a.description="invert v direction of 2nd face"
         a=self.createInputPin('swapA', 'Boolean')
+        a.description="swap u and v axes of 1st face"
         
         a=self.createInputPin('flipUB', 'Boolean')
+        a.description="invert u direction of 2nd face"
         a=self.createInputPin('flipVB', 'Boolean')
+        a.description="invert v direction of 2nd face"
         a=self.createInputPin('swapB', 'Boolean')
+        a.description="swap u and v axes of 2nd face"
         
         a=self.createInputPin('seamonly', 'Boolean',True)
+        a.description="if false the result is one bspline surface containing 1st 2nd face and the seam"
 
         a=self.createInputPin('tangentA', 'Integer',0)
         a.setInputWidgetVariant("Slider")
+        a.description="force for the tangent from 1st face"
         
         a=self.createInputPin('tangentB', 'Integer',0)
         a.setInputWidgetVariant("Slider")
+        a.description="force for the tangent from 2nd face"
 
-        a=self.createOutputPin('Shape_out', 'ShapePin')
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+    @staticmethod
+    def description():
+        return FreeCAD_Seam.__doc__
+
 
 
 def nodelist():

@@ -4046,12 +4046,21 @@ def run_FreeCAD_ImportFile(self):
     ls=contents.splitlines()
     rr=[]
     vs=[]
+    seps=self.getData('separator')
+    sepk={
+        'tabulator':'\t',
+        'space':' ',
+        'semicolon':';',
+        'comma':',',
+    }    
+        
+    sep=sepk[seps]
     for l in ls:
         try:
             if l.startswith('#'):
                 continue
-            rr += [[float(a) for a in l.split('\t')]]
-            ff=[float(a) for a in l.split('\t')]
+            rr += [[float(a) for a in l.split(sep)]]
+            ff=[float(a) for a in l.split(sep)]
         except:
             pass
         vs += [FreeCAD.Vector(*ff[:3])]
@@ -4218,6 +4227,7 @@ def createElevationGrid(pts,mode='thin_plate',rbfmode=True,source=None,gridCount
 def run_FreeCAD_Elevation(self):
     points=self.getData('points')
     say(points)
+    sayl("##")
     nb=createElevationGrid(points)
     self.setData("poles",nb)
 
@@ -4288,8 +4298,8 @@ def run_FreeCAD_Elevation(self):
     mode=self.getData('mode')
 
     #say(points)
-    sayl("Abburch")
-    return
+    #sayl("Abburch")
+    #return
     # run the calculation
     poles=createElevationGrid(points,mode=mode,rbfmode=rbfmode,gridCount=gridCount,bound=bound,noise=noise)
 
