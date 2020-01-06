@@ -1994,9 +1994,12 @@ def T2():
     
     nodes=FreeCAD.PF.graphManager.get().getAllNodes()
     say()
+    say('#####################################')
+    say('import nodeeditor')
     say('import nodeeditor.pfwrap as pfwrap')
     say('instance=pfwrap.getInstance()')
     say('gg=pfwrap.getGraphManager().getAllGraphs()[0]')
+    say()
 
     for ix, n in enumerate(nodes):
         tt=str(n.__class__).split('.')
