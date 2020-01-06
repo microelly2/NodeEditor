@@ -401,7 +401,8 @@ class MyNoWidget(InputWidgetSingle):
 
     def __init__(self, parent=None, **kwds):
         super(self.__class__, self).__init__(parent=parent, **kwds)
-        self.le = QLineEdit(self)
+        #self.le = QLineEdit(self)
+        self.le = QLabel(self)
         self.le.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.setWidget(self.le)
         #self.le.textChanged.connect(lambda val: self.dataSetCallback(val))
@@ -412,6 +413,37 @@ class MyNoWidget(InputWidgetSingle):
 
     def setWidgetValue(self, val):
         self.le.setText(str(val))
+
+
+class IntInputWidgetSlider2(InputWidgetSingle):
+    """
+    Decimal number slider input widget
+    """
+
+    def __init__(self, parent=None, **kwds):
+        super(self.__class__, self).__init__(parent=parent, **kwds)
+        valueRange = [-100,100]
+        draggerSteps=INT_SLIDER_DRAG_STEPS
+
+        if "pinAnnotations" in kwds and kwds["pinAnnotations"] is not None:
+            say("!X!", kwds["pinAnnotations"])
+            if "ValueRange" in kwds["pinAnnotations"]:
+                valueRange = kwds["pinAnnotations"]["ValueRange"]
+            if "DraggerSteps" in kwds["pinAnnotations"]:
+                draggerSteps= kwds["pinAnnotations"]["DraggerSteps"]
+                
+        say(valueRange)
+        say(draggerSteps)
+        # def __init__(self, parent=None, draggerSteps=draggerSteps, sliderRange=[-100, 100], *args, **kwargs):                
+        self.sb = slider(self,draggerSteps=draggerSteps,sliderRange=valueRange) 
+        self.setWidget(self.sb)
+        self.sb.valueChanged.connect(self.dataSetCallback)
+
+    def blockWidgetSignals(self, bLocked):
+        self.sb.blockSignals(bLocked)
+
+    def setWidgetValue(self, val):
+        self.sb.setValue(int(val))
 
 
 
@@ -460,8 +492,10 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
     if dataType == 'IntPin' or dataType == 'Integer':
         sayl('integer pin in FreeCAD')
         say("widgetvariant",widgetVariant,dataType)
-#        if widgetVariant == "SimpleSlider":
-#            return IntInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+        
+        
+        if widgetVariant == "Slider":
+            return IntInputWidgetSlider2(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
         if widgetVariant == "Simple":
             return IntInputWidgetSimple(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
@@ -469,9 +503,8 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
             if kwds["pinAnnotations"] is not None and "ValueRange" in kwds["pinAnnotations"]:
                 return IntInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
-        if widgetVariant == "HUHU":
-            return MyInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
-
+#        if widgetVariant == "EnumWidget":
+#            return MyInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
         return IntInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
