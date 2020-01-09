@@ -412,7 +412,8 @@ class MyNoWidget(InputWidgetSingle):
         self.le.blockSignals(bLocked)
 
     def setWidgetValue(self, val):
-        self.le.setText(str(val))
+        self.le.setText(str(val)[:40])
+
 
 
 class IntInputWidgetSlider2(InputWidgetSingle):
@@ -509,6 +510,7 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
         return IntInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
     if dataType == 'VectorPin':
+        
         return VectorInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'RotationPin':
         return None

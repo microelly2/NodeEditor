@@ -520,6 +520,7 @@ def run_FreeCAD_View3D(self, *args, **kwargs):
             t=Part.makeBox(0.001,0.001,0.001)#.toShape()
             f.Shape=t
 
+
     f.recompute()
     f.purgeTouched()
 
@@ -3367,7 +3368,7 @@ def run_FreeCAD_Polygon(self):
         #self.Called=True
 
         pts=self.points.getData()
-        say(pts)
+        #say(pts)
         if pts[0].__class__.__name__ == 'list':
             pts=pts[0]
         say("--")
@@ -4725,6 +4726,379 @@ def run_FreeCAD_Nurbs(self):
     ff=ssff.toShape()
     self.setPinObject("Shape_out",ff)
     
+#def rgb2gray(rgb):
+#    return np.dot(rgb[..., :3], [0.299, 0.587, 0.114]).astype(np.uint8)
+
+    
+def run_FreeCAD_ShapePattern(self):
+
+
+    ptsa=np.array(self.getData('points'))
+    
+    try:
+        (a,b,c)=ptsa.shape
+        pts=ptsa.reshape(a*b,3)
+    except:
+        pts=ptsa
+    
+    # single value or list
+    radius=self.getData('radius')
+    if isinstance(radius, list):
+        rr=radius[0]
+    else:
+        rr=radius
+
+    w=self.getData('width')
+    w=(w+101)/201
+
+    h=self.getData('height')
+    h=(h+101)/201*50
+    
+    rand=(self.getData('randomize')+100)/200
+
+    colors=[(0.5+random.random()*0.3,0.6+random.random()*0.4,random.random()*0.3) for p in pts]
+    radius=[ (rand*(0.5-random.random())+1)*rr*w for p in pts]
+ 
+
+    try:
+        sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+        sg.removeChild(self.sg2)
+    except:
+        say("noch kein sdfgd")
+
+    if self.getData('hide'):
+        return
+   
+    
+    import time
+    from pivy import coin
+
+    sayl()
+    a=time.time()
+    sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+    sg2= coin.SoSeparator()
+
+    mode=self.getData('mode')
+    say("!",mode)
+    for p,c,r in zip(pts,colors,radius):
+            
+            trans = coin.SoTranslation()
+            p=FreeCAD.Vector(p)
+            
+            if mode =='sphere':
+                trans.translation.setValue(p[0],p[1],p[2])
+                cub = coin.SoSphere()
+                cub.radius.setValue(2*r)
+
+                col = coin.SoBaseColor()
+                col.rgb=(c[2],c[0],c[1])
+                
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(trans)
+                #myCustomNode.addChild(myRotation) 
+                myCustomNode.addChild(cub)
+
+            elif mode =='cube':
+                trans.translation.setValue(p[0],p[1],p[2]+0.5*h)
+                cub = coin.SoCube()
+                cub.width.setValue(2*r)
+                cub.height.setValue(2*r)
+                cub.depth.setValue(h) #hoehe
+
+                col = coin.SoBaseColor()
+                col.rgb=(c[2],c[0],c[1])
+                
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(trans)
+                #myCustomNode.addChild(myRotation) 
+                myCustomNode.addChild(cub)
+
+            elif mode =='cone':
+                trans.translation.setValue(p[0],p[1],p[2]+0.5*h)
+                cub = coin.SoCone()
+                cub.height.setValue(h)
+                cub.bottomRadius.setValue(2*r)
+                myRotation = coin.SoRotationXYZ()
+                myRotation.angle = coin.M_PI/2   # 90 degrees
+                myRotation.axis = coin.SoRotationXYZ.X
+                col = coin.SoBaseColor()
+                col.rgb=(c[2],c[0],c[1])
+            
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(trans)
+                myCustomNode.addChild(myRotation) 
+                myCustomNode.addChild(cub)
+
+            else:
+                trans.translation.setValue(p[0],p[1],p[2]+1*h)
+                cub = coin.SoCone()
+                cub.height.setValue(2*h)
+                cub.bottomRadius.setValue(2*r)
+                myRotation = coin.SoRotationXYZ()
+                myRotation.angle = coin.M_PI/2   # 90 degrees
+                myRotation.axis = coin.SoRotationXYZ.X
+            
+                col = coin.SoBaseColor()
+                col.rgb=(c[2],c[0],c[1])
+            
+                trans2 = coin.SoTranslation()
+                trans2.translation.setValue(0,0.6*h,0)
+                cub2 = coin.SoCone()
+                cub2.height.setValue(1*h)
+                cub2.bottomRadius.setValue(1.4*r)
+            
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(trans)
+                myCustomNode.addChild(myRotation) 
+                
+                myCustomNode.addChild(cub)
+                myCustomNode.addChild(trans2)
+                myCustomNode.addChild(cub2)
+            
+            sg2.addChild(myCustomNode)
+
+
+    sg.addChild(sg2)
+    self.sg2=sg2
+    say("time to run coin", time.time()-a)
+
+def run_FreeCAD_ImageT(self):
+
+    from scipy import ndimage
+    fn=self.getData('image')
+    import matplotlib.image as mpimg    
+
+    img=mpimg.imread(fn)
+    (sa,sb,sc)=img.shape
+    red=0.005*(self.getData("red")+100)
+    green=0.005*(self.getData("green")+100)
+    blue=0.005*(self.getData("blue")+100)
+    #blue=0
+    say("rgb",red,green,blue)
     
     
+    # andere filtre
+    #img = ndimage.sobel(img)
+    #img = ndimage.laplace(img)
+    
+    im2=img[:,:,0]*red+img[:,:,1]*green+img[:,:,2]*blue
+    im2=np.round(im2)
+    
+    if self.getData('invert'):
+        im2 = 1- im2
+    
+    #im2 = ndimage.sobel(im2)
+
+   
+    ss=int((self.getData('maskSize')+100)/20)
+    say("ss",ss)
+    if ss != 0:
+        mode=self.getData('mode')
+        say("mode",mode)
+        if mode=='closing':
+            im2=ndimage.grey_closing(im2, size=(ss,ss))
+        elif mode=='opening':
+            im2=ndimage.grey_opening(im2, size=(ss,ss))    
+        elif mode=='erosion':
+            im2=ndimage.grey_erosion(im2, size=(ss,ss))
+        elif mode=='dilitation':
+            im2=ndimage.grey_dilation(im2, footprint=np.ones((ss,ss)))
+        else:
+            say("NO MODE")
+       
+
+
+    
+
+
+
+
+    nonzes=np.where(im2 == 0)
+    pts = [FreeCAD.Vector(sb+-x,sa-y) for y,x in np.array(nonzes).swapaxes(0,1)]
+    
+    h=10
+    pts = [FreeCAD.Vector(sb+-x,sa-y,(red*img[y,x,0]+green*img[y,x,1]+blue*img[y,x,2])*h) for y,x in np.array(nonzes).swapaxes(0,1)]
+    colors=[img[y,x] for y,x in np.array(nonzes).swapaxes(0,1)]
+    say("len pts",len(pts))
+    self.setData("Points_out",pts)
+    #self._preview=True   
+    
+    
+
+
+
+def run_dragger(self,**kv):
+    
+    from pivy import coin
+    t=coin.SoType.fromName("SoFCCSysDragger")
+
+    #del(self.points)
+    pointsa=[
+        FreeCAD.Vector(0,0,10),
+        FreeCAD.Vector(30,0,-20),
+        FreeCAD.Vector(30,30,0),
+        FreeCAD.Vector(0,30,20),
+        ]
+        
+    #self.points=points
+    #say(self.points)
+    try:
+            self.points
+    except:
+        say("hoel daten")
+        points=self.getData("points")
+        if len(points) == 0 :
+            points=pointsa
+    
+        self.points=points
+    
+    points=self.points
+    
+    par=np.array(points)
+    say(par.shape)
+    if len(par.shape)==3:
+        a,b,c=par.shape
+        points=par.reshape(a*b,3)
+    else:
+        points=par
+    self.points=points
+    #say("------------",points.shape)
+    
+    #return
+
+    tns=[]
+    try:
+        FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.gg)
+    except:
+        pass
+    self.gg= coin.SoSeparator()
+    FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().addChild(self.gg)
+    for p in points:
+        n=t.createInstance()
+        n.setStartingPoint(coin.SbVec3f(0,0,0))
+        g = coin.SoSeparator()
+        tt = coin.SoTransform()
+        say(p)
+        tt.translation = p.tolist()  
+        
+        g.addChild(tt)
+        g.addChild(n)
+        self.gg.addChild(g)
+        tns += [n]
+
+    print ("----------")
+    for n in tns:	
+        pass
+        #print (n)
+        #print(n.getLocalStartingPoint().getValue())
+        #print(n.getMotionMatrix().getValue())
+
+    self.tns=tns
+    #self.compute()
+
+def run_FreeCAD_Dragger(self,**k):
+
+    points=self.getData("points")
+    par=np.array(points)
+    pdiffs=[]
+
+    for n in self.tns:	
+        pdiffs += [-FreeCAD.Vector(n.getLocalStartingPoint().getValue())]
+
+    if len(par.shape)==3:
+        a,b,c=par.shape
+        
+        # has something changed?
+      
+        points=par.reshape(a*b,3)
+        lls=[(a-FreeCAD.Vector(b)).Length for a,b in zip(pdiffs,points)]
+#        say ("max",max(lls))
+        if max(lls)< 0.1:
+            say("zu wenig aenderung abbruch")
+            return
+        
+        pdiffs=np.array(pdiffs).reshape(a,b,3).tolist()
+    
+    
+    self.setData("Points_out",pdiffs)
+    self.points=pdiffs
+       
+    self.outExec.call()
+    self.setColor()
+
+    if self._preview:
+        say("create preview")
+        self.preview()
+
+    
+
+def run_FreeCAD_uv2xyz(self):
+    sh=self.getPinObject("Shape")
+    bs=sh.Surface
+    uvs=self.getData('points')
+    pts=[]
+    for uv in uvs:
+        say(uv)
+        pts += [bs.value(uv[0],uv[1])]
+    
+    self.setData('Points_out',pts)
+    
+
+
+from pivy import coin
+
+def run_FreeCAD_QuadMesh(self):
+
+    try:
+        FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.gg)
+    except:
+        pass
+
+    if self.getData('hide'):
+        return
+
+    points=self.getData('points')
+    vps=np.array(points)
+    (a,b,c)=vps.shape
+    tt=vps.reshape(a*b,3)
+
+    result = coin.SoSeparator()
+
+    myMaterial = coin.SoMaterial()
+    myMaterial.diffuseColor = (.78, .57, .11)
+    result.addChild(myMaterial)
+
+    myCoords = coin.SoCoordinate3()
+    myCoords.point.setValues(0, a*b, tt)
+    result.addChild(myCoords)
+
+    myQuadMesh = coin.SoQuadMesh()
+    myQuadMesh.verticesPerRow = b
+    myQuadMesh.verticesPerColumn = a
+
+    result.addChild(myQuadMesh)
+
+    sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+    sg.addChild(result)
+    self.gg=result
+        
+
+
+
+
+
+
+    #-------------
+
+
+
+
+
 #
+
+
+

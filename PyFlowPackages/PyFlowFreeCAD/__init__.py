@@ -116,6 +116,14 @@ nodelistcol += nodelist()
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensors import nodelist
 nodelistcol += nodelist()
 
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
+nodelistcol += nodelist()
+
+
+
 for n in nodelistcol:
 	_NODES[ n.__name__]=n
 
