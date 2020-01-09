@@ -45,7 +45,7 @@ class FreeCadNodeBase(NodeBase):
     @timer
     def compute(self, *args, **kwargs):
         if self._debug:
-            say("--- Start",self.name)
+            say("!-- Start",self.name)
             self._started=time.time()
         import nodeeditor.dev
         reload (nodeeditor.dev)
@@ -67,18 +67,34 @@ class FreeCadNodeBase(NodeBase):
         if not self._preview and a != None:
             FreeCAD.ActiveDocument.removeObject(name)
         else:
+            
             try:
                 shape=self.getPinObject("Shape_out")
-                #FreeCAD.Console.PrintError("update Shape for "+name+"\n")
-                
+                pts=None
+            except:
+                shape=None
+
+            if shape is None:
+                try:
+                    pts=self.getData("Points_out")
+                except:
+                    pts=None
+            if pts is not None:
+                import Points
+                if a == None:
+                    a = FreeCAD.ActiveDocument.addObject('Points::Feature', name)
+                pm=a.Placement
+                a.Points=Points.Points(pts)
+                a.Placement=pm
+                a.Label=label
+            elif shape is not None:
                 if a== None:
                     a=FreeCAD.ActiveDocument.addObject("Part::Feature",name)
                 pm=a.Placement
                 a.Shape=shape
                 a.Placement=pm
                 a.Label=label
-            except:
-                pass
+
 
     def makebackref(self):
         '''make reference insinde FreeCAD document to the node'''
