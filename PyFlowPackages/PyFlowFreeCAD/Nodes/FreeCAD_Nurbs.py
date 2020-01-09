@@ -845,6 +845,37 @@ class FreeCAD_FlipSwapArray(FreeCadNodeBase2):
         return ['flip','swap','Vector']
 
 
+class FreeCAD_uv2xyz(FreeCadNodeBase2):
+    '''
+    '''
+
+    def __init__(self, name="MyInterpolation"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin("points",'VectorPin', structure=StructureType.Array)
+        a=self.createInputPin("Shape",'ShapePin')
+      
+        a=self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
+
+class FreeCAD_xyz2uv(FreeCadNodeBase2):
+    '''
+    '''
+
+    def __init__(self, name="MyInterpolation"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin("points",'VectorPin', structure=StructureType.Array)
+        a=self.createInputPin("Shape",'ShapePin')
+      
+        a=self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
+
+
 
 def nodelist():
     return [
@@ -869,5 +900,8 @@ def nodelist():
 
                 FreeCAD_ConnectPoles,
                 FreeCAD_FlipSwapArray,
+                
+                FreeCAD_uv2xyz,
+                FreeCAD_xyz2uv,
 
         ]
