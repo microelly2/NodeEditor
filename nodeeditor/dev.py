@@ -5622,36 +5622,26 @@ def run_FreeCAD_IronSurface(self):
         return pts3,c.toShape()
 
     loopsa=self.getData('loopsA')
+    loopsb=self.getData('loopsB')
     k=self.getData('k')
-    say(k)
-    #k=3
-
-    
 
     ptsarr2=[]
     for pts in ptsarr:
 
-        loopsb=self.getData('loopsB')
-        #say(loopsa,loopsb)
         for i in range(loopsa+1):
             pts,c=run(pts)
-        #    col.append(c)
         for i in range(loopsb+1):
             pts,c=run(pts,k)
             
         ptsarr2 += [pts]
-        #col.append(c)
     
     ptsarr=np.array(ptsarr2).swapaxes(0,1)
-
     ptsarr2=[]
+
     for pts in ptsarr:
 
-        loopsb=self.getData('loopsB')
-        #say(loopsa,loopsb)
         for i in range(loopsa+1):
             pts,c=run(pts)
-        #    col.append(c)
         for i in range(loopsb+1):
             pts,c=run(pts,k)
             
@@ -5659,32 +5649,8 @@ def run_FreeCAD_IronSurface(self):
         col.append(c)
     
     ptsarr=np.array(ptsarr2).swapaxes(0,1)
-    say("----------",ptsarr.shape)
-    
-
-
-    k=self.getData('deflection')
-    if k>0:
-        ptsdd=c.discretize(QuasiDeflection=k*0.1)
-        ptsdd=c.discretize(Deflection=k*0.1)
-        self.setPinObject('Shape_out',Part.makePolygon(ptsdd))    
-
-        deflp=Part.makePolygon(ptsdd)
-        defl=Part.BSplineCurve(ptsdd).toShape()
-        say("deflection",len(ptsdd))
-        self.setPinObject('Shape_out',defl)
-        #self.setPinObject('Shape_out',Part.Compound([deflp,defl]))
-        self.setData('points',ptsdd)
-    else:
-    
-        self.setPinObject('Shape_out',Part.Compound(col))
-        #self.setPinObject('Shape_out',col[-1])
-        #self.setData('points',pts)
-    
-    
-    say('####')
+    self.setPinObject('Shape_out',Part.Compound(col))
     self.setData('points',ptsarr.tolist())
-    say(ptsarr[0,0])
     FreeCAD.ActiveDocument.recompute()
 
 
