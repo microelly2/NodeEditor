@@ -484,6 +484,28 @@ class Numpy(FunctionLibraryBase):
         return x1.tolist()
 
     @staticmethod
+    @IMPLEMENT_NODE(returns=('VectorPin', [], {}), meta={'Category': 'numpy|array', 'Keywords': ['list','interval']})
+    def linSpace2D(
+				start=('FloatPin',0.),
+				stop=('FloatPin',10), 
+				num=('IntPin', 50),
+				start2=('FloatPin',0.),
+				stop2=('FloatPin',10), 
+				num2=('IntPin', 50),
+				
+			):
+				
+        """create a linear Space"""
+
+        x1 = np.linspace(start, stop, num, endpoint=True)
+        y1 = np.linspace(start2, stop2, num2, endpoint=True)
+        say("linspace",x1)
+        prod=[FreeCAD.Vector(x,y) for x in x1 for y in y1]
+        return prod
+
+
+
+    @staticmethod
     @IMPLEMENT_NODE(returns=('FloatPin', [2.],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|random', 'Keywords': ['list','random']})
     def randomList(size=('IntPin', 50)):
         """create a random list"""

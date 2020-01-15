@@ -22,6 +22,8 @@ class FreeCAD_Tripod(FreeCadNodeBase2):
         a=self.createInputPin('v', 'Float',0)
         self.createInputPin('Shape', 'ShapePin')
         self.createOutputPin('position', 'VectorPin')
+        self.createOutputPin('poles', 'VectorPin',structure=StructureType.Array)
+        self.createOutputPin('polesIndex','IntPin',structure=StructureType.Array)
         self.createOutputPin('placement', 'PlacementPin' )
         self.createInputPin("display", 'Boolean', True)
         self.createInputPin("directionNormale", 'Boolean', False)
@@ -876,6 +878,178 @@ class FreeCAD_xyz2uv(FreeCadNodeBase2):
         a=self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
 
 
+class FreeCAD_replacePoles(FreeCadNodeBase2):
+    '''
+    '''
+
+    def __init__(self, name="MyInterpolation"):
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+
+        self.createInputPin('Shape', 'ShapePin')
+        self.createInputPin('poles', 'VectorPin',structure=StructureType.Array)
+        self.createInputPin('polesIndex','IntPin',structure=StructureType.Array)
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+
+class FreeCAD_Editor(FreeCadNodeBase2):
+    '''
+    '''
+
+    def __init__(self, name="MyTripod",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+
+        self.inExec = self.createInputPin("commit", 'ExecPin', None, self.commit)
+        self.inExec = self.createInputPin("rollback", 'ExecPin', None, self.rollback)
+        
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        
+        a=self.createInputPin("position",'VectorPin')
+
+        a=self.createInputPin('u',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a=self.createInputPin('v',"Integer")
+        a.setInputWidgetVariant("Slider")
+        
+        
+        self.createInputPin("displayIso", 'Boolean', False)
+        
+        self.createInputPin("useXYZT", 'Boolean', False)
+        
+
+        
+        a=self.createInputPin('x',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a=self.createInputPin('y',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a=self.createInputPin('z',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a=self.createInputPin('t',"Integer")
+        a.setInputWidgetVariant("Slider")
+        
+
+        self.createInputPin('Shape', 'ShapePin')
+        self.createOutputPin('position_out', 'VectorPin')
+        self.createInputPin("directionNormale", 'Boolean', False)
+        self.createOutputPin('u_out', 'FloatPin')
+        self.createOutputPin('v_out', 'FloatPin')
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+        
+    def commit(self,*arg,**kwarg):
+        self.shape=self.getPinObject("Shape_out")
+        
+    def rollback(self,*arg,**kwarg):
+        try:
+            del(self.shape)
+        except:
+            pass
+
+
+class FreeCAD_Editor2(FreeCadNodeBase2):
+    '''
+    '''
+
+    def __init__(self, name="MyTripod",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+
+        self.inExec = self.createInputPin("commit", 'ExecPin', None, self.commit)
+        self.inExec = self.createInputPin("bake", 'ExecPin', None, self.bake)
+        self.inExec = self.createInputPin("rollback", 'ExecPin', None, self.rollback)
+        
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        
+        
+        self.createInputPin("useStart", 'Boolean', False)
+
+        a=self.createInputPin('startU',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a=self.createInputPin('startV',"Integer")
+        a.setInputWidgetVariant("Slider")
+        
+        self.createInputPin("displayStart", 'Boolean', False)
+        self.createInputPin("useStartPosition", 'Boolean', False)
+        a=self.createInputPin("startPosition",'VectorPin')
+        
+        self.createInputPin("displayTarget", 'Boolean', False)
+        a=self.createInputPin("targetPosition",'VectorPin')
+
+
+		#feineinstellung
+        a=self.createInputPin('u',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a=self.createInputPin('v',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a=self.createInputPin('t',"Integer")
+        a.setInputWidgetVariant("Slider")
+        
+        #a=self.createInputPin('ku',"Integer")
+        #a.setInputWidgetVariant("Slider")
+        #a=self.createInputPin('kv',"Integer")
+        #a.setInputWidgetVariant("Slider")
+        
+        
+        self.createInputPin("bordersFrozen", 'Boolean', False)
+        self.createInputPin("tangentsFrozen", 'Boolean', False)
+        
+        self.createInputPin("displayIso", 'Boolean', False)
+        
+        #self.createInputPin("useXYZT", 'Boolean', False)
+        
+        a=self.createInputPin('offsetUA', 'Integer',0)
+        a.annotationDescriptionDict={ "ValueRange":(0,10)}
+        a.setInputWidgetVariant("Simple2")
+        a=self.createInputPin('offsetUB', 'Integer',0)
+        a.annotationDescriptionDict={ "ValueRange":(0,10)}
+        a.setInputWidgetVariant("Simple2")
+        a=self.createInputPin('offsetVA', 'Integer',0)
+        a.annotationDescriptionDict={ "ValueRange":(0,10)}
+        a.setInputWidgetVariant("Simple2")
+        a=self.createInputPin('offsetVB', 'Integer',0)
+        a.annotationDescriptionDict={ "ValueRange":(0,10)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('scaleU',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a=self.createInputPin('scaleV',"Integer")
+        a.setInputWidgetVariant("Slider")
+        
+        
+
+        
+        
+
+        self.createInputPin('Shape', 'ShapePin')
+        self.createOutputPin('position_out', 'VectorPin')
+        #self.createInputPin("directionNormale", 'Boolean', False)
+        self.createOutputPin('u_out', 'FloatPin')
+        self.createOutputPin('v_out', 'FloatPin')
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+    def bake(self,*arg,**kwarg):
+        say("nicht impl")
+        
+
+        
+    def commit(self,*arg,**kwarg):
+        self.shape=self.getPinObject("Shape_out")
+        
+    def rollback(self,*arg,**kwarg):
+        try:
+            del(self.shape)
+        except:
+            pass
+
+
 
 def nodelist():
     return [
@@ -903,5 +1077,9 @@ def nodelist():
                 
                 FreeCAD_uv2xyz,
                 FreeCAD_xyz2uv,
+                FreeCAD_replacePoles,
+                FreeCAD_Editor,
+                FreeCAD_Editor2,
+                
 
         ]

@@ -598,6 +598,43 @@ def run_FreeCAD_Tripod(self,*args, **kwargs):
     say(f)
     uu=umin+(umax-umin)*0.1*u
     vv=vmin+(vmax-vmin)*0.1*v
+
+    # bechränkung auf innen
+    uu=umin+(umax-umin)*0.005*(u+100)
+    vv=vmin+(vmax-vmin)*0.005*(v+100)
+    say(uu,vv)
+    uks=sf.getUKnots()
+    vks=sf.getVKnots()
+    say(uks)
+    say(vks)
+    for i in range(len(uks)-1):
+        if uks[i]<=uu and uu<uks[i+1]:
+            say("u seg gefuden",i)
+            break
+    say("usgement",i)
+    us=i
+    for i in range(len(vks)-1):
+        if vks[i]<=vv and vv<vks[i+1]:
+            say("v seg gefuden",i)
+            break
+    say("vsgement",i)
+    vs=i
+    say("segment",us,vs)
+    poles=sf.getPoles()
+    say(np.array(poles).shape)
+    arr=np.array(poles)[us:us+4,vs:vs+4]
+    # nur ein punkt
+    arr=np.array(poles)[us:us+1,vs:vs+1]
+    arr=[sf.value(uu,vv)]
+    
+    #say(arr.shape)
+    self.setData('poles',arr)
+    self.setData('polesIndex',[us,vs])
+    
+    
+
+
+
     pos=sf.value(uu,vv)
     self.setData('position',pos)
     
@@ -4735,11 +4772,42 @@ def run_FreeCAD_ShapePattern(self):
 
     ptsa=np.array(self.getData('points'))
     
+    
+    
     try:
         (a,b,c)=ptsa.shape
         pts=ptsa.reshape(a*b,3)
     except:
         pts=ptsa
+    
+    if ptsa.shape==(3):
+        say("single point")
+        pts=np.array([FreeCAD.Vector(ptsa)]).reshape(1,3)
+    
+    #pts=[FreeCAD.Vector(ptsa)]
+    #say("-pts ",pts)
+    
+    
+    
+    ptsa=np.array(self.getData('forces'))
+
+    try:
+        (a,b,c)=ptsa.shape
+        diffs=ptsa.reshape(a*b,3)
+    except:
+        diffs=ptsa
+    
+    #say(ptsa.shape)
+    #say("######",diffs.shape,pts.shape)
+    try:
+        if diffs.shape==pts.shape:
+            diffs=[a-b for a,b in zip(diffs,pts)]
+            say("diffs berechnet")
+            say(diffs[:4])      
+        else:
+            diffs=[FreeCAD.Vector(0,0,10+3*random.random()) for p in pts]    
+    except:
+        diffs=[FreeCAD.Vector(0,0,10+3*random.random()) for p in pts]    
     
     # single value or list
     radius=self.getData('radius')
@@ -4773,14 +4841,13 @@ def run_FreeCAD_ShapePattern(self):
     import time
     from pivy import coin
 
-    sayl()
     a=time.time()
     sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
     sg2= coin.SoSeparator()
 
     mode=self.getData('mode')
-    say("!",mode)
-    for p,c,r in zip(pts,colors,radius):
+    #say("!",mode)
+    for p,c,r,d in zip(pts,colors,radius,diffs):
             
             trans = coin.SoTranslation()
             p=FreeCAD.Vector(p)
@@ -4798,6 +4865,36 @@ def run_FreeCAD_ShapePattern(self):
                 myCustomNode.addChild(trans)
                 #myCustomNode.addChild(myRotation) 
                 myCustomNode.addChild(cub)
+
+            elif mode =='line':
+                #say(d)
+                p1=(p[0],p[1],p[2])
+                p1=(p[0]+d[0],p[1]+d[1],p[2]+d[2]*h)
+                p2=(p[0],p[1],p[2])
+                from pivy import coin
+                dash = coin.SoSeparator()
+                v = coin.SoVertexProperty()
+                v.vertex.set1Value(0, p1)
+                v.vertex.set1Value(1, p2)
+                l = coin.SoLineSet()
+                l.vertexProperty = v
+                dash.addChild(l)
+
+
+                drawstyle = coin.SoDrawStyle()
+                drawstyle.lineWidth =2
+
+                col = coin.SoBaseColor()
+                #col.rgb=(c[2],c[0],c[1])
+
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(drawstyle)
+                myCustomNode.addChild(trans)
+
+                
+                myCustomNode.addChild(dash)
+
 
             elif mode =='cube':
                 trans.translation.setValue(p[0],p[1],p[2]+0.5*h)
@@ -4864,7 +4961,7 @@ def run_FreeCAD_ShapePattern(self):
 
     sg.addChild(sg2)
     self.sg2=sg2
-    say("time to run coin", time.time()-a)
+    #say("time to run coin", time.time()-a)
 
 def run_FreeCAD_ImageT(self):
 
@@ -4934,7 +5031,20 @@ def run_FreeCAD_ImageT(self):
 def run_dragger(self,**kv):
     
     from pivy import coin
-    t=coin.SoType.fromName("SoFCCSysDragger")
+
+    tns=[]
+
+
+    def handler(arg):
+        say("dragger moved",arg)
+        self.compute()
+
+    def handler2(arg):
+        say("dragger started",arg)
+
+    
+
+
 
     #del(self.points)
     pointsa=[
@@ -4943,6 +5053,8 @@ def run_dragger(self,**kv):
         FreeCAD.Vector(30,30,0),
         FreeCAD.Vector(0,30,20),
         ]
+        
+    pointsa=[FreeCAD.Vector()]
         
     #self.points=points
     #say(self.points)
@@ -4957,6 +5069,7 @@ def run_dragger(self,**kv):
         self.points=points
     
     points=self.points
+    say(points)
     
     par=np.array(points)
     say(par.shape)
@@ -4970,7 +5083,7 @@ def run_dragger(self,**kv):
     
     #return
 
-    tns=[]
+
     try:
         FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.gg)
     except:
@@ -4978,17 +5091,24 @@ def run_dragger(self,**kv):
     self.gg= coin.SoSeparator()
     FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().addChild(self.gg)
     for p in points:
-        n=t.createInstance()
-        n.setStartingPoint(coin.SbVec3f(0,0,0))
+        t=coin.SoType.fromName("SoFCCSysDragger")
+        dragger=t.createInstance()
+        dragger.setStartingPoint(coin.SbVec3f(0,0,0))
+        
+        view = FreeCADGui.ActiveDocument.ActiveView
+        view.addDraggerCallback(dragger, "addFinishCallback", handler)
+        view.addDraggerCallback(dragger, "addStartCallback", handler2)
+
+
         g = coin.SoSeparator()
         tt = coin.SoTransform()
         say(p)
         tt.translation = p.tolist()  
         
         g.addChild(tt)
-        g.addChild(n)
+        g.addChild(dragger)
         self.gg.addChild(g)
-        tns += [n]
+        tns += [dragger]
 
     print ("----------")
     for n in tns:	
@@ -5025,6 +5145,8 @@ def run_FreeCAD_Dragger(self,**k):
     
     
     self.setData("Points_out",pdiffs)
+    
+    self.setData("point_out",pdiffs[0])
     self.points=pdiffs
        
     self.outExec.call()
@@ -5033,6 +5155,10 @@ def run_FreeCAD_Dragger(self,**k):
     if self._preview:
         say("create preview")
         self.preview()
+
+
+
+
 
     
 
@@ -5089,16 +5215,338 @@ def run_FreeCAD_QuadMesh(self):
 
 
 
+def run_FreeCAD_replacePoles(self):
+
+    sh=self.getPinObject("Shape")
+    sf=sh.Surface
+    poles=np.array(sf.getPoles())
+    points=np.array(self.getData('poles'))
+    [uix,vix]=self.getData('polesIndex')
+    #say(poles.shape)
+    #say(points.shape)
+    #say([uix,vix])
+ 
+     # daten holen und neu aufbauen
+    ud=sf.UDegree
+    vd=sf.VDegree
 
 
+    ap=np.array(sf.getPoles())
 
-    #-------------
+    uk=np.array(sf.getUKnots())
+    vk=np.array(sf.getVKnots())
+   
+    
+    mu=np.array(sf.getUMultiplicities())
+    mv=np.array(sf.getVMultiplicities())
+    start=ap[uix,vix]
+    
+    #ap[uix-1:uix+2,vix-1:vix+2] += (points-start)*0.8
+    #ap[uix:uix+1,vix:vix+1] += (points-start)*0.2
+    #ap[uix-1:uix+2,vix-1:vix+2] += (points)*0.8
+    ap[uix:uix+1,vix:vix+1] += (points)*1
+
+    fa=Part.BSplineSurface()
+    fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
+    self.setPinObject('Shape_out',fa.toShape())
+    
+ 
+#-----------------------------
+#    umrechnungsmethode
+ 
+def maskit(poles,vv,t,ui,vi,ut=0.2,vt=0.3, ruA=0,rvA=0, ruB=0,rvB=0,sA=1,sB=1):
+    
+
+    uc,vc,_=poles.shape
+    mask=np.array([vv.x,vv.y,vv.z]*(2+ruA+ruB)*(2+rvA+rvB)).reshape(2+ruA+ruB,2+rvA+rvB,3)
+
+
+    mask[0] *=ut
+    mask[-1] *= 1-ut
+
+    mask[:,0] *= vt
+    mask[:,-1] *= 1 - vt
+
+    # begrenzungen
+
+    su=max(0,ui-ruA)
+    sv=max(0,vi-rvA)
+    eu=min(uc,ui+ruB+2)
+    ev=min(vc,vi+rvB+2)
+
+    msu=max(0,-ui+ruA)
+    msv=max(0,-vi+rvA)
+    meu=min(2+ruA+ruB,uc-ui+1)
+    mev=min(2+rvA+rvB,vc-vi+1)
+    
+    
+    #su +=1;msu += 1
+    #su +=2;msu += 2
+    #eu -=2;meu -= 2
+    
+    mm=mask[msu:meu,msv:mev]
+    s=1
+    #mm[1:-1,1:-1]*= sA
+    mm[1:-1]*= sA
+    mm[:,1:-1]*= sB
+    
+    #say(mm.shape, poles[su:eu,sv:ev].shape)
+    if 10 and mm.shape[0] >=6 and mm.shape[1] >=6:
+        mm[2:-2,2:-2]*= 1.2
+    #say(mm)
+    
+
+    poles[su:eu,sv:ev] += mm*t
+
+    return poles
+    
+
+
+def run_FreeCAD_Editor2(self):
+    try:
+        say(self.shape)
+        sh=self.shape
+    except:
+        sh=self.getPinObject("Shape")
+    
+    sf=sh.Surface
+
+    # daten holen und neu aufbauen
+    ud=sf.UDegree
+    vd=sf.VDegree
+    ap=np.array(sf.getPoles())
+    uk=np.array(sf.getUKnots())
+    vk=np.array(sf.getVKnots())
+    mu=np.array(sf.getUMultiplicities())
+    mv=np.array(sf.getVMultiplicities())
+    
+    def pamo(v):
+        if v== -100:
+            return 0
+        else:
+            return 10**(v/100-1)
+    
+    ut=pamo(self.getData("u"))
+    vt=pamo(self.getData("v"))
+    
+    startu=self.getData("startU")*0.01
+    startv=self.getData("startV")*0.01
+    [umin,umax,vmin,vmax]=sf.toShape().ParameterRange
+    startu=umin+(umax-umin)*(self.getData("startU")+100)/200
+    startv=vmin+(vmax-vmin)*(self.getData("startV")+100)/200
+
+    
+    
+    if self.getData('useStartPosition'):
+        vv=self.getData('startPosition')
+        startu,startv=sf.parameter(vv)
+    else:
+        vv=sf.value(startu,startv)
+    
+    say("startuv",startu,startv)
+    say("----------------vv von position",vv)
+    
+    try:
+        FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.start)
+    except:
+        pass
+
+    
+    
+    if self.getData('displayStart'):
+        say("display Start .............")
+        from pivy import coin
+        
+        trans = coin.SoTranslation()
+        trans.translation.setValue(vv.x,vv.y,vv.z)
+        cub = coin.SoSphere()
+        cub.radius.setValue(3)
+
+        col = coin.SoBaseColor()
+        col.rgb=(1,0,0)
+        
+        myCustomNode = coin.SoSeparator()
+        myCustomNode.addChild(col)
+        myCustomNode.addChild(trans)
+        myCustomNode.addChild(cub)
+        sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+        sg.addChild(myCustomNode)
+        self.start=myCustomNode
+    
+    
+    vvtt=self.getData('targetPosition')
+    if self.getData('useStart'):
+        ui,vi=startu,startv
+    else:
+        ui,vi=sf.parameter(vvtt) 
+    say("reale ziel position ui,vi",ui,vi)
+   
+    
+    try:
+        FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.target)
+    except:
+        pass
+    
+    if self.getData('displayTarget'):
+        from pivy import coin
+        
+        trans = coin.SoTranslation()
+        trans.translation.setValue(vvtt.x,vvtt.y,vvtt.z)
+        cub = coin.SoSphere()
+        cub.radius.setValue(3)
+
+        col = coin.SoBaseColor()
+        col.rgb=(0,1,0)
+        
+        myCustomNode = coin.SoSeparator()
+        myCustomNode.addChild(col)
+        myCustomNode.addChild(trans)
+        myCustomNode.addChild(cub)
+        sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+        sg.addChild(myCustomNode)
+        self.target=myCustomNode
+    
+    
+    
+    
+    
+    vv=vvtt
+    
+    vv0=vvtt-sf.value(ui,vi)
+    # fur deg 1
+    #uix=int(round(ui+0.5))-1
+    #vix=int(round(vi+0.5))-1
+
+    # deg 2
+    uix=int(round(ui+0.5))
+    vix=int(round(vi+0.5))
+
+    [umin,umax,vmin,vmax]=sf.toShape().ParameterRange
+    #say("borders",[umin,umax,vmin,vmax])
+    #say("uix,vix",uix,vix)
+    
+    if self.getData('bordersFrozen'):
+        if uix<1:
+            uix=1
+        if vix<1:
+            vix=1
+        if uix>umax-1:
+            uix=int(umax)-1
+        if vix>vmax-1:
+            vix=int(vmax)-1
+
+    if self.getData('tangentsFrozen'):
+        if uix<2:
+            uix=2
+        if vix<2:
+            vix=2
+        if uix>umax-2:
+            uix=int(umax)-2
+        if vix>vmax-2:
+            vix=int(vmax)-2
+
+        
+
+    #uta=(1+ui-uix)
+    #vta=(1+vi-vix)
+    #say("aaaab            uta vta",uta,vta)
+    #say("uix",uix,vix)
+    #ui,vi=uta,vta
+    
+    st=self.getData('t')+101
+    ut*= st
+    vt*= st
+    
+    #say("----------------",ut,vt) 
+    #say("uix,vix",uix,vix)  
+    
+    #ru=int(round((self.getData('ku')+100)/40))
+    #rv=int(round((self.getData('kv')+100)/40))
+    #say("ku kv,",ru,rv)
+    #s=(self.getData('startU')+100)/10
+    
+    ruA=self.getData('offsetUA')
+    ruB=self.getData('offsetUB')
+    rvA=self.getData('offsetVA')
+    rvB=self.getData('offsetVB')
+    sA=(self.getData('scaleU')+150)/50
+    sB=(self.getData('scaleV')+150)/50
+    
+    
+    
+
+    def dist(param):
+
+        t=param[0]
+        ap=maskit(np.array(sf.getPoles()),vv0,t,uix,vix,ut=ut,vt=vt, ruA=ruA,rvA=rvA,ruB=ruB,rvB=rvB,sA=sA,sB=sB)
+        fa=Part.BSplineSurface()
+        fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
+        return fa.toShape().distToShape(Part.Vertex(vv))[0]
+
+    
+    from scipy import optimize
+    
+    allmethods=[ 
+            'Nelder-Mead' ,
+            'Powell' ,
+            'CG' ,
+            'BFGS' ,
+            'L-BFGS-B', 
+            'TNC',
+            'COBYLA',
+            'SLSQP',
+        ]
+
+    methods=[ 'Nelder-Mead' ]
+    
+    for method in methods:
+        
+        a=time.time()
+        result = optimize.minimize(dist, x0=[0,],  method=method)
+        r=result.x[0]
+
+        say("quality",np.round(result.fun,5),np.round(result.x,2),result.message,method)
+        say("run time for scipy.optimize.minimum",method,round(time.time()-a,3))
+
+    fa=Part.BSplineSurface()
+    ap=maskit(np.array(sf.getPoles()),vv0,r,uix,vix,ut=ut,vt=vt, ruA=ruA,rvA=rvA,ruB=ruB,rvB=rvB,sA=sA,sB=sB)
+    fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
+
+    #zeige nur aenderungen
+    #fa.segment(max(uix-ruA-2,uk[0]),min(uix+2+ruB,uk[-1]),max(vix-rvA-2,vk[0]),min(vix+2+rvB,vk[-1]))
+     
+    shape=fa.toShape()
+
+    self.setPinObject('Shape_out',shape)
+    
+    ui2,vi2=fa.parameter(vv)   
+    #say("neue pos", ui2,vi2)12
+    say("curvature",fa.curvature(ui2,vi2,'Max'))
+      
+    
+    [umin,umax,vmin,vmax]=fa.toShape().ParameterRange
+    aa=fa.uIso(ui2).toShape()
+    bb=fa.vIso(vi2).toShape()
+    
+    if self.getData('displayIso'):
+        #self.setPinObject('Shape_out',Part.Compound([shape,aa,bb]))
+        self.setPinObject('Shape_out',Part.Compound([aa,bb]))
+        
+    self.setData('position_out',[vv,vv])
+
+    say("Abstand", round(fa.toShape().distToShape(Part.Vertex(vv))[0],5))
+
+    self.setData('u_out',(ui2-umin)/(umax-umin)*10)
+    self.setData('v_out',(vi2-vmin)/(vmax-vmin)*10)
+
+
 
 
 
 
 
 #
+
 
 
 
