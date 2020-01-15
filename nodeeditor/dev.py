@@ -5253,22 +5253,20 @@ def run_FreeCAD_replacePoles(self):
  
 #-----------------------------
 #    umrechnungsmethode
+
  
 def maskit(poles,vv,t,ui,vi,ut=0.2,vt=0.3, ruA=0,rvA=0, ruB=0,rvB=0,sA=1,sB=1):
-    
 
     uc,vc,_=poles.shape
     mask=np.array([vv.x,vv.y,vv.z]*(2+ruA+ruB)*(2+rvA+rvB)).reshape(2+ruA+ruB,2+rvA+rvB,3)
 
-
-    mask[0] *=ut
+    mask[0] *= ut
     mask[-1] *= 1-ut
 
     mask[:,0] *= vt
     mask[:,-1] *= 1 - vt
 
     # begrenzungen
-
     su=max(0,ui-ruA)
     sv=max(0,vi-rvA)
     eu=min(uc,ui+ruB+2)
@@ -5279,25 +5277,11 @@ def maskit(poles,vv,t,ui,vi,ut=0.2,vt=0.3, ruA=0,rvA=0, ruB=0,rvB=0,sA=1,sB=1):
     meu=min(2+ruA+ruB,uc-ui+1)
     mev=min(2+rvA+rvB,vc-vi+1)
     
-    
-    #su +=1;msu += 1
-    #su +=2;msu += 2
-    #eu -=2;meu -= 2
-    
     mm=mask[msu:meu,msv:mev]
-    s=1
-    #mm[1:-1,1:-1]*= sA
     mm[1:-1]*= sA
     mm[:,1:-1]*= sB
-    
-    #say(mm.shape, poles[su:eu,sv:ev].shape)
-    if 10 and mm.shape[0] >=6 and mm.shape[1] >=6:
-        mm[2:-2,2:-2]*= 1.2
-    #say(mm)
-    
 
     poles[su:eu,sv:ev] += mm*t
-
     return poles
     
 
@@ -5334,8 +5318,6 @@ def run_FreeCAD_Editor2(self):
     [umin,umax,vmin,vmax]=sf.toShape().ParameterRange
     startu=umin+(umax-umin)*(self.getData("startU")+100)/200
     startv=vmin+(vmax-vmin)*(self.getData("startV")+100)/200
-
-    
     
     if self.getData('useStartPosition'):
         vv=self.getData('startPosition')
@@ -5350,7 +5332,6 @@ def run_FreeCAD_Editor2(self):
         FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.start)
     except:
         pass
-
     
     
     if self.getData('displayStart'):
@@ -5444,26 +5425,10 @@ def run_FreeCAD_Editor2(self):
             uix=int(umax)-2
         if vix>vmax-2:
             vix=int(vmax)-2
-
-        
-
-    #uta=(1+ui-uix)
-    #vta=(1+vi-vix)
-    #say("aaaab            uta vta",uta,vta)
-    #say("uix",uix,vix)
-    #ui,vi=uta,vta
     
     st=self.getData('t')+101
     ut*= st
     vt*= st
-    
-    #say("----------------",ut,vt) 
-    #say("uix,vix",uix,vix)  
-    
-    #ru=int(round((self.getData('ku')+100)/40))
-    #rv=int(round((self.getData('kv')+100)/40))
-    #say("ku kv,",ru,rv)
-    #s=(self.getData('startU')+100)/10
     
     ruA=self.getData('offsetUA')
     ruB=self.getData('offsetUB')
@@ -5482,7 +5447,6 @@ def run_FreeCAD_Editor2(self):
         fa=Part.BSplineSurface()
         fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
         return fa.toShape().distToShape(Part.Vertex(vv))[0]
-
     
     from scipy import optimize
     
@@ -5511,12 +5475,15 @@ def run_FreeCAD_Editor2(self):
     fa=Part.BSplineSurface()
     ap=maskit(np.array(sf.getPoles()),vv0,r,uix,vix,ut=ut,vt=vt, ruA=ruA,rvA=rvA,ruB=ruB,rvB=rvB,sA=sA,sB=sB)
     fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
-
+    
     #zeige nur aenderungen
-    #fa.segment(max(uix-ruA-2,uk[0]),min(uix+2+ruB,uk[-1]),max(vix-rvA-2,vk[0]),min(vix+2+rvB,vk[-1]))
-     
+    fb=fa.copy()
+    fb.segment(max(uix-ruA-2,uk[0]),min(uix+2+ruB,uk[-1]),max(vix-rvA-2,vk[0]),min(vix+2+rvB,vk[-1]))
+    col=[fb.uIso(k).toShape() for k in fb.getUKnots()]
+    col += [fb.vIso(k).toShape() for k in fb.getVKnots()]
+    
     shape=fa.toShape()
-
+    
     self.setPinObject('Shape_out',shape)
     
     ui2,vi2=fa.parameter(vv)   
@@ -5530,7 +5497,7 @@ def run_FreeCAD_Editor2(self):
     
     if self.getData('displayIso'):
         #self.setPinObject('Shape_out',Part.Compound([shape,aa,bb]))
-        self.setPinObject('Shape_out',Part.Compound([aa,bb]))
+        self.setPinObject('Shape_out',Part.Compound(col+ [aa,bb]))
         
     self.setData('position_out',[vv,vv])
 
@@ -5540,6 +5507,189 @@ def run_FreeCAD_Editor2(self):
     self.setData('v_out',(vi2-vmin)/(vmax-vmin)*10)
 
 
+
+# glättenb
+
+def run_FreeCAD_IronCurve(self):
+    sh=self.getPinObject('Shape')
+    pts=sh.Curve.getPoles()
+    
+    col=[]
+    w=self.getData("weight")
+
+    def run(pts,k=1):
+
+        l=len(pts)
+
+        pts2= [pts[0]] + [ (pts[i-1]+2*pts[i]+pts[i+1])/4 for i in range(1,l-1)] +[pts[-1]]
+        pts2= [pts[0]] + [ (pts[i-1]+w*pts[i]+pts[i+1])/(2+w) for i in range(1,l-1)] +[pts[-1]]
+
+        dd=[FreeCAD.Vector()]+[(pts[i]-pts2[i]).normalize()*k for i in range(1,l-1)]+[FreeCAD.Vector()]
+        pts3=[p+q for p,q in zip(pts2,dd)]
+        
+        
+        #
+        for i in range(1,l-3):
+            
+            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+3]).Length:
+                pts3=pts3[:i+1] +[pts3[i+3],pts3[i+2],pts3[i+1]] + pts3[i+4:]
+
+        for i in range(1,l-2):           
+            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+2]).Length:
+               pts3=pts3[:i+1] +[pts3[i+2],pts3[i+1]] + pts3[i+3:]
+        
+        c=Part.BSplineCurve(pts3)
+        return pts3,c.toShape()
+
+    loopsa=self.getData('loopsA')
+    k=self.getData('k')
+    say(k)
+    #k=3
+
+    loopsb=self.getData('loopsB')
+    say(loopsa,loopsb)
+    for i in range(loopsa+1):
+        pts,c=run(pts)
+        col.append(c)
+    for i in range(loopsb+1):
+        pts,c=run(pts,k)
+        col.append(c)
+
+
+    '''
+        Discretizes the curve and returns a list of points.
+        The function accepts keywords as argument:
+        discretize(Number=n) => gives a list of 'n' equidistant points
+        discretize(QuasiNumber=n) => gives a list of 'n' quasi equidistant points (is faster than the method above)
+        discretize(Distance=d) => gives a list of equidistant points with distance 'd'
+        discretize(Deflection=d) => gives a list of points with a maximum deflection 'd' to the curve
+        discretize(QuasiDeflection=d) => gives a list of points with a maximum deflection 'd' to the curve (faster)
+        discretize(Angular=a,Curvature=c,[Minimum=m]) => gives a list of points with an angular deflection of 'a'
+                                            and a curvature deflection of 'c'. Optionally a minimum number of points
+                                            can be set which by default is set to 2.        
+    '''
+    k=self.getData('deflection')
+    if k>0:
+        ptsdd=c.discretize(QuasiDeflection=k*0.1)
+        ptsdd=c.discretize(Deflection=k*0.1)
+        self.setPinObject('Shape_out',Part.makePolygon(ptsdd))    
+
+        deflp=Part.makePolygon(ptsdd)
+        defl=Part.BSplineCurve(ptsdd).toShape()
+        say("deflection",len(ptsdd))
+        self.setPinObject('Shape_out',defl)
+        #self.setPinObject('Shape_out',Part.Compound([deflp,defl]))
+        self.setData('points',ptsdd)
+    else:
+    
+        #self.setPinObject('Shape_out',Part.Compound(col))
+        self.setPinObject('Shape_out',col[-1])
+        self.setData('points',pts)
+    
+    FreeCAD.ActiveDocument.recompute()
+
+
+
+def run_FreeCAD_IronSurface(self):
+    sh=self.getPinObject('Shape')
+    ptsarr=sh.Surface.getPoles()
+    
+    col=[]
+    w=self.getData("weight")
+
+    def run(pts,k=1):
+
+        l=len(pts)
+
+        pts2= [pts[0]] + [ (pts[i-1]+2*pts[i]+pts[i+1])/4 for i in range(1,l-1)] +[pts[-1]]
+        pts2= [pts[0]] + [ (pts[i-1]+w*pts[i]+pts[i+1])/(2+w) for i in range(1,l-1)] +[pts[-1]]
+
+        dd=[FreeCAD.Vector()]+[FreeCAD.Vector((pts[i]-pts2[i])).normalize()*k for i in range(1,l-1)]+[FreeCAD.Vector()]
+        pts3=[FreeCAD.Vector(p+q) for p,q in zip(pts2,dd)]
+        
+        
+        #
+        for i in range(1,l-3):
+            
+            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+3]).Length:
+                pts3=pts3[:i+1] +[pts3[i+3],pts3[i+2],pts3[i+1]] + pts3[i+4:]
+
+        for i in range(1,l-2):           
+            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+2]).Length:
+               pts3=pts3[:i+1] +[pts3[i+2],pts3[i+1]] + pts3[i+3:]
+        
+        c=Part.BSplineCurve(pts3)
+        return pts3,c.toShape()
+
+    loopsa=self.getData('loopsA')
+    k=self.getData('k')
+    say(k)
+    #k=3
+
+    
+
+    ptsarr2=[]
+    for pts in ptsarr:
+
+        loopsb=self.getData('loopsB')
+        #say(loopsa,loopsb)
+        for i in range(loopsa+1):
+            pts,c=run(pts)
+        #    col.append(c)
+        for i in range(loopsb+1):
+            pts,c=run(pts,k)
+            
+        ptsarr2 += [pts]
+        #col.append(c)
+    
+    ptsarr=np.array(ptsarr2).swapaxes(0,1)
+
+    ptsarr2=[]
+    for pts in ptsarr:
+
+        loopsb=self.getData('loopsB')
+        #say(loopsa,loopsb)
+        for i in range(loopsa+1):
+            pts,c=run(pts)
+        #    col.append(c)
+        for i in range(loopsb+1):
+            pts,c=run(pts,k)
+            
+        ptsarr2 += [pts]
+        col.append(c)
+    
+    ptsarr=np.array(ptsarr2).swapaxes(0,1)
+    say("----------",ptsarr.shape)
+    
+
+
+    k=self.getData('deflection')
+    if k>0:
+        ptsdd=c.discretize(QuasiDeflection=k*0.1)
+        ptsdd=c.discretize(Deflection=k*0.1)
+        self.setPinObject('Shape_out',Part.makePolygon(ptsdd))    
+
+        deflp=Part.makePolygon(ptsdd)
+        defl=Part.BSplineCurve(ptsdd).toShape()
+        say("deflection",len(ptsdd))
+        self.setPinObject('Shape_out',defl)
+        #self.setPinObject('Shape_out',Part.Compound([deflp,defl]))
+        self.setData('points',ptsdd)
+    else:
+    
+        self.setPinObject('Shape_out',Part.Compound(col))
+        #self.setPinObject('Shape_out',col[-1])
+        #self.setData('points',pts)
+    
+    
+    say('####')
+    self.setData('points',ptsarr.tolist())
+    say(ptsarr[0,0])
+    FreeCAD.ActiveDocument.recompute()
+
+
+
+#
 
 
 

@@ -984,7 +984,7 @@ class FreeCAD_Editor2(FreeCadNodeBase2):
         a=self.createInputPin("targetPosition",'VectorPin')
 
 
-		#feineinstellung
+        #feineinstellung
         a=self.createInputPin('u',"Integer")
         a.setInputWidgetVariant("Slider")
         a=self.createInputPin('v',"Integer")
@@ -1050,6 +1050,80 @@ class FreeCAD_Editor2(FreeCadNodeBase2):
             pass
 
 
+class FreeCAD_IronCurve(FreeCadNodeBase2):
+    '''
+    '''
+
+    def __init__(self, name="MyTripod",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('loopsA',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(1,10)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('loopsB',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(0,20)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('k',"Integer",0)
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('deflection',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('weight',"Integer",2)
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(0,10)}
+        a.setInputWidgetVariant("Simple2")
+        
+        self.createInputPin('Shape', 'ShapePin')
+        self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+class FreeCAD_IronSurface(FreeCadNodeBase2):
+    '''
+    '''
+
+    def __init__(self, name="MyTripod",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)  
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('loopsA',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(1,10)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('loopsB',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(0,20)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('k',"Integer",0)
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('weight',"Integer",2)
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(0,10)}
+        a.setInputWidgetVariant("Simple2")
+        
+        self.createInputPin('Shape', 'ShapePin')
+        self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+
 
 def nodelist():
     return [
@@ -1080,6 +1154,7 @@ def nodelist():
                 FreeCAD_replacePoles,
                 FreeCAD_Editor,
                 FreeCAD_Editor2,
-                
+                FreeCAD_IronCurve,
+                FreeCAD_IronSurface,
 
         ]
