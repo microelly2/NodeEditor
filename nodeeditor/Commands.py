@@ -1993,7 +1993,7 @@ def getfun(fname):
     return(None,None)
 
 
-def T2():
+def dumpScriptforGraph():
     ''' skript zum aufsetzen graph'''
     
     nodes=FreeCAD.PF.graphManager.get().getAllNodes()
@@ -2014,7 +2014,7 @@ def T2():
         else:
             say("_{}=pfwrap.createNode('{}','{}','{}')".format(n.name,tt[2],n.__class__.__name__,n.name))    
             
-        say("_{}.setPosition({},{})".format(n.name,n.x,n.y))
+        say("_{}.setPosition({},{})".format(n.name,int(round(n.x)),int(round(n.y))))
         say("gg.addNode(_{})".format(n.name))
         say()
         say("#{}.setData(pinname,value)".format(n.name))
