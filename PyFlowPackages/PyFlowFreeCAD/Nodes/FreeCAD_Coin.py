@@ -16,6 +16,8 @@ class FreeCAD_ShapePattern(FreeCadNodeBase2):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         
         a=self.createInputPin('hide','Boolean')
+        a.description='hide or show pattern'
+        
         a = self.createInputPin('mode', 'String')
         a.annotationDescriptionDict={ 
                 "editable": False,
@@ -23,34 +25,41 @@ class FreeCAD_ShapePattern(FreeCadNodeBase2):
             }
         a.setInputWidgetVariant("EnumWidget")
         a.setData("cone")
+        a.description='predefined object to display'
+        
         a=self.createInputPin('height',"Integer")
         a.setInputWidgetVariant("Slider")
+        a.description='to scale the pattern in z direction'
+        
         a=self.createInputPin('width',"Integer")
         a.setInputWidgetVariant("Slider")
+        a.description='to scale the pattern in xy directions'
         a=self.createInputPin('randomize',"Integer")
         a.setInputWidgetVariant("Slider")
-
+        a.description='use it to create the pattern in different sizes for example with tree for a forest'
         
         a=self.createInputPin('points', 'VectorPin')
         a.setInputWidgetVariant("NO")
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
+        a.description="list fo vectors where the pattern should accure"
 
         a=self.createInputPin('forces', 'VectorPin')
         a.setInputWidgetVariant("NO")
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
+        a.description='is used to display the line pattern: direction and length of the line'
 
 
         a=self.createInputPin('color', 'VectorPin')
         a.setInputWidgetVariant("NO")
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
+        a.description='list of vector to define the rgb color for each pattern'
 
         a=self.createInputPin('radius', 'FloatPin',10)
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
-
   
         self.createOutputPin('Points_out', 'VectorPin')
 
@@ -76,7 +85,7 @@ class FreeCAD_QuadMesh(FreeCadNodeBase2):
 
 class FreeCAD_Dragger(FreeCadNodeBase):
     '''
-
+	a coin tool to display a draggable placement or a list of such placements
     '''
 
     dok = 0
@@ -118,9 +127,8 @@ class FreeCAD_Dragger(FreeCadNodeBase):
         except:
             pass
 
-
-
-    def XXTick(self, delta):     
+	# example implementation for automated running inside pyflow
+    def XX_DEACTIVETED_Tick(self, delta):     
         
         if self.getData("ticktime")==-100 or self.getData('tickOff'):
             return

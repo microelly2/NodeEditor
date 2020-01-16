@@ -895,64 +895,9 @@ class FreeCAD_replacePoles(FreeCadNodeBase2):
         self.createOutputPin('Shape_out', 'ShapePin')
 
 
+
+
 class FreeCAD_Editor(FreeCadNodeBase2):
-    '''
-    '''
-
-    def __init__(self, name="MyTripod",**kvargs):
-
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-
-        self.inExec = self.createInputPin("commit", 'ExecPin', None, self.commit)
-        self.inExec = self.createInputPin("rollback", 'ExecPin', None, self.rollback)
-        
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
-        
-        a=self.createInputPin("position",'VectorPin')
-
-        a=self.createInputPin('u',"Integer")
-        a.setInputWidgetVariant("Slider")
-        a=self.createInputPin('v',"Integer")
-        a.setInputWidgetVariant("Slider")
-        
-        
-        self.createInputPin("displayIso", 'Boolean', False)
-        
-        self.createInputPin("useXYZT", 'Boolean', False)
-        
-
-        
-        a=self.createInputPin('x',"Integer")
-        a.setInputWidgetVariant("Slider")
-        a=self.createInputPin('y',"Integer")
-        a.setInputWidgetVariant("Slider")
-        a=self.createInputPin('z',"Integer")
-        a.setInputWidgetVariant("Slider")
-        a=self.createInputPin('t',"Integer")
-        a.setInputWidgetVariant("Slider")
-        
-
-        self.createInputPin('Shape', 'ShapePin')
-        self.createOutputPin('position_out', 'VectorPin')
-        self.createInputPin("directionNormale", 'Boolean', False)
-        self.createOutputPin('u_out', 'FloatPin')
-        self.createOutputPin('v_out', 'FloatPin')
-        self.createOutputPin('Shape_out', 'ShapePin')
-
-        
-    def commit(self,*arg,**kwarg):
-        self.shape=self.getPinObject("Shape_out")
-        
-    def rollback(self,*arg,**kwarg):
-        try:
-            del(self.shape)
-        except:
-            pass
-
-
-class FreeCAD_Editor2(FreeCadNodeBase2):
     '''
     '''
 
@@ -1100,22 +1045,18 @@ class FreeCAD_IronSurface(FreeCadNodeBase2):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         a=self.createInputPin('loopsA',"Integer")
-        a.setInputWidgetVariant("Slider")
         a.annotationDescriptionDict={ "ValueRange":(1,10)}
         a.setInputWidgetVariant("Simple2")
 
         a=self.createInputPin('loopsB',"Integer")
-        a.setInputWidgetVariant("Slider")
         a.annotationDescriptionDict={ "ValueRange":(0,20)}
         a.setInputWidgetVariant("Simple2")
 
         a=self.createInputPin('k',"Integer",0)
-        a.setInputWidgetVariant("Slider")
         a.annotationDescriptionDict={ "ValueRange":(-5,20)}
         a.setInputWidgetVariant("Simple2")
 
         a=self.createInputPin('weight',"Integer",2)
-        a.setInputWidgetVariant("Slider")
         a.annotationDescriptionDict={ "ValueRange":(0,10)}
         a.setInputWidgetVariant("Simple2")
         
@@ -1153,7 +1094,7 @@ def nodelist():
                 FreeCAD_xyz2uv,
                 FreeCAD_replacePoles,
                 FreeCAD_Editor,
-                FreeCAD_Editor2,
+
                 FreeCAD_IronCurve,
                 FreeCAD_IronSurface,
 
