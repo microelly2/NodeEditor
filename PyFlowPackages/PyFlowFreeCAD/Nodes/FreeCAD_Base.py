@@ -122,7 +122,16 @@ class FreeCadNodeBase(NodeBase):
     def bake(self, *args, **kwargs):
         import nodeeditor.dev
         reload (nodeeditor.dev)
-        a=eval("nodeeditor.dev.run_{}(self,bake=True)".format(self.__class__.__name__))
+        try: s=self.getPinObject('Shape_out')
+        except:
+            say("nothing to bake")
+            return
+        
+        # a=eval("nodeeditor.dev.run_{}(self,bake=True)".format(self.__class__.__name__))
+        
+        f = w.addObject('Part::Feature','baked')
+        f.Shape=self.getPinObject('Shape_out')
+
     
     def refresh(self, *args, **kwargs):
         self.compute(*args, **kwargs)
