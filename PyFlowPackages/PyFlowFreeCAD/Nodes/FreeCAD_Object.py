@@ -2224,7 +2224,7 @@ class FreeCAD_Expression(FreeCadNodeBase2):
    
         a=self.createInputPin('modules', 'StringPin','time')
         a.description="required module names separated by comma"
-        a=self.createInputPin('expression', 'StringPin',time.time()+a)
+        a=self.createInputPin('expression', 'StringPin','time.time()+a')
         a.description="expression with at most 4 variables a, b, c, d"
         
         a=self.createInputPin('a', 'AnyPin')

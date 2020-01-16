@@ -1757,7 +1757,8 @@ def createNewNodeDocu():
     createNodeDocu(True)
 
 def T3():
-    createNewNodeDocu()
+    #createNewNodeDocu()
+    pass
 
 def createNodeDocu(onlyNew=False):
     '''

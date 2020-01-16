@@ -95,15 +95,15 @@ git clone https://github.com/microelly2/NodeEditor
   ```python
 import Qt
 >>> Qt
-#<module 'Qt' from '/home/me/.FreeCAD/Mod.PyFlow/Qt.py-master/Qt.py'>
+#<module 'Qt' from '/home/me/.FreeCAD/Mod/Qt.py-master/Qt.py'>
 print(Qt)
-#<module 'Qt' from '/home/me/.FreeCAD/Mod.PyFlow/Qt.py-master/Qt.py'>
+#<module 'Qt' from '/home/me/.FreeCAD/Mod/Qt.py-master/Qt.py'>
 import blinker
 print(blinker)
 #<module 'blinker' from '/usr/local/lib/python3.4/dist-packages/blinker/__init__.py'>
 import PyFlow
 print(PyFlow)
-#<module 'PyFlow' from '/home/me/.FreeCAD/Mod.PyFlow/PyFlow/PyFlow/__init__.py'>
+#<module 'PyFlow' from '/home/me/.FreeCAD/Mod/PyFlow/PyFlow/__init__.py'>
 import numpy
 print(numpy)
 #<module 'numpy' from '/tmp/.mount_FreeCAjzH7MR/usr/lib/python3.7/site-packages/numpy/__init__.py'>
