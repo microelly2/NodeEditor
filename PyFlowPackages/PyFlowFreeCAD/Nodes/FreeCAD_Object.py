@@ -1210,6 +1210,7 @@ class FreeCAD_View3D(FreeCadNodeBase2):
         description = " name of the workspace where the view is displayed, if empty  the active document is used" 
         self.createInputPin('Shape_in', 'ShapePin').\
         description= "shape to display"
+        self.createInputPin('off','Boolean')
 
 
     @staticmethod
@@ -2324,6 +2325,94 @@ class FreeCAD_Nurbs(FreeCadNodeBase2):
         return FreeCAD_Nurbs.__doc__
 
 
+class FreeCAD_Loft(FreeCadNodeBase2):
+    '''
+    'makeLoft(list of wires,[solid=False,ruled=False,closed=False,maxDegree=5]) -- Create a loft shape.'
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+   
+        a=self.createInputPin('shapes', 'ShapeListPin')
+        a=self.createInputPin('solid', 'Boolean')
+        a=self.createInputPin('ruled', 'Boolean')
+        a=self.createInputPin('closed', 'Boolean')
+        a=self.createInputPin('maxDegree', 'Integer',3)
+        a.annotationDescriptionDict={ "ValueRange":(1,10)}
+        a.setInputWidgetVariant("Simple2")
+
+        
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+class FreeCAD_Sweep(FreeCadNodeBase2):
+    '''
+    'makeSweepSurface(edge(path),edge(profile),[float]) -- Create a profile along a path.'
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+   
+        a=self.createInputPin('path', 'ShapePin')
+        a=self.createInputPin('profile', 'ShapePin')
+        a=self.createInputPin('f', 'Float')
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+
+class FreeCAD_Slice(FreeCadNodeBase2):
+    '''
+    
+>>> wires=list()
+>>> shape=FreeCAD.ActiveDocument.Box.Shape
+>>> 
+>>> for i in shape.slice(Base.Vector(0,0,1),5):
+>>>     wires.append(i)
+>>> 
+>>> comp=Part.Compound(wires)
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+   
+        a=self.createInputPin('shape', 'ShapePin')
+        a=self.createInputPin('direction', 'VectorPin')
+        a=self.createInputPin('distance', 'Float')
+        
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+class FreeCAD_IfElse(FreeCadNodeBase2):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.ifExec = self.createOutputPin('if', 'ExecPin')
+        self.elseExec = self.createOutputPin('else', 'ExecPin')
+   
+        a=self.createInputPin('flag', 'Boolean')
+        a=self.createOutputPin('out', 'Boolean')
+
+
 def nodelist():
     return [
                 FreeCAD_Toy,
@@ -2383,4 +2472,10 @@ def nodelist():
                 FreeCAD_Expression,
                 FreeCAD_Seam,
                 FreeCAD_Nurbs,
+                FreeCAD_Loft,
+                #FreeCAD_Sweep,
+                #FreeCAD_RuledSurface,
+                #FreeCAD_Slice,
+                FreeCAD_IfElse,
+                
         ]

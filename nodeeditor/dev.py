@@ -495,6 +495,7 @@ def run_FreeCAD_View3D(self, *args, **kwargs):
     timeA=time.time()
     shape=self.getPinObject('Shape_in')
     s=shape
+    say("--------",s,s.Volume,s.Area)
     l=FreeCAD.listDocuments()
     if workspace=='' or workspace=='None':
         w=FreeCAD.ActiveDocument
@@ -520,13 +521,20 @@ def run_FreeCAD_View3D(self, *args, **kwargs):
     f=w.getObject(name)
     if f == None:
         f = w.addObject('Part::Feature', name)
+
+    say("off-------",self.getData('off'))
+    if self.getData('off'):
+        f.ViewObject.hide()
+        return
+    else:
+        f.ViewObject.show()
+
     if s  !=  None:
-        if s.Volume != 0:
+        if 1 or s.Volume != 0:
             f.Shape=s
         else:  
             t=Part.makeBox(0.001,0.001,0.001)#.toShape()
             f.Shape=t
-
 
     f.recompute()
     f.purgeTouched()
@@ -1873,6 +1881,8 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
 
     colf=shapes
 
+    
+
     for tol in range(1000):
         colf2=[c.copy() for c in colf]
         try:
@@ -1880,6 +1890,7 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
             for f in colf2:
                 f.Tolerance=tol
             sh=Part.Shell(colf2)
+
             sol=Part.Solid(sh)
             say (sol.isValid())
             if sol.isValid():
@@ -5054,9 +5065,15 @@ def run_dragger(self,**kv):
 
 def run_FreeCAD_Dragger(self,**k):
 
+    try:
+        self.tns
+    except:
+        run_dragger(self)
+    
     points=self.getData("points")
     par=np.array(points)
     pdiffs=[]
+    
 
     for n in self.tns:	
         pdiffs += [-FreeCAD.Vector(n.getLocalStartingPoint().getValue())]
@@ -5572,5 +5589,42 @@ def run_FreeCAD_IronSurface(self):
     FreeCAD.ActiveDocument.recompute()
 
 
+def run_FreeCAD_Sweep(self):
+
+    profile=FreeCAD.ActiveDocument.Circle.Shape.Edge1
+    path=FreeCAD.ActiveDocument.Sketch.Shape.Edge1.copy()
+    #path.Curve.segment(1,5)
+    say(path.Curve.getKnots())
+    #path.reverse()
+    #profile.reverse()
+    
+    #path=Part.makePolygon([FreeCAD.Vector(),FreeCAD.Vector(0,100,0)])
+    
+    sweep=Part.makeSweepSurface(path,profile,self.getData('f'))
+    #sweep=Part.makeSweepSurface(path,profile,10)
+    say("hh")
+    self.setPinObject('Shape_out',sweep)
+
+def run_FreeCAD_Loft(self):
+
+    shapes=self.getPinObjectsA('shapes')
+    ws=[s.Wires[0] for s in shapes]
+    
+    loft=Part.makeLoft(ws,
+        self.getData('solid'),self.getData('ruled'),
+        self.getData('closed'),self.getData('maxDegree'))
+    
+    self.setPinObject('Shape_out',loft)
+    
+    
+def run_FreeCAD_IfElse(self):
+    self.setData('out',self.getData('flag'))
+    self.outExec.call()
+    if self.getData('flag'):
+        self.ifExec.call()
+    else:
+        self.elseExec.call()
+    
+    
 #
 
