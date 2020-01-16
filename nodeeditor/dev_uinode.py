@@ -24,7 +24,18 @@ if 1:
             self._rawNode._debug = True
 
     def bake(self,*args,**kvargs):
-        say("bake from gui not implemented - use for test icons")
+        #say("bake from gui not implemented - use for test icons")
+        s=self._rawNode.getPinObject('Shape_out')
+        try: 
+            s=self._rawNode.getPinObject('Shape_out')
+        except:
+            say("nothing to bake")
+            return
+     
+        
+        f = FreeCAD.ActiveDocument.addObject('Part::Feature','baked')
+        f.Shape=s
+
 
 
 #the add action
@@ -59,20 +70,20 @@ def addActions(self,RESOURCES_DIR):
 import os
 
 def loadimage(self,RESOURCES_DIR):
-	'''load the icon for a node'''
+    '''load the icon for a node'''
 
-	image=RESOURCES_DIR + "/"+ str(self._rawNode.__class__.__name__).lower()+".svg"
-	if os.path.exists(image):
-		self.image = image
-		self.svgIcon.setElementId("ALL")
+    image=RESOURCES_DIR + "/"+ str(self._rawNode.__class__.__name__).lower()+".svg"
+    if os.path.exists(image):
+        self.image = image
+        self.svgIcon.setElementId("ALL")
 
-		self.svgIcon.setElementId("layer1")
-	else:
-		self.image = RESOURCES_DIR + "/freecad.svg"
-		self.svgIcon.setElementId("layer1")
+        self.svgIcon.setElementId("layer1")
+    else:
+        self.image = RESOURCES_DIR + "/freecad.svg"
+        self.svgIcon.setElementId("layer1")
 
-	self.svgIcon.setScale(0.5)
-	self.svgIcon.setPos(-20, -20)
+    self.svgIcon.setScale(0.5)
+    self.svgIcon.setPos(-20, -20)
 
 
 
