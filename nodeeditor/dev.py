@@ -1,6 +1,11 @@
 import numpy as np
 import random
 import time
+import os.path
+from os import path
+import matplotlib.pyplot as plt
+import scipy.interpolate
+
 
 import FreeCAD
 import FreeCADGui
@@ -13,6 +18,9 @@ from PyFlow import CreateRawPin
 from nodeeditor.say import *
 import nodeeditor.store as store
 import nodeeditor.pfwrap as pfwrap
+
+from pivy import coin
+
 
 
 def runraw(self):
@@ -261,7 +269,6 @@ def run_FreeCAD_VectorArray(self,*args, **kwargs):
 
 def run_FreeCAD_Plot(self,*args, **kwargs):
 
-    import matplotlib.pyplot as plt
     
     sayl()
     mode=self.getData("Figure")
@@ -1264,9 +1271,7 @@ def cylindricprojection(self,*args, **kwargs):
 def run_FreeCAD_2DGeometry(self,*args, **kwargs):
     
     sayl()
-    #say(self.Lock)
-    #self.Lock=0
-    import os
+
     if os.path.exists('/tmp/lock'):
         say("Abbruch")
         return
@@ -3099,7 +3104,6 @@ def run_FreeCAD_Blinker(self):
         say("NDE ALL",i)
 
     def sleeper2(i):
-
             sleeper2a(i)
 
 
@@ -3108,12 +3112,7 @@ def run_FreeCAD_Blinker(self):
         a=time.time()
         say("start  outExec.call",i)
         say('##example set color')
-    
-
-    
         say("Ende call ",i,time.time()-a)
-
-
 
 
     def looper(j):
@@ -3188,12 +3187,10 @@ def run_FreeCAD_Receiver(self):
 
 
 def myExecute_Receiver(proxy,fp):
-#    sayl()
     proxy.name=fp.Name
     run_FreeCAD_Receiver(proxy)
 
 def myExecute_Blinker(proxy,fp):
-#    sayl()
     proxy.name=fp.Name
     run_FreeCAD_Blinker(proxy)
 
@@ -3827,7 +3824,6 @@ def run_PF_APP_WindowMinimized(app,event):
 def run_PF_APP_WindowNOMinimized(app,event):
     '''triggered from PyFlow.App'''
 
-    import nodeeditor.pfwrap as pfwrap
 
     pf=pfwrap.getInstance()
     for node in pfwrap.getInstance().graphManager.get().getAllNodes():
@@ -4060,9 +4056,7 @@ def run_FreeCAD_Zip(self):
 
 
 def run_FreeCAD_ImportFile(self):
-    sayl()
 
-    import os, time
     try:
         self.last
     except:
@@ -4120,9 +4114,6 @@ def run_FreeCAD_ImportFile(self):
 #----------------------------------------------------------------------------
 
 
-import numpy as np
-import matplotlib.pyplot as plt
-import scipy.interpolate
 
 def interpolate(x,y,z, gridsize,mode='thin_plate',rbfmode=True,shape=None):
 
@@ -4269,13 +4260,8 @@ def run_FreeCAD_Elevation(self):
     nb=createElevationGrid(points)
     self.setData("poles",nb)
 
+ 
 
-
-  
-    #----------------------------------------------------------------------------
-
-import numpy as np
-import scipy.interpolate
     
 def createElevationGrid(pts,mode='thin_plate',rbfmode=True,gridCount=20,bound=0,noise=0.0001):
     
@@ -4385,7 +4371,6 @@ def run_FreeCAD_Camera(self):
     cam.heightAngle.get()
     '''
   
-    from pivy import coin
     v=FreeCADGui.ActiveDocument.ActiveView
     
     #FreeCADGui.activeDocument().activeView().setCameraType("Perspective")
@@ -4459,8 +4444,6 @@ def run_FreeCAD_Camera(self):
     if self.getData("trackimages"):
         
         fn=self.getData("trackName")
-        import os.path
-        from os import path
         dn="/tmp/{}".format(fn)
         dirname = os.path.dirname(dn) 
         if not path.exists(dirname):
@@ -4769,10 +4752,9 @@ def run_FreeCAD_Nurbs(self):
     
 def run_FreeCAD_ShapePattern(self):
 
-
     ptsa=np.array(self.getData('points'))
-    
-    
+
+    # todo 3 kinds of input: single vector, list of vectors, array of vectors
     
     try:
         (a,b,c)=ptsa.shape
@@ -4784,10 +4766,6 @@ def run_FreeCAD_ShapePattern(self):
         say("single point")
         pts=np.array([FreeCAD.Vector(ptsa)]).reshape(1,3)
     
-    #pts=[FreeCAD.Vector(ptsa)]
-    #say("-pts ",pts)
-    
-    
     
     ptsa=np.array(self.getData('forces'))
 
@@ -4797,8 +4775,6 @@ def run_FreeCAD_ShapePattern(self):
     except:
         diffs=ptsa
     
-    #say(ptsa.shape)
-    #say("######",diffs.shape,pts.shape)
     try:
         if diffs.shape==pts.shape:
             diffs=[a-b for a,b in zip(diffs,pts)]
@@ -4838,15 +4814,13 @@ def run_FreeCAD_ShapePattern(self):
         return
    
     
-    import time
-    from pivy import coin
 
     a=time.time()
     sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
     sg2= coin.SoSeparator()
 
     mode=self.getData('mode')
-    #say("!",mode)
+
     for p,c,r,d in zip(pts,colors,radius,diffs):
             
             trans = coin.SoTranslation()
@@ -4856,22 +4830,17 @@ def run_FreeCAD_ShapePattern(self):
                 trans.translation.setValue(p[0],p[1],p[2])
                 cub = coin.SoSphere()
                 cub.radius.setValue(2*r)
-
                 col = coin.SoBaseColor()
                 col.rgb=(c[2],c[0],c[1])
-                
                 myCustomNode = coin.SoSeparator()
                 myCustomNode.addChild(col)
                 myCustomNode.addChild(trans)
-                #myCustomNode.addChild(myRotation) 
                 myCustomNode.addChild(cub)
 
             elif mode =='line':
-                #say(d)
                 p1=(p[0],p[1],p[2])
                 p1=(p[0]+d[0],p[1]+d[1],p[2]+d[2]*h)
                 p2=(p[0],p[1],p[2])
-                from pivy import coin
                 dash = coin.SoSeparator()
                 v = coin.SoVertexProperty()
                 v.vertex.set1Value(0, p1)
@@ -4879,37 +4848,26 @@ def run_FreeCAD_ShapePattern(self):
                 l = coin.SoLineSet()
                 l.vertexProperty = v
                 dash.addChild(l)
-
-
                 drawstyle = coin.SoDrawStyle()
                 drawstyle.lineWidth =2
-
                 col = coin.SoBaseColor()
-                #col.rgb=(c[2],c[0],c[1])
-
                 myCustomNode = coin.SoSeparator()
                 myCustomNode.addChild(col)
                 myCustomNode.addChild(drawstyle)
                 myCustomNode.addChild(trans)
-
-                
                 myCustomNode.addChild(dash)
-
 
             elif mode =='cube':
                 trans.translation.setValue(p[0],p[1],p[2]+0.5*h)
                 cub = coin.SoCube()
                 cub.width.setValue(2*r)
                 cub.height.setValue(2*r)
-                cub.depth.setValue(h) #hoehe
-
+                cub.depth.setValue(h)
                 col = coin.SoBaseColor()
-                col.rgb=(c[2],c[0],c[1])
-                
+                col.rgb=(c[2],c[0],c[1])                
                 myCustomNode = coin.SoSeparator()
                 myCustomNode.addChild(col)
                 myCustomNode.addChild(trans)
-                #myCustomNode.addChild(myRotation) 
                 myCustomNode.addChild(cub)
 
             elif mode =='cone':
@@ -4918,50 +4876,47 @@ def run_FreeCAD_ShapePattern(self):
                 cub.height.setValue(h)
                 cub.bottomRadius.setValue(2*r)
                 myRotation = coin.SoRotationXYZ()
-                myRotation.angle = coin.M_PI/2   # 90 degrees
+                myRotation.angle = coin.M_PI/2
                 myRotation.axis = coin.SoRotationXYZ.X
                 col = coin.SoBaseColor()
                 col.rgb=(c[2],c[0],c[1])
-            
                 myCustomNode = coin.SoSeparator()
                 myCustomNode.addChild(col)
                 myCustomNode.addChild(trans)
                 myCustomNode.addChild(myRotation) 
                 myCustomNode.addChild(cub)
 
-            else:
+            elif mode =='human':
+                say('not yet implemented')
+                #+# todo
+                
+            else: # mode == 'tree'
                 trans.translation.setValue(p[0],p[1],p[2]+1*h)
                 cub = coin.SoCone()
                 cub.height.setValue(2*h)
                 cub.bottomRadius.setValue(2*r)
                 myRotation = coin.SoRotationXYZ()
-                myRotation.angle = coin.M_PI/2   # 90 degrees
+                myRotation.angle = coin.M_PI/2
                 myRotation.axis = coin.SoRotationXYZ.X
-            
                 col = coin.SoBaseColor()
                 col.rgb=(c[2],c[0],c[1])
-            
                 trans2 = coin.SoTranslation()
                 trans2.translation.setValue(0,0.6*h,0)
                 cub2 = coin.SoCone()
                 cub2.height.setValue(1*h)
                 cub2.bottomRadius.setValue(1.4*r)
-            
                 myCustomNode = coin.SoSeparator()
                 myCustomNode.addChild(col)
                 myCustomNode.addChild(trans)
                 myCustomNode.addChild(myRotation) 
-                
                 myCustomNode.addChild(cub)
                 myCustomNode.addChild(trans2)
                 myCustomNode.addChild(cub2)
             
             sg2.addChild(myCustomNode)
 
-
     sg.addChild(sg2)
     self.sg2=sg2
-    #say("time to run coin", time.time()-a)
 
 def run_FreeCAD_ImageT(self):
 
@@ -5030,10 +4985,7 @@ def run_FreeCAD_ImageT(self):
 
 def run_dragger(self,**kv):
     
-    from pivy import coin
-
     tns=[]
-
 
     def handler(arg):
         say("dragger moved",arg)
@@ -5041,23 +4993,9 @@ def run_dragger(self,**kv):
 
     def handler2(arg):
         say("dragger started",arg)
-
-    
-
-
-
-    #del(self.points)
-    pointsa=[
-        FreeCAD.Vector(0,0,10),
-        FreeCAD.Vector(30,0,-20),
-        FreeCAD.Vector(30,30,0),
-        FreeCAD.Vector(0,30,20),
-        ]
         
     pointsa=[FreeCAD.Vector()]
         
-    #self.points=points
-    #say(self.points)
     try:
             self.points
     except:
@@ -5069,27 +5007,24 @@ def run_dragger(self,**kv):
         self.points=points
     
     points=self.points
-    say(points)
     
     par=np.array(points)
-    say(par.shape)
+
     if len(par.shape)==3:
         a,b,c=par.shape
         points=par.reshape(a*b,3)
     else:
         points=par
     self.points=points
-    #say("------------",points.shape)
-    
-    #return
-
 
     try:
         FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.gg)
     except:
         pass
+
     self.gg= coin.SoSeparator()
     FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().addChild(self.gg)
+
     for p in points:
         t=coin.SoType.fromName("SoFCCSysDragger")
         dragger=t.createInstance()
@@ -5098,7 +5033,6 @@ def run_dragger(self,**kv):
         view = FreeCADGui.ActiveDocument.ActiveView
         view.addDraggerCallback(dragger, "addFinishCallback", handler)
         view.addDraggerCallback(dragger, "addStartCallback", handler2)
-
 
         g = coin.SoSeparator()
         tt = coin.SoTransform()
@@ -5110,7 +5044,6 @@ def run_dragger(self,**kv):
         self.gg.addChild(g)
         tns += [dragger]
 
-    print ("----------")
     for n in tns:	
         pass
         #print (n)
@@ -5118,7 +5051,6 @@ def run_dragger(self,**kv):
         #print(n.getMotionMatrix().getValue())
 
     self.tns=tns
-    #self.compute()
 
 def run_FreeCAD_Dragger(self,**k):
 
@@ -5132,21 +5064,18 @@ def run_FreeCAD_Dragger(self,**k):
     if len(par.shape)==3:
         a,b,c=par.shape
         
-        # has something changed?
-      
+        # has something changed?     
         points=par.reshape(a*b,3)
         lls=[(a-FreeCAD.Vector(b)).Length for a,b in zip(pdiffs,points)]
-#        say ("max",max(lls))
         if max(lls)< 0.1:
             say("zu wenig aenderung abbruch")
             return
         
         pdiffs=np.array(pdiffs).reshape(a,b,3).tolist()
     
-    
-    self.setData("Points_out",pdiffs)
-    
+    self.setData("Points_out",pdiffs)    
     self.setData("point_out",pdiffs[0])
+    
     self.points=pdiffs
        
     self.outExec.call()
@@ -5156,26 +5085,19 @@ def run_FreeCAD_Dragger(self,**k):
         say("create preview")
         self.preview()
 
-
-
-
-
     
 
 def run_FreeCAD_uv2xyz(self):
     sh=self.getPinObject("Shape")
     bs=sh.Surface
     uvs=self.getData('points')
-    pts=[]
-    for uv in uvs:
-        say(uv)
-        pts += [bs.value(uv[0],uv[1])]
     
+    pts += [bs.value(uv[0],uv[1]) for uv in uvs]
     self.setData('Points_out',pts)
     
 
 
-from pivy import coin
+
 
 def run_FreeCAD_QuadMesh(self):
 
@@ -5286,7 +5208,7 @@ def maskit(poles,vv,t,ui,vi,ut=0.2,vt=0.3, ruA=0,rvA=0, ruB=0,rvB=0,sA=1,sB=1):
     
 
 
-def run_FreeCAD_Editor2(self):
+def run_FreeCAD_Editor(self):
     try:
         say(self.shape)
         sh=self.shape
@@ -5336,7 +5258,6 @@ def run_FreeCAD_Editor2(self):
     
     if self.getData('displayStart'):
         say("display Start .............")
-        from pivy import coin
         
         trans = coin.SoTranslation()
         trans.translation.setValue(vv.x,vv.y,vv.z)
@@ -5369,7 +5290,6 @@ def run_FreeCAD_Editor2(self):
         pass
     
     if self.getData('displayTarget'):
-        from pivy import coin
         
         trans = coin.SoTranslation()
         trans.translation.setValue(vvtt.x,vvtt.y,vvtt.z)
@@ -5511,6 +5431,7 @@ def run_FreeCAD_Editor2(self):
 # glättenb
 
 def run_FreeCAD_IronCurve(self):
+
     sh=self.getPinObject('Shape')
     pts=sh.Curve.getPoles()
     
@@ -5527,8 +5448,6 @@ def run_FreeCAD_IronCurve(self):
         dd=[FreeCAD.Vector()]+[(pts[i]-pts2[i]).normalize()*k for i in range(1,l-1)]+[FreeCAD.Vector()]
         pts3=[p+q for p,q in zip(pts2,dd)]
         
-        
-        #
         for i in range(1,l-3):
             
             if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+3]).Length:
@@ -5542,11 +5461,10 @@ def run_FreeCAD_IronCurve(self):
         return pts3,c.toShape()
 
     loopsa=self.getData('loopsA')
-    k=self.getData('k')
-    say(k)
-    #k=3
-
     loopsb=self.getData('loopsB')
+
+    k=self.getData('k')
+
     say(loopsa,loopsb)
     for i in range(loopsa+1):
         pts,c=run(pts)
@@ -5568,10 +5486,11 @@ def run_FreeCAD_IronCurve(self):
                                             and a curvature deflection of 'c'. Optionally a minimum number of points
                                             can be set which by default is set to 2.        
     '''
+
     k=self.getData('deflection')
     if k>0:
         ptsdd=c.discretize(QuasiDeflection=k*0.1)
-        ptsdd=c.discretize(Deflection=k*0.1)
+        #ptsdd=c.discretize(Deflection=k*0.1)
         self.setPinObject('Shape_out',Part.makePolygon(ptsdd))    
 
         deflp=Part.makePolygon(ptsdd)
@@ -5581,7 +5500,6 @@ def run_FreeCAD_IronCurve(self):
         #self.setPinObject('Shape_out',Part.Compound([deflp,defl]))
         self.setData('points',ptsdd)
     else:
-    
         #self.setPinObject('Shape_out',Part.Compound(col))
         self.setPinObject('Shape_out',col[-1])
         self.setData('points',pts)
@@ -5654,15 +5572,5 @@ def run_FreeCAD_IronSurface(self):
     FreeCAD.ActiveDocument.recompute()
 
 
-
 #
-
-
-
-
-
-#
-
-
-
 
