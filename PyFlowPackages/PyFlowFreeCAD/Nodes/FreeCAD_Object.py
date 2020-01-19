@@ -2395,22 +2395,7 @@ class FreeCAD_Slice(FreeCadNodeBase2):
         
         self.createOutputPin('Shape_out', 'ShapePin')
 
-class FreeCAD_IfElse(FreeCadNodeBase2):
-    '''
 
-    '''
-
-    dok = 0
-    def __init__(self, name="MyToy"):
-
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.ifExec = self.createOutputPin('if', 'ExecPin')
-        self.elseExec = self.createOutputPin('else', 'ExecPin')
-   
-        a=self.createInputPin('flag', 'Boolean')
-        a=self.createOutputPin('out', 'Boolean')
 
 
 def nodelist():
@@ -2476,6 +2461,6 @@ def nodelist():
                 #FreeCAD_Sweep,
                 #FreeCAD_RuledSurface,
                 #FreeCAD_Slice,
-                FreeCAD_IfElse,
+
                 
         ]

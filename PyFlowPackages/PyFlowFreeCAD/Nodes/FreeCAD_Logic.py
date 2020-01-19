@@ -340,6 +340,35 @@ class FreeCAD_FloatToy(FreeCadNodeBase2):
 
 
 
+class FreeCAD_IfElse(FreeCadNodeBase2):
+    '''
+	switch exec flow based on a flag
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.ifExec = self.createOutputPin('if', 'ExecPin')
+        self.ifExec.descrition='is fired if flag is true'
+        self.elseExec = self.createOutputPin('else', 'ExecPin')
+        self.elseExec.descrition='is fired if flag is false'
+   
+        a=self.createInputPin('flag', 'Boolean')
+        a.description='flag to control which exec pin is fired'
+        a=self.createOutputPin('out', 'Boolean')
+        a.description='the same as flag'
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_IfElse.__doc__
+
+    @staticmethod
+    def category():
+        return 'Logic'
 
 
 
@@ -359,5 +388,6 @@ def nodelist():
 
                 FreeCAD_BoolToy,
                 FreeCAD_FloatToy,
+                FreeCAD_IfElse,
                 
         ]
