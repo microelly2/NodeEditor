@@ -537,7 +537,7 @@ class FreeCAD_Collect_Vectors(FreeCadNodeBase):
         nodeeditor.dev.run_FreeCAD_Collect_Vectors(self,mode="refresh")
         self.outExec.call()
 
-class FreeCAD_ApproximateBSpline(FreeCadNodeBase2):
+class XFreeCAD_ApproximateBSpline(FreeCadNodeBase2):
     '''
     create an approximated BSpline for **points** on face **Shape_in**
     '''
@@ -551,7 +551,11 @@ class FreeCAD_ApproximateBSpline(FreeCadNodeBase2):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
-        self.tolerance=self.createInputPin("tolerance",'Float',100.)
+        self.tolerance=self.createInputPin("tolerance",'Float',300.)
+        self.tolerance.annotationDescriptionDict={ "ValueRange":(0.,1000.)}
+        # self.tolerance.setInputWidgetVariant("Simple2")
+
+        
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')
         #+# todo: more parameters for approximate
@@ -701,6 +705,9 @@ class FreeCAD_ApproximateBSpline(FreeCadNodeBase2):
 
         self.createInputPin('points', 'VectorPin', structure=StructureType.Array)
         self.tolerance=self.createInputPin("tolerance",'Float',100.)
+        self.tolerance.annotationDescriptionDict={ "ValueRange":(0.,1000.)}
+        # self.tolerance.setInputWidgetVariant("Simple2")
+
         self.tolerance.description="relative value for to,.erance"
         self.createInputPin("Shape_in",'ShapePin')
         #+# todo: more parameters for approximate
@@ -997,6 +1004,7 @@ class FreeCAD_Editor(FreeCadNodeBase2):
 
 class FreeCAD_IronCurve(FreeCadNodeBase2):
     '''
+    find a curve which is smoother than the starting curve with a lot of parameters to play
     '''
 
     def __init__(self, name="MyTripod",**kvargs):
@@ -1025,6 +1033,13 @@ class FreeCAD_IronCurve(FreeCadNodeBase2):
         a.annotationDescriptionDict={ "ValueRange":(0,100)}
         a.setInputWidgetVariant("Simple2")
 
+        self.mode = self.createInputPin('mode', 'String','constant')
+        self.mode.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":["constant","distance"]
+            }
+            
+
         a=self.createInputPin('weight',"Integer",2)
         a.setInputWidgetVariant("Slider")
         a.annotationDescriptionDict={ "ValueRange":(0,10)}
@@ -1033,6 +1048,11 @@ class FreeCAD_IronCurve(FreeCadNodeBase2):
         self.createInputPin('Shape', 'ShapePin')
         self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
         self.createOutputPin('Shape_out', 'ShapePin')
+
+    @staticmethod
+    def description():
+        return FreeCAD_IronCurve.__doc__
+
 
 class FreeCAD_IronSurface(FreeCadNodeBase2):
     '''
@@ -1052,6 +1072,7 @@ class FreeCAD_IronSurface(FreeCadNodeBase2):
         a.annotationDescriptionDict={ "ValueRange":(0,20)}
         a.setInputWidgetVariant("Simple2")
 
+        
         a=self.createInputPin('k',"Integer",0)
         a.annotationDescriptionDict={ "ValueRange":(-5,20)}
         a.setInputWidgetVariant("Simple2")
@@ -1060,9 +1081,100 @@ class FreeCAD_IronSurface(FreeCadNodeBase2):
         a.annotationDescriptionDict={ "ValueRange":(0,10)}
         a.setInputWidgetVariant("Simple2")
         
+        
+
+        
         self.createInputPin('Shape', 'ShapePin')
         self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
         self.createOutputPin('Shape_out', 'ShapePin')
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_IronCurve.__doc__
+
+class FreeCAD_ReduceCurve(FreeCadNodeBase2):
+    '''
+    interactive reduce poles from a curve to get it smoother 
+    '''
+
+    videos="https://youtu.be/iEHDOwz9S3Q https://youtu.be/0RjuXiqfQZo"
+
+    def __init__(self, name="MyTripod",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)  
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a = self.createInputPin("commit", 'ExecPin', None, self.commit)
+        a.description='accept changes into working copy'
+        a = self.createInputPin("bake", 'ExecPin', None, self.bake)
+        a.description='store working copy as nonparametric Shape'
+        a = self.createInputPin("rollback", 'ExecPin', None, self.rollback)
+        a.description="cancel all changes and go back to the inputpin Shape curve"
+        
+        
+        a=self.createInputPin('Move1', 'Integer',0)
+        a.setInputWidgetVariant("Slider")
+        a.description='interactive move the calculated new pole first direction'
+        a=self.createInputPin('Move2', 'Integer',0)
+        a.setInputWidgetVariant("Slider")
+        a.description='interactive move the calculated new pole 2nd direction'
+
+        a=self.createInputPin("hide",'Boolean')
+        a=self.createInputPin("position",'VectorPin')
+        a.description='a position to use as new pole instead of the calculated pole'
+        a=self.createInputPin("useStartPosition",'Boolean')
+        a.descrition='use the pin position as new pole base' 
+        
+
+        a=self.createInputPin('start',"Integer")
+        a.annotationDescriptionDict={ "ValueRange":(1,100)}
+        a.setInputWidgetVariant("Simple2")
+        a.description="knot number where modification starts"
+
+        a=self.createInputPin('segments',"Integer")
+        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+        a.setInputWidgetVariant("Simple2")
+        a.description="number of segments which are smoothed"
+
+        '''
+        a=self.createInputPin('k',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('weight',"Integer",2)
+        a.annotationDescriptionDict={ "ValueRange":(0,10)}
+        a.setInputWidgetVariant("Simple2")
+        
+        a=self.createInputPin("Method",'StringPin','BFGS')
+        '''
+        
+        a=self.createInputPin('Shape', 'ShapePin')
+        a.description='a bspline curve edge' 
+        
+        self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description='the list of knotes before and after change'
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+        a.description='the reduced bspline curve' 
+        
+        self.setExperimental()
+
+        
+    def commit(self,*arg,**kwarg):
+        import nodeeditor.dev
+        reload (nodeeditor.dev)
+        nodeeditor.dev.run_commit(self)
+        
+    def rollback(self,*arg,**kwarg):
+        try:
+            del(self.shape)
+        except:
+            pass
+
+    @staticmethod
+    def description():
+        return FreeCAD_ReduceCurve.__doc__
 
 
 
@@ -1097,5 +1209,5 @@ def nodelist():
 
                 FreeCAD_IronCurve,
                 FreeCAD_IronSurface,
-
+                FreeCAD_ReduceCurve,
         ]

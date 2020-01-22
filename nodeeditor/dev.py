@@ -2200,23 +2200,40 @@ def run_FreeCAD_bakery(self):
     Note : Continuity of the spline defaults to C2. However, it may not be applied if
     it conflicts with other parameters ( especially DegMax ).
 '''
+
 def run_FreeCAD_ApproximateBSpline(self):
     shin=self.getPinObject("Shape_in")
     say(shin)
-    if shin is None: return
-    shin=shin.toNurbs().Face1
-    sf=shin.Surface
     points=self.getData("points")
-    uvs=[]
-    pts2da=[sf.parameter(p) for p in points]
-    pts2d=[]
-    for i,p in enumerate(pts2da):
-        pts2d += [FreeCAD.Base.Vector2d(p[0],p[1])]
 
-    bs2d = Part.Geom2d.BSplineCurve2d()
-    tol=max(self.getData("tolerance"),1.)
-    bs2d.approximate(pts2d,Tolerance=tol*0.001)
-    self.setPinObject("Shape_out",bs2d.toShape(sf))
+    if shin is None: 
+        sf=None
+    
+        pp=[points[0]]
+        for i in range(1,len(points)):
+            if ((points[i]-points[i-1]).Length)>0.01:
+                pp += [points[i]]
+    
+        bs = Part.BSplineCurve()
+        tol=max(self.getData("tolerance"),1.)
+        bs.approximate(pp,Tolerance=tol*0.001)
+        self.setPinObject("Shape_out",bs.toShape())
+    else:
+        shin=shin.toNurbs().Face1
+        sf=shin.Surface
+
+        uvs=[]
+        pts2da=[sf.parameter(p) for p in points]
+    
+        pts2d=[]
+        for i,p in enumerate(pts2da):
+            pts2d += [FreeCAD.Base.Vector2d(p[0],p[1])]
+
+        bs2d = Part.Geom2d.BSplineCurve2d()
+        tol=max(self.getData("tolerance"),1.)
+        bs2d.approximate(pts2d,Tolerance=tol*0.001)
+
+        self.setPinObject("Shape_out",bs2d.toShape(sf))
 
 
 '''
@@ -5055,7 +5072,7 @@ def run_dragger(self,**kv):
         self.gg.addChild(g)
         tns += [dragger]
 
-    for n in tns:	
+    for n in tns:   
         pass
         #print (n)
         #print(n.getLocalStartingPoint().getValue())
@@ -5075,7 +5092,7 @@ def run_FreeCAD_Dragger(self,**k):
     pdiffs=[]
     
 
-    for n in self.tns:	
+    for n in self.tns:  
         pdiffs += [-FreeCAD.Vector(n.getLocalStartingPoint().getValue())]
 
     if len(par.shape)==3:
@@ -5455,24 +5472,49 @@ def run_FreeCAD_IronCurve(self):
     col=[]
     w=self.getData("weight")
 
+    mode=self.getData("mode")
     def run(pts,k=1):
 
         l=len(pts)
 
-        pts2= [pts[0]] + [ (pts[i-1]+2*pts[i]+pts[i+1])/4 for i in range(1,l-1)] +[pts[-1]]
-        pts2= [pts[0]] + [ (pts[i-1]+w*pts[i]+pts[i+1])/(2+w) for i in range(1,l-1)] +[pts[-1]]
+        if mode == 'constant':
+            pts2= [pts[0]] + [ (pts[i-1]+2*pts[i]+pts[i+1])/4 for i in range(1,l-1)] +[pts[-1]]
+            pts2= [pts[0]] + [ (pts[i-1]+w*pts[i]+pts[i+1])/(2+w) for i in range(1,l-1)] +[pts[-1]]
+        else:
+            pts2=[pts[0]]
+            for i in range(1,l-1):
+                al=(pts[i-1]-pts[i]).Length
+                el=(pts[i+1]-pts[i]).Length
+                say(i,al,el)
+                f=10.
+                if al!=0:
+                    al=min(1,1/al*(w+1))
+                else:
+                    al=1
+                if el !=0:
+                    el=min(1,1/el*(w+1))
+                else:
+                    el=1
+                
+                say(i,al,el)                
+                
+                pts2 += [(al*pts[i-1]+pts[i]+el*pts[i+1])/(1+al+el)]
+                
+
+            pts2 +=[pts[-1]]
 
         dd=[FreeCAD.Vector()]+[(pts[i]-pts2[i]).normalize()*k for i in range(1,l-1)]+[FreeCAD.Vector()]
         pts3=[p+q for p,q in zip(pts2,dd)]
         
-        for i in range(1,l-3):
-            
-            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+3]).Length:
-                pts3=pts3[:i+1] +[pts3[i+3],pts3[i+2],pts3[i+1]] + pts3[i+4:]
+        if 0:
+            for i in range(1,l-3):
+                
+                if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+3]).Length:
+                    pts3=pts3[:i+1] +[pts3[i+3],pts3[i+2],pts3[i+1]] + pts3[i+4:]
 
-        for i in range(1,l-2):           
-            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+2]).Length:
-               pts3=pts3[:i+1] +[pts3[i+2],pts3[i+1]] + pts3[i+3:]
+            for i in range(1,l-2):           
+                if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+2]).Length:
+                   pts3=pts3[:i+1] +[pts3[i+2],pts3[i+1]] + pts3[i+3:]
         
         c=Part.BSplineCurve(pts3)
         return pts3,c.toShape()
@@ -5483,10 +5525,12 @@ def run_FreeCAD_IronCurve(self):
     k=self.getData('k')
 
     say(loopsa,loopsb)
-    for i in range(loopsa+1):
+    for i in range(loopsa):
         pts,c=run(pts)
+        #pts,c=run(pts,k)
         col.append(c)
-    for i in range(loopsb+1):
+
+    for i in range(loopsb):
         pts,c=run(pts,k)
         col.append(c)
 
@@ -5625,6 +5669,264 @@ def run_FreeCAD_IfElse(self):
     else:
         self.elseExec.call()
     
+
+#-----------------
+
+
+
+from pivy.coin import *
+
+def clearcoin(self):
+    root=FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+    try:
+        root.removeChild(self._sg)
+        del(self._sg)
+    except:
+        pass
+
+
+def displaysphere(self,point,radius=5,color=(1,1,1)):
     
+    try:
+        sg=self._sg
+    except:
+        sg    = SoSeparator()
+        self._sg= sg
+
+        root=FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+        root.addChild(sg)
+
+    p=point
+    say(point,color,"##########")
+
+    trans = coin.SoTranslation()
+    trans.translation.setValue(p.x,p.y,p.z)
+    cub = coin.SoSphere()
+    cub.radius.setValue(radius)
+    col = coin.SoBaseColor()
+    col.rgb=color
+    myCustomNode = coin.SoSeparator()
+    myCustomNode.addChild(col)
+    myCustomNode.addChild(trans)
+    myCustomNode.addChild(cub)
+    sg.addChild(myCustomNode)
+        
+def displayspheres(self,points,radius=5,color=(1,1,1)):
+    for p in points:
+        displaysphere(self,p,radius=radius,color=color)
+
+def displayline(self,pts,color=(1,1,1)):
+    
+    try:
+        sg=self._sg
+    except:
+        sg    = SoSeparator()
+        self._sg= sg
+        root=FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+        root.addChild(sg)
+        
+        
+    heart    = SoSeparator()
+    coord = SoCoordinate3()
+    coord.point.setValues(0,len(pts),pts)
+    a=[i for i in range(len(pts))]+[-1]
+
+    drawstyle = SoDrawStyle()
+    drawstyle.style = SoDrawStyle.LINES
+    drawstyle.lineWidth = 4
+   
+
+    lineSet = SoIndexedLineSet()
+    lineSet.coordIndex.setValue(0)
+    lineSet.coordIndex.setValues(0, len(a), a)
+
+    myMaterial = SoMaterial()
+    myBinding = SoMaterialBinding()
+    myMaterial.diffuseColor.set1Value(0, SbColor(*color))
+#   myMaterial.diffuseColor.set1Value(1, SbColor(0,1.,0))
+#   myMaterial.diffuseColor.set1Value(2, SbColor(0,1.,1))
+#   myMaterial.diffuseColor.set1Value(3, SbColor(1,0.,1))
+#    myBinding.value = SoMaterialBinding.PER_PART
+
+    heart.addChild(drawstyle)
+    heart.addChild(myMaterial)
+    heart.addChild(myBinding)
+
+
+    heart.addChild(coord)
+    heart.addChild(lineSet)
+    sg.addChild(heart)
+    #root.removeChild(heart)
+    # self._sg=heart
+
+
+
+def run_FreeCAD_ReduceCurve(self):
+    
+    try:
+        if self.shape is None:
+            1/0
+        say(self.shape)
+        sh=self.shape
+    except:
+        sh=self.getPinObject("Shape")
+        self.shape=sh
+    
+    say(sh)
+    c=sh.Curve.copy()
+   
+    
+    sfa=c.copy()
+    sfb=c.copy()
+    sfab=c.copy()    
+    
+    pts=c.getPoles()
+    
+    p=self.getData('start')+1
+    l=self.getData('segments')
+    kk=c.getKnots()
+    
+    clearcoin(self)
+    
+    if l == 0:
+        say("nur startpunkt gesetzt",p)
+        self.setData('points',[c.value(kk[max(0,p-4)])])
+        if not self.getData('hide'):
+            displaysphere(self,c.value(kk[max(0,p-4)]),radius=4,color=(0,1,1))
+            
+        say(self.getData('points'))
+        self.setPinObject('Shape_out',self.shape)
+
+        
+        return
+    
+    say("intervall",p,l)
+    poles=pts[:p]+pts[p+l:]
+
+    s=Part.makePolygon(poles)
+       
+    
+    if self.getData('useStartPosition'):
+        pp=self.getData('position')
+    else:
+        pp=Part.makePolygon(pts[p:p+l+1]).CenterOfMass
+
+    m1=self.getData('Move1')
+    m2=self.getData('Move2')
+    tang=pts[p]-pts[p+l]
+    norm=FreeCAD.Vector(-tang.y,tang.x)
+    pp += -m1*tang/100 +m2*norm/100
+    
+
+    poles=pts[:p-1]+[pp]+pts[p+l:]
+    say("len points",len(pts),"p+l",p+l)
+    if p+l==len(pts):
+        poles=pts[:p-1]+[pts[-1]]
+    
+    say("len poles",len(poles))
+    
+    mpoints=pts[p:p+l]
+    
+    countA=len(poles)
+    degA=3
+    periodic=False
+    
+    if not periodic:
+        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+        knotA=range(len(multA))
+    else:
+        multA=[1]*(countA+1)
+        knotA=range(len(multA))
+
+    polesA=[p+FreeCAD.Vector(0,0,10) for p in poles]  
+    poles=polesA
+    sf=Part.BSplineCurve()
+    sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)
+    
+    
+    kks=sf.getKnots()   
+    pointsAAA= [sf.value(t) for t in range(max(0,p-4),min(p+1,len(kks)))]
+    if not self.getData('hide'):
+        displaysphere(self,pointsAAA[0],radius=6,color=(0,1,0))
+        displaysphere(self,pointsAAA[-1],radius=6,color=(0,1,0))
+    pointsAAA += [c.value(kk[t]) for t in range(max(0,p-4),min(p+l,len(kk)))]
+    self.setData('points',pointsAAA)
+    
+    if not self.getData('hide'):
+        displayspheres(self,pointsAAA,radius=4,color=(0,1,1))
+    
+    
+    self.outExec.call()
+    
+    po=max(1,p-4)
+
+    
+    kk=c.getKnots()
+
+    sfa=sf.copy()
+    sfa.segment(po,po+4)
+    ptsf =sfa.toShape().discretize(100)[::-1]
+    if not self.getData('hide'):
+        displayline(self,ptsf,(1,0,0))
+
+    ca=c.copy()
+    ca.segment(kk[po-1+1],kk[min(po+l+2+2,len(kk)-1)])
+    ptsf = ca.toShape().discretize(100)
+    if not self.getData('hide'):
+        displayline(self,ptsf,(1,1,0))
+    
+    sf=Part.BSplineCurve()
+    sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)   
+    self.setPinObject('Shape_out',sf.toShape())
+        
 #
+
+
+def run_bake(self):
+        say("nicht impl")
+        a=self.getData('loopsA')
+        b=self.getData('loopsB')
+        ax=self._wrapper.UIinputs
+        for i,j in enumerate(ax):
+            p=ax[j]
+            if p.name=='loopsB':
+                p.setData(0)
+            if p.name=='Move1':
+                p.setData(0)
+
+            if p.name=='Move2':
+                p.setData(0)
+        for i,j in enumerate(ax):
+            p=ax[j]
+            if p.name=='loopsA':
+                p.setData(a+b+4)
+        #self.setPinObject('Shape_out',self.shape)
+        self.compute()
+        self.outExec.call()
+        
+
+
+
+def run_commit(self):
+        self.shape=self.getPinObject("Shape_out")
+        say("nicht impl")
+        a=self.getData('start')
+        b=self.getData('segments')
+        ax=self._wrapper.UIinputs
+        for i,j in enumerate(ax):
+            p=ax[j]
+            if p.name=='segments':
+                p.setData(0)
+            if p.name=='Move1':
+                p.setData(0)
+
+            if p.name=='Move2':
+                p.setData(0)
+        for i,j in enumerate(ax):
+            p=ax[j]
+            if p.name=='start':
+                p.setData(a+4)
+        #self.setPinObject('Shape_out',self.shape)
+        self.compute()
+        self.outExec.call()
 

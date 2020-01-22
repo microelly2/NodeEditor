@@ -128,7 +128,7 @@ class FreeCadNodeBase(NodeBase):
             return
         
         # a=eval("nodeeditor.dev.run_{}(self,bake=True)".format(self.__class__.__name__))
-        
+        w=FreeCAD.ActiveDocument
         f = w.addObject('Part::Feature','baked')
         f.Shape=self.getPinObject('Shape_out')
 
