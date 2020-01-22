@@ -1098,7 +1098,7 @@ class FreeCAD_ReduceCurve(FreeCadNodeBase2):
     interactive reduce poles from a curve to get it smoother 
     '''
 
-    videos="https://youtu.be/iEHDOwz9S3Q"
+    videos="https://youtu.be/iEHDOwz9S3Q https://youtu.be/vuQ4s3iYqOA"
 
     def __init__(self, name="MyTripod",**kvargs):
 
@@ -1193,9 +1193,32 @@ see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
 
         
     def commit(self,*arg,**kwarg):
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_commit(self)
+        #import nodeeditor.dev
+        #reload (nodeeditor.dev)
+        #nodeeditor.dev.run_commit(self)
+
+        self.shape=self.getPinObject("Shape_out")
+        a=self.getData('start')
+        b=self.getData('segments')
+        ax=self._wrapper.UIinputs
+        for i,j in enumerate(ax):
+            p=ax[j]
+            if p.name=='segments':
+                p.setData(0)
+            if p.name=='Move1':
+                p.setData(0)
+
+            if p.name=='Move2':
+                p.setData(0)
+
+        for i,j in enumerate(ax):
+            p=ax[j]
+            if p.name=='start':
+                p.setData(a+4)
+        self.compute()
+        self.outExec.call()
+
+
         
     def rollback(self,*arg,**kwarg):
         try:

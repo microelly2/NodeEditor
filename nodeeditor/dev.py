@@ -5760,7 +5760,7 @@ def displayline(self,pts,color=(1,1,1)):
     # self._sg=heart
 
 
-
+# 19-22.01.2020
 def run_FreeCAD_ReduceCurve(self):
     
     try:
@@ -5795,6 +5795,7 @@ def run_FreeCAD_ReduceCurve(self):
     poles=pts[:p]+pts[p+l:]
 
     s=Part.makePolygon(poles)
+    
        
     
     if self.getData('useStartPosition'):
@@ -5914,8 +5915,6 @@ def run_FreeCAD_ReduceCurve(self):
         multA=[1]*(countA+1)
         knotA=range(len(multA))
 
-    #polesA=[p+FreeCAD.Vector(0,0,10) for p in poles]  
-    #poles=polesA
     
     sf=Part.BSplineCurve()
     sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)
@@ -5924,7 +5923,6 @@ def run_FreeCAD_ReduceCurve(self):
     tv=sf.parameter(target)
     tang=sf.tangent(tv)
     
-    #return abs(tang[0].x)
     dird=FreeCAD.Vector(np.cos(m1/100.*np.pi),np.sin(m1/100.*np.pi))
     tdd=dird.dot(tang[0])
 
@@ -5972,31 +5970,7 @@ def run_FreeCAD_ReduceCurve(self):
     sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)   
     self.setPinObject('Shape_out',sf.toShape())
         
-#
-
-
-def run_bake(self):
-        say("nicht impl")
-        a=self.getData('loopsA')
-        b=self.getData('loopsB')
-        ax=self._wrapper.UIinputs
-        for i,j in enumerate(ax):
-            p=ax[j]
-            if p.name=='loopsB':
-                p.setData(0)
-            if p.name=='Move1':
-                p.setData(0)
-
-            if p.name=='Move2':
-                p.setData(0)
-        for i,j in enumerate(ax):
-            p=ax[j]
-            if p.name=='loopsA':
-                p.setData(a+b+4)
-        #self.setPinObject('Shape_out',self.shape)
-        self.compute()
-        self.outExec.call()
-        
+       
 
 
 
