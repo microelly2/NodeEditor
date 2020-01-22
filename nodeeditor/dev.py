@@ -5697,7 +5697,7 @@ def displaysphere(self,point,radius=5,color=(1,1,1)):
         root.addChild(sg)
 
     p=point
-    say(point,color,"##########")
+    #say(point,color,"##########")
 
     trans = coin.SoTranslation()
     trans.translation.setValue(p.x,p.y,p.z)
@@ -5772,7 +5772,6 @@ def run_FreeCAD_ReduceCurve(self):
         sh=self.getPinObject("Shape")
         self.shape=sh
     
-    say(sh)
     c=sh.Curve.copy()
    
     
@@ -5787,18 +5786,10 @@ def run_FreeCAD_ReduceCurve(self):
     kk=c.getKnots()
     
     clearcoin(self)
-    
-    if l == 0:
-        say("nur startpunkt gesetzt",p)
-        self.setData('points',[c.value(kk[max(0,p-4)])])
-        if not self.getData('hide'):
-            displaysphere(self,c.value(kk[max(0,p-4)]),radius=4,color=(0,1,1))
-            
-        say(self.getData('points'))
-        self.setPinObject('Shape_out',self.shape)
 
-        
-        return
+    if not self.getData('hide') and self.getData('useStartPosition'):
+            displaysphere(self,c.value(kk[max(0,p-4)]),radius=4,color=(0,1,1))
+    
     
     say("intervall",p,l)
     poles=pts[:p]+pts[p+l:]
@@ -5809,24 +5800,30 @@ def run_FreeCAD_ReduceCurve(self):
     if self.getData('useStartPosition'):
         pp=self.getData('position')
     else:
-        pp=Part.makePolygon(pts[p:p+l+1]).CenterOfMass
+        if l==0:
+            pp=pts[p]
+        else:
+            pp=Part.makePolygon(pts[p:p+l+1]).CenterOfMass
 
     m1=self.getData('Move1')
     m2=self.getData('Move2')
-    tang=pts[p]-pts[p+l]
-    norm=FreeCAD.Vector(-tang.y,tang.x)
-    pp += -m1*tang/100 +m2*norm/100
+
     
+    
+    
+    if l == 0:
+        target=pts[p]
+    else:
+        if self.getData('usePositionAsAbsolute'):
+            target=self.getData('position')    
+        else:
+            target=Part.makePolygon(pts[p:p+l+1]).CenterOfMass+self.getData('position')    
+        
+    if not self.getData('hide'):
+        displaysphere(self,target,radius=8,color=(1,0,1))
+
 
     poles=pts[:p-1]+[pp]+pts[p+l:]
-    say("len points",len(pts),"p+l",p+l)
-    if p+l==len(pts):
-        poles=pts[:p-1]+[pts[-1]]
-    
-    say("len poles",len(poles))
-    
-    mpoints=pts[p:p+l]
-    
     countA=len(poles)
     degA=3
     periodic=False
@@ -5843,13 +5840,106 @@ def run_FreeCAD_ReduceCurve(self):
     sf=Part.BSplineCurve()
     sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)
     
+
+    strat=self.getData("Strategy")
+
+    def dist(param):
+
+        t=param[0]
+        pap=FreeCAD.Vector(*param)
+        poles=pts[:p-1]+[pap]+pts[p+l:]
+        sf=Part.BSplineCurve()
+        sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)
+
+
+        
+        dd=sf.toShape().distToShape(Part.Vertex(target))[0]        
+        ll=sf.toShape().Length
+
+        
+        if strat=='Shortest':
+            return ll
+        else:
+            return  dd
+
+
+
+
+    
+    from scipy import optimize
+    
+    if strat != 'Center of Mass':    
+        method=self.getData('Method')
+        a=time.time()
+        start=target
+        result = optimize.minimize(dist, x0=[start.x,start.y,start.z],  method=method)
+        r=result.x[0]
+
+        say("quality",np.round(result.fun,5),np.round(result.x,2),result.message,method)
+        say("run time for scipy.optimize.minimum",method,round(time.time()-a,3))
+
+        pp=FreeCAD.Vector(result.x)
+
+    if  strat != 'Point':
+        if l==0:
+            tang=pts[p-1]-pts[p+1]
+        else:
+            tang=pts[p]-pts[p+l]
+        
+        norm=FreeCAD.Vector(-tang.y,tang.x)
+        pp += -m1*tang/100 +m2*norm/100
+
+    
+    
+
+    if l != 0:
+        poles=pts[:p-1]+[pp]+pts[p+l:]
+    else:
+        poles=pts[:p-1]+[pp]+pts[p+1:]
+    
+    if p+l==len(pts):
+        poles=pts[:p-1]+[pts[-1]]
+    
+    
+    mpoints=pts[p:p+l]
+    
+    countA=len(poles)
+    degA=3
+    periodic=False
+    
+    if not periodic:
+        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
+        knotA=range(len(multA))
+    else:
+        multA=[1]*(countA+1)
+        knotA=range(len(multA))
+
+    #polesA=[p+FreeCAD.Vector(0,0,10) for p in poles]  
+    #poles=polesA
+    
+    sf=Part.BSplineCurve()
+    sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)
+
+
+    tv=sf.parameter(target)
+    tang=sf.tangent(tv)
+    
+    #return abs(tang[0].x)
+    dird=FreeCAD.Vector(np.cos(m1/100.*np.pi),np.sin(m1/100.*np.pi))
+    tdd=dird.dot(tang[0])
+
+    say("lenght dist",sf.toShape().Length,sf.toShape().distToShape(Part.Vertex(target))[0])
+    
     
     kks=sf.getKnots()   
     pointsAAA= [sf.value(t) for t in range(max(0,p-4),min(p+1,len(kks)))]
     if not self.getData('hide'):
         displaysphere(self,pointsAAA[0],radius=6,color=(0,1,0))
         displaysphere(self,pointsAAA[-1],radius=6,color=(0,1,0))
-    pointsAAA += [c.value(kk[t]) for t in range(max(0,p-4),min(p+l,len(kk)))]
+    if l ==0:
+        pointsAAA += [c.value(kk[t]) for t in range(max(0,p-4),min(p+l+1,len(kk)))]
+    else:    
+        pointsAAA += [c.value(kk[t]) for t in range(max(0,p-4),min(p+l,len(kk)))]
     self.setData('points',pointsAAA)
     
     if not self.getData('hide'):
@@ -5870,7 +5960,10 @@ def run_FreeCAD_ReduceCurve(self):
         displayline(self,ptsf,(1,0,0))
 
     ca=c.copy()
-    ca.segment(kk[po-1+1],kk[min(po+l+2+2,len(kk)-1)])
+    if l==0:
+        ca.segment(kk[po-1+1],kk[min(po+l+2+2+1,len(kk)-1)])
+    else:
+        ca.segment(kk[po-1+1],kk[min(po+l+2+2,len(kk)-1)])
     ptsf = ca.toShape().discretize(100)
     if not self.getData('hide'):
         displayline(self,ptsf,(1,1,0))

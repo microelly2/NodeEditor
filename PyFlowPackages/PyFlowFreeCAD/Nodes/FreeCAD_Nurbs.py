@@ -1098,7 +1098,7 @@ class FreeCAD_ReduceCurve(FreeCadNodeBase2):
     interactive reduce poles from a curve to get it smoother 
     '''
 
-    videos="https://youtu.be/iEHDOwz9S3Q https://youtu.be/0RjuXiqfQZo"
+    videos="https://youtu.be/iEHDOwz9S3Q"
 
     def __init__(self, name="MyTripod",**kvargs):
 
@@ -1117,15 +1117,22 @@ class FreeCAD_ReduceCurve(FreeCadNodeBase2):
         a=self.createInputPin('Move1', 'Integer',0)
         a.setInputWidgetVariant("Slider")
         a.description='interactive move the calculated new pole first direction'
+        
         a=self.createInputPin('Move2', 'Integer',0)
         a.setInputWidgetVariant("Slider")
         a.description='interactive move the calculated new pole 2nd direction'
 
         a=self.createInputPin("hide",'Boolean')
+        a.description="do not display the controls in 3D after works is finished"
+        
         a=self.createInputPin("position",'VectorPin')
         a.description='a position to use as new pole instead of the calculated pole'
+        
         a=self.createInputPin("useStartPosition",'Boolean')
-        a.descrition='use the pin position as new pole base' 
+        a.description='use the pin position as new pole base' 
+        
+        a=self.createInputPin("usePositionAsAbsolute",'Boolean')
+        a.description='use the pin position as absolute else it is added to the center of mass' 
         
 
         a=self.createInputPin('start',"Integer")
@@ -1147,14 +1154,38 @@ class FreeCAD_ReduceCurve(FreeCadNodeBase2):
         a.annotationDescriptionDict={ "ValueRange":(0,10)}
         a.setInputWidgetVariant("Simple2")
         
-        a=self.createInputPin("Method",'StringPin','BFGS')
         '''
+        a=self.createInputPin("Strategy",'StringPin','Center of Mass')
+        a.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":["Center of Mass","Shortest","Point"]
+            }
+        a.setInputWidgetVariant("EnumWidget")
+        a.setData("Center of Mass")
+        a.description='''how the curve should be simplified: 
+  -''Center of Mass'' starts at the center fo the old poles
+  -''Shortest'' calculates the shortest segement to fill the gap
+  -''Point''  makes the curve fitting a point'''
+
+        a=self.createInputPin("Method",'StringPin','BFGS')
+        a.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":['Nelder-Mead', 'Powell', 'CG', 'BFGS', 'L-BFGS-B', 'TNC', 'COBYLA', 'SLSQP',]
+            }
+        a.setInputWidgetVariant("EnumWidget")
+        a.setData("BFGS")
+        a.description='''the scipy methods for optimize.
+        
+If the computation time is to long or not good results are calcuated a change of the method may help. 
+
+see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
         
         a=self.createInputPin('Shape', 'ShapePin')
         a.description='a bspline curve edge' 
         
-        self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+        a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
         a.description='the list of knotes before and after change'
+
         a=self.createOutputPin('Shape_out', 'ShapePin')
         a.description='the reduced bspline curve' 
         
