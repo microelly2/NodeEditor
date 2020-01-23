@@ -4,6 +4,7 @@ PACKAGE_NAME = 'PyFlowFreeCAD'
 from collections import OrderedDict
 from PyFlow.UI.UIInterfaces import IPackage
 
+from nodeeditor.utils import *
 
 # Factories
 from PyFlow.Packages.PyFlowFreeCAD.Factories.PinInputWidgetFactory import getInputWidget
@@ -87,7 +88,6 @@ Voronoi
 nodelistcol=[]
 
 
-
 	
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
 nodelistcol += nodelist()
@@ -122,6 +122,12 @@ nodelistcol += nodelist()
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
 nodelistcol += nodelist()
 
+
+if devmode():
+	pass
+	# development tools and nodes
+	from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development import nodelist
+	nodelistcol += nodelist()
 
 
 for n in nodelistcol:

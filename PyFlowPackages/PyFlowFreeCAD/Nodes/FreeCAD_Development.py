@@ -1,5 +1,7 @@
-# nodes for development
 
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase, FreeCadNodeBase2
 
 
 
@@ -75,8 +77,6 @@ class FreeCAD_PinsTest(FreeCadNodeBase2):
     @staticmethod
     def keywords():
         return []
-
-
 
 
 
@@ -307,8 +307,6 @@ class FreeCAD_StorePins(NodeBase):
         say ("End exec for ---",self.getName())
 
 
-
-
 class FreeCAD_Toy(FreeCadNodeBase2):
     '''erzeuge eine zufallsBox'''
 
@@ -392,214 +390,14 @@ class FreeCAD_Toy(FreeCadNodeBase2):
 
 
 
-class FreeCAD_Array(FreeCadNodeBase2):
-    '''
-    test node for large arrays
-
-
-    '''
-
-    @staticmethod
-    def description():
-        return '''test node for large arrays(experimental)'''
-
-    def __init__(self, name="Fusion"):
-        super(self.__class__, self).__init__(name)
-
-
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
-
-        self.trace = self.createInputPin('trace', 'BoolPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
-
-        self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
-
-        self.objname = self.createInputPin("objectname", 'StringPin')
-        self.objname.setData(name)
-
-        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-        self.shapeOnly.recomputeNode=True
-
-
-        self.Arr_in = self.createInputPin('Array_in', 'ArrayPin')
-        self.Arr_out = self.createOutputPin('Array_out', 'ArrayPin')
-
-
-    def compute(self, *args, **kwargs):
-
-        say("")
-        say ("in compute",self.getName(),"objname is",self.objname.getData())
-
-        ss=self.Arr_in.getArray()
-        say("got Array",ss)
-
-
-        varr=np.round(np.random.random((3,4)),2)
-        say("store Array",varr)
-        self.Arr_out.setArray(varr)
-
-        self.postCompute()
-
-    @staticmethod
-    def description():
-        return FreeCAD_Array.__doc__
-
-    @staticmethod
-    def category():
-        return 'Experimental'
-
-    @staticmethod
-    def keywords():
-        return []
-
-
-
-
-
-class FreeCAD_Polygon(FreeCadNodeBase2):
-    '''
-    erzeuge eines Streckenzugs
-    for each point there is an input pin,
-    input pins can be added from context menu
-    '''
-
-    def __init__(self, name="MyQuadrangle"):
-
-        super(self.__class__, self).__init__(name)
-
-
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
-
-        self.trace = self.createInputPin('trace', 'BoolPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
-
-        self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
-
-        self.objname = self.createInputPin("objectname", 'StringPin')
-        self.objname.setData(name)
-
-        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-        self.shapeOnly.recomputeNode=True
-
-        self.vA = self.createInputPin("Vec1", 'VectorPin')
-        self.vB = self.createInputPin("Vec2", 'VectorPin')
-
-        self.setDatalist("Vec1 Vec2", [
-                        FreeCAD.Vector(-1,1,3),
-                        FreeCAD.Vector(1,-1,3),
-                    ])
-
-        self.vA.recomputeNode=True
-        self.vB.recomputeNode=True
-
-        self.Called=False
-        self.count=2
-
-
-    def createPin(self, *args, **kwargs):
-        pps=self.getOrderedPins()
-        last=pps[-1].getData()
-        prev=pps[-2].getData()
-        pinName = "Vec" + str(len(self.inputs) + -5)
-        p = CreateRawPin(pinName, self, 'VectorPin', PinDirection.Input)
-        p.enableOptions(PinOptions.Dynamic)
-        p.recomputeNode=True
-        p.setData(last+last-prev)
-        self.count += 1
-        pps=self.getOrderedPins()
-
-        return p
-
-    @timer
-    def compute(self, *args, **kwargs):
-
-        # recursion stopper
-        if self.Called:
-            return
-
-        self.Called=True
-
-        pts=[]
-
-        for t in self.getOrderedPins():
-            n=t.__class__.__name__
-            d=t.getData()
-            if d.__class__.__name__ =='Vector':
-                #if pts[-1]  !=  d:
-                    pts += [d]
-
-
-        shape=Part.makePolygon(pts)
-
-        self.setPinObject("Shape",shape)
-
-        if self.shapeout.hasConnections():
-            self.postCompute()
-
-        if self.shapeOnly.getData():
-            self.postCompute()
-        else:
-            cc=self.getObject()
-            cc.Label=self.objname.getData()
-            cc.Shape=shape
-            self.postCompute(cc)
-
-        self.Called=False
-
-    @staticmethod
-    def description():
-        return FreeCAD_Polygon.__doc__
-
-    @staticmethod
-    def category():
-        return 'Primitive'
-
-    @staticmethod
-    def keywords():
-        return ['Pointlist','Polygon','Part']
-
-
-
 
 
 
 def nodelist():
-    return [
-                FreeCAD_Foo,
-                FreeCAD_Toy,
-#               FreeCAD_Bar,
-                FreeCAD_Object,
-                FreeCAD_Box,
-                FreeCAD_Cone,
-                FreeCAD_Sphere,
-                FreeCAD_Quadrangle,
-                FreeCAD_Polygon,
-                FreeCAD_Polygon2,
-                FreeCAD_Array,
-                FreeCAD_Console,
-                FreeCAD_VectorArray,
-                FreeCAD_Boolean,
-                FreeCAD_BSpline,
-                FreeCAD_Plot,
-                FreeCAD_ShapeIndex,
-                FreeCAD_PartExplorer,
-                FreeCAD_Compound,
-                FreeCAD_Edge,
-                FreeCAD_Face,
-                FreeCAD_Parallelprojection,
-                FreeCAD_Perspectiveprojection,
-                FreeCAD_UVprojection,
-                FreeCAD_Part,
-                FreeCAD_PinsTest, #!
-                FreeCAD_Ref,
-                FreeCAD_RefList,
-                FreeCAD_LOD,
-                FreeCAD_view3D,
-                FreeCAD_Destruct_Shape,
-        ]
+	return [
+	FreeCAD_PinsTest,
+	FreeCAD_Foo,
+	FreeCAD_StorePins,
+	FreeCAD_Toy,
+	
+	]
