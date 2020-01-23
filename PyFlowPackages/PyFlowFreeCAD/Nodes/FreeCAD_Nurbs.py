@@ -856,35 +856,52 @@ class FreeCAD_FlipSwapArray(FreeCadNodeBase2):
 
 class FreeCAD_uv2xyz(FreeCadNodeBase2):
     '''
+    calculate the wolrd xyz coordinates for a list of uv coordinates in relation to a surface
     '''
 
     def __init__(self, name="MyInterpolation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         a=self.createInputPin("points",'VectorPin', structure=StructureType.Array)
+        a.description='list of vectors with uv coodinates - used are vectors with x=u, y=v'
         a=self.createInputPin("Shape",'ShapePin')
+        a.description='the reference bspline surface'
       
         a=self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
+        a.description='the list of 3D vectors'
+
+    @staticmethod
+    def description():
+        return FreeCAD_uv2xyz.__doc__
+
+
 
 class FreeCAD_xyz2uv(FreeCadNodeBase2):
     '''
+    calculate the uv coordinates for a set of xyz points on a bsline surface
     '''
 
     def __init__(self, name="MyInterpolation"):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         a=self.createInputPin("points",'VectorPin', structure=StructureType.Array)
+        a.description="a list of vectors"
         a=self.createInputPin("Shape",'ShapePin')
+        a.description='a bspline surface'
       
         a=self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
+        a.description="the list of uv Vectors (3D Vectors are used but z is set to zero)"
+
+    @staticmethod
+    def description():
+        return FreeCAD_xyz2uv.__doc__
 
 
+#+#
 class FreeCAD_replacePoles(FreeCadNodeBase2):
     '''
     '''
@@ -903,11 +920,15 @@ class FreeCAD_replacePoles(FreeCadNodeBase2):
 
 
 
+#10-14.01.2020
 
 class FreeCAD_Editor(FreeCadNodeBase2):
     '''
+    A node to edit a bspine surface
     '''
 
+    videos='https://youtu.be/5vhxx2Mt9QI https://youtu.be/wYJRXN-O618'
+    
     def __init__(self, name="MyTripod",**kvargs):
 
         super(self.__class__, self).__init__(name)
@@ -987,9 +1008,7 @@ class FreeCAD_Editor(FreeCadNodeBase2):
         self.createOutputPin('v_out', 'FloatPin')
         self.createOutputPin('Shape_out', 'ShapePin')
 
-    def bake(self,*arg,**kwarg):
-        say("nicht impl")
-        
+       
 
         
     def commit(self,*arg,**kwarg):
@@ -1001,12 +1020,18 @@ class FreeCAD_Editor(FreeCadNodeBase2):
         except:
             pass
 
+    @staticmethod
+    def description():
+        return FreeCAD_Editor.__doc__
 
+
+# 15.01.2020
 class FreeCAD_IronCurve(FreeCadNodeBase2):
     '''
     find a curve which is smoother than the starting curve with a lot of parameters to play
     '''
 
+    videos='https://youtu.be/FlHtj-xWKDg'
     def __init__(self, name="MyTripod",**kvargs):
 
         super(self.__class__, self).__init__(name)
@@ -1087,6 +1112,8 @@ class FreeCAD_IronSurface(FreeCadNodeBase2):
         self.createInputPin('Shape', 'ShapePin')
         self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
         self.createOutputPin('Shape_out', 'ShapePin')
+        
+        self.setExperimental()
 
 
     @staticmethod
@@ -1140,8 +1167,8 @@ class FreeCAD_ReduceCurve(FreeCadNodeBase2):
         a.setInputWidgetVariant("Simple2")
         a.description="knot number where modification starts"
 
-        a=self.createInputPin('segments',"Integer")
-        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+        a=self.createInputPin('segments',"Integer",-1)
+        a.annotationDescriptionDict={ "ValueRange":(-1,100)}
         a.setInputWidgetVariant("Simple2")
         a.description="number of segments which are smoothed"
 
@@ -1189,6 +1216,8 @@ see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
         a=self.createOutputPin('Shape_out', 'ShapePin')
         a.description='the reduced bspline curve' 
         
+        a=self.createInputPin("preservePolesCount",'Boolean')
+        
         self.setExperimental()
 
         
@@ -1196,6 +1225,7 @@ see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
         #import nodeeditor.dev
         #reload (nodeeditor.dev)
         #nodeeditor.dev.run_commit(self)
+        #return
 
         self.shape=self.getPinObject("Shape_out")
         a=self.getData('start')
@@ -1229,6 +1259,7 @@ see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
     @staticmethod
     def description():
         return FreeCAD_ReduceCurve.__doc__
+
 
 
 

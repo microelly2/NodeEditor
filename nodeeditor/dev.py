@@ -3481,10 +3481,11 @@ def run_FreeCAD_MoveVectors(self):
 
     vv=self.getData("vectors")
     mv=self.getData("mover")
-
-    if len(np.array(vv).shape)>1:
+    say(np.array(vv).shape)
+    if len(np.array(vv).shape)>2:
         b2=[]
         for av in vv:
+            
             b3=[v+mv for v in av]
             b2 += [b3]
     else:
@@ -5652,7 +5653,18 @@ def run_FreeCAD_Sweep(self):
 def run_FreeCAD_Loft(self):
 
     shapes=self.getPinObjectsA('shapes')
-    ws=[s.Wires[0] for s in shapes]
+
+    ws=[]
+
+    for s in shapes:
+        say(s,s.Wires,s.Edges)
+        
+        try:
+            ws += [s.Wires[0]]
+        except:
+            ws += [s.Edges[0]]
+
+    say(ws)
     
     loft=Part.makeLoft(ws,
         self.getData('solid'),self.getData('ruled'),
@@ -5785,7 +5797,12 @@ def run_FreeCAD_ReduceCurve(self):
     l=self.getData('segments')
     kk=c.getKnots()
     
+    
+    
     clearcoin(self)
+    if l == -1:
+        self.setPinObject('Shape_out',sh)
+        return
 
     if not self.getData('hide') and self.getData('useStartPosition'):
             displaysphere(self,c.value(kk[max(0,p-4)]),radius=4,color=(0,1,1))
@@ -5892,11 +5909,13 @@ def run_FreeCAD_ReduceCurve(self):
 
     
     
-
+    say("build poles---------------------")
     if l != 0:
         poles=pts[:p-1]+[pp]+pts[p+l:]
     else:
-        poles=pts[:p-1]+[pp]+pts[p+1:]
+        poles=pts[:p]+[pp]+pts[p+1:]
+    
+    say("pts,poles,l",len(pts),len(poles),l)
     
     if p+l==len(pts):
         poles=pts[:p-1]+[pts[-1]]
@@ -5967,7 +5986,13 @@ def run_FreeCAD_ReduceCurve(self):
         displayline(self,ptsf,(1,1,0))
     
     sf=Part.BSplineCurve()
-    sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)   
+    sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)
+    
+    # alte anzahl wiederhrstellen
+    if self.getData("preservePolesCount"):  
+        for i in range(l):
+            sf.insertKnot(p-3+(2*i+1)/(l+1),1)
+
     self.setPinObject('Shape_out',sf.toShape())
         
        
@@ -5976,24 +6001,32 @@ def run_FreeCAD_ReduceCurve(self):
 
 def run_commit(self):
         self.shape=self.getPinObject("Shape_out")
-        say("nicht impl")
+        say("nicht --------------------- impl")
         a=self.getData('start')
         b=self.getData('segments')
         ax=self._wrapper.UIinputs
         for i,j in enumerate(ax):
             p=ax[j]
             if p.name=='segments':
+                say("AA")
                 p.setData(0)
             if p.name=='Move1':
+                say("BB")
                 p.setData(0)
 
             if p.name=='Move2':
+                say("CC")
                 p.setData(0)
         for i,j in enumerate(ax):
             p=ax[j]
             if p.name=='start':
+                say("DD")
                 p.setData(a+4)
         #self.setPinObject('Shape_out',self.shape)
+        say("vor compute--------------------")
         self.compute()
+        say("nach compute--------------------")
         self.outExec.call()
+
+
 

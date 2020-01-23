@@ -1537,7 +1537,35 @@ class FreeCAD_ListOfVectors(FreeCadNodeBase2):
 
     @staticmethod
     def description():
-        return FreeCAD_ListOfVectors.__doc__
+        return FreeCAD_ListOfVectorlist.__doc__
+
+    @staticmethod
+    def category():
+        return 'Conversion'
+
+class FreeCAD_ListOfVectorlist(FreeCadNodeBase2):
+    '''
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.createOutputPin('vectorarray', 'VectorPin', structure=StructureType.Array)
+
+        self.pas=self.createInputPin('vectorlists', 'VectorPin', structure=StructureType.Array)
+        self.pas.enableOptions(PinOptions.AllowMultipleConnections)
+        self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
+
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_ListOfVectorlist.__doc__
 
     @staticmethod
     def category():
@@ -2349,6 +2377,8 @@ class FreeCAD_Loft(FreeCadNodeBase2):
         
         self.createOutputPin('Shape_out', 'ShapePin')
 
+
+#+# probleme mit der methode in part
 class FreeCAD_Sweep(FreeCadNodeBase2):
     '''
     'makeSweepSurface(edge(path),edge(profile),[float]) -- Create a profile along a path.'
@@ -2366,6 +2396,7 @@ class FreeCAD_Sweep(FreeCadNodeBase2):
         a=self.createInputPin('profile', 'ShapePin')
         a=self.createInputPin('f', 'Float')
         self.createOutputPin('Shape_out', 'ShapePin')
+
 
 
 class FreeCAD_Slice(FreeCadNodeBase2):
@@ -2421,6 +2452,7 @@ def nodelist():
                 FreeCAD_Destruct_Shape,
 
                 FreeCAD_ListOfVectors,
+                FreeCAD_ListOfVectorlist,
                 FreeCAD_MoveVectors,
                 FreeCAD_ScaleVectors,
                 FreeCAD_RepeatPattern,
