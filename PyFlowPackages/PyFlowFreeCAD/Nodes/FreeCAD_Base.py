@@ -19,7 +19,7 @@ def timer(func):
         if is_method :
                 name    = '{}.{}.{}'.format(func.__module__, args[0].__class__.__name__, func.__name__)
         else :
-                name    = '{}.{}'.format(fn.__module__, func.__name__)
+                name    = '{}.{}'.format(func.__module__, func.__name__)
         if log: sayW("call '{}'".format(name))
         start_time = time.time()
         value = func(*args, **kwargs)
@@ -397,9 +397,20 @@ class FreeCadNodeBase2(FreeCadNodeBase):
         if self._debug:
             say("--- Start",self.name)
             self._started=time.time()
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        a=eval("nodeeditor.dev.run_{}(self)".format(self.__class__.__name__))
+            say(self.__class__.category())
+            #eval("import dev_{}".format(self.__class__.category())
+        
+        import nodeeditor.dev_all
+        reload(nodeeditor.dev_all)
+        a="nodeeditor.dev_all.{}.run_{}(self)".format(self.__class__.category(),self.__class__.__name__)
+        try:
+            a=eval(a)
+        except:
+            sayexc("tried to run " + a)
+            import nodeeditor.dev
+            reload (nodeeditor.dev)
+            a=eval("nodeeditor.dev.run_{}(self)".format(self.__class__.__name__))
+
         if self._debug: 
             say("--- Done",self.name,round(time.time()-self._started,2))
 
