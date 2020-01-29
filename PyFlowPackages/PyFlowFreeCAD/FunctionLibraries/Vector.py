@@ -24,10 +24,17 @@ class Vector(FunctionLibraryBase):
 
     @staticmethod
     @IMPLEMENT_NODE(returns=('VectorPin', MVector()), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})
+    def list2Vector( XYZ=('FloatPin', [],{"enabledOptions": PinOptions.ArraySupported })):
+        ''' vector by coordinates X, Y, Z.'''
+        v = MVector(*XYZ)
+        return v
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('VectorPin', MVector()), nodeType=NodeTypes.Pure, meta={'Category': 'Vector', 'Keywords': ['Vector']})
     def vecCreate( X=('Float', 0), Y=('Float', 0), Z=('Float', 0)):
         ''' vector by coordinates X, Y, Z.'''
         v = MVector(X,Y,Z)
-        say("create vector",v)
+        #say("create vector",v)
         return v
 
     @staticmethod
