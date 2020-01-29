@@ -347,12 +347,7 @@ def run_projection_compute(self,*args, **kwargs):
     d=self.getPinByName('direction').getData()
     say("direction",d)
     shape=f.makeParallelProjection(e,d)
-    cc=self.getObject()
-    if cc  !=  None:
-        cc.Label=self.objname.getData()
-        cc.Shape=shape
-        #cc.ViewObject.LineWidth=8
-        cc.ViewObject.LineColor=(1.,1.,0.)
+    self.setPinObject('Shape_out',shape)
 
 def run_perspective_projection_compute(self,*args, **kwargs):
 
@@ -385,7 +380,7 @@ def run_uv_projection_compute(self,*args, **kwargs):
     f=store.store().get(self.getPinByName('face').getData())
     w=store.store().get(self.getPinByName('edge').getData())
     closed=True
-    closed=False
+    #closed=False
 
     if f==None:
         sayW("no face connected")
@@ -434,6 +429,7 @@ def run_uv_projection_compute(self,*args, **kwargs):
         rc=r[0][0]
     except: return
 
+    '''
     cc=self.getObject()
     if cc  !=  None:
         cc.Label=self.objname.getData()
@@ -442,7 +438,13 @@ def run_uv_projection_compute(self,*args, **kwargs):
         cc.Shape=r2[0][0]
     else:
         cc.Shape=r[0][0]
-
+    '''
+    if self.getData('inverse'):
+        self.setPinObject("Shape_out",r2[0][0])
+    else:
+        self.setPinObject("Shape_out",r[0][0])
+    return
+    
     if self.getPinByName('Extrusion').getData():
         f = FreeCAD.getDocument('project').getObject('MyExtrude')
         if f == None:
@@ -720,6 +722,71 @@ def run_FreeCAD_VIso(self,*args, **kwargs):
 
 
 
+def patchgrid(self):
+
+    shape=self.getPinObject("Face_in")
+    es=shape.Edges
+    sf=shape.Surface
+    e=es[0]
+
+    pts=e.discretize(200)
+
+    pams=np.array([sf.parameter(p) for p in pts])
+    pamsA=np.array([(u,v) for (v,u) in pams])
+
+    pamms= pams[pams[:,0].argsort()]
+    pammsA= pamsA[pamsA[:,0].argsort()]
+
+    segs={}
+    pamss2=[(round(k[0],1),k[1]) for k in pams]
+    for p in pamss2:
+        try:
+            segs[p[0]]+=[p[1]]
+        except:
+            segs[p[0]]=[p[1]]
+
+    col=[]
+    for s in segs:
+        mi=min(segs[s])
+        ma=max(segs[s])
+        if mi != ma:
+            ss=sf.uIso(s)
+            ss.segment(mi,ma)
+            col += [ss.toShape()]
+
+    us=col
+    col=[]
+    
+        
+
+    segsA={}
+    pamss2A=[(round(k[0],1),k[1]) for k in pamsA]
+
+    for p in pamss2A:
+        try:
+            segsA[p[0]]+=[p[1]]
+        except:
+            segsA[p[0]]=[p[1]]
+
+
+
+    col=[]
+    for s in segsA:
+        mi=min(segsA[s])
+        ma=max(segsA[s])
+        if mi != ma:
+            ss=sf.vIso(s)
+            ss.segment(mi,ma)
+            
+            
+            col += [ss.toShape()]
+
+
+    vs=col
+    return (us,vs)
+
+
+
 def run_FreeCAD_UVGrid(self,*args, **kwargs):
 
     f=self.getPinObject('Face_in')
@@ -744,10 +811,71 @@ def run_FreeCAD_UVGrid(self,*args, **kwargs):
         c=sf.vIso(vv).toShape()
         vs += [c]
 
+#
+
+    #verfeinerung path
+    sayl()
+    if  f.Area != sf.toShape().Area:
+        
+        us,vs=patchgrid(self)
+        
+        '''
+        # EXAKTE VERSION - ZU LANGSAM
+        # patch
+        anz=20
+        us=[]
+        for u in range(uc+1):
+            uu=umin+(umax-umin)*u/uc
+            c=sf.uIso(uu).toShape()
+            cc=sf.uIso(uu)
+            pts=c.discretize(anz)
+            off=True
+            suba=umin
+            subb=umin
+            for p in pts:
+                if f.distToShape(Part.Vertex(p))[0]<1:
+                    if off:
+                        off=False
+                        suba=cc.parameter(p)
+                    else:
+                        subb=cc.parameter(p)
+            try:
+                #say(suba,subb)
+                cc.segment(suba,subb)
+                c=cc.toShape()
+                us += [c]
+            except:
+                pass
+
+        vs=[]
+        for v in range(vc+1):
+            vv=vmin+(vmax-vmin)*v/vc
+            cc=sf.vIso(vv)
+            c=cc.toShape()
+            pts=cc.toShape().discretize(anz)
+            off=True
+            suba=vmin
+            subb=vmin
+            for p in pts:
+                if f.distToShape(Part.Vertex(p))[0]<1:
+                    if off:
+                        off=False
+                        suba=cc.parameter(p)
+                    else:
+                        subb=cc.parameter(p)
+            try:
+                cc.segment(suba,subb)
+                c=cc.toShape()
+                vs += [c]
+            except:
+                pass
+        '''
+        
+    
 
     self.setPinObjects('uEdges',us)
     self.setPinObjects('vEdges',vs)
-    self.setPinObject('Shape_out',Part.Compound(us+vs))
+    self.setPinObject('Shape_out',Part.Compound(us+vs+f.Edges))
 
 
 
@@ -1946,8 +2074,13 @@ def run_FreeCAD_Destruct_BSplineSurface(self,bake=False, **kwargs):
 
 def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
 
-        dat=self.arrayData.getData()
-        #say("dat",dat)
+        
+        data=self.getPinDataYsorted('poles')
+        for d in data:
+            say("!",np.array(d).shape)
+        dat=np.concatenate(data)
+        say(np.array(dat).shape)       
+        
         if len(dat) == 0:
             sayW("no points for poles")
             return
@@ -1955,7 +2088,6 @@ def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
         sf=Part.BSplineSurface()
 
         poles=np.array(dat)
-        #say(poles)
 
         (countA,countB,_)=poles.shape
         degB=min(countB-1,3,self.getPinByName("maxDegreeU").getData())
@@ -2641,11 +2773,19 @@ def run_FreeCAD_ConnectPoles(self):
 def run_FreeCAD_FlipSwapArray(self):
     say("flipswap")
     say(self.name)
-    polesA=np.array(self.getData('poles_in'))
-    say("shape",polesA.shape)
-    if len(polesA.shape)<2: return
-    poles=polesA.swapaxes(0,1)
-    say(poles.shape)
+    poles=np.array(self.getData('poles_in'))
+    say("shape",poles.shape)
+    if len(poles.shape)<2: return
+    if self.getData('swap'):
+        poles=poles.swapaxes(0,1)
+    if self.getData('flipu'):
+        poles=np.flipud(poles)
+    if self.getData('flipv'):
+        poles=np.flipud(poles)
+
+
+    
+    say("result",poles.shape)
     self.setData('poles_out',poles.tolist())
 
 
@@ -5017,23 +5157,32 @@ def run_dragger(self,**kv):
     tns=[]
 
     def handler(arg):
-        say("dragger moved",arg)
+        say("dragger moved")
         self.compute()
 
     def handler2(arg):
-        say("dragger started",arg)
+        say("dragger started")
         
-    pointsa=[FreeCAD.Vector()]
+    
+    
+    pointsa=self.getData('Points_out')
+    
+    if len(pointsa)==0:
+        pointsa=[FreeCAD.Vector()]
+    
         
     try:
             self.points
     except:
-        say("hoel daten")
+        say("hoel daten - self. points nicht da ")
         points=self.getData("points")
         if len(points) == 0 :
+            say("keine Dat points points - nehme zielpunkte")
             points=pointsa
     
         self.points=points
+    
+    #self.points=pointsa
     
     points=self.points
     
@@ -5055,6 +5204,7 @@ def run_dragger(self,**kv):
     FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().addChild(self.gg)
 
     for p in points:
+
         t=coin.SoType.fromName("SoFCCSysDragger")
         dragger=t.createInstance()
         dragger.setStartingPoint(coin.SbVec3f(0,0,0))
@@ -5065,13 +5215,15 @@ def run_dragger(self,**kv):
 
         g = coin.SoSeparator()
         tt = coin.SoTransform()
-        say(p)
+
         tt.translation = p.tolist()  
         
         g.addChild(tt)
         g.addChild(dragger)
         self.gg.addChild(g)
         tns += [dragger]
+
+
 
     for n in tns:   
         pass
@@ -5081,8 +5233,11 @@ def run_dragger(self,**kv):
 
     self.tns=tns
 
+
 def run_FreeCAD_Dragger(self,**k):
 
+    
+    
     try:
         self.tns
     except:
@@ -5092,6 +5247,35 @@ def run_FreeCAD_Dragger(self,**k):
     par=np.array(points)
     pdiffs=[]
     
+    #say("tns",self.tns)
+
+    n=self.tns[0]
+    pos=FreeCAD.Vector(n.getLocalStartingPoint().getValue())
+    m=n.getMotionMatrix().getValue()
+    m=FreeCAD.Matrix(*np.array(m).flatten())
+    pma=FreeCAD.Placement(m).inverse()
+    '''
+    # anwendung auf objekt
+    pm=FreeCAD.Placement(m)
+    pm.Base=pos
+    pm=pm.inverse()
+    FreeCAD.ActiveDocument.Box.Placement=pm
+    
+    '''
+    target=pma.multVec(-pos)
+    tu=pma.multVec(FreeCAD.Vector(1,0,0))
+    tv=pma.multVec(FreeCAD.Vector(0,1,0))
+    self.setData('point_out',target)
+    self.setData('hand',[target,tu,tv])
+    
+    clearcoin(self)
+
+    ptsl=[FreeCAD.Vector(),target]
+    displayline(self,ptsl,color=(1,1,1))
+    displaytext(self,target,color=(1,1,0),text=[self.name])
+
+    
+    #--------------------------------------------
 
     for n in self.tns:  
         pdiffs += [-FreeCAD.Vector(n.getLocalStartingPoint().getValue())]
@@ -5682,94 +5866,16 @@ def run_FreeCAD_IfElse(self):
         self.elseExec.call()
     
 
-#-----------------
 
 
+import nodeeditor
+import nodeeditor.cointools
+reload(nodeeditor.cointools)
 
-from pivy.coin import *
-
-def clearcoin(self):
-    root=FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
-    try:
-        root.removeChild(self._sg)
-        del(self._sg)
-    except:
-        pass
+from nodeeditor.cointools import *
 
 
-def displaysphere(self,point,radius=5,color=(1,1,1)):
-    
-    try:
-        sg=self._sg
-    except:
-        sg    = SoSeparator()
-        self._sg= sg
-
-        root=FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
-        root.addChild(sg)
-
-    p=point
-    #say(point,color,"##########")
-
-    trans = coin.SoTranslation()
-    trans.translation.setValue(p.x,p.y,p.z)
-    cub = coin.SoSphere()
-    cub.radius.setValue(radius)
-    col = coin.SoBaseColor()
-    col.rgb=color
-    myCustomNode = coin.SoSeparator()
-    myCustomNode.addChild(col)
-    myCustomNode.addChild(trans)
-    myCustomNode.addChild(cub)
-    sg.addChild(myCustomNode)
         
-def displayspheres(self,points,radius=5,color=(1,1,1)):
-    for p in points:
-        displaysphere(self,p,radius=radius,color=color)
-
-def displayline(self,pts,color=(1,1,1)):
-    
-    try:
-        sg=self._sg
-    except:
-        sg    = SoSeparator()
-        self._sg= sg
-        root=FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
-        root.addChild(sg)
-        
-        
-    heart    = SoSeparator()
-    coord = SoCoordinate3()
-    coord.point.setValues(0,len(pts),pts)
-    a=[i for i in range(len(pts))]+[-1]
-
-    drawstyle = SoDrawStyle()
-    drawstyle.style = SoDrawStyle.LINES
-    drawstyle.lineWidth = 4
-   
-
-    lineSet = SoIndexedLineSet()
-    lineSet.coordIndex.setValue(0)
-    lineSet.coordIndex.setValues(0, len(a), a)
-
-    myMaterial = SoMaterial()
-    myBinding = SoMaterialBinding()
-    myMaterial.diffuseColor.set1Value(0, SbColor(*color))
-#   myMaterial.diffuseColor.set1Value(1, SbColor(0,1.,0))
-#   myMaterial.diffuseColor.set1Value(2, SbColor(0,1.,1))
-#   myMaterial.diffuseColor.set1Value(3, SbColor(1,0.,1))
-#    myBinding.value = SoMaterialBinding.PER_PART
-
-    heart.addChild(drawstyle)
-    heart.addChild(myMaterial)
-    heart.addChild(myBinding)
-
-
-    heart.addChild(coord)
-    heart.addChild(lineSet)
-    sg.addChild(heart)
-    #root.removeChild(heart)
-    # self._sg=heart
 
 
 # 19-22.01.2020
