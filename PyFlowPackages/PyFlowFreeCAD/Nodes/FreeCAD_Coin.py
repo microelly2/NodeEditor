@@ -81,11 +81,11 @@ class FreeCAD_QuadMesh(FreeCadNodeBase2):
         a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
 
 
-
+from nodeeditor.cointools import *
 
 class FreeCAD_Dragger(FreeCadNodeBase):
     '''
-	a coin tool to display a draggable placement or a list of such placements
+    a coin tool to display a draggable placement or a list of such placements
     '''
 
     dok = 0
@@ -104,6 +104,9 @@ class FreeCAD_Dragger(FreeCadNodeBase):
         a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
         a=self.createOutputPin('Points_out', 'VectorPin',structure=StructureType.Array)
         a=self.createOutputPin('point_out', 'VectorPin')
+     
+        a=self.createOutputPin('hand', 'VectorPin',structure=StructureType.Array)
+        
         
         self.inExec = self.createInputPin('reset', 'ExecPin', None, self.resetpoints)
 #        a=self.createInputPin("tickOff","Boolean")
@@ -120,14 +123,16 @@ class FreeCAD_Dragger(FreeCadNodeBase):
             del(self.points)
         except:
             pass
+        self.start()  
 
     def stop(self, *args, **kwargs):
         try:
             FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.gg)
         except:
             pass
+        clearcoin(self)
 
-	# example implementation for automated running inside pyflow
+    # example implementation for automated running inside pyflow
     def XX_DEACTIVETED_Tick(self, delta):     
         
         if self.getData("ticktime")==-100 or self.getData('tickOff'):
