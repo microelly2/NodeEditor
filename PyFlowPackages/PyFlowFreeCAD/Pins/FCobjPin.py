@@ -58,6 +58,44 @@ class FCobjPin(PinBase):
         else:
             return None
 
+class FunctionId():
+    pass
+
+class FunctionPin(FCobjPin):
+
+    """doc string for """
+
+    def __init__(self, name, parent, direction, **kwargs):
+        #say("create pin",name,parent.getName(),direction)
+        super(FunctionPin, self).__init__(name, parent, direction)
+        self.setDefaultValue(None)
+
+    @staticmethod
+    def IsValuePin():
+        return True
+
+    @staticmethod
+    def supportedDataTypes():
+        return ('FunctionPin','ShapePin')
+
+    @staticmethod
+    def color():
+        return (90, 90, 250, 255)
+
+    @staticmethod
+    def pinDataTypeHint():
+        return 'FunctionPin', None
+
+    @staticmethod
+    def internalDataStructure():
+        return FunctionId
+
+    @staticmethod
+    def processData(data):
+        return data
+
+
+
 
 
 class ShapeId():
@@ -313,9 +351,8 @@ class StringD(str):
 class FloatD(float):
     pass
 
-# ghneralised data setter
+# generalised data setter
 def setDataG(self,data):
-    say("setDataG",self.name)
     super(self.__class__, self).setData(data)
     try:
         if  self.direction == PinDirection.Input and not self.hasConnections():
@@ -412,4 +449,5 @@ class Float(FloatPin):
 def nodelist():
     pins = [ShapePin,FacePin,EdgePin,ShapeListPin,FCobjPin,ArrayPin,TransformationPin ]
     pins += [Integer,Float,Boolean,String]
+    pins += [FunctionPin]
     return pins
