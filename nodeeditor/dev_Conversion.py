@@ -1,4 +1,4 @@
-# implemenation of the compute mnethods for category Conversion
+# implemenation of the compute methods for category Conversion
 
 import numpy as np
 import random

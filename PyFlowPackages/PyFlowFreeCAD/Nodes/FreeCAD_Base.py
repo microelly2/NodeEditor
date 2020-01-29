@@ -45,7 +45,7 @@ class FreeCadNodeBase(NodeBase):
     @timer
     def compute(self, *args, **kwargs):
         if self._debug:
-            say("!-- Start",self.name)
+            say("-- Start",self.name)
             self._started=time.time()
         import nodeeditor.dev
         reload (nodeeditor.dev)
@@ -340,6 +340,14 @@ class FreeCadNodeBase(NodeBase):
         return rots
 
  
+    def getPinDataYsorted(self,pinName):
+        pin=self.getPinByName(pinName)
+        ySortedPins = sorted(pin.affected_by, key=lambda pin: pin.owningNode().y)
+        dat=[ps.getData() for ps in ySortedPins]
+        return dat
+
+ 
+ 
             
     def reset(self,*args, **kwargs):
         pass
@@ -406,7 +414,7 @@ class FreeCadNodeBase2(FreeCadNodeBase):
         try:
             a=eval(a)
         except:
-            sayexc("tried to run " + a)
+            sayW("tried to run " + a)
             import nodeeditor.dev
             reload (nodeeditor.dev)
             a=eval("nodeeditor.dev.run_{}(self)".format(self.__class__.__name__))

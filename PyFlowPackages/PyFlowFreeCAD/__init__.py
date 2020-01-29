@@ -123,6 +123,9 @@ from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
 nodelistcol += nodelist()
 
 
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Lambda import nodelist
+nodelistcol += nodelist()
+
 if devmode():
 	pass
 	# development tools and nodes
