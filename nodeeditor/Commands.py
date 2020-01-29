@@ -1782,6 +1782,9 @@ def createNodeDocu(onlyNew=False):
             if c[7:] in ['PinsTest']:
                 continue 
 
+            
+            # if c[8:] not in ['ReduceCurve']:                continue
+
             # di 17.12.
             sels= ['centerOfMass','distToShape','IndexToList','Reduce']
             sels+=['Transformation','repeatPattern','scaleVectors','moveVectors','listOfVectors']
@@ -1827,6 +1830,13 @@ def createNodeDocu(onlyNew=False):
                     say("  "+s.lstrip())
                 
                 say("[[nodes::{}|More ...]]\n\n".format(c[8:]))
+
+                try:
+                    say("Videos: {}".format(node.videos))
+                    say()
+                except:
+                    pass
+
                 FreeCAD.n=node
                 try:
                     kats[node.category()] +=  [c]

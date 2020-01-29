@@ -26,7 +26,7 @@ class VectorDecoder(json.JSONDecoder):
         return Vector(vec3Dict[Vector.__name__])
 
 def setDataG(self,data):
-    say("setDataG",self.name)
+    
     super(self.__class__, self).setData(data)
     try:
         if  self.direction == PinDirection.Input and not self.hasConnections():
