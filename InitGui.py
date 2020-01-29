@@ -35,6 +35,11 @@ pv3=sys.version.startswith('3')
 if pv3:
     sys.path.append('/usr/local/lib/python3.4/dist-packages')
     sys.path.append('/usr/lib/python3/dist-packages')
+    #------#+# todo implemt generalized hack
+    #sys.path.append('/home/klixto/anaconda3/lib/python3.7/site-packages')
+    #sys.path.append('/home/klixto/.local/lib/python3.7/site-packages')
+    #--end hack
+    
     import blinker
     import docutils
 
@@ -186,6 +191,7 @@ class _Command2():
                 modul = self.modul
             else:
                 modul = self.name
+                
             Gui.doCommand('from importlib import reload')
             Gui.doCommand("import " + modul)
             Gui.doCommand("import " + self.lmod)
@@ -289,7 +295,10 @@ if FreeCAD.GuiUp:
 
     current += [c3bI(["tests"], always, 'Commands', 'create All Nodes for Tests',icon=None)]
     _current += [c3bI(["tests"], always, 'Commands', 'create node with all pins',icon=None)]
-    current += [c3bI(["tools"], always, 'Commands', 'createBePlane',icon=None)]
+
+    if devmode():
+        current += [c3bI(["tools"], always, 'Commands', 'createBePlane',icon=None)]
+
     current += [c3bI(["tools"], always, 'Commands', 'create some parts',icon=None)]
     current += [c3bI(["tools"], always, 'Commands', 'display Tools',icon=None)]
     _current += [c3bI(["tools"], always, 'Commands', 'display Preferences Window',icon=None)]

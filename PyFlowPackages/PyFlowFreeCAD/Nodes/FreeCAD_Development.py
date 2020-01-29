@@ -307,8 +307,8 @@ class FreeCAD_StorePins(NodeBase):
         say ("End exec for ---",self.getName())
 
 
-class FreeCAD_Toy(FreeCadNodeBase2):
-    '''erzeuge eine zufallsBox'''
+class FreeCAD_Toy2(FreeCadNodeBase2):
+    ''''''
 
 
 
@@ -325,7 +325,8 @@ class FreeCAD_Toy(FreeCadNodeBase2):
         self.randomize = self.createInputPin("randomize", 'BoolPin')
 
         self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+        
 
         self.objname = self.createInputPin("objectname", 'StringPin')
         self.objname.setData(name)
@@ -341,63 +342,299 @@ class FreeCAD_Toy(FreeCadNodeBase2):
         name="MyToy"
         self.objname.setData(name)
 
-    def compute(self, *args, **kwargs):
-
-        yid="ID_"+str(self.uid)
-        yid=yid.replace('-','_')
-        say(str(self.uid).replace('-','_'))
-
-        cc=FreeCAD.ActiveDocument.getObject(yid)
-        if cc == None:
-            cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
-            FreeCAD.activeDocument().recompute()
-        cc.Label=self.objname.getData()
+        a=self.createInputPin('Shape', 'ShapePin')
 
 
-        f=30 if self.randomize.getData() else 0
-        shape=Part.makeBox(10+f*random.random(),10+f*random.random(),10+f*random.random())
-        cc.Shape=shape
+        a=self.createInputPin('k',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        a=self.createInputPin('l',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        
+        a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a=self.createInputPin('uvs', 'VectorPin',structure=StructureType.Array)
 
-        if self.part.hasConnections():
-            say("send a Part")
-            if cc == None:
-                self.part.setData(None)
-            else:
-                self.part.setData(cc.Name)
 
-        sayl()
-        say(self.getPinByName("Shape"))
-        say(shape)
 
-        self.setPinObject("Shape",shape)
         self.outExec.call()
 
     @staticmethod
     def description():
-        return FreeCAD_Toy.__doc__
+        return FreeCAD_Toy2.__doc__
 
     @staticmethod
     def category():
         return 'Development'
 
+
+
+class FreeCAD_Tape(FreeCadNodeBase2):
+    ''''''
+
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+        self.arrayData = self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
+        
+      
+
+
+
+        a=self.createInputPin('Shape', 'ShapePin')
+
+
+        a=self.createInputPin('k',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        a=self.createInputPin('l',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        
+        a=self.createInputPin('hands', 'VectorPin',structure=StructureType.Array)
+        a.enableOptions(PinOptions.AllowMultipleConnections)
+        #a.disableOptions(PinOptions.SupportsOnlyArrays)
+
+        a=self.createInputPin('scalesU', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('scalesV', 'FloatPin',structure=StructureType.Array)
+
+
+        self.outExec.call()
+
     @staticmethod
-    def keywords():
-        return ['Box','Part']
+    def description():
+        return FreeCAD_Toy2.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
 
 
 
 
 
 
+
+
+
+
+
+class FreeCAD_Toy3(FreeCadNodeBase2):
+    ''''''
+
+
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.objname = self.createInputPin("objectname", 'StringPin')
+        self.objname.setData(name)
+
+        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
+        self.shapeOnly.recomputeNode=True
+
+        self.randomize = self.createInputPin("randomize", 'BoolPin')
+
+        a=self.createInputPin('Shape', 'ShapePin')
+
+
+        a=self.createInputPin('k',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        a=self.createInputPin('l',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        
+        a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a=self.createInputPin('uvs', 'VectorPin',structure=StructureType.Array)
+
+        self.arrayData = self.createInputPin('data', 'AnyPin', structure=StructureType.Dict)
+        self.arrayData.enableOptions(PinOptions.AllowMultipleConnections | PinOptions.AllowAny | PinOptions.DictElementSupported)
+        self.arrayData.disableOptions(PinOptions.ChangeTypeOnConnection | PinOptions.SupportsOnlyArrays)
+        self.outArray = self.createOutputPin('out', 'AnyPin', structure=StructureType.Dict)
+        self.outArray.enableOptions(PinOptions.AllowAny)
+        self.outArray.disableOptions(PinOptions.ChangeTypeOnConnection)
+        self.result = self.createOutputPin('result', 'BoolPin')
+        #self.arrayData.onPinDisconnected.connect(self.inPinDisconnected)
+        #self.arrayData.onPinConnected.connect(self.inPinConnected)
+        #self.KeyType.typeChanged.connect(self.updateDicts)
+
+
+
+class FreeCAD_ReduceSurface(FreeCadNodeBase2):
+    '''
+    interactive reduce poles from a curve to get it smoother 
+    '''
+
+    videos="https://youtu.be/iEHDOwz9S3Q https://youtu.be/vuQ4s3iYqOA"
+
+    def __init__(self, name="MyTripod",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)  
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a = self.createInputPin("commit", 'ExecPin', None, self.commit)
+        a.description='accept changes into working copy'
+        a = self.createInputPin("bake", 'ExecPin', None, self.bake)
+        a.description='store working copy as nonparametric Shape'
+        a = self.createInputPin("rollback", 'ExecPin', None, self.rollback)
+        a.description="cancel all changes and go back to the inputpin Shape curve"
+        
+        
+        a=self.createInputPin('Move1', 'Integer',0)
+        a.setInputWidgetVariant("Slider")
+        a.description='interactive move the calculated new pole first direction'
+        
+        a=self.createInputPin('Move2', 'Integer',0)
+        a.setInputWidgetVariant("Slider")
+        a.description='interactive move the calculated new pole 2nd direction'
+
+        a=self.createInputPin('Move3', 'Integer',0)
+        a.setInputWidgetVariant("Slider")
+        a.description='interactive move the calculated new pole 2nd direction'
+
+        a=self.createInputPin("hide",'Boolean')
+        a.description="do not display the controls in 3D after works is finished"
+        
+        a=self.createInputPin("position",'VectorPin')
+        a.description='a position to use as new pole instead of the calculated pole'
+        
+        a=self.createInputPin("useStartPosition",'Boolean')
+        a.description='use the pin position as new pole base' 
+        
+        a=self.createInputPin("usePositionAsAbsolute",'Boolean')
+        a.description='use the pin position as absolute else it is added to the center of mass' 
+        
+
+        a=self.createInputPin('startU',"Integer")
+        a.annotationDescriptionDict={ "ValueRange":(1,100)}
+        a.setInputWidgetVariant("Simple2")
+        a.description="knot number where modification starts"
+
+        a=self.createInputPin('segmentsU',"Integer",-1)
+        a.annotationDescriptionDict={ "ValueRange":(-1,100)}
+        a.setInputWidgetVariant("Simple2")
+        a.description="number of segments which are smoothed"
+
+        a=self.createInputPin('startV',"Integer")
+        a.annotationDescriptionDict={ "ValueRange":(1,100)}
+        a.setInputWidgetVariant("Simple2")
+        a.description="knot number where modification starts"
+
+        a=self.createInputPin('segmentsV',"Integer",-1)
+        a.annotationDescriptionDict={ "ValueRange":(-1,100)}
+        a.setInputWidgetVariant("Simple2")
+        a.description="number of segments which are smoothed"
+
+        '''
+        a=self.createInputPin('k',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        a.setInputWidgetVariant("Simple2")
+
+        a=self.createInputPin('weight',"Integer",2)
+        a.annotationDescriptionDict={ "ValueRange":(0,10)}
+        a.setInputWidgetVariant("Simple2")
+        
+        '''
+        a=self.createInputPin("Strategy",'StringPin','Center of Mass')
+        a.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":["Center of Mass","Shortest","Point"]
+            }
+        a.setInputWidgetVariant("EnumWidget")
+        a.setData("Center of Mass")
+        a.description='''how the curve should be simplified: 
+  -''Center of Mass'' starts at the center fo the old poles
+  -''Shortest'' calculates the shortest segement to fill the gap
+  -''Point''  makes the curve fitting a point'''
+
+        a=self.createInputPin("Method",'StringPin','BFGS')
+        a.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":['Nelder-Mead', 'Powell', 'CG', 'BFGS', 'L-BFGS-B', 'TNC', 'COBYLA', 'SLSQP',]
+            }
+        a.setInputWidgetVariant("EnumWidget")
+        a.setData("BFGS")
+        a.description='''the scipy methods for optimize.
+        
+If the computation time is to long or not good results are calcuated a change of the method may help. 
+
+see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
+        
+        a=self.createInputPin('Shape', 'ShapePin')
+        a.description='a bspline curve edge' 
+        
+        a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description='the list of knotes before and after change'
+
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+        a.description='the reduced bspline curve' 
+        
+        a=self.createInputPin("preservePolesCount",'Boolean')
+        
+        self.setExperimental()
+
+        
+    def commit(self,*arg,**kwarg):
+        #import nodeeditor.dev
+        #reload (nodeeditor.dev)
+        #nodeeditor.dev.run_commit(self)
+        #return
+
+        self.shape=self.getPinObject("Shape_out")
+        a=self.getData('start')
+        b=self.getData('segments')
+        ax=self._wrapper.UIinputs
+        for i,j in enumerate(ax):
+            p=ax[j]
+            if p.name=='segments':
+                p.setData(0)
+            if p.name=='Move1':
+                p.setData(0)
+
+            if p.name=='Move2':
+                p.setData(0)
+
+        for i,j in enumerate(ax):
+            p=ax[j]
+            if p.name=='start':
+                p.setData(a+4)
+        self.compute()
+        self.outExec.call()
+
+
+        
+    def rollback(self,*arg,**kwarg):
+        try:
+            del(self.shape)
+        except:
+            pass
+
+    @staticmethod
+    def description():
+        return FreeCAD_ReduceSurface.__doc__
 
 
 
 
 def nodelist():
-	return [
-	FreeCAD_PinsTest,
-	FreeCAD_Foo,
-	FreeCAD_StorePins,
-	FreeCAD_Toy,
-	
-	]
+    return [
+    FreeCAD_PinsTest,
+    FreeCAD_Foo,
+    FreeCAD_StorePins,
+    #FreeCAD_Toy,
+    FreeCAD_Toy2,
+    FreeCAD_Toy3,
+    
+    FreeCAD_Tape,
+	#FreeCAD_ReduceSurface,
+
+]
