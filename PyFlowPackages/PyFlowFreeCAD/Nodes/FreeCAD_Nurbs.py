@@ -1261,7 +1261,61 @@ see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
         return FreeCAD_ReduceCurve.__doc__
 
 
+class FreeCAD_BSplineSegment(FreeCadNodeBase2):
+    '''
+    segment of the BSpline 
+    '''
 
+    def __init__(self, name="MyTripod",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)  
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('uStart',"Float")
+        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+        a=self.createInputPin('vStart',"Float",)
+        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+
+        a=self.createInputPin('uEnd',"Float",100)
+        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+
+        a=self.createInputPin('vEnd',"Float",100)
+        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+        
+        self.createInputPin('Shape', 'ShapePin')
+        self.createOutputPin('Shape_out', 'ShapePin')
+        
+        self.setExperimental()
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_BSplineSegment.__doc__
+
+class FreeCAD_BSplineOffset(FreeCadNodeBase2):
+    '''
+    a poor man offset approx: create a grid of points moved in normal direction
+    '''
+
+    def __init__(self, name="MyTripod",**kvargs):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)  
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('height',"Float")
+        a.annotationDescriptionDict={ "ValueRange":(-100,100)}
+        
+        self.createInputPin('Shape', 'ShapePin')
+        self.createOutputPin('Shape_out', 'ShapePin')
+        a=self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
+        
+        self.setExperimental()
+
+    @staticmethod
+    def description():
+        return FreeCAD_BSplineOffset.__doc__
 
 def nodelist():
     return [
@@ -1295,4 +1349,6 @@ def nodelist():
                 FreeCAD_IronCurve,
                 FreeCAD_IronSurface,
                 FreeCAD_ReduceCurve,
+                FreeCAD_BSplineSegment,
+                FreeCAD_BSplineOffset
         ]
