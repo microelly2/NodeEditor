@@ -445,7 +445,7 @@ class FreeCAD_Toy3(FreeCadNodeBase2):
         self.randomize = self.createInputPin("randomize", 'BoolPin')
 
         a=self.createInputPin('Shape', 'ShapePin')
-
+        a=self.createOutputPin('Shape', 'ShapePin')
 
         a=self.createInputPin('k',"Integer",0)
         a.annotationDescriptionDict={ "ValueRange":(-5,20)}
@@ -467,10 +467,14 @@ class FreeCAD_Toy3(FreeCadNodeBase2):
         #self.KeyType.typeChanged.connect(self.updateDicts)
 
 
+    @staticmethod
+    def category():
+        return 'Development'
+
 
 class FreeCAD_ReduceSurface(FreeCadNodeBase2):
     '''
-    interactive reduce poles from a curve to get it smoother 
+  
     '''
 
     videos="https://youtu.be/iEHDOwz9S3Q https://youtu.be/vuQ4s3iYqOA"
@@ -635,6 +639,6 @@ def nodelist():
     FreeCAD_Toy3,
     
     FreeCAD_Tape,
-	#FreeCAD_ReduceSurface,
+    #FreeCAD_ReduceSurface,
 
 ]

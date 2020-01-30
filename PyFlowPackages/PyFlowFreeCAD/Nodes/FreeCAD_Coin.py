@@ -1,6 +1,7 @@
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2, FreeCadNodeBase
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import FreeCadNodeBase2, FreeCadNodeBase
+from nodeeditor.cointools import *
 
 
 class FreeCAD_ShapePattern(FreeCadNodeBase2):
@@ -81,7 +82,6 @@ class FreeCAD_QuadMesh(FreeCadNodeBase2):
         a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
 
 
-from nodeeditor.cointools import *
 
 class FreeCAD_Dragger(FreeCadNodeBase):
     '''
@@ -106,11 +106,9 @@ class FreeCAD_Dragger(FreeCadNodeBase):
         a=self.createOutputPin('point_out', 'VectorPin')
      
         a=self.createOutputPin('hand', 'VectorPin',structure=StructureType.Array)
-        
+        a=self.createOutputPin('hands', 'PlacementPin',structure=StructureType.Array)
         
         self.inExec = self.createInputPin('reset', 'ExecPin', None, self.resetpoints)
-#        a=self.createInputPin("tickOff","Boolean")
-#        a=self.createInputPin("ticktime","Integer",-100)
         a.setInputWidgetVariant("Slider")
 
     def start(self, *args, **kwargs):
@@ -132,19 +130,6 @@ class FreeCAD_Dragger(FreeCadNodeBase):
             pass
         clearcoin(self)
 
-    # example implementation for automated running inside pyflow
-    def XX_DEACTIVETED_Tick(self, delta):     
-        
-        if self.getData("ticktime")==-100 or self.getData('tickOff'):
-            return
-        try:
-           self._total += delta
-        except:
-            self._total= delta
-           
-        if self._total >= (self.getData("ticktime")+100)/200:
-                self.compute()
-                self._total=0
 
 
 
