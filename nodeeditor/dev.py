@@ -3614,6 +3614,30 @@ def run_FreeCAD_ListOfVectors(self):
     self.setData("vectors",b)
     self.setColor(a=0.7)
     
+
+def run_FreeCAD_ListOfVectorList(self):
+    
+    say()
+    say("list of vectors dump ...")
+    say("Hack recompute input nodes is active")
+    ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
+    b=[]
+    for i in ySortedPins:
+        # hack to get current values #+# todo debug
+        i.owningNode().compute()
+        vv=i.owningNode().getData(i.name)
+        #say(i.name,vv)
+        #say(np.array(vv).shape)
+        if len(np.array(vv).shape)>1:
+            ll=np.array(vv).shape
+            vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
+            b += vv.tolist()
+        else:
+            b += [vv]
+    
+    b=[FreeCAD.Vector(*v) for v in b]
+    self.setData("vectors",b)
+    self.setColor(a=0.7)
     
     
 def run_FreeCAD_MoveVectors(self):
@@ -4140,23 +4164,38 @@ def run_FreeCAD_ApplyPlacements(self):
 
     comp=[]
     s=Part.makeBox(200,1000,200)
-    pms=self.getPinPlacements("Placements")
+    pms=self.getData("Placements")
+    say(pms)
+    #pms=self.getPinPlacements("Placements")
+    
     if pinHasData(self,"Shape_in"):
         s=self.getPinObject("Shape_in")
     else:
         s=None
     
-
+    say("got",pms)
+    say("s",s)
+    #s=Part.makeBox(2,100,2)
 
     if  s is not None:
+        say(s)
         
         # say(pms)
         for p in pms:
+            
+            
             ss=s.copy()
-            ss.Placement=p
+            say("ss placement",ss.Placement)
+            ss.Placement=p.copy()
+            say("ss placement",ss.Placement)
             comp += [ss]
         
-        self.setPinObject("Shape_out",Part.Compound(comp))
+        #self.setPinObject("Shape_out",Part.Compound(comp))
+        sayl()
+        self.setPinObject("Shape_out",ss)
+        say("ss",ss)
+        #Part.show(ss)
+        #Part.show
     
     
     else:
@@ -5166,6 +5205,7 @@ def run_dragger(self,**kv):
     
     
     pointsa=self.getData('Points_out')
+    self.startpositions=pointsa
     
     if len(pointsa)==0:
         pointsa=[FreeCAD.Vector()]
@@ -5178,6 +5218,8 @@ def run_dragger(self,**kv):
         points=self.getData("points")
         if len(points) == 0 :
             say("keine Dat points points - nehme zielpunkte")
+            
+            pointsa=[FreeCAD.Vector(0,0,0)]
             points=pointsa
     
         self.points=points
@@ -5203,11 +5245,36 @@ def run_dragger(self,**kv):
     self.gg= coin.SoSeparator()
     FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().addChild(self.gg)
 
+    pmas=[]
     for p in points:
+        say("setze dragger position auf",p)
 
         t=coin.SoType.fromName("SoFCCSysDragger")
         dragger=t.createInstance()
-        dragger.setStartingPoint(coin.SbVec3f(0,0,0))
+        #dragger.setStartingPoint(coin.SbVec3f(0,0,0))
+        try:
+            #1/0
+            say("restore matrix")
+            
+            self.startmatrix=np.array([[0,0,1,0],[0.7,0.71,0,0],[-0.71,0.7,0,0],[40,-20,30,1]])
+            self.startmatrix=np.array([[1,0,0,0],[0,1,0,0],[0.,0,1,0],[0,0,0,1]])
+            say(self.startmatrix)
+            mm=FreeCAD.Matrix(*self.startmatrix.flatten())
+            mm.transpose()           
+            pma=FreeCAD.Placement(mm)
+            #pma.Base += pointsa[0]
+            pma.Base += self.startpositions[0]
+            
+            
+            pmas += [pma]
+            
+            #FreeCAD.ActiveDocument.Cone.Placement=pma
+            
+            dragger.getMotionMatrix().setValue(self.startmatrix)
+        except:
+            dragger.setStartingPoint(coin.SbVec3f(0,0,0))
+        
+
         
         view = FreeCADGui.ActiveDocument.ActiveView
         view.addDraggerCallback(dragger, "addFinishCallback", handler)
@@ -5223,7 +5290,7 @@ def run_dragger(self,**kv):
         self.gg.addChild(g)
         tns += [dragger]
 
-
+    self.setData("hands",pmas)
 
     for n in tns:   
         pass
@@ -5253,20 +5320,23 @@ def run_FreeCAD_Dragger(self,**k):
     pos=FreeCAD.Vector(n.getLocalStartingPoint().getValue())
     m=n.getMotionMatrix().getValue()
     m=FreeCAD.Matrix(*np.array(m).flatten())
-    pma=FreeCAD.Placement(m).inverse()
-    '''
-    # anwendung auf objekt
-    pm=FreeCAD.Placement(m)
-    pm.Base=pos
-    pm=pm.inverse()
-    FreeCAD.ActiveDocument.Box.Placement=pm
+    mm=m
     
-    '''
+    pma=FreeCAD.Placement(m).inverse()
+
     target=pma.multVec(-pos)
     tu=pma.multVec(FreeCAD.Vector(1,0,0))
     tv=pma.multVec(FreeCAD.Vector(0,1,0))
     self.setData('point_out',target)
     self.setData('hand',[target,tu,tv])
+    
+
+    mm.transpose()           
+    pma=FreeCAD.Placement(mm)
+    #pma.Base += self.startpositions[0]  
+    self.setData('hands',[pma])
+    
+    apos=pma.inverse().multVec(target)
     
     clearcoin(self)
 
@@ -5274,8 +5344,20 @@ def run_FreeCAD_Dragger(self,**k):
     displayline(self,ptsl,color=(1,1,1))
     displaytext(self,target,color=(1,1,0),text=[self.name])
 
+    m=np.round(n.getMotionMatrix().getValue(),2)
     
-    #--------------------------------------------
+    store=True
+    if store:
+        self.startmatrix=m
+        
+    m=n.getMotionMatrix().getValue()
+    
+    
+    m=FreeCAD.Matrix(*np.array(m).flatten())
+    pma=FreeCAD.Placement(m).inverse()
+    t=np.round(np.array(pma.inverse().toMatrix().A).reshape(4,4),2)
+    
+    
 
     for n in self.tns:  
         pdiffs += [-FreeCAD.Vector(n.getLocalStartingPoint().getValue())]
@@ -6136,3 +6218,43 @@ def run_commit(self):
 
 
 
+
+
+def run_FreeCAD_BSplineSegment(self):
+    
+    sh=self.getPinObject("Shape")
+    bs=sh.Surface.copy()
+
+    ustart=self.getData('uStart')*0.01
+    vstart=self.getData('vStart')*0.01
+    uend=self.getData('uEnd')*0.01
+    vend=self.getData('vEnd')*0.01
+    [ua,ue,va,ve]=sh.ParameterRange
+    bs.segment(ua+(ue-ua)*ustart,ua+(ue-ua)*uend,va+(ve-va)*vstart,va+(ve-va)*vend)
+    self.setPinObject('Shape_out',bs.toShape())
+     
+def run_FreeCAD_BSplineOffset(self):
+
+    sh=self.getPinObject("Shape") 
+    h=self.getData("height")
+    bs=sh.Surface
+    [ua,ue,va,ve]=sh.ParameterRange
+    points=np.array([[bs.value(ua+(ue-ua)*u*0.01,va+(ve-va)*v*0.01) for v in range(101)]  for u in range(101)])
+    
+    nomrs=[]
+    for u in range(101):
+        nus=[]
+        for v in range(101):
+            try:
+                nus += [bs.normal(ua+(ue-ua)*u*0.01,va+(ve-va)*v*0.01)]
+            except:
+                nus += [FreeCAD.Vector()]
+        nomrs += [nus]
+        
+    norms=np.array(nomrs)
+    #norms=np.array([[bs.normal(ua+(ue-ua)*u*0.01,va+(ve-va)*v*0.01) for v in range(101)]  for u in range(101)]) 
+
+    newpts=points+ norms*h
+    self.setData('Points_out',newpts.tolist())
+    self.setPinObject('Shape_out',bs.toShape())
+     
