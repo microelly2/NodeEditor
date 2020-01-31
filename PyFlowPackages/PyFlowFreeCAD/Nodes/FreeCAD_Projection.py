@@ -7,7 +7,6 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase2):
     parallal projection of an edge onto a face
     '''
 
-    dok=4
     def __init__(self, name="MyParallelProjection"):
         super(self.__class__, self).__init__(name)
 
@@ -29,17 +28,6 @@ class FreeCAD_Parallelprojection(FreeCadNodeBase2):
         p.description="direction of the projection light"
 
 
-    def compute(self, *args, **kwargs):
-
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_projection_compute(self,*args, **kwargs)
-        self.outExec.call()
-
-        if self._preview:
-            self.preview()
-
-
     @staticmethod
     def description():
         return FreeCAD_Parallelprojection.__doc__
@@ -58,7 +46,6 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase2):
     perspective projection of an edge onto a face
     '''
 
-    dok=4
     def __init__(self, name="MyPerspectiveProjection"):
         super(self.__class__, self).__init__(name)
 
@@ -77,16 +64,6 @@ class FreeCAD_Perspectiveprojection(FreeCadNodeBase2):
         p.recomputeNode=True
         p.description="center of projection, position of the point light"
 
-
-    def compute(self, *args, **kwargs):
-
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_perspective_projection_compute(self,*args, **kwargs)
-        self.outExec.call()
-
-        if self._preview:
-            self.preview()
 
     @staticmethod
     def description():
@@ -109,7 +86,6 @@ class FreeCAD_UVprojection(FreeCadNodeBase2):
     and a interpolated curve is computed
     '''
 
-    dok=4
     def __init__(self, name="MyUVProjection"):
         super(self.__class__, self).__init__(name)
 
@@ -135,16 +111,6 @@ class FreeCAD_UVprojection(FreeCadNodeBase2):
         p=self.createInputPin('ExtrusionDown', 'Float',50)
         p.recomputeNode=True
 
-
-    def compute(self, *args, **kwargs):
-
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_uv_projection_compute(self,*args, **kwargs)
-        self.outExec.call()
-
-        if self._preview:
-            self.preview()
 
 
     @staticmethod

@@ -6,6 +6,7 @@ import nodeeditor.dev_Conversion as Conversion
 import nodeeditor.dev_Lambda as Lambda
 import nodeeditor.dev_Coin as Coin
 import nodeeditor.dev_BSpline as BSpline
+import nodeeditor.dev_Projection as Projection
 
 
 
@@ -18,6 +19,7 @@ if devmode:
 
 
 reload(nodeeditor.dev_BSpline)
+reload(nodeeditor.dev_Projection)
 
 
 if devmode:
