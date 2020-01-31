@@ -64,6 +64,10 @@ class FreeCAD_ShapePattern(FreeCadNodeBase2):
   
         self.createOutputPin('Points_out', 'VectorPin')
 
+    @staticmethod
+    def category():
+        return 'Coin'
+
 
 class FreeCAD_QuadMesh(FreeCadNodeBase2):
     '''
@@ -80,6 +84,10 @@ class FreeCAD_QuadMesh(FreeCadNodeBase2):
         a=self.createInputPin('hide','Boolean')
         
         a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+
+    @staticmethod
+    def category():
+        return 'Coin'
 
 
 
@@ -130,6 +138,10 @@ class FreeCAD_Dragger(FreeCadNodeBase):
             pass
         clearcoin(self)
 
+
+    @staticmethod
+    def category():
+        return 'Coin'
 
 
 

@@ -1,3 +1,8 @@
+/testdata.csv
+/template_doku_video.txt
+/template_doku_video.md
+/nodeeditor/windows_manager.py
+/nodeeditor/transformations.py
 *.FC*
 /PyFlowPackages/PyFlowFreeCAD/Nodes/FreeCAD_Nurbs_trash.py
 /PyFlowPackages/PyFlowFreeCAD/UI/FreeCAD_icons/*

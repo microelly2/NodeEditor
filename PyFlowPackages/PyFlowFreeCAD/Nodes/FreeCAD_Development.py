@@ -445,7 +445,7 @@ class FreeCAD_Toy3(FreeCadNodeBase2):
         self.randomize = self.createInputPin("randomize", 'BoolPin')
 
         a=self.createInputPin('Shape', 'ShapePin')
-        a=self.createOutputPin('Shape', 'ShapePin')
+        a=self.createOutputPin('Shape_out', 'ShapePin')
 
         a=self.createInputPin('k',"Integer",0)
         a.annotationDescriptionDict={ "ValueRange":(-5,20)}

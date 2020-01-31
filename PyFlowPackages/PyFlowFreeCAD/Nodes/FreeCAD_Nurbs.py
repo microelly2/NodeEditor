@@ -876,6 +876,10 @@ class FreeCAD_uv2xyz(FreeCadNodeBase2):
     def description():
         return FreeCAD_uv2xyz.__doc__
 
+    @staticmethod
+    def category():
+        return 'BSpline'
+
 
 
 class FreeCAD_xyz2uv(FreeCadNodeBase2):
@@ -900,6 +904,10 @@ class FreeCAD_xyz2uv(FreeCadNodeBase2):
     def description():
         return FreeCAD_xyz2uv.__doc__
 
+    @staticmethod
+    def category():
+        return 'BSpline'
+
 
 #+#
 class FreeCAD_replacePoles(FreeCadNodeBase2):
@@ -917,6 +925,10 @@ class FreeCAD_replacePoles(FreeCadNodeBase2):
         self.createInputPin('poles', 'VectorPin',structure=StructureType.Array)
         self.createInputPin('polesIndex','IntPin',structure=StructureType.Array)
         self.createOutputPin('Shape_out', 'ShapePin')
+
+    @staticmethod
+    def category():
+        return 'BSpline'
 
 
 
@@ -1024,6 +1036,10 @@ class FreeCAD_Editor(FreeCadNodeBase2):
     def description():
         return FreeCAD_Editor.__doc__
 
+    @staticmethod
+    def category():
+        return 'BSpline'
+
 
 # 15.01.2020
 class FreeCAD_IronCurve(FreeCadNodeBase2):
@@ -1078,6 +1094,10 @@ class FreeCAD_IronCurve(FreeCadNodeBase2):
     def description():
         return FreeCAD_IronCurve.__doc__
 
+    @staticmethod
+    def category():
+        return 'BSpline'
+
 
 class FreeCAD_IronSurface(FreeCadNodeBase2):
     '''
@@ -1119,6 +1139,11 @@ class FreeCAD_IronSurface(FreeCadNodeBase2):
     @staticmethod
     def description():
         return FreeCAD_IronCurve.__doc__
+
+    @staticmethod
+    def category():
+        return 'BSpline'
+
 
 class FreeCAD_ReduceCurve(FreeCadNodeBase2):
     '''
@@ -1222,10 +1247,6 @@ see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
 
         
     def commit(self,*arg,**kwarg):
-        #import nodeeditor.dev
-        #reload (nodeeditor.dev)
-        #nodeeditor.dev.run_commit(self)
-        #return
 
         self.shape=self.getPinObject("Shape_out")
         a=self.getData('start')
@@ -1260,6 +1281,10 @@ see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
     def description():
         return FreeCAD_ReduceCurve.__doc__
 
+    @staticmethod
+    def category():
+        return 'BSpline'
+
 
 class FreeCAD_BSplineSegment(FreeCadNodeBase2):
     '''
@@ -1293,6 +1318,11 @@ class FreeCAD_BSplineSegment(FreeCadNodeBase2):
     def description():
         return FreeCAD_BSplineSegment.__doc__
 
+    @staticmethod
+    def category():
+        return 'BSpline'
+
+
 class FreeCAD_BSplineOffset(FreeCadNodeBase2):
     '''
     a poor man offset approx: create a grid of points moved in normal direction
@@ -1311,11 +1341,23 @@ class FreeCAD_BSplineOffset(FreeCadNodeBase2):
         self.createOutputPin('Shape_out', 'ShapePin')
         a=self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
         
+        a=self.createInputPin('sizeU',"Integer",10)
+        a.annotationDescriptionDict={ "ValueRange":(10,100)}
+
+        a=self.createInputPin('sizeV',"Integer",10)
+        a.annotationDescriptionDict={ "ValueRange":(10,100)}
+
+        
+        
         self.setExperimental()
 
     @staticmethod
     def description():
         return FreeCAD_BSplineOffset.__doc__
+
+    @staticmethod
+    def category():
+        return 'BSpline'
 
 def nodelist():
     return [
