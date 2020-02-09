@@ -1,4 +1,6 @@
-
+'''
+nodes which use function pins
+'''
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
@@ -186,7 +188,7 @@ class FreeCAD_DemoFunction(FreeCadNodeBase2):
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        a=self.createInputPin("example",'StringPin','find [4,5]')
+        a=self.createInputPin("example",'StringPin','find_4_5')
    
         a=self.createOutputPin('function_out', 'FunctionPin')       
 
@@ -271,15 +273,15 @@ class FreeCAD_AssignPoints(FreeCadNodeBase2):
 
 def nodelist():
     return [
-                FreeCAD_Function,
-                FreeCAD_Expression2Function,
-                FreeCAD_ReduceFunction,
-                
-                FreeCAD_SumDistances,
-#                FreeCAD_SumForces,
-#                FreeCAD_MinimizeFunction,
-                FreeCAD_MinimizeFunction2,
                 FreeCAD_AssignPoints,
-                FreeCAD_DemoFunction
+                FreeCAD_DemoFunction,               
+                FreeCAD_Expression2Function,
+                FreeCAD_Function,
+                #FreeCAD_MinimizeFunction,
+                
+                FreeCAD_MinimizeFunction2,             
+                FreeCAD_ReduceFunction,                
+                FreeCAD_SumDistances,
+               #FreeCAD_SumForces,
                 
         ]

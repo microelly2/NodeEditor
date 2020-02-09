@@ -1,3 +1,8 @@
+'''
+nodes to create pure coin objects in the 3d view
+it is used only for visualization effects
+basic routines are found in cointools.py
+'''
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import FreeCadNodeBase2, FreeCadNodeBase
@@ -143,6 +148,52 @@ class FreeCAD_Dragger(FreeCadNodeBase):
     def category():
         return 'Coin'
 
+class FreeCAD_Camera(FreeCadNodeBase2):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        #a=self.createInputPin('filename', 'String','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
+        
+        #a=self.createInputPin('positionX', 'Float',0)
+        #a=self.createInputPin('positionY', 'Float',0)
+        #a=self.createInputPin('positionZ', 'Float',0)
+        a=self.createInputPin('position', 'VectorPin')
+        
+        if 0:
+            a=self.createInputPin('directionX', 'Float',0)
+            a=self.createInputPin('directionY', 'Float',0)
+            a=self.createInputPin('directionZ', 'Float',0)
+        
+            a=self.createInputPin('usePointAt', 'Boolean',True)
+        #a=self.createInputPin('pointAtX', 'Float',0)
+        #a=self.createInputPin('pointAtY', 'Float',0)
+        a=self.createInputPin('angle', 'Float',0)
+    
+        a=self.createInputPin('pointAt', 'VectorPin')
+        
+        # geht nicht
+        #a=self.createInputPin('nearDistance', 'Float',0)
+        #a=self.createInputPin('farDistance', 'Float',1000)
+       
+        
+        #a=self.createInputPin('perspective', 'Boolean',True)
+        a=self.createInputPin('trackimages', 'BoolPin',False)
+        a=self.createInputPin('timestamp', 'BoolPin',False)
+        a=self.createInputPin('trackName', 'StringPin',"camera")
+        a=self.createOutputPin('image', 'StringPin')
+
+
+    @staticmethod
+    def category():
+        return 'Coin'
 
 
 def nodelist():
@@ -150,5 +201,6 @@ def nodelist():
                 FreeCAD_ShapePattern,
                 FreeCAD_Dragger,
                 FreeCAD_QuadMesh,
+                FreeCAD_Camera,
 
     ]

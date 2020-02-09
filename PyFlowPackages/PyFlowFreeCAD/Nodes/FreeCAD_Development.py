@@ -1,4 +1,8 @@
-
+'''
+nodes under development
+nodes for debugging and test data 
+some stuff to play and new prototypes in very alpha state
+'''
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase, FreeCadNodeBase2
@@ -182,15 +186,8 @@ class FreeCAD_StorePins(NodeBase):
 
     @staticmethod
     def category():
-        return 'DefaultLib'
+        return 'Development'
 
-    @staticmethod
-    def keywords():
-        return ['freecad']
-
-    @staticmethod
-    def description():
-        return "change Placement of the FreeCAD object"
 
     def compute(self, *args, **kwargs):
         # muss ueberarbeitet werden #+#
@@ -407,7 +404,7 @@ class FreeCAD_Tape(FreeCadNodeBase2):
 
     @staticmethod
     def description():
-        return FreeCAD_Toy2.__doc__
+        return FreeCAD_Tape.__doc__
 
     @staticmethod
     def category():
@@ -424,7 +421,8 @@ class FreeCAD_Tape(FreeCadNodeBase2):
 
 
 class FreeCAD_Toy3(FreeCadNodeBase2):
-    ''''''
+    '''
+    '''
 
 
 
@@ -628,10 +626,133 @@ see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
 
 
 
+class FreeCAD_Topo2(FreeCadNodeBase2):
+    '''
+    dummy for tests
+    '''
+
+    @staticmethod
+    def description():
+        return "a dummy for tests"
+
+    def __init__(self, name="Fusion"):
+        super(self.__class__, self).__init__(name)
+        
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)  
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+
+        a=self.createInputPin('ShapeA', 'ShapePin')
+        a=self.createInputPin('ShapeB', 'ShapePin')
+        
+        a=self.createOutputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description='the list of knotes before and after change'
+
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+        a.description='the reduced bspline curve' 
+
+
+        a=self.createInputPin('vertexA',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(0,8)}
+        a=self.createInputPin('vertexB',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(0,8)}
+        
+        a=self.createInputPin('selA',"Integer",0)
+        a.annotationDescriptionDict={ "ValueRange":(0,36)}
+        
+        #a=self.createInputPin('selB',"Integer",0)
+        #a.annotationDescriptionDict={ "ValueRange":(0,8)}
+        
+        a=self.createInputPin("singleIndex",'Boolean')
+        a=self.createInputPin("flagA",'Boolean')
+        a=self.createInputPin("flagB",'Boolean')
+
+
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+from nodeeditor.cointools import *
+reload (nodeeditor.cointools)
+
+class FreeCAD_elastic(FreeCadNodeBase2):
+    '''
+    dummy for tests
+    '''
+
+    @staticmethod
+    def description():
+        return "a dummy for tests"
+
+    def __init__(self, name="Fusion"):
+        super(self.__class__, self).__init__(name)
+        
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute) 
+        self.inExec = self.createInputPin("Hide", 'ExecPin', None, self.hide) 
+        self.inExec = self.createInputPin("Show", 'ExecPin', None, self.show)  
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+
+        a=self.createInputPin('a',"Integer",-100)
+        a.setInputWidgetVariant("Slider")
+
+        a=self.createInputPin('b',"Integer")
+        a.setInputWidgetVariant("Slider")
+
+
+        a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a=self.createInputPin('fixpoints', 'VectorPin',structure=StructureType.Array)
+        a=self.createInputPin('force', 'FunctionPin')
+        
+        a=self.createOutputPin('Points_out', 'VectorPin',structure=StructureType.Array)
+        
+
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+        a.description='the reduced bspline curve' 
+
+
+#        a=self.createInputPin('vertexA',"Integer",0)
+#        a.annotationDescriptionDict={ "ValueRange":(0,8)}
+#        a=self.createInputPin('vertexB',"Integer",0)
+#        a.annotationDescriptionDict={ "ValueRange":(0,8)}
+        
+#        a=self.createInputPin('selA',"Integer",0)
+#        a.annotationDescriptionDict={ "ValueRange":(0,36)}
+        
+        #a=self.createInputPin('selB',"Integer",0)
+        #a.annotationDescriptionDict={ "ValueRange":(0,8)}
+        
+        #a=self.createInputPin("singleIndex",'Boolean')
+        a=self.createInputPin("hide",'BoolPin')
+        a=self.createInputPin("animate",'BoolPin')
+        
+
+    def show(self,*args, **kwargs):
+        sayl()
+        showcoin(self)
+        sayl()
+
+    def hide(self,*args, **kwargs):
+        sayl()
+        hidecoin(self)
+        sayl()
+
+
+
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+
+
+
 
 def nodelist():
     return [
-    FreeCAD_PinsTest,
+    # FreeCAD_PinsTest,
     FreeCAD_Foo,
     FreeCAD_StorePins,
     #FreeCAD_Toy,
@@ -639,6 +760,7 @@ def nodelist():
     FreeCAD_Toy3,
     
     FreeCAD_Tape,
+    FreeCAD_Topo2,
     #FreeCAD_ReduceSurface,
-
+    FreeCAD_elastic,
 ]

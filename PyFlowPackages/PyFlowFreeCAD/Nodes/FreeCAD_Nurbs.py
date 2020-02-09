@@ -1,4 +1,7 @@
+'''
+BSline Curves and Surfaces
 
+'''
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase, FreeCadNodeBase2
 
@@ -144,97 +147,6 @@ class FreeCAD_UVGrid(FreeCadNodeBase2):
 
 
 
-class FreeCAD_Voronoi(FreeCadNodeBase2):
-    '''
-    voronoi cells, delaunay triangulation on a surface for a given set of uv points  on this surface
-    '''
-
-    def __init__(self, name="MyVoronoi"):
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.createInputPin('Face', 'ShapePin')
-        self.createInputPin("useLines", 'Boolean', True)
-        a=self.createInputPin("indA", 'Integer', True)
-
-        a.setInputWidgetVariant("MyINPUTVARIANT")
-
-        self.createInputPin("indB", 'Integer', True)
-        self.createOutputPin('uEdges', 'ShapeListPin')
-        self.createOutputPin('vEdges', 'ShapeListPin')
-        self.createInputPin('uList', 'Float', structure=StructureType.Array,defaultValue=None)
-        self.createInputPin('vList', 'Float', structure=StructureType.Array,defaultValue=None)
-
-        a=self.createInputPin("flipArea", 'Boolean', True)
-
-        self.createOutputPin('Points', 'ShapePin')
-        self.createOutputPin('convexHull', 'ShapePin')
-        self.createOutputPin('delaunayTriangles', 'ShapePin')
-        self.createOutputPin('voronoiCells', 'ShapePin')
-
-
-    @staticmethod
-    def description():
-        return FreeCAD_Voronoi.__doc__
-
-    @staticmethod
-    def category():
-        return 'Voronoi'
-
-    @staticmethod
-    def keywords():
-        return ['convex','Hull','Delaunay','Cell']
-
-
-
-class FreeCAD_Hull(FreeCadNodeBase2):
-    '''
-    delaynay triangulation, convex hull and alpha hull for a given set of points
-    '''
-
-    def __init__(self, name="MyHull"):
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.createInputPin('Shape', 'ShapePin')
-        self.createInputPin("singleSimplex", 'Boolean', True)
-
-        a=self.createInputPin("simplex", 'Integer', True)
-        a.description="index of the displayed simplex if singleSimplex is set"
-
-        a=self.createInputPin("showFaces", 'Boolean', True)
-        a.description="display alpha and convex hull by faces" 
-
-        a=self.createInputPin("alpha", 'Integer', True)
-
-        self.createOutputPin('uEdges', 'ShapeListPin')
-        self.createOutputPin('vEdges', 'ShapeListPin')
-        self.createInputPin('uList', 'Float', structure=StructureType.Array,defaultValue=None)
-        self.createInputPin('vList', 'Float', structure=StructureType.Array,defaultValue=None)
-        self.createOutputPin('Points', 'ShapePin')
-        self.createOutputPin('convexHull', 'ShapePin')
-        self.createOutputPin('delaunayTriangles', 'ShapePin')
-        self.createOutputPin('alphaHull', 'ShapePin').description='edges or faces compound of the alpha hull'
-
-
-    @staticmethod
-    def description():
-        return FreeCAD_Hull.__doc__
-
-    @staticmethod
-    def category():
-        return 'Voronoi'
-
-    @staticmethod
-    def keywords():
-        return ['Convex','delaunay','alpha hull']
-
-
-
-
-
-
-
 
 class FreeCAD_Discretize(FreeCadNodeBase2):
     '''
@@ -265,13 +177,6 @@ class FreeCAD_Discretize(FreeCadNodeBase2):
     def keywords():
         return []
 
-#   def produce(self,**kvargs):
-#       self.compute(produce=True)
-
-    def XXproduce(self, *args, **kwargs):
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_FreeCAD_Tread(self,produce=True)
 
 class FreeCAD_Offset(FreeCadNodeBase2):
     '''
@@ -344,7 +249,7 @@ class FreeCAD_FillEdge(FreeCadNodeBase2):
 
     @staticmethod
     def category():
-        return 'Surfaces'
+        return 'BSpline'
 
     @staticmethod
     def keywords():
@@ -811,103 +716,6 @@ class FreeCAD_ConnectPoles(FreeCadNodeBase2):
         return ['matrix','vector','concatenate']
 
 
-class FreeCAD_FlipSwapArray(FreeCadNodeBase2):
-    '''
-    flip directions of the vector-array or swap its axes
-    '''
-
-    def __init__(self, name="MyInterpolation"):
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
-        a=self.createInputPin("poles_in",'VectorPin', structure=StructureType.Array)
-        a.description="2 dim vector array" 
-
-        a=self.createOutputPin('poles_out', 'VectorPin', structure=StructureType.Array)
-        a.description="2 dim vector array flipped or swapped poles_in" 
-        
-        a=self.createOutputPin('Shape_out', 'ShapePin')
-        a.description="a BSplineSurface degree 3 to visualize the poles array"
-
-        a=self.createInputPin('swap', 'Boolean',0)
-        a.description="Flag for swap axes of the array"
-
-        a=self.createInputPin('flipu', 'Boolean',0)
-        a.description="Flag for invert u direction of the array"
-
-        a=self.createInputPin('flipv', 'Boolean',0)
-        a.description="Flag for invert v direction of the array"
-
-
-    @staticmethod
-    def description():
-        return FreeCAD_FlipSwapArray.__doc__
-
-    @staticmethod
-    def category():
-        return 'VectorArray dim 2'
-
-    @staticmethod
-    def keywords():
-        return ['flip','swap','Vector']
-
-
-class FreeCAD_uv2xyz(FreeCadNodeBase2):
-    '''
-    calculate the wolrd xyz coordinates for a list of uv coordinates in relation to a surface
-    '''
-
-    def __init__(self, name="MyInterpolation"):
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
-        a=self.createInputPin("points",'VectorPin', structure=StructureType.Array)
-        a.description='list of vectors with uv coodinates - used are vectors with x=u, y=v'
-        a=self.createInputPin("Shape",'ShapePin')
-        a.description='the reference bspline surface'
-      
-        a=self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
-        a.description='the list of 3D vectors'
-
-    @staticmethod
-    def description():
-        return FreeCAD_uv2xyz.__doc__
-
-    @staticmethod
-    def category():
-        return 'BSpline'
-
-
-
-class FreeCAD_xyz2uv(FreeCadNodeBase2):
-    '''
-    calculate the uv coordinates for a set of xyz points on a bsline surface
-    '''
-
-    def __init__(self, name="MyInterpolation"):
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
-        a=self.createInputPin("points",'VectorPin', structure=StructureType.Array)
-        a.description="a list of vectors"
-        a=self.createInputPin("Shape",'ShapePin')
-        a.description='a bspline surface'
-      
-        a=self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
-        a.description="the list of uv Vectors (3D Vectors are used but z is set to zero)"
-
-    @staticmethod
-    def description():
-        return FreeCAD_xyz2uv.__doc__
-
-    @staticmethod
-    def category():
-        return 'BSpline'
-
 
 #+#
 class FreeCAD_replacePoles(FreeCadNodeBase2):
@@ -1359,16 +1167,42 @@ class FreeCAD_BSplineOffset(FreeCadNodeBase2):
     def category():
         return 'BSpline'
 
+class FreeCAD_Nurbs(FreeCadNodeBase2):
+    '''
+    converts faces to nurbs
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+   
+        a=self.createInputPin('shape', 'ShapePin')
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+    @staticmethod
+    def description():
+        return FreeCAD_Nurbs.__doc__
+
+    @staticmethod
+    def category():
+        return 'BSpline'
+
+
+
 def nodelist():
     return [
+				FreeCAD_ApproximateBSpline,
                 FreeCAD_Tripod,
 
-                FreeCAD_UIso, FreeCAD_VIso,
+                FreeCAD_UIso, 
+                FreeCAD_VIso,
                 FreeCAD_UVGrid,
 
-                FreeCAD_Voronoi,
-                FreeCAD_Hull,
-
+                
                 FreeCAD_Discretize,
                 FreeCAD_Offset,
                 FreeCAD_FillEdge,
@@ -1377,14 +1211,11 @@ def nodelist():
                 FreeCAD_Destruct_BSpline,
                 FreeCAD_Destruct_BSplineSurface,
                 FreeCAD_Collect_Vectors,
-                FreeCAD_ApproximateBSpline,
+                
                 FreeCAD_InterpolateBSpline,
 
                 FreeCAD_ConnectPoles,
-                FreeCAD_FlipSwapArray,
                 
-                FreeCAD_uv2xyz,
-                FreeCAD_xyz2uv,
                 FreeCAD_replacePoles,
                 FreeCAD_Editor,
 

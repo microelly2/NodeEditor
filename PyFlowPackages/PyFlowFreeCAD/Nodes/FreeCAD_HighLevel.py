@@ -1,3 +1,7 @@
+'''
+these nodes are example implementation of high level use cases
+and should be moved to specialized packages later
+'''
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
@@ -176,9 +180,6 @@ class FreeCAD_FigureOnFace(FreeCadNodeBase2):
     @staticmethod
     def category():
         return 'HighLevel'
-
-## ||
-## \/ okay
 
 
 class FreeCAD_Tread(FreeCadNodeBase2):

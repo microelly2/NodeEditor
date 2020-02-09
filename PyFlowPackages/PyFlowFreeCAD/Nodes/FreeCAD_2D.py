@@ -1,4 +1,7 @@
-
+'''
+This module contains nodes to create Geom2D objects like Circle, Ellipse, LineSegement.
+The can be used to create Sketches or for uv-figures on faces
+'''
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
@@ -236,17 +239,15 @@ class FreeCAD_2DArcOfCircle(FreeCadNodeBase2):
 
 
 
-
-
-
-def nodelist():
-    return [
+__all__= [
                 FreeCAD_2DGeometry,
                 FreeCAD_2DCircle,
                 FreeCAD_2DEllipse,
                 FreeCAD_2DArcOfEllipse,
                 FreeCAD_2DArcOfParabola,
                 FreeCAD_2DArcOfCircle,
-
-
         ]
+
+def nodelist():
+	return __all__
+

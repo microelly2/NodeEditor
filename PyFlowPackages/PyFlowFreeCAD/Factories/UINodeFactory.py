@@ -16,8 +16,10 @@ import FreeCAD
 from nodeeditor.say import *
 
 def createUINode(raw_instance):
-    sayl("UINODE factory")
-    say(raw_instance)
+	
+	
+    #sayl("UINODE factory")
+    #say(raw_instance)
 
     if isinstance(raw_instance, FreeCAD_Object):
         return UIFreeCAD_ObjectNode(raw_instance)

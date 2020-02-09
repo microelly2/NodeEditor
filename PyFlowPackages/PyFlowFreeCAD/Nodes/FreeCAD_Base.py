@@ -1,4 +1,6 @@
-# Base classes and methods for freecad nodes
+'''
+Base classes and methods for freecad nodes
+'''
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 
@@ -43,7 +45,7 @@ class FreeCadNodeBase(NodeBase):
         self._preview=False
     
     @timer
-    def compute(self, *args, **kwargs):
+    def XXcompute(self, *args, **kwargs):
         if self._debug:
             say("-- Start",self.name)
             self._started=time.time()
@@ -55,6 +57,27 @@ class FreeCadNodeBase(NodeBase):
         if self._preview:
             say("create preview")
             self.preview()
+    
+    
+    @timer
+    def compute(self, *args, **kwargs):
+        if self._debug:
+            say("--- Start",self.name)
+            self._started=time.time()
+            say(self.__class__.category())
+        
+        import nodeeditor.dev_all
+        reload(nodeeditor.dev_all)
+        a="nodeeditor.dev_all.{}.run_{}(self)".format(self.__class__.category(),self.__class__.__name__)
+        a=eval(a)
+
+        if self._debug: 
+            say("--- Done Post",self.name,round(time.time()-self._started2,2))
+
+        if self._preview:
+            say("create preview")
+            self.preview()
+
             
 
     def preview(self):

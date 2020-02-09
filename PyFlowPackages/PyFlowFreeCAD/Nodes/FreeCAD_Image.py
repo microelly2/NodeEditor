@@ -1,3 +1,7 @@
+'''
+Image processing node like closing,erosion, 
+will become a wrapper for open computer vision cv2  and scipy.ndimage
+'''
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
@@ -46,6 +50,13 @@ class FreeCAD_ImageT(FreeCadNodeBase2):
    
         self.createOutputPin('Points_out', 'VectorPin')
 
+    @staticmethod
+    def description():
+        return FreeCAD_ImageT.__doc__
+
+    @staticmethod
+    def category():
+        return 'Image'
 
 
 
