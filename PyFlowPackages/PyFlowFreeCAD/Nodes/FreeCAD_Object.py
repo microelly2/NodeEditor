@@ -673,6 +673,14 @@ def nodelist():
 # hack wird irgendwo geladen warun #+#
 # muss wieder raus, weil schon in information !!!
 class FreeCAD_Object(FreeCadNodeBase2):
+    def __init__(self, name="MyToy"):
+
+            super(self.__class__, self).__init__(name)
+            self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+            self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+       
+    
+    
     pass
     
     

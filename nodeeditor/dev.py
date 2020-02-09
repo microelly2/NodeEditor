@@ -21,6 +21,16 @@ import nodeeditor.pfwrap as pfwrap
 
 from pivy import coin
 
+import nodeeditor
+import nodeeditor.cointools
+#reload(nodeeditor.cointools)
+from nodeeditor.cointools import *
+      
+
+       
+import nodeeditor.tools as noto
+#reload(noto)
+
 
 
 def runraw(self):
@@ -188,144 +198,6 @@ def runraw(self):
 
 
 
-def run_FreeCAD_VectorArray(self,*args, **kwargs):
-
-    countA=self.getData("countA")
-    countB=self.getData("countB")
-    countC=self.getData("countC")
-    vO=self.getData("vecBase")
-    vA=self.getData("vecA")
-
-    vB=self.getData("vecB")
-    vC=self.getData("vecC")
-    rx=self.getData("randomX")
-    ry=self.getData("randomY")
-    rz=self.getData("randomZ")
-
-
-    degA=self.getData("degreeA")
-    degB=self.getData("degreeB")
-    if countA<degA+1:
-        degA=countA-1
-    if countB<degB+1:
-        degB=countB-1
-
-    points=[vO+vA*a+vB*b+vC*c+FreeCAD.Vector((0.5-random.random())*rx,(0.5-random.random())*ry,(0.5-random.random())*rz)
-        for a in range(countA) for b in range(countB) for c in range(countC)]
-
-    if countC != 1:
-        sayexc("not implemented")
-        return
-
-    if degA==0 or degB==0:
-        col = []
-        poles=np.array(points).reshape(countA,countB,3)
-        for ps in poles:
-            ps=[FreeCAD.Vector(p) for p in ps]
-            col += [Part.makePolygon(ps)]
-        for ps in poles.swapaxes(0,1):
-            ps=[FreeCAD.Vector(p) for p in ps]
-            col += [Part.makePolygon(ps)]
-
-        shape=Part.makeCompound(col)
-
-
-    else:
-
-        poles=np.array(points).reshape(countA,countB,3)
-
-        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-        multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
-        knotA=range(len(multA))
-        knotB=range(len(multB))
-
-        sf=Part.BSplineSurface()
-        sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,False,degA,degB)
-        shape=sf.toShape()
-
-
-    self.setData('vectors_out',poles.tolist())
-
-    #cc=self.getObject()
-    #try:
-    #    cc.Label=self.objname.getData()
-    #except:
-    #    pass
-    #cc.Shape=shape
-    self.setPinObject('Shape_out',shape)
-    #Beispiel Nodename setzen
-    #self.setNodename("HUHU")
-    
-    # Fehler setzen
-    #self.setError("raise Exception")
-    
-
-
-
-
-
-
-
-
-def run_FreeCAD_Plot(self,*args, **kwargs):
-
-    
-    sayl()
-    mode=self.getData("Figure")
-    say("mode",mode)
-
-    if mode=="Figure1":
-        fig=plt.figure(1)
-
-    elif mode=="Figure2":
-        fig=plt.figure(2)
-
-    elif mode=="Figure3":
-        fig=plt.figure(3)
-
-    else:
-        fig=plt.figure(4)
-
-    #plt.close()
-    plt.clf()
-    plt.title(self.getName())
-
-    x=self.xpin.getData()
-    y=self.ypin.getData()
-
-    say(x)
-    say(y)
-    say(len(x),len(y))
-
-
-    if len(y)  != 0:
-        N=len(y)
-        if len(x) != len(y):
-            x = np.linspace(0, 10, N, endpoint=True)
-        else:
-            x=np.array(x)
-
-        y=np.array(y)
-
-        if not  mode=="Figure3":
-             plt.plot(x, y , 'b-')
-
-
-    x2=self.xpin2.getData()
-    y2=self.ypin2.getData()
-    say (len(x2),len(y2))
-    if x2  !=  None and y2  !=  None:
-        x2=np.array(x2)
-        y2=np.array(y2)
-        if not mode=="Figure3":
-            plt.plot(x2, y2 , 'r-')
-        else:
-            plt.plot(x2, y2, 'ro')
-
-
-    plt.show()
-    fig.canvas.draw()
-    fig.canvas.flush_events()
 
 
 def run_Bar_compute(self,*args, **kwargs):
@@ -545,49 +417,6 @@ def run_FreeCAD_Tripod(self,*args, **kwargs):
 
 
 
-def run_FreeCAD_UIso(self,*args, **kwargs):
-
-    f=self.getPinObject('Face_in')
-    if f is None: return
-    if f.__class__.__name__  == 'Shape':
-        f=f.Face1
-    sf=f.Surface
-
-    [umin,umax,vmin,vmax]=f.ParameterRange
-    u=self.getData("u")
-
-    uu=umin+(umax-umin)*0.1*u
-    c=sf.uIso(uu)
-    self.setPinObject('Shape_out',c.toShape())
-
-    #if self.getData('display'):
-    #    obj=self.getObject()
-    #    obj.Shape=c.toShape()
-
-
-
-
-def run_FreeCAD_VIso(self,*args, **kwargs):
-
-    f=self.getPinObject('Face_in')
-    if f is None: return
-    if f.__class__.__name__  == 'Shape':
-        f=f.Face1
-    sf=f.Surface
-
-    [umin,umax,vmin,vmax]=f.ParameterRange
-    v=self.getData("v")
-
-    vv=vmin+(vmax-vmin)*0.1*v
-    c=sf.vIso(vv)
-    self.setPinObject('Shape_out',c.toShape())
-
-    #if self.getData('display'):
-    #    obj=self.getObject()
-    #    obj.Shape=c.toShape()
-
-
-
 def patchgrid(self):
 
     shape=self.getPinObject("Face_in")
@@ -650,99 +479,6 @@ def patchgrid(self):
 
     vs=col
     return (us,vs)
-
-
-
-def run_FreeCAD_UVGrid(self,*args, **kwargs):
-
-    f=self.getPinObject('Face_in')
-    if f is None: return
-    if f.__class__.__name__  == 'Shape':
-        f=f.Face1
-    sf=f.Surface
-
-    [umin,umax,vmin,vmax]=f.ParameterRange
-    uc=self.getData("uCount")
-    vc=self.getData("vCount")
-    
-    us=[]
-    for u in range(uc+1):
-        uu=umin+(umax-umin)*u/uc
-        c=sf.uIso(uu).toShape()
-        us += [c]
-
-    vs=[]
-    for v in range(vc+1):
-        vv=vmin+(vmax-vmin)*v/vc
-        c=sf.vIso(vv).toShape()
-        vs += [c]
-
-#
-
-    #verfeinerung path
-    sayl()
-    if  f.Area != sf.toShape().Area:
-        
-        us,vs=patchgrid(self)
-        
-        '''
-        # EXAKTE VERSION - ZU LANGSAM
-        # patch
-        anz=20
-        us=[]
-        for u in range(uc+1):
-            uu=umin+(umax-umin)*u/uc
-            c=sf.uIso(uu).toShape()
-            cc=sf.uIso(uu)
-            pts=c.discretize(anz)
-            off=True
-            suba=umin
-            subb=umin
-            for p in pts:
-                if f.distToShape(Part.Vertex(p))[0]<1:
-                    if off:
-                        off=False
-                        suba=cc.parameter(p)
-                    else:
-                        subb=cc.parameter(p)
-            try:
-                #say(suba,subb)
-                cc.segment(suba,subb)
-                c=cc.toShape()
-                us += [c]
-            except:
-                pass
-
-        vs=[]
-        for v in range(vc+1):
-            vv=vmin+(vmax-vmin)*v/vc
-            cc=sf.vIso(vv)
-            c=cc.toShape()
-            pts=cc.toShape().discretize(anz)
-            off=True
-            suba=vmin
-            subb=vmin
-            for p in pts:
-                if f.distToShape(Part.Vertex(p))[0]<1:
-                    if off:
-                        off=False
-                        suba=cc.parameter(p)
-                    else:
-                        subb=cc.parameter(p)
-            try:
-                cc.segment(suba,subb)
-                c=cc.toShape()
-                vs += [c]
-            except:
-                pass
-        '''
-        
-    
-
-    self.setPinObjects('uEdges',us)
-    self.setPinObjects('vEdges',vs)
-    self.setPinObject('Shape_out',Part.Compound(us+vs+f.Edges))
-
 
 
 
@@ -913,342 +649,6 @@ def mapPoints(pts,face):
 
 
 
-def run_FreeCAD_Voronoi(self,*args, **kwargs):
-    '''
-    create voronoi and delaunay stuff using scipy, see
-    https://docs.scipy.org/doc/scipy-0.18.1/reference/generated/scipy.spatial.Voronoi.html
-    '''
-
-    from scipy.spatial import Voronoi, voronoi_plot_2d
-
-    # get data from inpins or generate somthinfg for testing
-    face=self.getPinObject("Face")
-    ulist=self.getData("uList")
-    vlist=self.getData("vList")
-
-    if len(ulist) == len(vlist) and len(ulist)>0:
-        say("use old")
-        pointsa=zip(ulist,vlist)
-    else:
-        say("ewigene datan")
-        n=30
-        try: 
-            pointsa=self.pointsa
-            #1/0
-        except:
-            pointsa=np.random.random(2*n).reshape(n,2)*0.8 + [0.1,0.1]
-            self.pointsa=pointsa
-
-    # add the bounding box in normalized uvspace
-    points = np.concatenate([pointsa,np.array([[0,0],[0,1],[1,0],[1,1]])])
-
-    # core calculation
-    vor = Voronoi(points)
-    points=[FreeCAD.Vector(v[0],v[1]) for v in points]
-
-    if 0:
-        say("ridge points--")
-        say(len(vor.ridge_points))
-        say(vor.ridge_points)
-
-
-    #
-    # delaunay
-    #
-    edges=[]
-    col=[]
-    for r in  vor.ridge_points:
-        pts=[points[v] for v in r if v  !=  -1]
-        if len(pts)>1:
-            for i in range(len(pts)-1):
-                pa=pts[i]
-                pb=pts[i+1]
-                xa,ya=pa[0],pa[1]
-                xb,yb=pb[0],pb[1]
-                edges += [(xa,ya,xb,yb)]
-
-    if self.getData("useLines"):
-        shape=mapEdgesLines(edges,face)
-    else:
-        shape=mapEdgesCurves(edges,face)
-
-    spoints=[v.Point for v in shape.Vertexes]
-    self.setPinObject("delaunayTriangles",shape)
-
-    #
-    # voronoi 
-    #
-    vertexes=[FreeCAD.Vector(v[0],v[1]) for v in vor.vertices]
-
-    if 0:
-        say("regions")
-        say(vor.regions)
-
-        say("point region")
-        say(vor.point_region)
-
-        say("ridge_vertexes")
-        say(vor.ridge_vertices)
-
-    col=[]
-    col2=[]
-    uvedges=[]
-    #for r in  vor.regions:
-    say("ridge_vertices ..")
-    pos=self.getData('indA')
-    #
-    # this code is buggy !!!
-    #
-    #for ix, r in  enumerate(vor.ridge_vertices):
-    for ix, r in  enumerate(vor.regions):
-        pts=[vertexes[v] for v in r if v  !=  -1]
-        #say(ix,len(r),len(pts))
-        #if ix  != pos:
-        #   continue
-        uvedgesA=[]
-        if len(pts)>1:
-            col += [Part.makePolygon(pts)]
-            for i in range(len(pts)-1):
-                pa=pts[i]
-                pb=pts[i+1]
-                xa,ya=pa[0],pa[1]
-                xb,yb=pb[0],pb[1]
-                
-                if not check (xa,ya,xb,yb):
-                    (xa,ya,xb,yb)=trim(xa,ya,xb,yb)
-                if check (xa,ya,xb,yb):
-                    pa=FreeCAD.Vector(xa,ya)
-                    pb=FreeCAD.Vector(xb,yb)
-                    #say()
-                    uvedges += [(xa,ya,xb,yb)]
-                    uvedgesA += [(xa,ya,xb,yb)]
-                    #col2 += [Part.makePolygon([pa,pb])]
-                if not check (xa,ya,xb,yb):
-                    (xa,ya,xb,yb)=trim(xa,ya,xb,yb)
-                    if check (xa,ya,xb,yb):
-                        pa=FreeCAD.Vector(xa,ya)
-                        pb=FreeCAD.Vector(xb,yb)
-                        #say()
-                        #uvedges += [(xa,ya,xb,yb)]
-                        uvedgesA += [(xa,ya,xb,yb)]
-                        #col2 += [Part.makePolygon([pa,pb])]
-                    else:
-                        say("Err",xa,ya,xb,yb)
-        try:
-            uuu=uvedgesA+[(uvedgesA[-1][2],uvedgesA[-1][3],uvedgesA[0][0],uvedgesA[0][1])]
-            #say(uuu[0])
-            #say(uuu[-1])
-            #say("--")
-        except:
-            pass
-
-    # create the output shape
-    if self.getData("useLines"):
-        shape=mapEdgesLines(uvedges,face)
-    else:
-        shape=mapEdgesCurves(uvedges,face)
-    self.setPinObject("voronoiCells",shape)
-
-
-#-------------------volle zellen
-
-    #
-    # regions filled 
-    #
-    #say("vor.regions",vor.regions)
-
-    for ix, r in  enumerate(vor.regions):
-        pts=[vertexes[v] for v in r if v  !=  -1]
-        if ix==self.getData('indA'):
-            #say(ix,r)
-            if len(pts)<=2:
-                say("zuwenig punkte")
-            else:
-                shapes=mapPoints(pts,face)
-                if len(shapes)>0:
-                    cc=FreeCAD.ActiveDocument.getObject("regionFilled")
-                    if cc == None:
-                        cc=FreeCAD.ActiveDocument.addObject("Part::Feature","regionFilled")
-                    cc.Shape=shapes[0]
-                    if self.getData('flipArea'):
-                        #say(shapes)
-                        cc.Shape=shapes[1]
-            break
-
-
-    from scipy.spatial import Delaunay
-
-    tri = Delaunay(pointsa)
-    #say(tri.simplices)
-    points=[FreeCAD.Vector(p[0],p[1]) for p in points]
-
-    #
-    # simplexes
-    #
-    if 0:
-        coll=[]
-        if 0: # 3D Variante
-            for s in tri.simplices:
-                [a,b,c,d]=s
-                a=points[a]
-                b=poi[b]
-                c=points[c]
-                d=points[d]
-                coll += [Part.makePolygon([a,b]),Part.makePolygon([a,c]),Part.makePolygon([a,d]),Part.makePolygon([b,c]),Part.makePolygon([b,d]),Part.makePolygon([c,d])]
-        else: #2 D
-            for s in tri.simplices:
-                [a,b,c]=s
-                a=points[a]
-                b=points[b]
-                c=points[c]
-                coll += [Part.makePolygon([a,b]),Part.makePolygon([a,c]),Part.makePolygon([b,c])]
-
-    #
-    # convex hull
-    #
-#   coll=[]
-    edges=[]
-    for s in tri.convex_hull:
-        [a,b]=s
-        a=points[a]
-        b=points[b]
-#       coll += [Part.makePolygon([a,b])]
-        xa,ya=a[0],a[1]
-        xb,yb=b[0],b[1]
-        edges += [(xa,ya,xb,yb)]
-
-    if self.getData("useLines"):
-        shape=mapEdgesLines(edges,face)
-    else:
-        shape=mapEdgesCurves(edges,face)
-    self.setPinObject("convexHull",shape)
-
-    #
-    # punkte veranschaulichen
-    #
-    col=[]
-    for p in spoints:
-        col += [Part.makeSphere(50,p)]
-
-    shape=Part.Compound(col)
-    self.setPinObject("Points",shape)
-
-
-
-
-
-
-
-def run_FreeCAD_Hull(self,*args, **kwargs):
-    '''
-    calculate voronoi delaunay  stuff for 3D point cloud
-    '''
-
-    from scipy.spatial import Delaunay
-
-    # get the point cloud
-    shape=self.getPinObject("Shape")
-    if shape is None: return
-    points=[v.Point for v in shape.Vertexes]
-
-    # threshold parameter for alpha hull
-    lmax=0.03*(self.getData('alpha')+0.1)
-
-    #core calculation
-    atime=time.time()
-    tri = Delaunay(points)
-    say("time to calculate delaunay:{}".format(time.time()-atime)) 
-
-    # say(tri.simplices)
-
-    #
-    # simplexes and alpha hull
-    #
-    atime=time.time()
-    coll=[]
-    colf=[]
-
-    for s in tri.simplices:
-        aatime=time.time()
-        [a,b,c,d]=s
-        a=points[a]
-        b=points[b]
-        c=points[c]
-        d=points[d]
-        coll += [Part.makePolygon([a,b]),Part.makePolygon([a,c]),Part.makePolygon([a,d]),Part.makePolygon([b,c]),Part.makePolygon([b,d]),Part.makePolygon([c,d])]
-
-        bbtime=time.time()
-        tta=Part.makePolygon([a,b,c,a]).Edges
-        ttb=Part.makePolygon([a,b,d,a]).Edges
-        ttc=Part.makePolygon([a,c,d,a]).Edges
-        ttd=Part.makePolygon([b,c,d,b]).Edges
-
-        # create a alpha simplex if it is small enough 
-        if max ([e.Length for e in tta+ttb+ttc+ttd])<lmax:
-            bbtime=time.time()
-            if 10:
-                wire=Part.makePolygon([a,b,c,a])
-                colf += [Part.Face(wire)]
-                wire=Part.makePolygon([a,b,d,a])
-                colf += [Part.Face(wire)]
-                wire=Part.makePolygon([a,d,c,a])
-                colf += [Part.Face(wire)]
-                wire=Part.makePolygon([d,b,c,d])
-                colf += [Part.Face(wire)]
-
-            else:
-                w=Part.BSplineSurface()
-                w.buildFromPolesMultsKnots(np.array([[a,b],[a,c]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
-                colf += [w.toShape()]
-                w.buildFromPolesMultsKnots(np.array([[a,b],[a,d]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
-                colf += [w.toShape()]
-                w.buildFromPolesMultsKnots(np.array([[b,c],[b,d]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
-                colf += [w.toShape()]
-                w.buildFromPolesMultsKnots(np.array([[a,d],[a,c]]),[2,2],[2,2],[0,1],[0,1],False,False,1,1)
-                colf += [w.toShape()]
-            say("! time alpha:makefaces {}  simplex edges{}".format(time.time()-bbtime,bbtime-aatime)) 
-    say("time to calculate alpha:{}".format(time.time()-atime)) 
-
-
-    # restrict set if simplexes is flag simpleSimplex is set
-    atime=time.time()
-    if self.getData('singleSimplex'):
-        index=self.getData('simplex')
-        coll=coll[6*index:6*index+6]
-
-    shape=Part.Compound(coll)
-    self.setPinObject("delaunayTriangles",shape)
-
-    try:
-        shape=Part.Compound(colf)
-    except:
-        shape=Part.Shape()
-    if len(colf)==0:
-        shape=Part.makeSphere(0.0)
-
-    self.setPinObject("alphaHull",shape)
-    say("number of bordercells",len(colf)/3)
-
-    #
-    # convex hull
-    #
-    coll=[]
-    for s in tri.convex_hull:
-        [a,b,c]=s
-        a=points[a]
-        b=points[b]
-        c=points[c]
-        coll += [Part.makePolygon([a,b]),Part.makePolygon([b,c]),Part.makePolygon([c,a])]
-
-    self.setPinObject("convexHull",Part.Compound(coll))
-
-    # post process following nodes
-    atime=time.time()
-
-    say("time for call view3dNodes:{}".format(time.time()-atime)) 
-
-
-
 #---------------
 
 def cylindricprojection(self,*args, **kwargs):
@@ -1269,270 +669,8 @@ def cylindricprojection(self,*args, **kwargs):
 
         Part.show(Part.makePolygon(pts2))
 
-
-def run_FreeCAD_2DGeometry(self,*args, **kwargs):
-    
-    sayl()
-
-    if os.path.exists('/tmp/lock'):
-        say("Abbruch")
-        return
-
-    try:
-        if time.time()-self.Lock <1.1:
-            return
-    except:
-        say("noc lock")
-    self.Lock=time.time()
-    say("running--------")
-    
-    face=self.getPinObject("Shape")
-    if face == None:
-        return
-    
-    umin,umax,vmin,vmax=face.ParameterRange
-    sf=face.Surface
-
-    ua=self.getData("ua")*0.1
-    va=self.getData("va")*0.1
-    ub=self.getData("ub")*0.1
-    vb=self.getData("vb")*0.1
-
-    ua=umin+ua*(umax-umin)
-    va=vmin+va*(vmax-vmin)
-    ub=umin+ub*(umax-umin)
-    vb=vmin+vb*(vmax-vmin)
-
-    a=FreeCAD.Base.Vector2d(ua,va)
-    b=FreeCAD.Base.Vector2d(ub,vb)
-
-    line=Part.Geom2d.Line2dSegment(a,b)
-    
-    ee = line.toShape(sf)
-    # Part.show(ee)
-    #say(ee)
-    say(ee.Length)
-    
-    self.setPinObject("geometry",line)
-    self.setPinObject("Shape_out",ee)
-
-
-    self.Lock=0
-
-
-def run_FreeCAD_2DCircle(self,*args, **kwargs):
-
-    face=self.getPinObject("Shape")
-    if face == None:
-        return
-
-    umin,umax,vmin,vmax=face.ParameterRange
-    sf=face.Surface
-
-    u=self.getData("u")*0.1
-    v=self.getData("v")*0.1
-    r=self.getData("radius")*0.1
-
-    u=umin+u*(umax-umin)
-    v=vmin+v*(vmax-vmin)
-    r=r*(umax-umin)
-
-    a=FreeCAD.Base.Vector2d(u,v)
-
-    line=Part.Geom2d.Circle2d(a,r)
-    say(line)
-    
-    ee = line.toShape(sf)
-    
-    self.setPinObject("geometry",line)
-    self.setPinObject("Shape_out",ee)
-
-
-
-
-def run_FreeCAD_2DEllipse(self,*args, **kwargs):
-
-    face=self.getPinObject("Shape")
-    if face == None:
-        return
-
-    umin,umax,vmin,vmax=face.ParameterRange
-    sf=face.Surface
-
-    u=self.getData("uLocation")*0.1
-    v=self.getData("vLocation")*0.1
-    #r=self.getData("radius")*0.1
-    r=4
-
-    u=umin+u*(umax-umin)
-    v=vmin+v*(vmax-vmin)
-    r=r*(umax-umin)
-
-    a=FreeCAD.Base.Vector2d(u,v)
-    xax=FreeCAD.Base.Vector2d(np.sin(self.getData("direction")*np.pi/5),np.cos(self.getData("direction")*np.pi/5))
-    #yax=FreeCAD.Base.Vector2d(self.getData("uYAxis"),self.getData("vYAxis"))
-    fig=ine=Part.Geom2d.Ellipse2d()
-    fig.MinorRadius=self.getData("MinorRadius")*0.1
-    fig.MajorRadius=self.getData("MajorRadius")*0.1
-    fig.Location=a
-    fig.XAxis=xax
-#   fig.YAxis=yax
-    
-    
-    ee = fig.toShape(sf)
-    
-    self.setPinObject("geometry",fig)
-    self.setPinObject("Shape_out",ee)
-
-
-
-
-def run_FreeCAD_2DArcOfEllipse(self,*args, **kwargs):
-
-    face=self.getPinObject("Shape")
-    if face == None:
-        return
-
-    umin,umax,vmin,vmax=face.ParameterRange
-    sf=face.Surface
-
-    u=self.getData("uLocation")*0.1
-    v=self.getData("vLocation")*0.1
-    #r=self.getData("radius")*0.1
-    r=4
-
-    u=umin+u*(umax-umin)
-    v=vmin+v*(vmax-vmin)
-    r=r*(umax-umin)
-
-    a=FreeCAD.Base.Vector2d(u,v)
-    xax=FreeCAD.Base.Vector2d(np.sin(self.getData("direction")*np.pi/5),np.cos(self.getData("direction")*np.pi/5))
-    #yax=FreeCAD.Base.Vector2d(self.getData("uYAxis"),self.getData("vYAxis"))
-    fig=Part.Geom2d.Ellipse2d()
-    fig.MinorRadius=self.getData("MinorRadius")*0.1
-    fig.MajorRadius=self.getData("MajorRadius")*0.1
-    fig.Location=a
-    fig.XAxis=xax
-#   fig.YAxis=yax
-
-    arca=self.getData("startAngle")
-    arcb=self.getData("endAngle")*np.pi/5
-
-    say(arca,arcb)
-    fig=Part.Geom2d.ArcOfEllipse2d(fig,arca,arcb)
-
-    ee = fig.toShape(sf)
-    
-    self.setPinObject("geometry",fig)
-    self.setPinObject("Shape_out",ee)
-
-
-
-def run_FreeCAD_2DArcOfCircle(self,*args, **kwargs):
-
-    sayl()
-    face=self.getPinObject("Shape")
-    if face == None:
-        umin,umax,vmin,vmax=0,10,0,10
-        sf=None
-    else:
-        umin,umax,vmin,vmax=face.ParameterRange
-        sf=face.Surface
-
-    u=self.getData("uLocation")*0.1
-    v=self.getData("vLocation")*0.1
-    #r=self.getData("radius")*0.1
-    r=self.getData("radius")*0.1
-
-    u=umin+u*(umax-umin)
-    v=vmin+v*(vmax-vmin)
-    r=r*(umax-umin)
-
-    a=FreeCAD.Base.Vector2d(u,v)
-#   xax=FreeCAD.Base.Vector2d(np.sin(self.getData("direction")*np.pi/5),np.cos(self.getData("direction")*np.pi/5))
-#   #yax=FreeCAD.Base.Vector2d(self.getData("uYAxis"),self.getData("vYAxis"))
-#   fig=Part.Geom2d.Ellipse2d()
-#   fig.MinorRadius=self.getData("MinorRadius")*0.1
-#   fig.MajorRadius=self.getData("MajorRadius")*0.1
-#   fig.Location=a
-#   fig.XAxis=xax
-#   fig.YAxis=yax
-
-
-    fig=Part.Geom2d.Circle2d(a,r)
-
-    arca=self.getData("startAngle")
-    arcb=self.getData("endAngle")*np.pi/5
-
-    say(arca,arcb)
-    fig=Part.Geom2d.ArcOfCircle2d(fig,arca,arcb)
-
-    if sf== None:
-        ee = fig.toShape()
-    else:
-        ee = fig.toShape(sf)
-    
-    self.setPinObject("geometry",fig)
-    self.setPinObject("Shape_out",ee)
-
-
-
-def run_FreeCAD_2DArcOfParabola(self,*args, **kwargs):
-
-    face=self.getPinObject("Shape")
-    if face == None:
-        return
-
-    umin,umax,vmin,vmax=face.ParameterRange
-    sf=face.Surface
-
-    u=self.getData("uLocation")*0.1
-    v=self.getData("vLocation")*0.1
-    #r=self.getData("radius")*0.1
-    r=4
-
-    u=umin+u*(umax-umin)
-    v=vmin+v*(vmax-vmin)
-    r=r*(umax-umin)
-
-    a=FreeCAD.Base.Vector2d(u,v)
-    xax=FreeCAD.Base.Vector2d(np.sin(self.getData("direction")*np.pi/5),np.cos(self.getData("direction")*np.pi/5))
-    #yax=FreeCAD.Base.Vector2d(self.getData("uYAxis"),self.getData("vYAxis"))
-    fig=Part.Geom2d.Parabola2d()
-    fig.Focal=self.getData("MinorRadius")*0.1
-    #fig.MajorRadius=self.getData("MajorRadius")*0.1
-    fig.Location=a
-    fig.XAxis=xax
-#   fig.YAxis=yax
-
-    arca=self.getData("startAngle")*np.pi/5
-    arcb=self.getData("endAngle")*np.pi/5
-
-    say(arca,arcb)
-    fig=Part.Geom2d.ArcOfParabola2d(fig,arca,arcb)
-
-    if sf  !=  None:
-        ee = fig.toShape(sf)
-    else:
-        ee = fig.toShape()
-    
-    self.setPinObject("geometry",fig)
-    self.setPinObject("Shape_out",ee)
-
-
-
- 
  
 
-'''
-para=Part.Parabola(App.Vector(-50.993458,78.566841,0),App.Vector(28.611713,68.414307,0),App.Vector(0,0,1))
-Part.ArcOfParabola(para,11.605501,43.939412)
-
-
-
-circ=Part.Circle(App.Vector(33.254650,124.267365,0),App.Vector(0,0,1),49.420288)
-Part.ArcOfCircle(circ,3.110107,4.361358)
-'''
 
 #--------------------------
 
@@ -1540,57 +678,6 @@ import sys
 if sys.version_info[0] !=2:
     from importlib import reload
 
-
-def run_FreeCAD_Simplex(self,*args, **kwargs):
-
-    k=self.getData("noise")
-    say("kkk",k)
-
-    def rav(v):
-        '''add a random vector to a vector'''
-        return v+FreeCAD.Vector(0.5-random.random(),0.5-random.random(),0.5-random.random())*k
-
-
-    sayl()
-    a=self.getData("pointA")
-    b=self.getData("pointB")
-    c=self.getData("pointC")
-    d=self.getData("pointD")
-    say(a,b,c,d)
-    colf=[]
-    wire=Part.makePolygon([a,rav(b),rav(c),a])
-    colf += [Part.Face(wire)]
-    
-    wire=Part.makePolygon([a,rav(b),rav(d),a])
-    colf += [Part.Face(wire)]
-
-    wire=Part.makePolygon([a,rav(c),rav(d),a])
-    colf += [Part.Face(wire)]
-
-    wire=Part.makePolygon([c,rav(b),rav(d),c])
-    colf += [Part.Face(wire)]
-
-    #Part.show(Part.Compound(colf))
-    self.setPinObject("Compound_out",Part.Compound(colf))
-
-    for tol in range(100):
-        colf2=[c.copy() for c in colf]
-        try:
-            # say ("try tolerance",tol)
-            for f in colf2:
-                f.Tolerance=tol
-            sh=Part.Shell(colf2)
-            sol=Part.Solid(sh)
-            say (sol.isValid())
-            if sol.isValid():
-                say("solid created with tol",tol)
-                #Part.show(sol)
-                #cc=self.getObject();cc.Shape=sol
-                
-                self.setPinObject("Shape_out",sol)
-                break
-        except:
-            pass
 
 
 
@@ -1696,163 +783,7 @@ def run_FreeCAD_RefList(self,*args, **kwargs):
 
 
 
-def run_FreeCAD_Discretize(self,*args, **kwargs):
-    sayl()
-    count=self.getData("count")
-    edge=self.getPinObject("Wire")
-    say(edge)
-    if edge is None: return
-    ptsa=edge.discretize(count)
 
-    self.setPinObject("Shape_out",Part.makePolygon(ptsa))
-    if 0:
-        sc=Part.BSplineCurve()
-        sc.buildFromPoles(ptsa)
-        self.setPinObject("Shape_out",sc.toShape())
-    
-
-    return
-
-    pts=edge.discretize(count*10)
-    #Part.show(Part.makePolygon(pts))
-    face=FreeCAD.ActiveDocument.BePlane.Shape.Face1
-    sf=face.Surface
-    r=200
-    pts2=[]
-    pts3=[]
-    for i in range(len(pts)-1):
-        p=pts[i]
-        u,v=sf.parameter(p)
-        say(u,v)
-        t=(pts[i+1]-p).normalize()
-        say(t)
-        n=sf.normal(u,v)
-        say(n)
-        u,v=sf.parameter(p+n.cross(t)*r)
-        pts2 += [sf.value(u,v)]
-        u,v=sf.parameter(p-n.cross(t)*r)
-        pts3 += [sf.value(u,v)]
-    closed=True
-    if 0:
-        if closed:
-            Part.show(Part.makePolygon(pts2+[pts2[0]]))
-            Part.show(Part.makePolygon(pts3+[pts3[0]]))
-        else:
-            Part.show(Part.makePolygon(pts2))
-            Part.show(Part.makePolygon(pts3))
-
-
-
-
-def run_FreeCAD_Offset(self,produce=False, **kwargs):
-    #sayl()
-    count=self.getData("count")
-    edge=self.getPinObject("Wire")
-    say(edge)
-    if edge is None: return
-    pts=edge.discretize(count*10)
-    # Part.show(Part.makePolygon(pts))
-    face=self.getPinObject("Shape")
-    sf=face.Surface
-    r=self.getData("offset")*20
-    pts2=[]
-    pts3=[]
-    pts4=[]
-    pts5=[]
-    #r2=self.getData("height")*20
-    r2=100
-    
-    for i in range(len(pts)-1):
-        p=pts[i]
-        u,v=sf.parameter(p)
-        say(u,v)
-        t=(pts[i+1]-p).normalize()
-        say(t)
-        n=sf.normal(u,v)
-        say(n)
-        u,v=sf.parameter(p+n.cross(t)*r)
-        pts2 += [sf.value(u,v)]
-        u,v=sf.parameter(p-n.cross(t)*r)
-        pts3 += [sf.value(u,v)]
-        pts4 += [p+n*r2]
-        pts5 += [p-n*r2]
-    closed=True
-    closed=False
-    if closed:
-        pol2=Part.makePolygon(pts2+[pts2[0]])
-        pol3=Part.makePolygon(pts3+[pts3[0]])
-        pol4=Part.makePolygon(pts4+[pts4[0]])
-    else:
-        pol2=Part.makePolygon(pts2)
-        pol3=Part.makePolygon(pts3)
-        pol4=Part.makePolygon(pts4)
-    if produce:
-            Part.show(pol2)
-            Part.show(pol3)
-            Part.show(pol4)
-
-    sfa=Part.BSplineSurface()
-    
-    poles=np.array([pts2,pts4,pts3])
-
-    countB=len(pts2)
-    countA=3
-    degA=2
-    degB=3
-    if closed==False:
-        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-        multA=[degA]+[1]*(countA-degA)+[degA]
-        
-        multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
-        knotA=range(len(multA))
-        knotB=range(len(multB))
-
-        sfa=Part.BSplineSurface()
-        sfa.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,True,False,degA,degB)
-    else:
-        multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-        multB=[degB]+[1]*(countB-degB)+[degB]
-        knotA=range(len(multA))
-        knotB=range(len(multB))
-
-        sfa=Part.BSplineSurface()
-        sfa.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,False,True,degA,degB)
-
-    if 10:
-        poles=np.array([pts2,pts4,pts3,pts5])
-        countA=4
-
-        poles=np.array([pts2,pts2,pts4,pts3,pts3])
-        countA=5
-        
-        multA=[degA]+[1]*(countA-degA)+[degA]
-        multB=[degB]+[1]*(countB-degB)+[degB]
-        multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]
-        knotA=range(len(multA))
-        knotB=range(len(multB))
-
-        sfa=Part.BSplineSurface()
-        sfa.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,True,False,degA,degB)
-
-
-    Part.show(sfa.toShape())
-
-
-
-    self.setPinObject("Shape_out",Part.Compound([pol2,pol3,pol4]))
-
-
-
-
-
-def run_FreeCAD_FillEdge(self,produce=False, **kwargs):
-   
-    return #+# muss mparametriz werden
-    wire=FreeCAD.ActiveDocument.BePlane.Shape.Wires[0]
-    #_=Part.makeFilledFace(Part.__sortEdges__([App.ActiveDocument.Shape004.Shape.Edge2, ]))
-    _=Part.makeFilledFace(wire.Edges)
-    Part.show(_)
-    
 
 def run_FreeCAD_Solid(self,bake=False, **kwargs):
     
@@ -1900,193 +831,6 @@ def run_FreeCAD_Solid(self,bake=False, **kwargs):
 
 
 
-
-# autumn 19
-def run_FreeCAD_Destruct_BSpline(self,bake=False, **kwargs):
-    shape=self.getPinObject("Shape_in")
-    if shape is None: return
-    c=shape.Curve
-    say(c)
-    self.setData("knots",c.getKnots())
-    self.setData("mults",c.getMultiplicities())
-    self.setData("degree",c.Degree)
-    self.setData("poles",c.getPoles())
-    #self.setData("periodic",False)
-    say("done")
-
-
-
-def run_FreeCAD_Destruct_BSplineSurface(self,bake=False, **kwargs):
-    shape=self.getPinObject("Shape_in")
-    if shape is None: return
-    c=shape.Surface
-    say(c)
-    FreeCAD.c=c
-    self.setData("uknots",c.getUKnots())
-    self.setData("umults",c.getUMultiplicities())
-    self.setData("udegree",c.UDegree)
-    self.setData("uperiodic",c.isUPeriodic)
-    self.setData("vknots",c.getVKnots())
-    self.setData("vmults",c.getVMultiplicities())
-    self.setData("vdegree",c.VDegree)
-    self.setData("vperiodic",c.isVPeriodic)
-    poles=c.getPoles()
-
-    self.setData('poles',poles)
-
-    say("done")
-
-
-
-def run_FreeCAD_BSplineSurface(self, *args, **kwargs):
-
-        
-        data=self.getPinDataYsorted('poles')
-        for d in data:
-            say("!",np.array(d).shape)
-        dat=np.concatenate(data)
-        say(np.array(dat).shape)       
-        
-        if len(dat) == 0:
-            sayW("no points for poles")
-            return
-        dat=np.array(dat)
-        sf=Part.BSplineSurface()
-
-        poles=np.array(dat)
-
-        (countA,countB,_)=poles.shape
-        degB=min(countB-1,3,self.getPinByName("maxDegreeU").getData())
-        degA=min(countA-1,3,self.getPinByName("maxDegreeV").getData())
-        
-        periodicU=self.getData("periodicU")
-        
-        periodicV=self.getData("periodicV")
-        if periodicU:
-            multA=[1]*(countA+1)
-            knotA=range(len(multA))
-        else:
-            multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-            knotA=range(len(multA))
-
-        if periodicV:
-            multB=[1]*(countB+1)
-            knotB=range(len(multB))
-        else:
-            multB=[degB+1]+[1]*(countB-1-degB)+[degB+1]       
-            knotB=range(len(multB))
-
-
-        sf=Part.BSplineSurface()
-        sf.buildFromPolesMultsKnots(poles,multA,multB,knotA,knotB,periodicU,periodicV,degA,degB)
-        shape=sf.toShape()
-
-        self.setPinObject("Shape_out",shape)
-    
-
-
-
-def run_FreeCAD_BSplineCurve(self, *args, **kwargs):
-
-        dat=self.arrayData.getData()
-        if len(dat)==0:             return
-        dat=np.array(dat)
-        sf=Part.BSplineCurve()
-
-        poles=np.array(dat)
-
-        (countA,_)=poles.shape
-        degA=min(countA-1,13,self.getPinByName("maxDegree").getData())
-
-        periodic=self.getData("periodic")
-        #periodic=True
-        if not periodic:
-            multA=[degA+1]+[1]*(countA-1-degA)+[degA+1]
-            knotA=range(len(multA))
-
-        else:
-            multA=[1]*(countA+1)
-            knotA=range(len(multA))
-
-            
-        sf=Part.BSplineCurve()
-        sf.buildFromPolesMultsKnots(poles,multA,knotA,periodic,degA)
-        shape=sf.toShape()
-
-
-        shape=sf.toShape()
-        
-        #cc=self.getObject()
-        #cc.Label=self.objname.getData()
-        #cc.Shape=shape
-
-        self.setPinObject("Shape_out",shape)
-    
-    
-
-
-def run_FreeCAD_Compound(self, *args, **kwargs):
-
-        #+# todo ShapesList implementieren
-#        try:
-#            subshapes=self.getPinObjects("Shapes")
-#        except:
-#            subshapes=[]
-#        try:
-#            subshapes += self.getPinObjects("ShapeList")
-#        except:
-#            pass
-
-        # get list of nodes
-        outArray = []
-        ySortedPins = sorted(self.shapes.affected_by, key=lambda pin: pin.owningNode().y)
-
-        for i in ySortedPins:
-            outArray.append(i.owningNode().getPinObject(i.name))
-        
-
-#-----------------
-
-
-        say("Compound Shapes:",outArray)
-        shape=Part.Compound(outArray)
-
-        self.setPinObject("Shape_out",shape)
-    
-
-def run_FreeCAD_Collect_Vectors(self, mode=None):
-    #say("collect",mode)
-    if mode=="reset":
-        self.points=[]
-        return
-
-
-    maxSize=self.getData("maxSize")
-    red=self.getData("reduce")
-    point = self.getData("point")
-    try:
-        if (self.points[-1]-point).Length <0.01:
-#           say("zu dicht")
-            return
-    except:
-        pass
-
-    # point.y *= -1.
-
-    self.points += [point]
-    #say(len(self.points))
-    if maxSize >0 and len(self.points)>maxSize:
-            self.points = self.points[len(self.points)-maxSize:]
-    if len(self.points)>2 and red>2:
-        pol=Part.makePolygon(self.points)
-        pointsd=pol.discretize(red)
-    else:
-        pointsd=self.points
-    self.setData("points",pointsd)
-    #say(len(self.points),len(pointsd))
-    if not self.inRefresh.hasConnections():
-        self.outExec.call()
-    
 
 
 
@@ -2166,146 +910,6 @@ def run_FreeCAD_bakery(self):
     #f.ViewObject.Transparency = transparency
 
     #say("E",time.time()-timeA)
-
-
-'''
-    Replaces this B-Spline curve by approximating a set of points.
-    The function accepts keywords as arguments.
-
-    approximate2(Points = list_of_points)
-
-    Optional arguments :
-
-    DegMin = integer (3) : Minimum degree of the curve.
-    DegMax = integer (8) : Maximum degree of the curve.
-    Tolerance = float (1e-3) : approximating tolerance.
-    Continuity = string ('C2') : Desired continuity of the curve.
-    Possible values : 'C0','G1','C1','G2','C2','C3','CN'
-
-    LengthWeight = float, CurvatureWeight = float, TorsionWeight = float
-    If one of these arguments is not null, the functions approximates the
-    points using variational smoothing algorithm, which tries to minimize
-    additional criterium:
-    LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion
-    Continuity must be C0, C1 or C2, else defaults to C2.
-
-    Parameters = list of floats : knot sequence of the approximated points.
-    This argument is only used if the weights above are all null.
-
-    ParamType = string ('Uniform','Centripetal' or 'ChordLength')
-    Parameterization type. Only used if weights and Parameters above aren't specified.
-
-    Note : Continuity of the spline defaults to C2. However, it may not be applied if
-    it conflicts with other parameters ( especially DegMax ).
-'''
-
-def run_FreeCAD_ApproximateBSpline(self):
-    shin=self.getPinObject("Shape_in")
-    say(shin)
-    points=self.getData("points")
-
-    if shin is None: 
-        sf=None
-    
-        pp=[points[0]]
-        for i in range(1,len(points)):
-            if ((points[i]-points[i-1]).Length)>0.01:
-                pp += [points[i]]
-    
-        bs = Part.BSplineCurve()
-        tol=max(self.getData("tolerance"),1.)
-        bs.approximate(pp,Tolerance=tol*0.001)
-        self.setPinObject("Shape_out",bs.toShape())
-    else:
-        shin=shin.toNurbs().Face1
-        sf=shin.Surface
-
-        uvs=[]
-        pts2da=[sf.parameter(p) for p in points]
-    
-        pts2d=[]
-        for i,p in enumerate(pts2da):
-            pts2d += [FreeCAD.Base.Vector2d(p[0],p[1])]
-
-        bs2d = Part.Geom2d.BSplineCurve2d()
-        tol=max(self.getData("tolerance"),1.)
-        bs2d.approximate(pts2d,Tolerance=tol*0.001)
-
-        self.setPinObject("Shape_out",bs2d.toShape(sf))
-
-
-'''
->>> print(bs2d.interpolate.__doc__)
-
-    Replaces this B-Spline curve by interpolating a set of points.
-    The function accepts keywords as arguments.
-
-    interpolate(Points = list_of_points)
-
-    Optional arguments :
-
-    PeriodicFlag = bool (False) : Sets the curve closed or opened.
-    Tolerance = float (1e-6) : interpolating tolerance
-
-    Parameters : knot sequence of the interpolated points.
-    If not supplied, the function defaults to chord-length parameterization.
-    If PeriodicFlag == True, one extra parameter must be appended.
-
-    EndPoint Tangent constraints :
-
-    InitialTangent = vector, FinalTangent = vector
-    specify tangent vectors for starting and ending points
-    of the BSpline. Either none, or both must be specified.
-
-    Full Tangent constraints :
-
-    Tangents = list_of_vectors, TangentFlags = list_of_bools
-    Both lists must have the same length as Points list.
-    Tangents specifies the tangent vector of each point in Points list.
-    TangentFlags (bool) activates or deactivates the corresponding tangent.
-    These arguments will be ignored if EndPoint Tangents (above) are also defined.
-
-    Note : Continuity of the spline defaults to C2. However, if periodic, or tangents
-    are supplied, the continuity will drop to C1.
-
->>> 
-'''
-def run_FreeCAD_InterpolateBSpline(self):
-    points=self.getData("points")
-    say("interpolate for {} points".format(len(points)))
-    if len(points)<2:return
-
-    shin=self.getPinObject("Shape_in")
-    if shin is None:
-        bs2d = Part.BSplineCurve()
-        tol=max(self.getData("tolerance"),1.)
-        #+# todo: problem with tolerance parameter - how to use it ?
-
-        bs2d.interpolate(points,PeriodicFlag=False)
-        self.setPinObject("Shape_out",bs2d.toShape())
-    
-        return
-
-    
-    
-    
-    shin=shin.toNurbs().Face1
-    sf=shin.Surface
-    
-    uvs=[]
-    pts2da=[sf.parameter(p) for p in points]
-    pts2d=[]
-    for i,p in enumerate(pts2da):
-        pts2d += [FreeCAD.Base.Vector2d(p[0],p[1])]
-
-    bs2d = Part.Geom2d.BSplineCurve2d()
-
-    tol=max(self.getData("tolerance"),1.)
-    #+# todo: problem with tolerance parameter - how to use it ?
-
-    bs2d.interpolate(pts2d,PeriodicFlag=False)
-    self.setPinObject("Shape_out",bs2d.toShape(sf))
-
 
 
 
@@ -2492,10 +1096,15 @@ def run_FreeCAD_Bender(self):
 
     comps=[]
 
-    poles=FreeCAD.ActiveDocument.Shape.Shape.Face1.Surface.getPoles()
+
+#    poles=FreeCAD.ActiveDocument.Shape.Shape.Face1.Surface.getPoles()
+    
     shapein=self.getPinObject("Shape_in")
     say(shapein)
-    if shapein is None: return
+    if shapein is None: 
+        sayErOb(self,"no Shape_in")
+        return
+
     poles=shapein.Surface.getPoles()
     poles=np.array(poles)
 
@@ -3105,182 +1714,6 @@ def reload_obj(self,*args, **kwargs):
 
 
 
-def run_FreeCAD_Blinker(self):
-
-    from blinker import signal
-    try:
-        sn=self.getData('signalName')
-        ss= self.name +"@PyFlow"
-    except:
-        sn=self.Object.signalName
-        ss=self.name +")@FreeCAD"
-
-    from threading import Thread
-
-
-    def sleeper(i):
-        
-        anz=0
-        for j in range(1000):
-            send_data = signal(sn)
-            say("###",i,j,self.getData("sleep"),time.time())
-            #say("%r sends signal %r to receivers ..." %(ss,sn))
-            result = send_data.send(self.name, message=self.getData("signalMessage"),obj=self.getData("signalObject"))
-            #say( "%r signal feedbacks:" %self.name)
-            #for r in result:
-            #    say(r[1])
-
-        
-            time.sleep(1+0.02*random.random())
-            if self.getData("sleep") ==0:
-                say("ENDE",i)
-                return
-        say("NDE ALL",i)
-
-    def sleeper2(i):
-            sleeper2a(i)
-
-
-
-    def sleeper2a(i):
-        a=time.time()
-        say("start  outExec.call",i)
-        say('##example set color')
-        say("Ende call ",i,time.time()-a)
-
-
-    def looper(j):
-        try:
-            j=self.getData("loops")
-        except:
-            return
-        say("################# vSTART Looper",j)
-        for i in range(j):
-            if self.stopped:
-                say("stopped")
-                return
-            send_data = signal(sn)
-            say("###",i,j,self.getData("sleep"),time.time())
-            say("%r sends signal %r to receivers ..." %(ss,sn))
-            result = send_data.send(self.name, message=self.getData("signalMessage"),obj=self.getData("signalObject"))
-            say( "%r signal feedbacks:" %self.name)
-            for r in result:
-                say(r[1])
-
-            if self.getData("sleep") ==0:
-                say("ENDE blinker calls at iteration",i)
-                return
-            t = Thread(target=sleeper2, args=(i,))
-            t.start()
-            time.sleep(self.getData("sleep")*0.1) 
-
-
-        say("###             END Looper",j)
-
-    a=time.time()
-    self.stopped=False
-    t2 = Thread(target=looper, args=(10,))
-    t2.start()
-    say("startf")
-    #t2._stop();  say("stoppedAA")
-    FreeCAD.t2=t2
-
-    say("-----------------------------------Ende main",time.time()-a)
-
-    def hu():
-        for i in range(3):
-            send_data = signal(sn)
-            say()
-            say("%r sends signal %r to receivers ..." %(ss,sn))
-            result = send_data.send(self.name, message=self.getData("signalMessage"),obj=self.getData("signalObject"))
-            say( "%r signal feedbacks:" %self.name)
-            for r in result:
-                say(r[1])
-            tsleep=self.getData('sleep')
-            if tsleep == 0:
-                say("no loop")
-                return
-            else:
-                say("sleep...",0.2)
-                time.sleep(tsleep)
-                say(i,"wake on!!")
-
-def run_FreeCAD_Receiver(self):
-
-    try:
-        say("Data:",self.kw)
-        say("Sender:",self.sender)
-    except:
-        say("no sender data and name avaiable")
-    #self.setData("signalName",self.sender)
-    #self.setData("senderMessage",self.kw['message'])
-    self.setColor(b=0,a=0.4)
-    
-
-
-
-
-def myExecute_Receiver(proxy,fp):
-    proxy.name=fp.Name
-    run_FreeCAD_Receiver(proxy)
-
-def myExecute_Blinker(proxy,fp):
-    proxy.name=fp.Name
-    run_FreeCAD_Blinker(proxy)
-
-def f(x):
-        return x*x
-
-
-def run_FreeCAD_Async(self):
-    #say(self.name)
-    #sayl()
-    #anz=0
-    maxanz=15
-    obj=self
-
-    self.setData("message",self.name+" start")
-
-    self.setData("message","")
-
-    from threading import Thread
-
-    def sleeper(i):
-        
-        anz=0
-        for j in range(56):
-            tt=random.randint(1,4)*2+1
-     #       tt=2
-            #print (self.name," %d loops for %f " % (j,tt))
-            #print(obj)
-            for zz in range(tt):
-                anz += 1
-                time.sleep(0.28)
-                lll=0
-                for k in range(100):
-                    for kk in range(1000):
-                        lll +=1
-                #print (self.name,anz)
-            
-            #print ("thread %d woke up" % i)
-            self.setData("message",self.name+"-----"+str(anz))
-            obj.outExec.call()
-
-            if anz>maxanz:
-                break
-            
-        print ("-------------------Ende",self.name,anz,maxanz)
-        self.setData("message",self.name+"  ENDE")
-    
-
-    for i in range(1):
-        t = Thread(target=sleeper, args=(i,))
-        t.start()
-    
-
-
-
-
 def run_FreeCAD_FigureOnFace(self):
 
     ca=np.array(self.getData("pattern"))
@@ -3397,114 +1830,7 @@ def run_FreeCAD_FigureOnFace(self):
     self.setPinObjects("details",cols)
 
 
-    
-    
-def run_FreeCAD_RepeatPattern(self):
 
-    b=self.getData("pattern")
-    apts=self.getData("vectors")
-
-    a=np.array(apts)
-
-    # make the vectors array flat
-    if len(np.array(a).shape)>1:
-        ll=np.array(a).shape
-        a=np.array(a).reshape(np.prod(ll[:-1]),3)
-
-    a=[FreeCAD.Vector(v.tolist()) for v in a]
-    c=[[av+bv for bv in b] for av in a]
-
-    col=[]
-    for pts in c:
-        col +=[Part.makePolygon(pts)]
-
-    cc=Part.Compound(col)
-
-    self.setData("pattern_out",c)
-    self.setPinObject("Shape_out",cc)
-    self.setColor(a=0.7)
-    
-
-
-def run_FreeCAD_Polygon(self):
-    
-            # recursion stopper
-        if self.Called:
-            return
-        #sayl()
-        # mit zeitstemple aktivieren
-        #self.Called=True
-
-        pts=self.points.getData()
-        #say(pts)
-        if pts[0].__class__.__name__ == 'list':
-            pts=pts[0]
-        say("--")
-        if len(pts)<2:
-            sayW("zu wenig points")
-        else:
-            try:
-                shape=Part.makePolygon(pts)
-            except:
-                return
-
-        self.setPinObject("Shape_out",shape)
-
-        if self._preview:
-            self.preview()
-
-        #self.Called=False
-
-
-def run_FreeCAD_ListOfVectors(self):
-    
-    say()
-    say("list of vectors dump ...")
-    say("Hack recompute input nodes is active")
-    ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
-    b=[]
-    for i in ySortedPins:
-        # hack to get current values #+# todo debug
-        i.owningNode().compute()
-        vv=i.owningNode().getData(i.name)
-        #say(i.name,vv)
-        #say(np.array(vv).shape)
-        if len(np.array(vv).shape)>1:
-            ll=np.array(vv).shape
-            vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
-            b += vv.tolist()
-        else:
-            b += [vv]
-    
-    b=[FreeCAD.Vector(*v) for v in b]
-    self.setData("vectors",b)
-    self.setColor(a=0.7)
-    
-
-def run_FreeCAD_ListOfVectorList(self):
-    
-    say()
-    say("list of vectors dump ...")
-    say("Hack recompute input nodes is active")
-    ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
-    b=[]
-    for i in ySortedPins:
-        # hack to get current values #+# todo debug
-        i.owningNode().compute()
-        vv=i.owningNode().getData(i.name)
-        #say(i.name,vv)
-        #say(np.array(vv).shape)
-        if len(np.array(vv).shape)>1:
-            ll=np.array(vv).shape
-            vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
-            b += vv.tolist()
-        else:
-            b += [vv]
-    
-    b=[FreeCAD.Vector(*v) for v in b]
-    self.setData("vectors",b)
-    self.setColor(a=0.7)
-    
     
 def run_FreeCAD_MoveVectors(self):
     #+# todo anpassen 1 2 3 dimensionale arrays
@@ -3550,45 +1876,7 @@ def run_FreeCAD_ScaleVectors(self):
 ## \/ okay
 
 
-def run_FreeCAD_Transformation(self):
 
-    vx=self.getData("vectorX")
-    vy=self.getData("vectorY") 
-    vz=self.getData("vectorZ") 
-    v0=self.getData("vector0") 
-    dat=[vx.x,vx.y,vx.z,
-        vy.x,vy.y,vy.z,
-        vz.x,vz.y,vz.z,
-        v0.x,v0.y,v0.z,
-        ]
-    
-    dat=np.array(dat).reshape(4,3)
-
-    vv2=self.getPinByName("transformation")
-    vv2.setTransformation(dat)
-    
-
-
-def run_FreeCAD_Reduce(self):
-
-    flags=self.getData("selection")
-    eids=self.getData("shapes")
-    say(self.name)
-    if eids is None:
-        return
-    shapes=[store.store().get(eid)  for eid in eids]
-    reduced=[]
-    for f,s in zip(shapes,flags):
-        if s:
-             reduced += [f]
-    try:
-        rc=Part.Compound(reduced)
-    except:
-       rc=Part.Shape()
-    say("!!rc=",rc)
-    self.setPinObject("Shape_out",rc)
-    self.setColor(b=0,a=0.4)
-    
 
 
 def run_FreeCAD_IndexToList(self):
@@ -3611,139 +1899,8 @@ def run_FreeCAD_IndexToList(self):
     
 ## ab hier neu 02.12.
 
-def run_FreeCAD_DistToShape(self):
-    
-    eids=self.getPinObjectsA("shapes")
-    if len(eids)==0:
-       points=self.getData('points')
-       eids=[Part.Point(p).toShape() for p in points]
-    
-    target=self.getPinObject("target")
-    dists=[]
-    for s in eids:
-        dists += [target.distToShape(s)[0]]
-
-    self.setData("distance",dists)
-    self.setColor(b=0,a=0.4)
-    
 
 
-def run_FreeCAD_LessThan(self):
-    values=self.getData("values")
-    threshold=self.getData("threshold")
-    rc=[]
-    for v in values:
-        say(v, v<threshold)
-        rc += [v<threshold]
-    self.setData("lessThan",rc)
-    self.setColor(b=0,a=0.4)
-    
-
-def run_FreeCAD_MoreThan(self):
-    values=self.getData("values")
-    threshold=self.getData("treshold")
-    rc=[]
-    for v in values:
-        say(v, v>threshold)
-        rc += [v>threshold]
-    self.setData("moreThan",rc)
-    self.setColor(b=0,a=0.4)
-    
-
-def run_FreeCAD_Equal(self):
-    values=self.getData("values")
-    threshold=self.getData("value")
-    rc=[]
-    for v in values:
-        say(v, v ==threshold)
-        rc += [v == threshold]
-    self.setData("equal",rc)
-    self.setColor(b=0,a=0.4)
-    
-
-def run_FreeCAD_Nearly(self):
-    values=self.getData("values")
-    threshold=self.getData("value")
-    tol=self.getData("tolerance")
-    rc=[]
-    for v in values:
-        #say(v, v ==threshold)
-        rc += [v >= threshold -tol and  v <= threshold + tol]
-    self.setData("nearly",rc)
-    self.setColor(b=0,a=0.4)
-    
-
-
-def run_FreeCAD_And(self):
-    a=self.getData("a")
-    b=self.getData("b")
-    flags=[va and vb for va,vb in zip(a,b)]
-    self.setData("and",flags)
-
-    wr=self.getWrapper()
-    wr.setHeaderHtml("AND: "+flagstring(flags))
-
-    self.setColor(b=0,a=0.4)
-    
-
-
-def flagstring(flags,lenf=10):
-    '''create string form boolean list'''
-    fstring=""
-    for f in flags[:lenf]:
-        fstring += "L" if f else "O"
-    if lenf<len(flags):
-        fstring += "..."
-    return fstring
-
-
-def run_FreeCAD_BoolToy(self):
-    self.setData("flags",[self.getData("flagA"),self.getData("flagB"),self.getData("flagC"),self.getData("flagD")])
-    flags=[self.getData("flagA"),self.getData("flagB"),self.getData("flagC"),self.getData("flagD")]
-    fstring="Flags:"
-    for f in flags:
-        fstring += "L" if f else "O"
-    #set the label of the node
-    wr=self.getWrapper()
-    wr.setHeaderHtml(fstring)
- 
-    self.setColor(b=0,a=0.4)
-    
-
-def run_FreeCAD_Or(self):
-    a=self.getData("a")
-    b=self.getData("b")
-    flags = [va or vb for va,vb in zip(a,b)]
-    self.setData("or",flags)
-    
-    wr=self.getWrapper()
-    wr.setHeaderHtml("OR: "+flagstring(flags))
- 
-    self.setColor(b=0,a=0.4)
-    
-
-
-
-def run_FreeCAD_Not(self):
-    a=self.getData("a")
-    flags=[not va for va in a]
-    self.setData("not",flags)
-
-    wr=self.getWrapper()
-    wr.setHeaderHtml("NOT: "+flagstring(flags))
-
-    self.setColor(b=0,a=0.4)
-    
-
-def run_FreeCAD_True(self):
-    self.setData("true",[True]*self.getData("count"))
-    self.setColor(b=0,a=0.4)
-    
-
-def run_FreeCAD_False(self):
-    self.setData("false",[False]*self.getData("count"))
-    self.setColor(b=0,a=0.4)
-    
 
 ##ab hier neu 03.12.
 
@@ -3769,90 +1926,8 @@ def run_FreeCAD_FloatToy(self):
     self.setData("floats",floats)
     self.setColor(b=0,a=0.4)
     
-    
-def run_FreeCAD_Tube(self):
-    #+# todo better normal for 3d curve
-    floats=self.getData('parameter')
-    radius=self.getData('radius')
-
-    cc=self.getPinObject("backbone")
-    if cc is None:
-        say("no backbone curve abort")
-        return
-    say("expected parameter range", cc.ParameterRange)
-    curve=cc.Curve
-    pts=[]
-    for f,r  in zip(floats,radius):
-        f *= 0.1
-        r *= 0.1
-        p=curve.value(f)
-        t=curve.tangent(f)[0]
-        if 0:
-            h=FreeCAD.Vector(0,0,1)
-            n=t.cross(h)
-        else:
-            n=curve.normal(f)
-            h=n.cross(t)
-            
-        pts += [[p-h*r,p+n*r,p+h*r,p-n*r]]
-    
-    # aufrichten normale
-    z=pts[0]
-    pts2 =[z]
-    for i in range(len(pts)-1):
-        a=z
-        b=pts[i+1]
-        sums=[]
-        for j in range(4):
-            sums +=[sum([(a[k-j]-b[k]).Length for k in range(4)])]
-        say(sums.index(min(sums)))
-        index=sums.index(min(sums))
-        z=b[index:]+b[:index]
-        pts2 += [z]
-        
-    self.setData("points",pts2)
-    
 
 
-
-def run_FreeCAD_CenterOfMass(self):
-    #shape=self.getPinObject("Shape")
-    if 0:
-        t=self.getPinByName("Shape")
-
-        outArray = []
-        ySortedPins = sorted(t.affected_by, key=lambda pin: pin.owningNode().y)
-        for i in ySortedPins:
-            outArray.append(i.owningNode().getPinObject(i.name))
-
-    else:
-        outArray=self.getPinObjectsA("ShapeList")
-    
-    say(outArray)    
-        
-    pts=[f.CenterOfMass for f in outArray]
-    self.setData("points",pts)
-    
-
-
-
-def run_FreeCAD_ListOfShapes(self):
-    
-    say()
-    say("list of vectors dump ...")
-    say("Hack recompute input nodes is active")
-    ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
-    b=[]
-    for i in ySortedPins:
-        # hack to get current values #+# todo debug
-        # i.owningNode().compute()
-        vv=i.owningNode().getPinObject(i.name)
-        say(i.name,vv)
-        b += [vv]
-    say(b)
-    self.setPinObjects("ShapeList",b)
-    self.setColor(a=0.7)
-    
 
 
 def run_shelfToy(self):
@@ -3930,50 +2005,6 @@ def run_FreeCAD_Toy(self):
 
 def run_FreeCAD_Toy(self):
     sayl()
-
-
-def run_FreeCAD_Object(self, *args, **kwargs):
-
-        say("-------------------------------")
-        say ("in compute",self.getName(),"objname is",self.objname.getData())
-        nl=len(self.getName())
-        pps=self.getOrderedPins()
-        say(pps)
-        say("lllllllllllll")
-        for p in pps:
-            try:
-                print((str(p.getName()[nl+1:]),p.getData()))
-            except:  pass
-        obn=self.objname.getData()
-        FreeCAD.ActiveDocument.recompute()
-        obj=FreeCAD.ActiveDocument.getObject(obn)
-        self.fob=obj
-        sayl("vor store ")
-        obj.purgeTouched()
-        self.store()
-        sayl("oioio")
-        try:
-            sh=obj.Shape
-            self.setPinObject("Shape_out",sh)
-        except:
-            pass # no shape
-        sayl("kk")
-    
-
-        say("vorbr")
-        a=self.makebackref()
-        say("nach backref")
-        if a != None:
-            a.sources=[obj]
-
-
-        a.purgeTouched()
-        say("Reference", a.Name)
-        
-        if self._preview:
-            self.preview()
-
-
 
 
    
@@ -4111,7 +2142,11 @@ def run_FreeCAD_Repeat(self):
 
 def run_FreeCAD_Index(self):
     vecs=self.getData("list")
-    self.setData("item",vecs[self.getData('index')])
+    ix=self.getData('index')
+    if ix<len(vecs):
+        self.setData("item",vecs[ix])
+    else:
+        sayErr("index not valid")
 
 
     
@@ -4355,6 +2390,10 @@ def createElevationGrid(pts,mode='thin_plate',rbfmode=True,gridCount=20,bound=0,
     else:
         noisefactor=10**(-4+noise)
     
+    if len(pts)==0:
+        sayErr("no points for elevation grid")
+        return []
+    
     pts2=[p+FreeCAD.Vector(random.random(),random.random(),random.random())*noisefactor for p in pts]
 
     x=np.array(pts2)[:,0]
@@ -4401,6 +2440,7 @@ def run_FreeCAD_Elevation(self):
     # run the calculation
     poles=createElevationGrid(points,mode=mode,rbfmode=rbfmode,gridCount=gridCount,bound=bound,noise=noise)
 
+        
     # store the ruesult to the outputpin and start postprocessing
     self.setData("poles",poles)
 
@@ -4544,6 +2584,9 @@ def run_FreeCAD_Counter(self):
 def run_FreeCAD_Export(self):
         
     a=self.getPinObject("Shape")
+    if a is None:
+        sayErOb(self,"no Shape")
+        return
     fn=self.getData("filename")
     mode=self.getData('mode')
     if mode=='BREP':
@@ -4588,6 +2631,10 @@ def run_FreeCAD_Expression(self):
     b=self.getData('b')
     c=self.getData('c')
     d=self.getData('d')
+    say(expression)
+    if a is None:
+        a=0.
+    
     v=eval(expression)
 
     say("parameters a,b,c,d",a,b,c,d)
@@ -4605,6 +2652,10 @@ def run_FreeCAD_Expression(self):
 
 
 def run_FreeCAD_Seam(self):
+    if  self.getPinObject("shapeA") is None:
+        sayErOb(self,"no ShapeA")
+        return
+        
     fa=self.getPinObject("shapeA").Surface.copy()
     auflip=self.getData("flipUA")
     avflip=self.getData("flipVA")
@@ -5053,15 +3104,6 @@ def run_FreeCAD_ImageT(self):
     self.setData("Points_out",pts)
     
 
-def run_FreeCAD_uv2xyz(self):
-    sh=self.getPinObject("Shape")
-    bs=sh.Surface
-    uvs=self.getData('points')
-    
-    pts += [bs.value(uv[0],uv[1]) for uv in uvs]
-    self.setData('Points_out',pts)
-    
-
 
 
 
@@ -5077,7 +3119,12 @@ def run_FreeCAD_QuadMesh(self):
 
     points=self.getData('points')
     vps=np.array(points)
-    (a,b,c)=vps.shape
+    try:
+        (a,b,c)=vps.shape
+    except:
+        sayErOb(self,"points have no grid structure")
+        return
+        
     tt=vps.reshape(a*b,3)
 
     result = coin.SoSeparator()
@@ -5106,6 +3153,10 @@ def run_FreeCAD_QuadMesh(self):
 def run_FreeCAD_replacePoles(self):
 
     sh=self.getPinObject("Shape")
+    if sh is None:
+        sayErr("no Shape - abort")
+        return
+    
     sf=sh.Surface
     poles=np.array(sf.getPoles())
     points=np.array(self.getData('poles'))
@@ -5139,452 +3190,65 @@ def run_FreeCAD_replacePoles(self):
     self.setPinObject('Shape_out',fa.toShape())
     
  
-#-----------------------------
-#    umrechnungsmethode
-
- 
-def maskit(poles,vv,t,ui,vi,ut=0.2,vt=0.3, ruA=0,rvA=0, ruB=0,rvB=0,sA=1,sB=1):
-
-    uc,vc,_=poles.shape
-    mask=np.array([vv.x,vv.y,vv.z]*(2+ruA+ruB)*(2+rvA+rvB)).reshape(2+ruA+ruB,2+rvA+rvB,3)
-
-    mask[0] *= ut
-    mask[-1] *= 1-ut
-
-    mask[:,0] *= vt
-    mask[:,-1] *= 1 - vt
-
-    # begrenzungen
-    su=max(0,ui-ruA)
-    sv=max(0,vi-rvA)
-    eu=min(uc,ui+ruB+2)
-    ev=min(vc,vi+rvB+2)
-
-    msu=max(0,-ui+ruA)
-    msv=max(0,-vi+rvA)
-    meu=min(2+ruA+ruB,uc-ui+1)
-    mev=min(2+rvA+rvB,vc-vi+1)
-    
-    mm=mask[msu:meu,msv:mev]
-    mm[1:-1]*= sA
-    mm[:,1:-1]*= sB
-
-    poles[su:eu,sv:ev] += mm*t
-    return poles
-    
-
-
-def run_FreeCAD_Editor(self):
-    try:
-        say(self.shape)
-        sh=self.shape
-    except:
-        sh=self.getPinObject("Shape")
-    
-    sf=sh.Surface
-
-    # daten holen und neu aufbauen
-    ud=sf.UDegree
-    vd=sf.VDegree
-    ap=np.array(sf.getPoles())
-    uk=np.array(sf.getUKnots())
-    vk=np.array(sf.getVKnots())
-    mu=np.array(sf.getUMultiplicities())
-    mv=np.array(sf.getVMultiplicities())
-    
-    def pamo(v):
-        if v== -100:
-            return 0
-        else:
-            return 10**(v/100-1)
-    
-    ut=pamo(self.getData("u"))
-    vt=pamo(self.getData("v"))
-    
-    startu=self.getData("startU")*0.01
-    startv=self.getData("startV")*0.01
-    [umin,umax,vmin,vmax]=sf.toShape().ParameterRange
-    startu=umin+(umax-umin)*(self.getData("startU")+100)/200
-    startv=vmin+(vmax-vmin)*(self.getData("startV")+100)/200
-    
-    if self.getData('useStartPosition'):
-        vv=self.getData('startPosition')
-        startu,startv=sf.parameter(vv)
-    else:
-        vv=sf.value(startu,startv)
-    
-    say("startuv",startu,startv)
-    say("----------------vv von position",vv)
-    
-    try:
-        FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.start)
-    except:
-        pass
-    
-    
-    if self.getData('displayStart'):
-        say("display Start .............")
-        
-        trans = coin.SoTranslation()
-        trans.translation.setValue(vv.x,vv.y,vv.z)
-        cub = coin.SoSphere()
-        cub.radius.setValue(3)
-
-        col = coin.SoBaseColor()
-        col.rgb=(1,0,0)
-        
-        myCustomNode = coin.SoSeparator()
-        myCustomNode.addChild(col)
-        myCustomNode.addChild(trans)
-        myCustomNode.addChild(cub)
-        sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
-        sg.addChild(myCustomNode)
-        self.start=myCustomNode
-    
-    
-    vvtt=self.getData('targetPosition')
-    if self.getData('useStart'):
-        ui,vi=startu,startv
-    else:
-        ui,vi=sf.parameter(vvtt) 
-    say("reale ziel position ui,vi",ui,vi)
-   
-    
-    try:
-        FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.target)
-    except:
-        pass
-    
-    if self.getData('displayTarget'):
-        
-        trans = coin.SoTranslation()
-        trans.translation.setValue(vvtt.x,vvtt.y,vvtt.z)
-        cub = coin.SoSphere()
-        cub.radius.setValue(3)
-
-        col = coin.SoBaseColor()
-        col.rgb=(0,1,0)
-        
-        myCustomNode = coin.SoSeparator()
-        myCustomNode.addChild(col)
-        myCustomNode.addChild(trans)
-        myCustomNode.addChild(cub)
-        sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
-        sg.addChild(myCustomNode)
-        self.target=myCustomNode
-    
-    
-    
-    
-    
-    vv=vvtt
-    
-    vv0=vvtt-sf.value(ui,vi)
-    # fur deg 1
-    #uix=int(round(ui+0.5))-1
-    #vix=int(round(vi+0.5))-1
-
-    # deg 2
-    uix=int(round(ui+0.5))
-    vix=int(round(vi+0.5))
-
-    [umin,umax,vmin,vmax]=sf.toShape().ParameterRange
-    #say("borders",[umin,umax,vmin,vmax])
-    #say("uix,vix",uix,vix)
-    
-    if self.getData('bordersFrozen'):
-        if uix<1:
-            uix=1
-        if vix<1:
-            vix=1
-        if uix>umax-1:
-            uix=int(umax)-1
-        if vix>vmax-1:
-            vix=int(vmax)-1
-
-    if self.getData('tangentsFrozen'):
-        if uix<2:
-            uix=2
-        if vix<2:
-            vix=2
-        if uix>umax-2:
-            uix=int(umax)-2
-        if vix>vmax-2:
-            vix=int(vmax)-2
-    
-    st=self.getData('t')+101
-    ut*= st
-    vt*= st
-    
-    ruA=self.getData('offsetUA')
-    ruB=self.getData('offsetUB')
-    rvA=self.getData('offsetVA')
-    rvB=self.getData('offsetVB')
-    sA=(self.getData('scaleU')+150)/50
-    sB=(self.getData('scaleV')+150)/50
-    
-    
-    
-
-    def dist(param):
-
-        t=param[0]
-        ap=maskit(np.array(sf.getPoles()),vv0,t,uix,vix,ut=ut,vt=vt, ruA=ruA,rvA=rvA,ruB=ruB,rvB=rvB,sA=sA,sB=sB)
-        fa=Part.BSplineSurface()
-        fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
-        return fa.toShape().distToShape(Part.Vertex(vv))[0]
-    
-    from scipy import optimize
-    
-    allmethods=[ 
-            'Nelder-Mead' ,
-            'Powell' ,
-            'CG' ,
-            'BFGS' ,
-            'L-BFGS-B', 
-            'TNC',
-            'COBYLA',
-            'SLSQP',
-        ]
-
-    methods=[ 'Nelder-Mead' ]
-    
-    for method in methods:
-        
-        a=time.time()
-        result = optimize.minimize(dist, x0=[0,],  method=method)
-        r=result.x[0]
-
-        say("quality",np.round(result.fun,5),np.round(result.x,2),result.message,method)
-        say("run time for scipy.optimize.minimum",method,round(time.time()-a,3))
-
-    fa=Part.BSplineSurface()
-    ap=maskit(np.array(sf.getPoles()),vv0,r,uix,vix,ut=ut,vt=vt, ruA=ruA,rvA=rvA,ruB=ruB,rvB=rvB,sA=sA,sB=sB)
-    fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
-    
-    #zeige nur aenderungen
-    fb=fa.copy()
-    fb.segment(max(uix-ruA-2,uk[0]),min(uix+2+ruB,uk[-1]),max(vix-rvA-2,vk[0]),min(vix+2+rvB,vk[-1]))
-    col=[fb.uIso(k).toShape() for k in fb.getUKnots()]
-    col += [fb.vIso(k).toShape() for k in fb.getVKnots()]
-    
-    shape=fa.toShape()
-    
-    self.setPinObject('Shape_out',shape)
-    
-    ui2,vi2=fa.parameter(vv)   
-    #say("neue pos", ui2,vi2)12
-    say("curvature",fa.curvature(ui2,vi2,'Max'))
-      
-    
-    [umin,umax,vmin,vmax]=fa.toShape().ParameterRange
-    aa=fa.uIso(ui2).toShape()
-    bb=fa.vIso(vi2).toShape()
-    
-    if self.getData('displayIso'):
-        #self.setPinObject('Shape_out',Part.Compound([shape,aa,bb]))
-        self.setPinObject('Shape_out',Part.Compound(col+ [aa,bb]))
-        
-    self.setData('position_out',[vv,vv])
-
-    say("Abstand", round(fa.toShape().distToShape(Part.Vertex(vv))[0],5))
-
-    self.setData('u_out',(ui2-umin)/(umax-umin)*10)
-    self.setData('v_out',(vi2-vmin)/(vmax-vmin)*10)
-
-
-
-# glättenb
-
-def run_FreeCAD_IronCurve(self):
-
-    sh=self.getPinObject('Shape')
-    pts=sh.Curve.getPoles()
-    
-    col=[]
-    w=self.getData("weight")
-
-    mode=self.getData("mode")
-    def run(pts,k=1):
-
-        l=len(pts)
-
-        if mode == 'constant':
-            pts2= [pts[0]] + [ (pts[i-1]+2*pts[i]+pts[i+1])/4 for i in range(1,l-1)] +[pts[-1]]
-            pts2= [pts[0]] + [ (pts[i-1]+w*pts[i]+pts[i+1])/(2+w) for i in range(1,l-1)] +[pts[-1]]
-        else:
-            pts2=[pts[0]]
-            for i in range(1,l-1):
-                al=(pts[i-1]-pts[i]).Length
-                el=(pts[i+1]-pts[i]).Length
-                say(i,al,el)
-                f=10.
-                if al!=0:
-                    al=min(1,1/al*(w+1))
-                else:
-                    al=1
-                if el !=0:
-                    el=min(1,1/el*(w+1))
-                else:
-                    el=1
-                
-                say(i,al,el)                
-                
-                pts2 += [(al*pts[i-1]+pts[i]+el*pts[i+1])/(1+al+el)]
-                
-
-            pts2 +=[pts[-1]]
-
-        dd=[FreeCAD.Vector()]+[(pts[i]-pts2[i]).normalize()*k for i in range(1,l-1)]+[FreeCAD.Vector()]
-        pts3=[p+q for p,q in zip(pts2,dd)]
-        
-        if 0:
-            for i in range(1,l-3):
-                
-                if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+3]).Length:
-                    pts3=pts3[:i+1] +[pts3[i+3],pts3[i+2],pts3[i+1]] + pts3[i+4:]
-
-            for i in range(1,l-2):           
-                if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+2]).Length:
-                   pts3=pts3[:i+1] +[pts3[i+2],pts3[i+1]] + pts3[i+3:]
-        
-        c=Part.BSplineCurve(pts3)
-        return pts3,c.toShape()
-
-    loopsa=self.getData('loopsA')
-    loopsb=self.getData('loopsB')
-
-    k=self.getData('k')
-
-    say(loopsa,loopsb)
-    for i in range(loopsa):
-        pts,c=run(pts)
-        #pts,c=run(pts,k)
-        col.append(c)
-
-    for i in range(loopsb):
-        pts,c=run(pts,k)
-        col.append(c)
-
-
-    '''
-        Discretizes the curve and returns a list of points.
-        The function accepts keywords as argument:
-        discretize(Number=n) => gives a list of 'n' equidistant points
-        discretize(QuasiNumber=n) => gives a list of 'n' quasi equidistant points (is faster than the method above)
-        discretize(Distance=d) => gives a list of equidistant points with distance 'd'
-        discretize(Deflection=d) => gives a list of points with a maximum deflection 'd' to the curve
-        discretize(QuasiDeflection=d) => gives a list of points with a maximum deflection 'd' to the curve (faster)
-        discretize(Angular=a,Curvature=c,[Minimum=m]) => gives a list of points with an angular deflection of 'a'
-                                            and a curvature deflection of 'c'. Optionally a minimum number of points
-                                            can be set which by default is set to 2.        
-    '''
-
-    k=self.getData('deflection')
-    if k>0:
-        ptsdd=c.discretize(QuasiDeflection=k*0.1)
-        #ptsdd=c.discretize(Deflection=k*0.1)
-        self.setPinObject('Shape_out',Part.makePolygon(ptsdd))    
-
-        deflp=Part.makePolygon(ptsdd)
-        defl=Part.BSplineCurve(ptsdd).toShape()
-        say("deflection",len(ptsdd))
-        self.setPinObject('Shape_out',defl)
-        #self.setPinObject('Shape_out',Part.Compound([deflp,defl]))
-        self.setData('points',ptsdd)
-    else:
-        #self.setPinObject('Shape_out',Part.Compound(col))
-        self.setPinObject('Shape_out',col[-1])
-        self.setData('points',pts)
-    
-    FreeCAD.ActiveDocument.recompute()
-
-
-
-def run_FreeCAD_IronSurface(self):
-    sh=self.getPinObject('Shape')
-    ptsarr=sh.Surface.getPoles()
-    
-    col=[]
-    w=self.getData("weight")
-
-    def run(pts,k=1):
-
-        l=len(pts)
-
-        pts2= [pts[0]] + [ (pts[i-1]+2*pts[i]+pts[i+1])/4 for i in range(1,l-1)] +[pts[-1]]
-        pts2= [pts[0]] + [ (pts[i-1]+w*pts[i]+pts[i+1])/(2+w) for i in range(1,l-1)] +[pts[-1]]
-
-        dd=[FreeCAD.Vector()]+[FreeCAD.Vector((pts[i]-pts2[i])).normalize()*k for i in range(1,l-1)]+[FreeCAD.Vector()]
-        pts3=[FreeCAD.Vector(p+q) for p,q in zip(pts2,dd)]
-        
-        
-        #
-        for i in range(1,l-3):
-            
-            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+3]).Length:
-                pts3=pts3[:i+1] +[pts3[i+3],pts3[i+2],pts3[i+1]] + pts3[i+4:]
-
-        for i in range(1,l-2):           
-            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+2]).Length:
-               pts3=pts3[:i+1] +[pts3[i+2],pts3[i+1]] + pts3[i+3:]
-        
-        c=Part.BSplineCurve(pts3)
-        return pts3,c.toShape()
-
-    loopsa=self.getData('loopsA')
-    loopsb=self.getData('loopsB')
-    k=self.getData('k')
-
-    ptsarr2=[]
-    for pts in ptsarr:
-
-        for i in range(loopsa+1):
-            pts,c=run(pts)
-        for i in range(loopsb+1):
-            pts,c=run(pts,k)
-            
-        ptsarr2 += [pts]
-    
-    ptsarr=np.array(ptsarr2).swapaxes(0,1)
-    ptsarr2=[]
-
-    for pts in ptsarr:
-
-        for i in range(loopsa+1):
-            pts,c=run(pts)
-        for i in range(loopsb+1):
-            pts,c=run(pts,k)
-            
-        ptsarr2 += [pts]
-        col.append(c)
-    
-    ptsarr=np.array(ptsarr2).swapaxes(0,1)
-    self.setPinObject('Shape_out',Part.Compound(col))
-    self.setData('points',ptsarr.tolist())
-    FreeCAD.ActiveDocument.recompute()
-
 
 def run_FreeCAD_Sweep(self):
-    # funktioniert so nicht
 
-    profile=FreeCAD.ActiveDocument.Circle.Shape.Edge1
-    path=FreeCAD.ActiveDocument.Sketch.Shape.Edge1.copy()
-    #path.Curve.segment(1,5)
-    say(path.Curve.getKnots())
-    #path.reverse()
-    #profile.reverse()
+
+    profile=self.getPinObject('profile')
+    profiles=self.getPinObjectsA('profiles')   
+    if profile is None and profiles is None:
+        sayErOb(self,"profile or profiles not defined")
+        return
+
+
+    if self.getPinObject('path') is None:
+        sayErOb(self,"path not defined")
+        return
+        
+
+    path=self.getPinObject('path').Edge1
+
+    say(path)     # path sollte ein wire sein !!   
     
-    #path=Part.makePolygon([FreeCAD.Vector(),FreeCAD.Vector(0,100,0)])
+    if profile is not None:
+        a=FreeCAD.ActiveDocument.addObject('Part::Feature','profile')
+        a.Shape=profile
+        pps=[a]
+
+    else:
+        pps=[]
+        for p in profiles:
+            pa=FreeCAD.ActiveDocument.addObject('Part::Feature','profile')
+            pa.Shape=p
+            pps += [pa]
     
-    sweep=Part.makeSweepSurface(path,profile,self.getData('f'))
-    #sweep=Part.makeSweepSurface(path,profile,10)
-    say("hh")
-    self.setPinObject('Shape_out',sweep)
+    b=FreeCAD.ActiveDocument.addObject('Part::Feature','path')
+    b.Shape=path
+    FreeCAD.activeDocument().recompute(None,True,True)
+    
+    sw=FreeCAD.ActiveDocument.addObject('Part::Sweep','Sweep')   
+    sw.Sections= pps
+    sw.Spine=(b,['Edge1',])    
+    sw.Solid=False
+    sw.Frenet=False
+    FreeCAD.activeDocument().recompute(None,True,True)
+    
+    self.setPinObject('Shape_out',sw.Shape)
+
+    FreeCAD.activeDocument().removeObject(sw.Name)   
+    FreeCAD.activeDocument().removeObject(b.Name)
+    
+    for p in pps:
+        FreeCAD.activeDocument().removeObject(p.Name)
+    
+    
 
 def run_FreeCAD_Loft(self):
 
     shapes=self.getPinObjectsA('shapes')
+    if shapes is None or len(shapes)==0:
+        sayErOb(self,"no shapes")
+        return
 
     ws=[]
 
@@ -5604,41 +3268,18 @@ def run_FreeCAD_Loft(self):
     
     self.setPinObject('Shape_out',loft)
     
-    
-def run_FreeCAD_IfElse(self):
-    self.setData('out',self.getData('flag'))
-    self.outExec.call()
-    if self.getData('flag'):
-        self.ifExec.call()
-    else:
-        self.elseExec.call()
-    
-
-
-
-import nodeeditor
-import nodeeditor.cointools
-reload(nodeeditor.cointools)
-from nodeeditor.cointools import *
-
-
-        
-
-       
-import nodeeditor.tools as noto
-reload(noto)
-
-def run_FreeCAD_Toy3(self):
-    say(noto)
-    d=[[1,2,3],[4,5,6,6,7,8]]
-    #d=[1,2,3,4,5,6]
-    #d=[1,2,3]
-    rc=noto.data2vecs(d)
-    say(rc)
-    bs=noto.createBSplineSurface()
-    self.setPinObject("Shape1", bs.toShape())
-    
 
 
 
 
+def run_FreeCAD_Sleep(self):
+    time.sleep((self.getData('sleep')+100)*0.01)
+    say("moin")
+
+def run_FreeCAD_Slice(self):
+    sayW("not implemeted")
+    sayl()
+
+
+def run_FreeCAD_Object(self):
+    sayW("not implemented")

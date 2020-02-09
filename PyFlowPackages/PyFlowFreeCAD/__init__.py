@@ -56,6 +56,7 @@ from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import FreeCAD_Placem
 _NODES = {
     FreeCAD_Placement.__name__: FreeCAD_Placement,
 }
+
 '''
 # Liste der Module neu
 +Geom2D
@@ -88,43 +89,61 @@ Voronoi
 nodelistcol=[]
 
 
-	
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D import nodelist
 nodelistcol += nodelist()
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Combination import nodelist
 nodelistcol += nodelist()
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic import nodelist
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Conversion import nodelist
 nodelistcol += nodelist()
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_File import nodelist
 nodelistcol += nodelist()
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_2D import nodelist
-nodelistcol += nodelist()
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitives import nodelist
-nodelistcol += nodelist()
-
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection import nodelist
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
 nodelistcol += nodelist()
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel import nodelist
 nodelistcol += nodelist()
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensors import nodelist
-nodelistcol += nodelist()
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image import nodelist
 nodelistcol += nodelist()
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Information import nodelist
 nodelistcol += nodelist()
-
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Lambda import nodelist
 nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import nodelist
+nodelistcol += nodelist()
+	
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitive import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensor import nodelist
+nodelistcol += nodelist()
+
+
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
+nodelistcol += nodelist()
+
 
 if devmode():
 	pass

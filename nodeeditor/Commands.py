@@ -1195,19 +1195,107 @@ def createAllNodesforTests():
     # erzeuge für alle Nodes ein Objekt und lasse es laufen compute()
 
     nn=[]
-    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic import nodelist
-    nn += nodelist()
     
-    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
-    nn += nodelist()
+    testall=False
+    if testall:
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic import nodelist
+        nn += nodelist()
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
+        nn += nodelist()
 
-    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
-    nn += nodelist()
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
+        nn += nodelist()
+        
 
-    
-    from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
-    nn += nodelist()
-  
+
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
+        nn += nodelist()
+
+        # bis hiergher getestet
+
+    #----------------------------
+    # alles 
+    nodelistcol=[]
+    if 1:
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D import nodelist
+        nodelistcol += nodelist()
+        
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Combination import nodelist
+        nodelistcol += nodelist()
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Conversion import nodelist
+        nodelistcol += nodelist()
+        
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development import nodelist
+        nodelistcol += nodelist()
+        
+
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_File import nodelist
+        nodelistcol += nodelist()
+        
+
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
+        nodelistcol += nodelist()
+        
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel import nodelist
+        nodelistcol += nodelist()
+        
+
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image import nodelist
+        nodelistcol += nodelist()
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Information import nodelist
+        nodelistcol += nodelist()
+        
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Lambda import nodelist
+        nodelistcol += nodelist()
+        
+        
+
+
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic import nodelist
+        nodelistcol += nodelist()
+
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
+        nodelistcol += nodelist()
+
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
+        nodelistcol += nodelist()
+
+
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import nodelist
+        nodelistcol += nodelist()
+        
+            
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitive import nodelist
+        nodelistcol += nodelist()
+        
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection import nodelist
+        nodelistcol += nodelist()
+
+        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensor import nodelist
+        nodelistcol += nodelist()
+        
+
+
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
+        nodelistcol += nodelist()
+        
+
+
+
+
+
 
     
     x0=-300
@@ -1215,7 +1303,7 @@ def createAllNodesforTests():
     y=-400
     nodes={}
     
-    for i,n in enumerate(nn):
+    for i,n in enumerate(nodelistcol):
         #if i>13:break
         FreeCADGui.updateGui()
         name=n.__name__
@@ -1904,10 +1992,49 @@ def createNodeDocu(onlyNew=False):
     say()
     say("number of nodes {}".format(len(cnks)))
 
+    import PyFlow.Packages.PyFlowFreeCAD.Nodes
+    for modul in [ 
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_2D,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Lambda,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitive,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensor,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal,
+            ]:
+                
+        mn=modul.__name__
+        k=mn[44:]
+
+        say("====={}=====".format(k))
+        
+        say("=={}==".format(modul.__name__))
+        say()
+        say(modul.__doc__)
+        
+        try:
+            for c in kats[k]:
+                say("[[nodes::{}]]".format(c[8:]))
+                say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
+
+            say()
+            say("number of nodes:"+str(len(kats[k])))
+        except:
+            sayW("!!problem ",k)
+
+
     
 
 
-def T3a(): # docfun():
+def T3(): # docfun():
 
     clearReportView()
     packages = GET_PACKAGES()
@@ -1986,7 +2113,7 @@ def T3a(): # docfun():
 
 
     say()
-    say("number of nodes {}".format(nc))            
+    say("!number of nodes {}".format(nc))  
 
 
 def getfun(fname):
@@ -2046,4 +2173,14 @@ def dumpScriptforGraph():
 
 
 
-            
+def T2():
+    import toponaming
+    reload (toponaming)  
+    
+    toponaming.main()
+        
+def T2():
+    import elastic
+    reload (elastic)  
+    
+    elastic.main()

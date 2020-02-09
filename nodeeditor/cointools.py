@@ -3,6 +3,7 @@
 import Part,FreeCADGui
 from pivy import coin
 from pivy.coin import *
+from nodeeditor.say import *
 
 def clearcoin(self):
     root=FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
@@ -11,6 +12,28 @@ def clearcoin(self):
         del(self._sg)
     except:
         pass
+
+def hidecoin(self):
+    root=FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+    sayl("WW",self._sg)
+    root.removeChild(self._sg)
+    say("Done")
+    try:
+        root.removeChild(self._sg)
+        say("deleted")
+        #clearcoin(self)
+
+    except:
+        pass
+
+def showcoin(self):
+    root=FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+    sayl()
+    try:
+        root.addChild(self._sg)
+    except:
+        pass
+        
 
 
 def displaysphere(self,point,radius=5,color=(1,1,1)):
@@ -44,7 +67,7 @@ def displayspheres(self,points,radius=5,color=(1,1,1)):
     for p in points:
         displaysphere(self,p,radius=radius,color=color)
 
-def displayline(self,pts,color=(1,1,1)):
+def displayline(self,pts,color=(1,1,1),linewidth=4):
     
     try:
         sg=self._sg
@@ -62,7 +85,7 @@ def displayline(self,pts,color=(1,1,1)):
 
     drawstyle = SoDrawStyle()
     drawstyle.style = SoDrawStyle.LINES
-    drawstyle.lineWidth = 4
+    drawstyle.lineWidth = 1
    
 
     lineSet = SoIndexedLineSet()

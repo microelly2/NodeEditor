@@ -15,9 +15,10 @@ import nodeeditor.pfwrap as pfwrap
 
 print ("reloaded: "+ __file__)
 
-
-
+import nodeeditor
+from nodeeditor.utils import *
 from nodeeditor.cointools import *
+reload (nodeeditor.cointools)
 
 
 def run_FreeCAD_Toy2(self):
@@ -26,6 +27,9 @@ def run_FreeCAD_Toy2(self):
     clearcoin(self)
 
     shape=self.getPinObject("Shape")
+    if shape is None:
+        sayErOb(self,"no Shape")
+        return
     sf=shape.Face1.Surface
     say(sf)
     
@@ -112,6 +116,7 @@ def run_FreeCAD_Tape(self):
     k=self.getData('k')*4
     #l=0.1
     pts=[]
+    ptsa=[]
     #say(ySortedPins)
     say('#############')
     for i,h in  enumerate(ySortedPins):
@@ -143,7 +148,7 @@ def run_FreeCAD_Tape(self):
         ptsa=pts
     
     say(np.array(pts).shape)
-    self.setData('points_out',ptsa)
+    self.setData('Points_out',ptsa)
 
 
 
@@ -682,3 +687,496 @@ def run_FreeCAD_Toy3(self):
 
 
 
+
+
+def run_FreeCAD_Toy3(self):
+    say(noto)
+    d=[[1,2,3],[4,5,6,6,7,8]]
+    #d=[1,2,3,4,5,6]
+    #d=[1,2,3]
+    rc=noto.data2vecs(d)
+    say(rc)
+    bs=noto.createBSplineSurface()
+    self.setPinObject("Shape1", bs.toShape())
+    
+
+def run_FreeCAD_Toy3(self):
+    # testdaten fuer toponaming
+
+    pts=[
+    [0,0,0],[10,0,0],[10,5,0],[0,5,0],
+    [0,0,15],[10,0,15],[10,5,15],[0,5,10]
+    ]
+
+    if 1:
+        [A,B,C,D,E,F,G,H]=[FreeCAD.Vector(p) for p in pts]
+        col=[Part.makePolygon(l) for l in [[A,B],[B,C],[C,D],[D,A],
+                [E,F],[F,G],[G,H],[H,E],
+                [A,E],[B,F],[C,G],[D,H]]]
+        
+        Part.show(Part.Compound(col))
+
+
+
+
+#---------------------------
+#---------------------------
+from nodeeditor.say import *
+import FreeCAD
+import Part 
+import numpy as np
+
+
+class TopVertex(object):
+    
+    def __init__(self):
+        sayl()
+        self.vs={}
+        self.ehs={}
+        self.igel={}
+        
+    def pkey(self,p):
+        return tuple((round(p.x,2),round(p.y,2),round(p.z,2)))
+
+    def addVertex(self,v):
+        self.vs[self.pkey(v.Point)]=v
+        self.ehs[self.pkey(v.Point)]=[]
+        self.igel[self.pkey(v.Point)]=[]
+
+    def addEdge(self,e):
+        p1k=self.pkey(e.Vertexes[0].Point)
+        p2k=self.pkey(e.Vertexes[1].Point)
+        [start,ende]=e.ParameterRange
+        t1=e.tangentAt(start)
+        t2=e.tangentAt(ende)
+        dirchange=t1.dot(t2)
+        val=[tuple((round((e.Vertexes[0].Point-e.Vertexes[1].Point).Length,2),round(dirchange,2)))]
+        self.ehs[p1k] += val
+        self.ehs[p2k] += val
+        if (e.Vertexes[0].Point+t1-e.Vertexes[1].Point).Length<(e.Vertexes[0].Point-e.Vertexes[1].Point).Length:
+            self.igel[p1k] += [t1]
+        else:
+            self.igel[p1k] += [-t1]
+
+        if (e.Vertexes[0].Point-t1-e.Vertexes[1].Point).Length<(e.Vertexes[0].Point-e.Vertexes[1].Point).Length:
+            self.igel[p2k] += [t2]
+        else:
+            self.igel[p2k] += [-t2]
+        
+        # self.igel[p2k] += [t2]
+        
+    def getEdgekeys(self):
+        kks=[]
+        
+
+        
+        for k in self.ehs:
+            R=np.array(self.ehs[k]).swapaxes(0,1)
+            aa=np.lexsort((R[1],R[0]))
+            R2=np.array([(R[0,i],R[1,i]) for i in aa]).tolist()
+            R2=[tuple(r) for r in R2]
+
+            kks += [tuple(R2)]
+        return kks
+            
+    def run(self):
+        say("run igels ")
+
+        for v in self.vs:
+            say(v,self.igel[v])
+        
+        say("run done")
+    
+    
+def run_FreeCAD_Topo2(self):
+    sayl()
+    
+    
+    tv=TopVertex()
+    
+    shape=FreeCAD.ActiveDocument.Box.Shape
+    for v in shape.Vertexes:
+        tv.addVertex(v)
+
+    for e in shape.Edges:
+        FreeCAD.e=e
+        tv.addEdge(e)
+
+
+
+    
+    tv2=TopVertex()
+    shape2=FreeCAD.ActiveDocument.Shape.Shape
+    for v in shape2.Vertexes:
+        tv2.addVertex(v)
+
+    for e in shape2.Edges:
+        FreeCAD.e=e
+        tv2.addEdge(e)
+
+    
+    
+    say("Asuwertung edgehash auftreten - welceh verschiedenen ecken gibt es")
+    say("teil 1")
+    eks={}
+    ks=tv.getEdgekeys()
+    for k in ks:
+        try:
+            eks[k] += 1
+        except:
+            eks[k] = 1
+        
+    for k in eks:
+        say(k,eks[k])
+
+        
+    say("teil 2")
+    eks={}
+    ks=tv2.getEdgekeys()
+    
+    for k in ks:
+        try:
+            eks[k] += 1
+        except:
+            eks[k] = 1
+        
+    for k in eks:
+        say(k,eks[k])
+    
+    
+    
+    
+    akeys=[k for k in tv.igel.keys()]
+    bkeys=[k for k in tv2.igel.keys()]
+
+    aix=self.getData('vertexA')%len(akeys)
+    bix=self.getData('vertexB')%len(bkeys)
+
+    pA=akeys[aix]
+    pB=bkeys[bix]
+
+    
+    vlA=[]
+    for v in tv.igel[pA]:
+        if v not in vlA:
+            vlA += [v]
+
+    vlB=[]
+    for v in tv2.igel[pB]:
+        if v not in vlB:
+            vlB += [v]
+
+
+
+
+    perms=[[0,1],[0,2],[1,0],[1,2],[2,0],[2,1]] 
+    
+    selA=self.getData('selA')
+    
+    selAs=[selA]
+    selAs=range(36)
+    
+    
+    bests=[]
+    besterr=1000
+
+    clearcoin(self)
+        
+    def runsel(selA,lang=True):
+        
+        ata=time.time()
+        
+        iA=selA%6
+        iB=selA//6
+
+        [i0,i1]=perms[iA]   
+        aa,bb = vlA[i0],vlA[i1]
+        cc=aa.cross(bb)
+        bb=cc.cross(aa)
+        aaA,bbA,ccA=aa,bb,cc
+        vvA=FreeCAD.Matrix(aa.x,aa.y,aa.z,0,  bb.x,bb.y,bb.z,0 , cc.x,cc.y,cc.z,0, 0,0,0,1)
+
+
+        [i0,i1]=perms[iB]
+        aa,bb = vlB[i0],vlB[i1]
+        cc=aa.cross(bb)
+        bb=cc.cross(aa)
+        aaB,bbB,ccB=aa,bb,cc
+        
+        vvB=FreeCAD.Matrix(aa.x,aa.y,aa.z,0,  bb.x,bb.y,bb.z,0 , cc.x,cc.y,cc.z,0, 0,0,0,1)
+
+        vv=vvB.inverse()*vvA
+        
+
+        if not lang:
+            clearcoin(self)
+            say("display")
+            target=FreeCAD.Vector(pA)
+            displaysphere(self,target,radius=0.5,color=(1,0,0))
+            displayline(self,[target,target+aaA*4],(1,1,0))
+            displayline(self,[target,target+bbA*4],(0,1,0))
+            displayline(self,[target,target+ccA*4],(1,0,0))
+            
+            target=FreeCAD.Vector(pB)
+            displaysphere(self,target,radius=0.5,color=(0,0,1))
+            displayline(self,[target,target+aaB*4],(1,1,0))
+            displayline(self,[target,target+bbB*4],(0,1,0))
+            displayline(self,[target,target+ccB*4],(1,0,1))
+
+
+        #verschiebung
+        t4=FreeCAD.Matrix(1,0,0,pB[0],  0,1,0,pB[1],  0,0,1,pB[2], 0,0,0,1)
+        t2=FreeCAD.Matrix(1,0,0,-pA[0],  0,1,0,-pA[1],  0,0,1,-pA[2], 0,0,0,1)
+
+        
+        shape=FreeCAD.ActiveDocument.Box.Shape.copy()
+
+        pm=FreeCAD.ActiveDocument.Box.Placement
+        
+        pmm=pm.toMatrix()
+        
+        st4=shape.transformGeometry(t4*vv*t2)
+        st5=st4.transformGeometry(pmm)
+        #st5=shape.transformGeometry(pmm*t4*vv*t2)
+        #say("st5 pm",st5.Placement)
+        
+        
+        if not lang:
+            
+            '''
+            a=FreeCAD.ActiveDocument.getObject("huhu")
+            if a is None:
+                a=FreeCAD.ActiveDocument.addObject("Part::Feature","huhu")
+        
+            a.Shape=st4
+            #a.Placement=FreeCAD.Placement()
+            '''
+            self.setPinObject('Shape_out',st5)
+        
+        errs=0
+        
+        for v in st4.Vertexes:
+            #print (v.Point)
+            pk=tv2.pkey(v.Point)
+            try:
+                tv2.vs[pk]
+            except:
+                if not lang:
+                    say("nicht gefundener Ecke ",pk)
+                errs += 1
+        #say("Abweichungen",selA,errs)
+        
+        return errs
+            
+    single=self.getData('singleIndex')
+    
+    if not single:
+        for selA in selAs:
+            a=time.time()
+            errs=runsel(selA,True)
+            if errs == besterr:
+                bests += [selA]
+            elif errs<besterr:
+                besterr=errs
+                bests = [selA]
+        
+        say(len(selAs))
+        say("Transformationen ...")
+        say("BESTE Abweichung",besterr,"fuer index:",bests)
+        
+        runsel(bests[0],False)
+
+    else:
+        runsel(self.getData('selA'),False)
+    
+    
+    
+    
+    
+def run_FreeCAD_elastic(self):  
+    
+    
+    
+    try:
+        if time.time() - self._lastrun <1:
+            sayErr("laueft noch")
+            return
+    except:
+        self._lastrun=time.time()
+    
+    self._lastrun=time.time()
+    say(self._lastrun,'##########################')
+    
+    
+
+    eng=30
+    bfak=30
+    fofaktor=1/(1+(self.getData('b')+100)/10)
+    #fofaktor=1
+    
+    
+    b=500
+    a=20
+    a=20
+
+    def force(point,pts):
+        
+        p=pts[0]
+        rc=FreeCAD.Vector()
+        for p in pts:
+            dd=(point-p)
+            l=dd.Length
+            if l==0:
+                continue
+            #if l <0.00001:
+            #   continue
+            #b=500
+            #a=20
+            c=0.05
+            c=0.005
+            eng=25
+            #eng=10
+            
+            eng=40
+            if l<eng:
+                f=l*0.05
+                #say("eng",l)
+                f=4
+            else:
+                f=c*(a/l-b)
+                #f=c*(a/l**2.01-b)
+#           say("f--",abs(f))
+            if abs(f)<2: f=0
+            
+            rc += dd.normalize()*f
+            l=rc.Length
+            #if l>bfak:
+            #   #say("reducen",l,bfak)
+            #   rc *= bfak/l
+        return rc
+        
+        
+        
+
+    a=self.getData('a')+101
+    say('a',a)
+    
+    
+
+    sayl()
+    clearcoin(self)
+    
+    pts=self.getData('fixpoints')
+    say(pts)
+    if len(pts)==0:
+        pts=[
+            FreeCAD.Vector(200,0,-0),
+            FreeCAD.Vector(100,200,-100),
+            FreeCAD.Vector(50,200),
+            FreeCAD.Vector(100,-50,100)
+            ]
+    
+    
+    pts2=self.getData('points')
+    if len(pts2) == 0:
+        
+        pts2=[FreeCAD.Vector(0,0,100),
+            FreeCAD.Vector(100,-100),FreeCAD.Vector(0,30),
+            FreeCAD.Vector(-100,100),
+            ]
+
+        pts2=[-FreeCAD.Vector(250,250,250)
+            +FreeCAD.Vector(random.random(),random.random(),random.random())*500 for i in range(5)]
+    try:
+        (sa,sb,sc)=np.array(pts2).shape
+        pts2=[FreeCAD.Vector(a) for a in np.array(pts2).reshape(sa*sb,3)]
+    except:
+        pass
+    #return
+    
+    
+    
+    ptsm=pts2
+    #displayline(self,pts)
+    #displayline(self,pts2)
+    
+    
+    for p in pts:
+        displaysphere(self,p,radius=4.5,color=(1,0,1))
+    point=FreeCAD.Vector()
+    
+    tracks=[pts2]
+    
+    for j in range(a):
+        if 0 and j%50==0:
+            #clearcoin(self)
+            for p in pts:
+                displaysphere(self,p,radius=.5,color=(1,0,1))
+
+        
+        
+        if self.getData('animate'):
+            FreeCADGui.updateGui()
+            time.sleep(0.01)
+        pts3=[]
+        #say("j",j)
+        for i,point in enumerate(pts2):
+            f =force(point,pts+pts2[:i]+pts2[i+1:])
+            
+            
+            point += f * fofaktor
+            
+            pts3 += [point]
+
+        #say("aenderungne")
+        pts3n=[]
+        mods=False
+        
+        for p2,p3 in zip(ptsm,pts3):
+            if (p2-p3).Length>8*fofaktor:
+                pts3n += [p3]
+                mods=True
+            else:
+                pts3n += [p2]
+
+        pts3=pts3n
+        for p2,p3 in zip(pts2,pts3):
+            #say([p2,p3])
+            displayline(self,[p2,p3],color=(1,0,0))
+            displaysphere(self,p2,radius=0.3,color=(1,0,0))
+        #say()
+        ptsm=[(pm+p2+p3)/3 for pm,p2,p3 in zip(ptsm,pts2,pts3)]
+        pts2=pts3
+        #say("MOFD",mods,j)
+        tracks +=[pts2]
+        if not mods:
+            break
+        
+    say("Ende")
+
+    for point in pts2:
+        # abstand kraft 0 25 --> hilfs huelle 12.5
+        r=min(0.5*b/a,5)
+        
+        displaysphere(self,point,radius=r,color=(0,0,1))
+    
+    say("tracks",np.array(tracks).shape)
+    FreeCAD.Tracks=tracks
+    self.setData("Points_out",pts2)
+        
+
+    if 0:
+        pts=[t[6] for t in tracks]
+        bs=Part.BSplineCurve()
+        uc=len(pts)
+        say("uc",uc)
+        udegree=25
+        umults=[udegree+1]+[1]*(uc-1-udegree)+[udegree+1]   
+        uknots=range(len(umults))
+        bs.buildFromPolesMultsKnots(pts,umults,uknots,False,udegree)
+                
+        Part.show(bs.toShape())
+
+    if self.getData('hide'):
+        clearcoin(self)
+    self._lastrun=0

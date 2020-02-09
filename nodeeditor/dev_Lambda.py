@@ -181,6 +181,10 @@ from scipy import optimize
 def run_FreeCAD_MinimizeFunction2(self):
     
     f=self.getPinObject('function')
+    if f is None:
+        sayErOb(self,"no fuction")
+        return
+        
     start=self.getData('start')
     method=self.getData('Method')
     say("start value(s)",start)
@@ -205,6 +209,9 @@ def run_FreeCAD_AssignPoints(self):
     
     points=self.getData('points')
     f=self.getPinObject('function')
+    if f is None:
+        sayErOb(self,"no fuction")
+        return
 #    say(signature(f))
     assert '(target, points)' == str(signature(f))
     FreeCAD.t=signature(f)

@@ -29,6 +29,10 @@ reload(noto)
 def run_FreeCAD_BSplineSegment(self):
     
     sh=self.getPinObject("Shape")
+    if sh is None:
+        sayErr("no Shape -- abort ")
+        return
+
     bs=sh.Surface.copy()
 
     ustart=self.getData('uStart')*0.01
@@ -42,6 +46,10 @@ def run_FreeCAD_BSplineSegment(self):
 def run_FreeCAD_BSplineOffset(self):
 
     sh=self.getPinObject("Shape") 
+    if sh is None:
+        sayErOb(self,"no Shape")    
+        return
+    
     h=self.getData("height")
 
     bs=sh.Surface
@@ -116,6 +124,7 @@ def run_FreeCAD_BSplineOffset(self):
 #+# todo cleanup code reduceCurve 31.01.2020
 def run_FreeCAD_ReduceCurve(self):
     
+
     try:
         if self.shape is None:
             1/0
@@ -123,6 +132,10 @@ def run_FreeCAD_ReduceCurve(self):
         sh=self.shape
     except:
         sh=self.getPinObject("Shape")
+        if sh is None:
+            sayErOb(self,"no Shape")    
+            return
+
         self.shape=sh
     
     c=sh.Curve.copy()
@@ -335,6 +348,771 @@ def run_FreeCAD_ReduceCurve(self):
             sf.insertKnot(p-3+(2*i+1)/(l+1),1)
 
     self.setPinObject('Shape_out',sf.toShape())
+
+
+
+'''
+    Replaces this B-Spline curve by approximating a set of points.
+    The function accepts keywords as arguments.
+
+    approximate2(Points = list_of_points)
+
+    Optional arguments :
+
+    DegMin = integer (3) : Minimum degree of the curve.
+    DegMax = integer (8) : Maximum degree of the curve.
+    Tolerance = float (1e-3) : approximating tolerance.
+    Continuity = string ('C2') : Desired continuity of the curve.
+    Possible values : 'C0','G1','C1','G2','C2','C3','CN'
+
+    LengthWeight = float, CurvatureWeight = float, TorsionWeight = float
+    If one of these arguments is not null, the functions approximates the
+    points using variational smoothing algorithm, which tries to minimize
+    additional criterium:
+    LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion
+    Continuity must be C0, C1 or C2, else defaults to C2.
+
+    Parameters = list of floats : knot sequence of the approximated points.
+    This argument is only used if the weights above are all null.
+
+    ParamType = string ('Uniform','Centripetal' or 'ChordLength')
+    Parameterization type. Only used if weights and Parameters above aren't specified.
+
+    Note : Continuity of the spline defaults to C2. However, it may not be applied if
+    it conflicts with other parameters ( especially DegMax ).
+'''
+
+def run_FreeCAD_ApproximateBSpline(self):
+    shin=self.getPinObject("Shape_in")
+    if shin is None:
+        sayErOb(self,"no Shape_in")    
+        return
+
+    say(shin)
+    points=self.getData("points")
+
+    if shin is None: 
+        sf=None
+    
+        pp=[points[0]]
+        for i in range(1,len(points)):
+            if ((points[i]-points[i-1]).Length)>0.01:
+                pp += [points[i]]
+    
+        bs = Part.BSplineCurve()
+        tol=max(self.getData("tolerance"),1.)
+        bs.approximate(pp,Tolerance=tol*0.001)
+        self.setPinObject("Shape_out",bs.toShape())
+    else:
+        shin=shin.toNurbs().Face1
+        sf=shin.Surface
+
+        uvs=[]
+        pts2da=[sf.parameter(p) for p in points]
+    
+        pts2d=[]
+        for i,p in enumerate(pts2da):
+            pts2d += [FreeCAD.Base.Vector2d(p[0],p[1])]
+
+        bs2d = Part.Geom2d.BSplineCurve2d()
+        tol=max(self.getData("tolerance"),1.)
+        bs2d.approximate(pts2d,Tolerance=tol*0.001)
+
+        self.setPinObject("Shape_out",bs2d.toShape(sf))
+
+
+'''
+>>> print(bs2d.interpolate.__doc__)
+
+    Replaces this B-Spline curve by interpolating a set of points.
+    The function accepts keywords as arguments.
+
+    interpolate(Points = list_of_points)
+
+    Optional arguments :
+
+    PeriodicFlag = bool (False) : Sets the curve closed or opened.
+    Tolerance = float (1e-6) : interpolating tolerance
+
+    Parameters : knot sequence of the interpolated points.
+    If not supplied, the function defaults to chord-length parameterization.
+    If PeriodicFlag == True, one extra parameter must be appended.
+
+    EndPoint Tangent constraints :
+
+    InitialTangent = vector, FinalTangent = vector
+    specify tangent vectors for starting and ending points
+    of the BSpline. Either none, or both must be specified.
+
+    Full Tangent constraints :
+
+    Tangents = list_of_vectors, TangentFlags = list_of_bools
+    Both lists must have the same length as Points list.
+    Tangents specifies the tangent vector of each point in Points list.
+    TangentFlags (bool) activates or deactivates the corresponding tangent.
+    These arguments will be ignored if EndPoint Tangents (above) are also defined.
+
+    Note : Continuity of the spline defaults to C2. However, if periodic, or tangents
+    are supplied, the continuity will drop to C1.
+
+>>> 
+'''
+def run_FreeCAD_InterpolateBSpline(self):
+    points=self.getData("points")
+    say("interpolate for {} points".format(len(points)))
+    if len(points)<2:return
+
+    shin=self.getPinObject("Shape_in")
+    if shin is None:
+        bs2d = Part.BSplineCurve()
+        tol=max(self.getData("tolerance"),1.)
+        #+# todo: problem with tolerance parameter - how to use it ?
+
+        bs2d.interpolate(points,PeriodicFlag=False)
+        self.setPinObject("Shape_out",bs2d.toShape())
+    
+        return
+
+    
+    
+    
+    shin=shin.toNurbs().Face1
+    sf=shin.Surface
+    
+    uvs=[]
+    pts2da=[sf.parameter(p) for p in points]
+    pts2d=[]
+    for i,p in enumerate(pts2da):
+        pts2d += [FreeCAD.Base.Vector2d(p[0],p[1])]
+
+    bs2d = Part.Geom2d.BSplineCurve2d()
+
+    tol=max(self.getData("tolerance"),1.)
+    #+# todo: problem with tolerance parameter - how to use it ?
+
+    bs2d.interpolate(pts2d,PeriodicFlag=False)
+    self.setPinObject("Shape_out",bs2d.toShape(sf))
+
+
+
+
+
+def run_FreeCAD_Destruct_BSpline(self,bake=False, **kwargs):
+    shape=self.getPinObject("Shape_in")
+    if shape is None: return
+    c=shape.Curve
+    say(c)
+    self.setData("knots",c.getKnots())
+    self.setData("mults",c.getMultiplicities())
+    self.setData("degree",c.Degree)
+    self.setData("poles",c.getPoles())
+    #self.setData("periodic",False)
+    say("done")
+
+
+
+def run_FreeCAD_Destruct_BSplineSurface(self,bake=False, **kwargs):
+    shape=self.getPinObject("Shape_in")
+    if shape is None: return
+    c=shape.Surface
+    say(c)
+    FreeCAD.c=c
+    self.setData("uknots",c.getUKnots())
+    self.setData("umults",c.getUMultiplicities())
+    self.setData("udegree",c.UDegree)
+    self.setData("uperiodic",c.isUPeriodic)
+    self.setData("vknots",c.getVKnots())
+    self.setData("vmults",c.getVMultiplicities())
+    self.setData("vdegree",c.VDegree)
+    self.setData("vperiodic",c.isVPeriodic)
+    poles=c.getPoles()
+
+    self.setData('poles',poles)
+
+    say("done")
+
+
+
+#-----------------------------
+#    umrechnungsmethode
+
+ 
+def maskit(poles,vv,t,ui,vi,ut=0.2,vt=0.3, ruA=0,rvA=0, ruB=0,rvB=0,sA=1,sB=1):
+
+    uc,vc,_=poles.shape
+    mask=np.array([vv.x,vv.y,vv.z]*(2+ruA+ruB)*(2+rvA+rvB)).reshape(2+ruA+ruB,2+rvA+rvB,3)
+
+    mask[0] *= ut
+    mask[-1] *= 1-ut
+
+    mask[:,0] *= vt
+    mask[:,-1] *= 1 - vt
+
+    # begrenzungen
+    su=max(0,ui-ruA)
+    sv=max(0,vi-rvA)
+    eu=min(uc,ui+ruB+2)
+    ev=min(vc,vi+rvB+2)
+
+    msu=max(0,-ui+ruA)
+    msv=max(0,-vi+rvA)
+    meu=min(2+ruA+ruB,uc-ui+1)
+    mev=min(2+rvA+rvB,vc-vi+1)
+    
+    mm=mask[msu:meu,msv:mev]
+    mm[1:-1]*= sA
+    mm[:,1:-1]*= sB
+
+    poles[su:eu,sv:ev] += mm*t
+    return poles
+    
+
+
+def run_FreeCAD_Editor(self):
+    try:
+        say(self.shape)
+        sh=self.shape
+    except:
+        sh=self.getPinObject("Shape")
+    
+    if sh is None:
+        sayErOb(self,"no Shape")    
+        return
+
+    sf=sh.Surface
+
+    # daten holen und neu aufbauen
+    ud=sf.UDegree
+    vd=sf.VDegree
+    ap=np.array(sf.getPoles())
+    uk=np.array(sf.getUKnots())
+    vk=np.array(sf.getVKnots())
+    mu=np.array(sf.getUMultiplicities())
+    mv=np.array(sf.getVMultiplicities())
+    
+    def pamo(v):
+        if v== -100:
+            return 0
+        else:
+            return 10**(v/100-1)
+    
+    ut=pamo(self.getData("u"))
+    vt=pamo(self.getData("v"))
+    
+    startu=self.getData("startU")*0.01
+    startv=self.getData("startV")*0.01
+    [umin,umax,vmin,vmax]=sf.toShape().ParameterRange
+    startu=umin+(umax-umin)*(self.getData("startU")+100)/200
+    startv=vmin+(vmax-vmin)*(self.getData("startV")+100)/200
+    
+    if self.getData('useStartPosition'):
+        vv=self.getData('startPosition')
+        startu,startv=sf.parameter(vv)
+    else:
+        vv=sf.value(startu,startv)
+    
+    say("startuv",startu,startv)
+    say("----------------vv von position",vv)
+    
+    try:
+        FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.start)
+    except:
+        pass
+    
+    
+    if self.getData('displayStart'):
+        say("display Start .............")
+        
+        trans = coin.SoTranslation()
+        trans.translation.setValue(vv.x,vv.y,vv.z)
+        cub = coin.SoSphere()
+        cub.radius.setValue(3)
+
+        col = coin.SoBaseColor()
+        col.rgb=(1,0,0)
+        
+        myCustomNode = coin.SoSeparator()
+        myCustomNode.addChild(col)
+        myCustomNode.addChild(trans)
+        myCustomNode.addChild(cub)
+        sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+        sg.addChild(myCustomNode)
+        self.start=myCustomNode
+    
+    
+    vvtt=self.getData('targetPosition')
+    if self.getData('useStart'):
+        ui,vi=startu,startv
+    else:
+        ui,vi=sf.parameter(vvtt) 
+    say("reale ziel position ui,vi",ui,vi)
+   
+    
+    try:
+        FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.target)
+    except:
+        pass
+    
+    if self.getData('displayTarget'):
+        
+        trans = coin.SoTranslation()
+        trans.translation.setValue(vvtt.x,vvtt.y,vvtt.z)
+        cub = coin.SoSphere()
+        cub.radius.setValue(3)
+
+        col = coin.SoBaseColor()
+        col.rgb=(0,1,0)
+        
+        myCustomNode = coin.SoSeparator()
+        myCustomNode.addChild(col)
+        myCustomNode.addChild(trans)
+        myCustomNode.addChild(cub)
+        sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+        sg.addChild(myCustomNode)
+        self.target=myCustomNode
+    
+    
+    
+    
+    
+    vv=vvtt
+    
+    vv0=vvtt-sf.value(ui,vi)
+    # fur deg 1
+    #uix=int(round(ui+0.5))-1
+    #vix=int(round(vi+0.5))-1
+
+    # deg 2
+    uix=int(round(ui+0.5))
+    vix=int(round(vi+0.5))
+
+    [umin,umax,vmin,vmax]=sf.toShape().ParameterRange
+    #say("borders",[umin,umax,vmin,vmax])
+    #say("uix,vix",uix,vix)
+    
+    if self.getData('bordersFrozen'):
+        if uix<1:
+            uix=1
+        if vix<1:
+            vix=1
+        if uix>umax-1:
+            uix=int(umax)-1
+        if vix>vmax-1:
+            vix=int(vmax)-1
+
+    if self.getData('tangentsFrozen'):
+        if uix<2:
+            uix=2
+        if vix<2:
+            vix=2
+        if uix>umax-2:
+            uix=int(umax)-2
+        if vix>vmax-2:
+            vix=int(vmax)-2
+    
+    st=self.getData('t')+101
+    ut*= st
+    vt*= st
+    
+    ruA=self.getData('offsetUA')
+    ruB=self.getData('offsetUB')
+    rvA=self.getData('offsetVA')
+    rvB=self.getData('offsetVB')
+    sA=(self.getData('scaleU')+150)/50
+    sB=(self.getData('scaleV')+150)/50
+    
+    
+    
+
+    def dist(param):
+
+        t=param[0]
+        ap=maskit(np.array(sf.getPoles()),vv0,t,uix,vix,ut=ut,vt=vt, ruA=ruA,rvA=rvA,ruB=ruB,rvB=rvB,sA=sA,sB=sB)
+        fa=Part.BSplineSurface()
+        fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
+        return fa.toShape().distToShape(Part.Vertex(vv))[0]
+    
+    from scipy import optimize
+    
+    allmethods=[ 
+            'Nelder-Mead' ,
+            'Powell' ,
+            'CG' ,
+            'BFGS' ,
+            'L-BFGS-B', 
+            'TNC',
+            'COBYLA',
+            'SLSQP',
+        ]
+
+    methods=[ 'Nelder-Mead' ]
+    
+    for method in methods:
+        
+        a=time.time()
+        result = optimize.minimize(dist, x0=[0,],  method=method)
+        r=result.x[0]
+
+        say("quality",np.round(result.fun,5),np.round(result.x,2),result.message,method)
+        say("run time for scipy.optimize.minimum",method,round(time.time()-a,3))
+
+    fa=Part.BSplineSurface()
+    ap=maskit(np.array(sf.getPoles()),vv0,r,uix,vix,ut=ut,vt=vt, ruA=ruA,rvA=rvA,ruB=ruB,rvB=rvB,sA=sA,sB=sB)
+    fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
+    
+    #zeige nur aenderungen
+    fb=fa.copy()
+    fb.segment(max(uix-ruA-2,uk[0]),min(uix+2+ruB,uk[-1]),max(vix-rvA-2,vk[0]),min(vix+2+rvB,vk[-1]))
+    col=[fb.uIso(k).toShape() for k in fb.getUKnots()]
+    col += [fb.vIso(k).toShape() for k in fb.getVKnots()]
+    
+    shape=fa.toShape()
+    
+    self.setPinObject('Shape_out',shape)
+    
+    ui2,vi2=fa.parameter(vv)   
+    #say("neue pos", ui2,vi2)12
+    say("curvature",fa.curvature(ui2,vi2,'Max'))
+      
+    
+    [umin,umax,vmin,vmax]=fa.toShape().ParameterRange
+    aa=fa.uIso(ui2).toShape()
+    bb=fa.vIso(vi2).toShape()
+    
+    if self.getData('displayIso'):
+        #self.setPinObject('Shape_out',Part.Compound([shape,aa,bb]))
+        self.setPinObject('Shape_out',Part.Compound(col+ [aa,bb]))
+        
+    self.setData('position_out',[vv,vv])
+
+    say("Abstand", round(fa.toShape().distToShape(Part.Vertex(vv))[0],5))
+
+    self.setData('u_out',(ui2-umin)/(umax-umin)*10)
+    self.setData('v_out',(vi2-vmin)/(vmax-vmin)*10)
+
+
+
+def run_FreeCAD_IronCurve(self):
+
+    sh=self.getPinObject('Shape')
+    
+    if sh is None:
+        sayErOb(self,"no Shape")    
+        return
+
+    pts=sh.Curve.getPoles()
+    
+    col=[]
+    w=self.getData("weight")
+
+    mode=self.getData("mode")
+    def run(pts,k=1):
+
+        l=len(pts)
+
+        if mode == 'constant':
+            pts2= [pts[0]] + [ (pts[i-1]+2*pts[i]+pts[i+1])/4 for i in range(1,l-1)] +[pts[-1]]
+            pts2= [pts[0]] + [ (pts[i-1]+w*pts[i]+pts[i+1])/(2+w) for i in range(1,l-1)] +[pts[-1]]
+        else:
+            pts2=[pts[0]]
+            for i in range(1,l-1):
+                al=(pts[i-1]-pts[i]).Length
+                el=(pts[i+1]-pts[i]).Length
+                say(i,al,el)
+                f=10.
+                if al!=0:
+                    al=min(1,1/al*(w+1))
+                else:
+                    al=1
+                if el !=0:
+                    el=min(1,1/el*(w+1))
+                else:
+                    el=1
+                
+                say(i,al,el)                
+                
+                pts2 += [(al*pts[i-1]+pts[i]+el*pts[i+1])/(1+al+el)]
+                
+
+            pts2 +=[pts[-1]]
+
+        dd=[FreeCAD.Vector()]+[(pts[i]-pts2[i]).normalize()*k for i in range(1,l-1)]+[FreeCAD.Vector()]
+        pts3=[p+q for p,q in zip(pts2,dd)]
+        
+        if 0:
+            for i in range(1,l-3):
+                
+                if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+3]).Length:
+                    pts3=pts3[:i+1] +[pts3[i+3],pts3[i+2],pts3[i+1]] + pts3[i+4:]
+
+            for i in range(1,l-2):           
+                if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+2]).Length:
+                   pts3=pts3[:i+1] +[pts3[i+2],pts3[i+1]] + pts3[i+3:]
+        
+        c=Part.BSplineCurve(pts3)
+        return pts3,c.toShape()
+
+    loopsa=self.getData('loopsA')
+    loopsb=self.getData('loopsB')
+
+    k=self.getData('k')
+
+    say(loopsa,loopsb)
+    for i in range(loopsa):
+        pts,c=run(pts)
+        #pts,c=run(pts,k)
+        col.append(c)
+
+    for i in range(loopsb):
+        pts,c=run(pts,k)
+        col.append(c)
+
+
+    '''
+        Discretizes the curve and returns a list of points.
+        The function accepts keywords as argument:
+        discretize(Number=n) => gives a list of 'n' equidistant points
+        discretize(QuasiNumber=n) => gives a list of 'n' quasi equidistant points (is faster than the method above)
+        discretize(Distance=d) => gives a list of equidistant points with distance 'd'
+        discretize(Deflection=d) => gives a list of points with a maximum deflection 'd' to the curve
+        discretize(QuasiDeflection=d) => gives a list of points with a maximum deflection 'd' to the curve (faster)
+        discretize(Angular=a,Curvature=c,[Minimum=m]) => gives a list of points with an angular deflection of 'a'
+                                            and a curvature deflection of 'c'. Optionally a minimum number of points
+                                            can be set which by default is set to 2.        
+    '''
+
+    k=self.getData('deflection')
+    if k>0:
+        ptsdd=c.discretize(QuasiDeflection=k*0.1)
+        #ptsdd=c.discretize(Deflection=k*0.1)
+        self.setPinObject('Shape_out',Part.makePolygon(ptsdd))    
+
+        deflp=Part.makePolygon(ptsdd)
+        defl=Part.BSplineCurve(ptsdd).toShape()
+        say("deflection",len(ptsdd))
+        self.setPinObject('Shape_out',defl)
+        #self.setPinObject('Shape_out',Part.Compound([deflp,defl]))
+        self.setData('points',ptsdd)
+    else:
+        #self.setPinObject('Shape_out',Part.Compound(col))
+        self.setPinObject('Shape_out',col[-1])
+        self.setData('points',pts)
+    
+    FreeCAD.ActiveDocument.recompute()
+
+
+
+def run_FreeCAD_IronSurface(self):
+    sh=self.getPinObject('Shape')
+    if sh is None:
+        sayErOb(self,"no Shape")    
+        return
+
+    ptsarr=sh.Surface.getPoles()
+    
+    col=[]
+    w=self.getData("weight")
+
+    def run(pts,k=1):
+
+        l=len(pts)
+
+        pts2= [pts[0]] + [ (pts[i-1]+2*pts[i]+pts[i+1])/4 for i in range(1,l-1)] +[pts[-1]]
+        pts2= [pts[0]] + [ (pts[i-1]+w*pts[i]+pts[i+1])/(2+w) for i in range(1,l-1)] +[pts[-1]]
+
+        dd=[FreeCAD.Vector()]+[FreeCAD.Vector((pts[i]-pts2[i])).normalize()*k for i in range(1,l-1)]+[FreeCAD.Vector()]
+        pts3=[FreeCAD.Vector(p+q) for p,q in zip(pts2,dd)]
+        
+        
+        #
+        for i in range(1,l-3):
+            
+            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+3]).Length:
+                pts3=pts3[:i+1] +[pts3[i+3],pts3[i+2],pts3[i+1]] + pts3[i+4:]
+
+        for i in range(1,l-2):           
+            if (pts3[i]-pts3[i+1]).Length>(pts3[i]-pts3[i+2]).Length:
+               pts3=pts3[:i+1] +[pts3[i+2],pts3[i+1]] + pts3[i+3:]
+        
+        c=Part.BSplineCurve(pts3)
+        return pts3,c.toShape()
+
+    loopsa=self.getData('loopsA')
+    loopsb=self.getData('loopsB')
+    k=self.getData('k')
+
+    ptsarr2=[]
+    for pts in ptsarr:
+
+        for i in range(loopsa+1):
+            pts,c=run(pts)
+        for i in range(loopsb+1):
+            pts,c=run(pts,k)
+            
+        ptsarr2 += [pts]
+    
+    ptsarr=np.array(ptsarr2).swapaxes(0,1)
+    ptsarr2=[]
+
+    for pts in ptsarr:
+
+        for i in range(loopsa+1):
+            pts,c=run(pts)
+        for i in range(loopsb+1):
+            pts,c=run(pts,k)
+            
+        ptsarr2 += [pts]
+        col.append(c)
+    
+    ptsarr=np.array(ptsarr2).swapaxes(0,1)
+    self.setPinObject('Shape_out',Part.Compound(col))
+    self.setData('points',ptsarr.tolist())
+    FreeCAD.ActiveDocument.recompute()
+
+
+
+
         
 
 
+
+
+def run_FreeCAD_UIso(self,*args, **kwargs):
+
+    f=self.getPinObject('Face_in')
+    if f is None: return
+    if f.__class__.__name__  == 'Shape':
+        f=f.Face1
+    sf=f.Surface
+
+    [umin,umax,vmin,vmax]=f.ParameterRange
+    u=self.getData("u")
+
+    uu=umin+(umax-umin)*0.1*u
+    c=sf.uIso(uu)
+    self.setPinObject('Shape_out',c.toShape())
+
+    #if self.getData('display'):
+    #    obj=self.getObject()
+    #    obj.Shape=c.toShape()
+
+
+
+
+def run_FreeCAD_VIso(self,*args, **kwargs):
+
+    f=self.getPinObject('Face_in')
+    if f is None: return
+    if f.__class__.__name__  == 'Shape':
+        f=f.Face1
+    sf=f.Surface
+
+    [umin,umax,vmin,vmax]=f.ParameterRange
+    v=self.getData("v")
+
+    vv=vmin+(vmax-vmin)*0.1*v
+    c=sf.vIso(vv)
+    self.setPinObject('Shape_out',c.toShape())
+
+    #if self.getData('display'):
+    #    obj=self.getObject()
+    #    obj.Shape=c.toShape()
+
+
+def run_FreeCAD_UVGrid(self,*args, **kwargs):
+
+    sayl()
+    f=self.getPinObject('Face_in')
+    if f is None: return
+    if f.__class__.__name__  == 'Shape':
+        f=f.Face1
+    sf=f.Surface
+
+    [umin,umax,vmin,vmax]=f.ParameterRange
+    uc=self.getData("uCount")
+    vc=self.getData("vCount")
+    
+    us=[]
+    for u in range(uc+1):
+        uu=umin+(umax-umin)*u/uc
+        c=sf.uIso(uu).toShape()
+        us += [c]
+
+    vs=[]
+    for v in range(vc+1):
+        vv=vmin+(vmax-vmin)*v/vc
+        c=sf.vIso(vv).toShape()
+        vs += [c]
+
+#
+
+    #verfeinerung path
+    sayl()
+    if  f.Area != sf.toShape().Area:
+        
+        us,vs=patchgrid(self)
+        
+        '''
+        # EXAKTE VERSION - ZU LANGSAM
+        # patch
+        anz=20
+        us=[]
+        for u in range(uc+1):
+            uu=umin+(umax-umin)*u/uc
+            c=sf.uIso(uu).toShape()
+            cc=sf.uIso(uu)
+            pts=c.discretize(anz)
+            off=True
+            suba=umin
+            subb=umin
+            for p in pts:
+                if f.distToShape(Part.Vertex(p))[0]<1:
+                    if off:
+                        off=False
+                        suba=cc.parameter(p)
+                    else:
+                        subb=cc.parameter(p)
+            try:
+                #say(suba,subb)
+                cc.segment(suba,subb)
+                c=cc.toShape()
+                us += [c]
+            except:
+                pass
+
+        vs=[]
+        for v in range(vc+1):
+            vv=vmin+(vmax-vmin)*v/vc
+            cc=sf.vIso(vv)
+            c=cc.toShape()
+            pts=cc.toShape().discretize(anz)
+            off=True
+            suba=vmin
+            subb=vmin
+            for p in pts:
+                if f.distToShape(Part.Vertex(p))[0]<1:
+                    if off:
+                        off=False
+                        suba=cc.parameter(p)
+                    else:
+                        subb=cc.parameter(p)
+            try:
+                cc.segment(suba,subb)
+                c=cc.toShape()
+                vs += [c]
+            except:
+                pass
+        '''
+        
+    
+
+    self.setPinObjects('uEdges',us)
+    self.setPinObjects('vEdges',vs)
+    self.setPinObject('Shape_out',Part.Compound(us+vs+f.Edges))
+
+
+
+
+
+def run_FreeCAD_FillEdge(self):
+	sayW("Fill Edge not yet implemented")

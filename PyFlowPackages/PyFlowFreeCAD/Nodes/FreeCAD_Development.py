@@ -38,7 +38,9 @@ class FreeCAD_PinsTest(FreeCadNodeBase2):
         self.shapeOnly.recomputeNode=True
 
 
-        for pn in  'Any Vector Rotation Enumeration Shape ShapeList FCobj Array Float Int String Bool'.split(' '):
+        for pn in  'Any Vector Rotation Shape ShapeList FCobj Array Float Int String Bool'.split(' '):
+            say("create Pin for ",pn)
+            
             p=self.createInputPin(pn+"_in", pn+'Pin')
             p=self.createOutputPin(pn+"_out", pn+'Pin')
             p=self.createInputPin(pn+"_in_array", pn+'Pin', structure=StructureType.Array)
@@ -121,187 +123,6 @@ class FreeCAD_Foo(FreeCadNodeBase2):
         return []
 
 
-
-class FreeCAD_StorePins(NodeBase):
-    '''
-    testnode for store-pins
-    '''
-
-    def __init__(self, name):
-
-        super(self.__class__, self).__init__(name)
-
-
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
-
-        self.trace = self.createInputPin('trace', 'BoolPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
-
-        self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape', 'ShapePin')
-
-        self.objname = self.createInputPin("objectname", 'StringPin')
-        self.objname.setData(name)
-
-        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-        self.shapeOnly.recomputeNode=True
-
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.show = self.createInputPin('Show', 'ExecPin', None, self.show)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.trace = self.createInputPin('trace', 'BoolPin')
-
-        self.obj = self.createOutputPin('Object', 'FCobjPin')
-        self.obja = self.createInputPin('ObjectA', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape_out', 'FCobjPin')
-        self.shapein = self.createInputPin('Shape_in', 'FCobjPin')
-
-        if 0:
-            self.arrout = self.createOutputPin('Array_out', 'FCobjPin')
-            self.arrin = self.createInputPin('Array_in', 'FCobjPin')
-        else:
-            self.arrout = self.createOutputPin('Array_out', 'ArrayPin')
-            self.arrin = self.createInputPin('Array_in', 'ArrayPin')
-
-        self.vobjname = self.createInputPin("objectname", 'StringPin')
-        self.vobjname.setData(name)
-
-
-    def show(self,*args, **kwargs):
-        sayl("list all pins")
-
-
-    def getObject(self,*args):
-        say("getobject")
-        return self
-    pass
-
-
-    @staticmethod
-    def pinTypeHints():
-        return {'inputs': ['FloatPin','FloatPin','FloatPin','FloatPin','StringPin'], 'outputs': []}
-
-
-    @staticmethod
-    def category():
-        return 'Development'
-
-
-    def compute(self, *args, **kwargs):
-        # muss ueberarbeitet werden #+#
-
-        say ("in compute",self.getName(),"objname is",self.vobjname.getData())
-        say("#----------------------------------------############################")
-        say("#----------------------------------------############################")
-
-        ss=self.arrin.getArray()
-        say("getArray",ss)
-
-        # array erzeugen und  senden
-        say("connected?",self.arrout.hasConnections())
-        if 1 or self.arrout.hasConnections():
-
-                varr=np.round(np.random.random((3,4)),2)
-                say("store ",varr)
-                store.store().add(str(self.arrout.uid),varr)
-                self.arrout.setData(str(self.arrout.uid))
-        say ("array done ok")
-        say("#----------------------------------------############################")
-        say("#----------------------------------------############################")
-
-
-        say ("get shapein")
-        shapein=self.shapein.getData()
-
-        if shapein  !=  None:
-            say("shapein",shapein)
-            s=store.store().get(shapein)
-
-            #
-            say("s:::::::",s)
-            if s  !=   None:
-                say("!!!!!!!!!!!!!!!!!!!!show")
-                #Part.show(s)
-
-            #store.store().dela(shapein)
-            store.store().list()
-
-
-        try:
-            say ("try get object")
-            c=FreeCAD.ActiveDocument.getObject(self.vobjname.getData())
-            say ("ok",c,c.Name)
-        except:
-            say ("nothing found")
-            c=None
-
-        # use the input object
-        if self.obja.getData() == None:
-            say( "no input object")
-            c = None
-        else:
-            c=FreeCAD.ActiveDocument.getObject(self.obja.getData())
-
-
-
-        # if this is not possible fall back to the given name for the obj
-        if c== None:
-            c=FreeCAD.ActiveDocument.getObject(self.vobjname.getData())
-
-
-        say("!!",self.uid)
-        say(str(self.uid))
-        yid="ID_"+str(self.uid)
-        yid=yid.replace('-','_')
-        say(str(self.uid).replace('-','_'))
-
-        if 1 or c==None:
-            cc=FreeCAD.ActiveDocument.getObject(yid)
-
-        if cc == None:
-            cc=FreeCAD.ActiveDocument.addObject("Part::Feature",yid)
-        say("created",cc.Name,yid)
-
-
-        print("input object from pin",self.obja,"getData ..",self.obja.getData())
-
-        if shapein  !=  None:
-            say("shapein",shapein)
-            s=store.store().get(shapein)
-
-            #
-            say("s:::::::",s)
-            if s  !=   None:
-                say("!!!!!!!!!!!!!!!!!!!!show")
-                #Part.show(s)
-
-            #store.store().dela(shapein)
-            store.store().list()
-
-            if s  !=  None:
-                    say("!!!!!!!!!!!!!!!!!!!!show")
-                    cc.Shape=s
-
-
-        if c == None:
-            self.obj.setData(None)
-        else:
-            s=c
-            self.obj.setData(c.Name)
-            say("[send key{0} from {1}@{2}]".format(self.shapeout.uid,self.shapeout.getName(),self.getName()))
-        #   say("sended obj",self.shapeout.uid,self.shapeout.getName(),self.getName())
-        #   store.store().addid(c)
-            say("add to store shape",s,self.shapeout.uid)
-            say("connected?",self.shapeout.hasConnections())
-            if self.shapeout.hasConnections():
-                store.store().add(str(self.shapeout.uid),s.Shape)
-                self.shapeout.setData(self.shapeout.uid)
-
-        say ("data set to output object is done, exec...")
-        self.outExec.call()
-        say ("End exec for ---",self.getName())
 
 
 class FreeCAD_Toy2(FreeCadNodeBase2):
@@ -752,15 +573,18 @@ class FreeCAD_elastic(FreeCadNodeBase2):
 
 def nodelist():
     return [
-    # FreeCAD_PinsTest,
+    
+    FreeCAD_PinsTest,
+    
     FreeCAD_Foo,
-    FreeCAD_StorePins,
-    #FreeCAD_Toy,
+    
     FreeCAD_Toy2,
     FreeCAD_Toy3,
     
     FreeCAD_Tape,
-    FreeCAD_Topo2,
-    #FreeCAD_ReduceSurface,
+
+    FreeCAD_Topo2,   
+    
+    ##FreeCAD_ReduceSurface,
     FreeCAD_elastic,
 ]
