@@ -340,6 +340,47 @@ class FreeCAD_Seam(FreeCadNodeBase2):
     def category():
         return 'Combination'
 
+
+
+class FreeCAD_ApplyPlacements(FreeCadNodeBase2):
+    '''
+    apply a list of placements to 
+    a shape or a list of shapes 
+    or a list of vectors(polygon)
+    '''
+
+    dok = 4
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description="a list of vectors which define a poylgon pattern"
+
+        a=self.createInputPin('Shapes', 'ShapeListPin')   
+        a.description="a list of shapes,  the n. shape will get the n. placement"
+
+        a=self.createInputPin('Shape_in', 'ShapePin')   
+        a.description="a single shape, there will be a copy of this shape for each placement"
+        
+        a=self.createInputPin('Placements', 'PlacementPin',structure=StructureType.Array)
+        a.description="the list of placement which are applied to the shape, shapelist or points"
+
+        a=self.createOutputPin('Shape_out', 'ShapePin')   
+
+        a=self.createOutputPin('points_out', 'VectorPin',structure=StructureType.Array)
+        a.description="the result if the input was the __points__ pin"
+
+    @staticmethod
+    def description():
+        return FreeCAD_ApplyPlacements.__doc__
+
+
+
+
 __all__= [
 		FreeCAD_Boolean,
 		FreeCAD_Compound,
@@ -349,6 +390,7 @@ __all__= [
 		
 		FreeCAD_Slice,
 		FreeCAD_Sweep,
+		FreeCAD_ApplyPlacements,
 		
 	]
 

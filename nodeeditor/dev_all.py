@@ -19,7 +19,7 @@ import nodeeditor.dev_Details  as Details
 import nodeeditor.dev_Document as Document
 
 if devmode:
-	import nodeeditor.dev_Development as Development
+    import nodeeditor.dev_Development as Development
 
 
 #import nodeeditor.dev_  as 
@@ -41,18 +41,19 @@ import nodeeditor.dev_Surface  as Surface
 
 import nodeeditor.dev_Voronoi as Voronoi
 
+from nodeeditor.say import *
 
 
 
 import nodeeditor
 if devmode:
-	reload(nodeeditor.dev)
-	reload(nodeeditor.dev_Development)
-	pass
+    #hgreload(nodeeditor.dev)
+    #reload(nodeeditor.dev_Development)
+    pass
 
 
 #reload(nodeeditor.dev_Logic)
-#reload(nodeeditor.dev)
+#reload(nodeeditor.dev_Points)
 
 #reload(nodeeditor.dev_BSpline)
 
@@ -66,4 +67,22 @@ if devmode:
 #reload(nodeeditor.dev_Projection)
 #reload(nodeeditor.dev_Primitives)
 
+def run_FreeCAD_Collect_Data(self, mode=None):
+
+    if mode=="reset":
+        self.points=[]
+    
+    else:
+
+        maxSize=self.getData("maxSize")    
+        point = self.getData("data")
+
+        self.points += [point]
+        if maxSize >0 and len(self.points)>maxSize:
+                self.points = self.points[len(self.points)-maxSize:]   
+
+    self.setData("collection",self.points)
+
+    if not self.inRefresh.hasConnections():
+        self.outExec.call()
 

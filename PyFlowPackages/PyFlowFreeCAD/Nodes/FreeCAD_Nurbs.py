@@ -383,64 +383,8 @@ class FreeCAD_Destruct_BSplineSurface(FreeCadNodeBase2):
         return []
 
 
-class FreeCAD_Collect_Vectors(FreeCadNodeBase):
-    '''
-    collect vectors to a list
-    '''
-
-    dok=2 
-    def __init__(self, name="MyCollection"):
-        super(self.__class__, self).__init__(name)
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.inReset = self.createInputPin("reset", 'ExecPin', None, self.reset)
-        self.inReset.description="clear the list of collected points"
-        self.inRefresh = self.createInputPin("refresh", 'ExecPin', None, self.refresh)
-        self.inRefresh.description="update the outpin **points**"
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-
-        self.pp=self.createInputPin('point', 'VectorPin')
-        self.pp.description="list of collected vectors"
-#        self.pp.enableOptions(PinOptions.AllowMultipleConnections)
-#        self.pp.disableOptions(PinOptions.SupportsOnlyArrays)
-
-        self.createInputPin("maxSize",'Integer',100).\
-        description="maximum length of the points list, if more points are gotten older points are dropped"
-        self.createInputPin("reduce",'Integer',0).\
-        description="create only a discretized list of the polygon with this size"
-
-        a=self.createOutputPin('points', 'VectorPin', structure=StructureType.Array)
-        a.description="list of collected vectors"
-        
-        self.points=[]
-
-    @staticmethod
-    def description():
-        return FreeCAD_Collect_Vectors.__doc__
-
-    @staticmethod
-    def category():
-        return 'Points'
-
-    @staticmethod
-    def keywords():
-        return ['point','collect']
-
-    def reset(self,*args, **kwargs):
-        say("reset")
-        self.compute(mode="reset")
-
-    @timer
-    def reset(self, *args, **kwargs):
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_FreeCAD_Collect_Vectors(self,mode="reset")
 
 
-    def refresh(self,*args, **kwargs):
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_FreeCAD_Collect_Vectors(self,mode="refresh")
-        self.outExec.call()
 
 class XFreeCAD_ApproximateBSpline(FreeCadNodeBase2):
     '''
@@ -1195,7 +1139,7 @@ class FreeCAD_Nurbs(FreeCadNodeBase2):
 
 def nodelist():
     return [
-				FreeCAD_ApproximateBSpline,
+                FreeCAD_ApproximateBSpline,
                 FreeCAD_Tripod,
 
                 FreeCAD_UIso, 
@@ -1210,7 +1154,6 @@ def nodelist():
                 
                 FreeCAD_Destruct_BSpline,
                 FreeCAD_Destruct_BSplineSurface,
-                FreeCAD_Collect_Vectors,
                 
                 FreeCAD_InterpolateBSpline,
 

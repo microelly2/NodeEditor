@@ -1966,6 +1966,7 @@ def createNodeDocu(onlyNew=False):
             except:
                 sayErr("problem for ",c)
 #   sayl("t3 done")
+
     say("======Nodes by category======")
     kl=list(kats.keys())
     kl.sort()
@@ -1991,10 +1992,12 @@ def createNodeDocu(onlyNew=False):
         
     say()
     say("number of nodes {}".format(len(cnks)))
+    
+    return
 
     import PyFlow.Packages.PyFlowFreeCAD.Nodes
     for modul in [ 
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_2D,
+                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D,
                     PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base,
                     PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin,
                     PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development,

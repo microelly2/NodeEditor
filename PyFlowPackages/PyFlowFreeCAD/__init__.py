@@ -89,7 +89,7 @@ Voronoi
 nodelistcol=[]
 
 
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D import nodelist
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Algebra import nodelist
 nodelistcol += nodelist()
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Combination import nodelist
@@ -101,9 +101,19 @@ nodelistcol += nodelist()
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_File import nodelist
 nodelistcol += nodelist()
 
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Flow import nodelist
+nodelistcol += nodelist()
+
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
 nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Data import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D import nodelist
+nodelistcol += nodelist()
+
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel import nodelist
 nodelistcol += nodelist()

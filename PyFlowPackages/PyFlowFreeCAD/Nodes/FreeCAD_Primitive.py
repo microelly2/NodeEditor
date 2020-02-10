@@ -434,6 +434,49 @@ class FreeCAD_Simplex(FreeCadNodeBase2):
         return []
 
 
+class FreeCAD_Elevation(FreeCadNodeBase2):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        
+        #a=self.createInputPin('filename', 'String','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
+        
+        a=self.createInputPin('force', 'Boolean',True)
+        a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a=self.createOutputPin('poles', 'VectorPin',structure=StructureType.Array)
+
+        self.mode = self.createInputPin('mode', 'String')
+        self.mode.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":['linear', 'thin_plate', 'cubic', 'inverse', 'multiquadric', 'gaussian', 'quintic']
+            }
+        self.mode.setInputWidgetVariant("EnumWidget")
+        self.mode.setData("cubic")
+
+
+        a=self.createInputPin('gridCount', 'Integer',10)
+        a.annotationDescriptionDict={ "ValueRange":(3,30)}
+        a.setInputWidgetVariant("Simple2")
+        
+        a=self.createInputPin('bound', 'Float',0)
+        a.setInputWidgetVariant("Simple3")
+       
+
+
+        a=self.createInputPin('noise', 'Integer',1)
+        a.annotationDescriptionDict={ "ValueRange":(0,4)}
+        a.setInputWidgetVariant("Simple2")
+        
+        a=self.createInputPin('Rbf', 'Boolean',True)
+    
+
 
 
 
@@ -449,6 +492,7 @@ def nodelist():
                 FreeCAD_BSplineSurface,
                 FreeCAD_BSplineCurve,
                 FreeCAD_Simplex,
+                FreeCAD_Elevation,
 
 
         ]
