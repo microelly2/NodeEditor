@@ -568,6 +568,56 @@ class FreeCAD_elastic(FreeCadNodeBase2):
 
 
 
+class FreeCAD_Forum(FreeCadNodeBase):
+    '''
+    '''
+
+    @staticmethod
+    def description():
+        return "a dummy for tests"
+
+    def __init__(self, name="Fusion"):
+        super(self.__class__, self).__init__(name)
+        
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.inExec = self.createInputPin('reset', 'ExecPin', None, self.reset) 
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        self.createOutputPin('news', 'StringPin')
+        
+
+        self.process = self.createInputPin('process', 'Boolean')
+        self.delay = self.createInputPin('Delay(s)', 'FloatPin')
+        self.delay.setDefaultValue(1.0)
+        self.delay.annotationDescriptionDict={ "ValueRange":(0.,10)}
+        self._total=0
+        
+
+
+
+    def Tick(self, delta):
+        if self.process.getData():
+            #say(self._total,delta)
+            self._total += delta
+            if self._total >= self.delay.getData():
+                self.compute()
+                self._total=0
+
+
+
+        
+
+    def reset(self,*args, **kwargs):
+        self.hash={}
+
+
+
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+
 
 
 
@@ -587,4 +637,5 @@ def nodelist():
     
     ##FreeCAD_ReduceSurface,
     FreeCAD_elastic,
+    FreeCAD_Forum,
 ]

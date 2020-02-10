@@ -1115,4 +1115,4 @@ def run_FreeCAD_UVGrid(self,*args, **kwargs):
 
 
 def run_FreeCAD_FillEdge(self):
-	sayW("Fill Edge not yet implemented")
+    sayW("Fill Edge not yet implemented")

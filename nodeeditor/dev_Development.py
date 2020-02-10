@@ -13,7 +13,7 @@ import nodeeditor.store as store
 import nodeeditor.pfwrap as pfwrap
 
 
-print ("reloaded: "+ __file__)
+# print ("reloaded: "+ __file__)
 
 import nodeeditor
 from nodeeditor.utils import *
@@ -1180,3 +1180,85 @@ def run_FreeCAD_elastic(self):
     if self.getData('hide'):
         clearcoin(self)
     self._lastrun=0
+
+
+
+
+
+
+
+
+
+def run_FreeCAD_Forum(self):
+	import time
+	sayl()
+	say(time.time())
+	url='http://forum.freecadweb.org/search.php?search_id=active_topics'
+	
+
+
+	import urllib.request
+	import re,time
+
+
+	try:
+		_=self.hash
+	except:
+		self.hash={}
+		self.last=time.time()
+
+	response = urllib.request.urlopen(url)
+	ans=response.read()
+	for i,l in enumerate(ans.splitlines()): 	
+		if  'class="topictitle">' in str(l):
+			#print(l)
+			#print ("")
+			m = re.search('topictitle">(.*)</a>', str(l))
+			title = m.group(1)
+			#print("--",title)
+			
+		elif  'username">' in str(l) or 'username-coloured">' in str(l):
+			#say(l)
+			if  'username">' in str(l):
+				m = re.search('username">(.+?)</a> &raquo;(.+?)&raquo;', str(l))
+				if m is None: 
+					pass
+					#print("----------",m) 
+				else:
+					name = m.group(1)
+
+					date = m.group(2)
+					
+					#print(name,date)
+			
+			else:
+			
+				m = re.search('username-coloured">(.+?)</a> &raquo;(.+?)&raquo;', str(l))
+				if m is None: 
+					pass
+					#print("----------",m) 
+				else:
+					name = m.group(1)
+
+					date = m.group(2)
+					
+					#print("!!",name,date)
+			
+			
+			
+			
+			
+			try:
+				_=self.hash[(title+name+date)]
+#				say()
+				
+			except:
+				if 0:
+					sayW(title)
+					say("by {}  ({})".format(name,date))
+				self.setData("news",str((title,name,date)))
+				self.outExec.call()
+				self.hash[(title+name+date)]=time.time()
+				self.last=time.time()
+
+	self.setColor()

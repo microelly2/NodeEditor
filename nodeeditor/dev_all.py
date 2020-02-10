@@ -48,7 +48,7 @@ from nodeeditor.say import *
 import nodeeditor
 if devmode:
     #hgreload(nodeeditor.dev)
-    #reload(nodeeditor.dev_Development)
+    reload(nodeeditor.dev_Development)
     pass
 
 
