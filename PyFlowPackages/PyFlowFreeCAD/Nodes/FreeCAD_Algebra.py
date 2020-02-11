@@ -1,21 +1,17 @@
 '''
-
+expressions, equations, simple algebra
 '''
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase2
 
-
-
-
         
 
 class FreeCAD_Expression(FreeCadNodeBase2):
     '''
-    evaluate  an expressions with at most 4 variables
+    evaluate an expression with at most 4 variables
     '''
 
-    dok = 0
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -27,7 +23,7 @@ class FreeCAD_Expression(FreeCadNodeBase2):
         a=self.createInputPin('expression', 'StringPin','time.time()+a')
         a.description="expression with at most 4 variables a, b, c, d"
         
-        a=self.createInputPin('a', 'AnyPin')
+        a=self.createInputPin('a', 'AnyPin',0.0)
         a.enableOptions(PinOptions.AllowAny)
         a.description="first parameter"
         a=self.createInputPin('b', 'AnyPin')
@@ -52,11 +48,16 @@ class FreeCAD_Expression(FreeCadNodeBase2):
     @staticmethod
     def description():
         return FreeCAD_Expression.__doc__
- 
-def nodelist():
-    return [
 
-                FreeCAD_Expression
+    @staticmethod
+    def category():
+        return 'Algebra'
+
+__all__= [
+			FreeCAD_Expression,
                 
         ]
 
+ 
+def nodelist():
+    return __all__

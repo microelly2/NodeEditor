@@ -1133,7 +1133,7 @@ class FreeCAD_Nurbs(FreeCadNodeBase2):
 
     @staticmethod
     def category():
-        return 'BSpline'
+        return 'Nurbs'
 
 
 
@@ -1166,5 +1166,8 @@ def nodelist():
                 FreeCAD_IronSurface,
                 FreeCAD_ReduceCurve,
                 FreeCAD_BSplineSegment,
-                FreeCAD_BSplineOffset
+                FreeCAD_BSplineOffset,
+                FreeCAD_Nurbs,
+                
+                #FreeCAD_Placement3
         ]

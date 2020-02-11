@@ -7,6 +7,8 @@ some stuff to play and new prototypes in very alpha state
 from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import timer, FreeCadNodeBase, FreeCadNodeBase2
 
+from nodeeditor.cointools import *
+reload (nodeeditor.cointools)
 
 
 class FreeCAD_PinsTest(FreeCadNodeBase2):
@@ -54,22 +56,9 @@ class FreeCAD_PinsTest(FreeCadNodeBase2):
             p=self.createOutputPin(pn+"_out_array", pn+'Pin', structure=StructureType.Array)
 #           p=self.createOutputPin(pn+"_out_dict", pn+'Pin', structure=PinStructure.Dict)
 
-        self.createInputPin("yyy","AnyPin", None,  supportedPinDataTypes=["FloatPin", "IntPin"])
-
+		#a pin for different types
+        self.createInputPin("FloatOrInt","AnyPin", None,  supportedPinDataTypes=["FloatPin", "IntPin"])
         self.createInputPin("Shape_or_Rotation","AnyPin", None,  supportedPinDataTypes=["ShapePin", "RotationPin"])
-
-
-
-
-    def compute(self, *args, **kwargs):
-
-        sayl()
-
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_Foo_compute(self,*args, **kwargs)
-
-        self.outExec.call()
 
 
     @staticmethod
@@ -80,146 +69,45 @@ class FreeCAD_PinsTest(FreeCadNodeBase2):
     def category():
         return 'Development'
 
-    @staticmethod
-    def keywords():
-        return []
 
 
 
-
-
-
-class FreeCAD_Foo(FreeCadNodeBase2):
-    '''
-    dummy for tests
-    '''
-
-    @staticmethod
-    def description():
-        return "a dummy for tests"
-
-    def __init__(self, name="Fusion"):
-        super(self.__class__, self).__init__(name)
-
-
-
-    def compute(self, *args, **kwargs):
-
-        sayl()
-        import nodeeditor.dev
-        reload (nodeeditor.dev)
-        nodeeditor.dev.run_foo_compute(self,*args, **kwargs)
-
-    @staticmethod
-    def description():
-        return FreeCAD_Foo.__doc__
-
-    @staticmethod
-    def category():
-        return 'Development'
-
-    @staticmethod
-    def keywords():
-        return []
-
-
-
-
-class FreeCAD_Toy2(FreeCadNodeBase2):
-    ''''''
-
-
-
-    def __init__(self, name="MyToy"):
-
-        super(self.__class__, self).__init__(name)
-
-
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.Show = self.createInputPin('Show', 'ExecPin', None, self.show)
-
-        self.trace = self.createInputPin('trace', 'BoolPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
-
-        self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
-        
-
-        self.objname = self.createInputPin("objectname", 'StringPin')
-        self.objname.setData(name)
-
-        self.shapeOnly = self.createInputPin("shapeOnly", 'BoolPin', True)
-        self.shapeOnly.recomputeNode=True
-
-        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
-        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
-        self.part = self.createOutputPin('Part', 'FCobjPin')
-        self.objname = self.createInputPin("objectname", 'StringPin')
-        self.randomize = self.createInputPin("randomize", 'BoolPin')
-        name="MyToy"
-        self.objname.setData(name)
-
-        a=self.createInputPin('Shape', 'ShapePin')
-
-
-        a=self.createInputPin('k',"Integer",0)
-        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
-        a=self.createInputPin('l',"Integer",0)
-        a.annotationDescriptionDict={ "ValueRange":(-5,20)}
-        
-        a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
-        a=self.createInputPin('uvs', 'VectorPin',structure=StructureType.Array)
-
-
-
-        self.outExec.call()
-
-    @staticmethod
-    def description():
-        return FreeCAD_Toy2.__doc__
-
-    @staticmethod
-    def category():
-        return 'Development'
 
 
 
 class FreeCAD_Tape(FreeCadNodeBase2):
-    ''''''
-
-
+    '''
+    create a list of points and tangents 
+    to provide a tangent seam of a face
+    '''
 
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
-
-
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
         self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
-        self.arrayData = self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
+        self.shapeout.description="the visualization of the tape"
         
-      
-
-
-
-        a=self.createInputPin('Shape', 'ShapePin')
-
+        self.arrayData = self.createOutputPin('Points_out', 'VectorPin', structure=StructureType.Array)
+        self.arrayData.description="the position and tangent data for post processing"
 
         a=self.createInputPin('k',"Integer",0)
         a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        a.description="size of the tangent force"
+        
         a=self.createInputPin('l',"Integer",0)
         a.annotationDescriptionDict={ "ValueRange":(-5,20)}
+        a.description="size of the normal force"
         
         a=self.createInputPin('hands', 'VectorPin',structure=StructureType.Array)
         a.enableOptions(PinOptions.AllowMultipleConnections)
-        #a.disableOptions(PinOptions.SupportsOnlyArrays)
+        a.description="the list of positions and directions to use as constraints" 
 
-        a=self.createInputPin('scalesU', 'FloatPin',structure=StructureType.Array)
-        a=self.createInputPin('scalesV', 'FloatPin',structure=StructureType.Array)
-
+        #a=self.createInputPin('Shape', 'ShapePin')
+        #a=self.createInputPin('scalesU', 'FloatPin',structure=StructureType.Array)
+        #a=self.createInputPin('scalesV', 'FloatPin',structure=StructureType.Array)
 
         self.outExec.call()
 
@@ -232,20 +120,9 @@ class FreeCAD_Tape(FreeCadNodeBase2):
         return 'Development'
 
 
-
-
-
-
-
-
-
-
-
 class FreeCAD_Toy3(FreeCadNodeBase2):
     '''
     '''
-
-
 
     def __init__(self, name="MyToy"):
 
@@ -494,8 +371,7 @@ class FreeCAD_Topo2(FreeCadNodeBase2):
     def category():
         return 'Development'
 
-from nodeeditor.cointools import *
-reload (nodeeditor.cointools)
+
 
 class FreeCAD_elastic(FreeCadNodeBase2):
     '''
@@ -570,11 +446,8 @@ class FreeCAD_elastic(FreeCadNodeBase2):
 
 class FreeCAD_Forum(FreeCadNodeBase):
     '''
+    poll the freecad forum for new posts
     '''
-
-    @staticmethod
-    def description():
-        return "a dummy for tests"
 
     def __init__(self, name="Fusion"):
         super(self.__class__, self).__init__(name)
@@ -583,16 +456,12 @@ class FreeCAD_Forum(FreeCadNodeBase):
         self.inExec = self.createInputPin('reset', 'ExecPin', None, self.reset) 
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         self.createOutputPin('news', 'StringPin')
-        
 
         self.process = self.createInputPin('process', 'Boolean')
         self.delay = self.createInputPin('Delay(s)', 'FloatPin')
         self.delay.setDefaultValue(1.0)
         self.delay.annotationDescriptionDict={ "ValueRange":(0.,10)}
         self._total=0
-        
-
-
 
     def Tick(self, delta):
         if self.process.getData():
@@ -602,15 +471,72 @@ class FreeCAD_Forum(FreeCadNodeBase):
                 self.compute()
                 self._total=0
 
-
-
-        
-
     def reset(self,*args, **kwargs):
         self.hash={}
 
+    @staticmethod
+    def description():
+        return FreeCAD_Forum.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
 
 
+
+
+class FreeCAD_ToyWidgets(FreeCadNodeBase2):
+    '''
+    methode zum spielen input widgets
+    '''
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        
+        a = self.createInputPin("Slider", 'IntPin')
+        a.setInputWidgetVariant("Slider")
+
+        a = self.createInputPin("Simple", 'IntPin')
+        a.setInputWidgetVariant("Simple") # unbeschraenkt
+
+        a = self.createInputPin("Default", 'IntPin')
+        
+        a = self.createInputPin("Slider", 'FloatPin')
+        a.setInputWidgetVariant("Slider")
+
+        a = self.createInputPin("Simple", 'FloatPin')
+        a.setInputWidgetVariant("Simple") # unbeschraenkt
+
+        a = self.createInputPin("Default", 'FloatPin')
+        
+        return
+        
+        # alle pins erzeugen
+        import  PyFlow.Packages.PyFlowFreeCAD
+        pincs=PyFlow.Packages.PyFlowFreeCAD.PyFlowFreeCAD.GetPinClasses()  
+
+        for p in pincs:
+            say("!",p)
+            if p in ["AnyPin","ArrayPin"]:continue
+            
+            self.createInputPin(str(p)+"_in",str(p))
+            self.createOutputPin(str(p)+"_out",str(p))
+
+        import  PyFlow.Packages.PyFlowBase
+        pincs=PyFlow.Packages.PyFlowBase.PyFlowBase.GetPinClasses()   
+
+        for p in pincs:
+            say("!",p)
+            if p in ["AnyPin","ArrayPin"]:continue
+            self.createInputPin(str(p)+"_in",str(p))
+            self.createOutputPin(str(p)+"_out",str(p))
+
+    @staticmethod
+    def description():
+        return FreeCAD_ToyWidgets.__doc__
 
     @staticmethod
     def category():
@@ -624,11 +550,9 @@ class FreeCAD_Forum(FreeCadNodeBase):
 def nodelist():
     return [
     
-    FreeCAD_PinsTest,
+    FreeCAD_PinsTest,    
+    FreeCAD_ToyWidgets,
     
-    FreeCAD_Foo,
-    
-    FreeCAD_Toy2,
     FreeCAD_Toy3,
     
     FreeCAD_Tape,

@@ -1,4 +1,6 @@
-# implemenation of the compute methods for category Conversion
+
+import FreeCAD
+import Part 
 
 import numpy as np
 import random
@@ -114,19 +116,15 @@ def run_FreeCAD_Tape(self):
 
     l=self.getData('l')
     k=self.getData('k')*4
-    #l=0.1
+
     pts=[]
     ptsa=[]
-    #say(ySortedPins)
-    say('#############')
+
+
     for i,h in  enumerate(ySortedPins):
-        #say(h.getData())
+
         [p,tu,tv]=h.getData()
-        if i==0:
-            say(i,p)
-            say(tu)
-            say(tv)
-            say()
+
         '''
         if i ==0:
             pts +=  [[p,p+k*tu,p+2*k*tu],[p+l*tv,p+l*tv+k*tu,p+l*tv+2*k*tu]]
@@ -147,7 +145,6 @@ def run_FreeCAD_Tape(self):
         ptsa=pts[1:]+[pts[0]]
         ptsa=pts
     
-    say(np.array(pts).shape)
     self.setData('Points_out',ptsa)
 
 
@@ -635,6 +632,7 @@ def run_commitFF(self):
 
 
 from inspect import signature
+
 def run_FreeCAD_Toy3(self):
     dit=self.getData('data')
     say(dit)
@@ -719,12 +717,6 @@ def run_FreeCAD_Toy3(self):
 
 
 
-#---------------------------
-#---------------------------
-from nodeeditor.say import *
-import FreeCAD
-import Part 
-import numpy as np
 
 
 class TopVertex(object):
@@ -1180,10 +1172,6 @@ def run_FreeCAD_elastic(self):
     if self.getData('hide'):
         clearcoin(self)
     self._lastrun=0
-
-
-
-
 
 
 

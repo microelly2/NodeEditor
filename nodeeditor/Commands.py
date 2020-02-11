@@ -1196,56 +1196,29 @@ def createAllNodesforTests():
 
     nn=[]
     
-    testall=False
-    if testall:
-        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic import nodelist
-        nn += nodelist()
-        
-        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
-        nn += nodelist()
-
-        
-        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
-        nn += nodelist()
-        
-
-
-        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs import nodelist
-        nn += nodelist()
-
-        # bis hiergher getestet
-
-    #----------------------------
-    # alles 
     nodelistcol=[]
     if 1:
-        
-        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D import nodelist
+  
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
         nodelistcol += nodelist()
-        
-        
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Combination import nodelist
         nodelistcol += nodelist()
         
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Conversion import nodelist
         nodelistcol += nodelist()
         
-        
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development import nodelist
         nodelistcol += nodelist()
-        
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_File import nodelist
         nodelistcol += nodelist()
-        
 
-        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
-        nodelistcol += nodelist()
-        
+        from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D import nodelist
+        nodelistcol += nodelist()       
         
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel import nodelist
         nodelistcol += nodelist()
-        
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image import nodelist
         nodelistcol += nodelist()
@@ -1253,12 +1226,8 @@ def createAllNodesforTests():
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Information import nodelist
         nodelistcol += nodelist()
         
-        
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Lambda import nodelist
         nodelistcol += nodelist()
-        
-        
-
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic import nodelist
         nodelistcol += nodelist()
@@ -1268,34 +1237,21 @@ def createAllNodesforTests():
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
         nodelistcol += nodelist()
-
-
         
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import nodelist
         nodelistcol += nodelist()
-        
             
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitive import nodelist
         nodelistcol += nodelist()
         
-        
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection import nodelist
         nodelistcol += nodelist()
-
         
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensor import nodelist
         nodelistcol += nodelist()
-        
-
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
         nodelistcol += nodelist()
-        
-
-
-
-
-
 
     
     x0=-300
@@ -1700,8 +1656,8 @@ def getdescription(pin):
     if not pin.description.endswith(' instance'):
         return pin.description
     descriptions = {
-		'u':'coordinate in uv space',
-		'v':'2nd coordinate in uv space',
+        'u':'coordinate in uv space',
+        'v':'2nd coordinate in uv space',
         'Shape_out': 'resulting shape',
         'Compound_out': 'resulting shape as compound',
         'Shape_in': 'reference shape',
@@ -1870,28 +1826,6 @@ def createNodeDocu(onlyNew=False):
             if c[7:] in ['PinsTest']:
                 continue 
 
-            
-            # if c[8:] not in ['ReduceCurve']:                continue
-
-            # di 17.12.
-            sels= ['centerOfMass','distToShape','IndexToList','Reduce']
-            sels+=['Transformation','repeatPattern','scaleVectors','moveVectors','listOfVectors']
-            sels+=['Object','Box','Cone','Sphere','Quadrangle']
-            sels+=['Object','Quadrangle']
-            sels=['Polygon','Console','VectorArray','BSplineCurve','BSplineSurface']
-            
-            sels=["Plot","ShapeIndex","ShapeExplorer",  "Compound",  "Edge", "Face",]
-
-            tt="FreeCAD_Parallelprojection,FreeCAD_Perspectiveprojection,FreeCAD_UVprojection,"
-
-            sels=[t[8:] for t in tt.split(',')]
-            sels=['Blinker','Receiver']
-            
-            
-            #if onlyNew and c[8:] not in sels:
-            #    continue
-
-
             try:
                 
                 
@@ -1903,6 +1837,8 @@ def createNodeDocu(onlyNew=False):
                 say("/*")
                 node = classNodes[c]("nodeName")
                 say("*/")
+                
+                say("[[::pyflow::categories#"+ classNodes[c].category()+"|"+ classNodes[c].category() +" ...]]")
                 
 #               if node.dok != 2: continue
                 try:
@@ -1967,6 +1903,7 @@ def createNodeDocu(onlyNew=False):
                 sayErr("problem for ",c)
 #   sayl("t3 done")
 
+
     say("======Nodes by category======")
     kl=list(kats.keys())
     kl.sort()
@@ -1993,26 +1930,49 @@ def createNodeDocu(onlyNew=False):
     say()
     say("number of nodes {}".format(len(cnks)))
     
+ 
+ 
+ 
     return
+    # nur kategorien ab hier
+    say("############################################")
+    say("############################################")
+    say("############################################")
+    
+    
 
     import PyFlow.Packages.PyFlowFreeCAD.Nodes
+
     for modul in [ 
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Lambda,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitive,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensor,
-                    PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal,
-            ]:
+
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Algebra,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Combination,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Conversion,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Data,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_File,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Flow,
+            
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Information,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Lambda,
+            
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitive,
+            
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensor,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal,
+            PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Voronoi,
+            
+
+        ]:
                 
         mn=modul.__name__
         k=mn[44:]
@@ -2022,16 +1982,22 @@ def createNodeDocu(onlyNew=False):
         say("=={}==".format(modul.__name__))
         say()
         say(modul.__doc__)
+
         
         try:
-            for c in kats[k]:
-                say("[[nodes::{}]]".format(c[8:]))
-                say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
-
-            say()
-            say("number of nodes:"+str(len(kats[k])))
+            _=kats[k]
         except:
-            sayW("!!problem ",k)
+            sayErr("ignore",k)
+            continue
+
+        for c in kats[k]:
+            say("[[nodes::{}]]".format(c[8:]))
+            say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
+
+        say()
+        say("number of nodes:"+str(len(kats[k])))
+
+        FreeCAD.kats=kats
 
 
     

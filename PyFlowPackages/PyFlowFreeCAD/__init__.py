@@ -50,46 +50,15 @@ _FOO_LIBS = {
 }
 
 
-# nodes
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import FreeCAD_Placement
+_NODES = {}
 
-_NODES = {
-    FreeCAD_Placement.__name__: FreeCAD_Placement,
-}
-
-'''
-# Liste der Module neu
-+Geom2D
-BSpline
-Combination
-Construction
-Conversion
-Curves
-+Details
-Development*
-+Document
-Generator
-+HighLevel
-+Information
-+Logic
-+numpy*
-+Placement
-+Points
-+Primitive
-+Projection
-+Rotation
-+Sensor
-+Signal
-Surface
-+Vector
-VectorArray2
-Voronoi
-
-'''
 nodelistcol=[]
 
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Algebra import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
 nodelistcol += nodelist()
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Combination import nodelist
@@ -98,26 +67,20 @@ nodelistcol += nodelist()
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Conversion import nodelist
 nodelistcol += nodelist()
 
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Data import nodelist
+nodelistcol += nodelist()
+
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_File import nodelist
 nodelistcol += nodelist()
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Flow import nodelist
 nodelistcol += nodelist()
 
-
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
-nodelistcol += nodelist()
-
-from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Data import nodelist
-nodelistcol += nodelist()
-
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D import nodelist
 nodelistcol += nodelist()
 
-
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel import nodelist
 nodelistcol += nodelist()
-
 
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image import nodelist
 nodelistcol += nodelist()
@@ -149,15 +112,14 @@ nodelistcol += nodelist()
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensor import nodelist
 nodelistcol += nodelist()
 
-
-
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
+nodelistcol += nodelist()
+
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Voronoi import nodelist
 nodelistcol += nodelist()
 
 
 if devmode():
-	pass
-	# development tools and nodes
 	from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development import nodelist
 	nodelistcol += nodelist()
 

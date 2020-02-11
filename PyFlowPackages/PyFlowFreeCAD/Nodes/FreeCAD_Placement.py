@@ -1,6 +1,7 @@
 '''
-Placement of a FreeCAd object
+Placement of a FreeCAD object
 '''
+
 from PyFlow.Core import NodeBase
 from PyFlow.Core.Common import *
 
@@ -44,11 +45,16 @@ def onChanged_example(self,*args, **kwargs):
     self.owningNode().reshape()
 
 
+
+
 class FreeCAD_Placement(FreeCadNodeBase2):
+    '''
+    Placement xyz
+    '''
 
-    def __init__(self, name):
+    def __init__(self, name='huhu'):
 
-        super(FreeCAD_Placement, self).__init__(name)
+        super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
 
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
@@ -57,8 +63,8 @@ class FreeCAD_Placement(FreeCadNodeBase2):
         self.pb = self.createInputPin('Rotation_Axis', 'VectorPin',FreeCAD.Vector(0,0,1))
         self.pc = self.createInputPin('Rotation_Angle', 'FloatPin',0.0)
 
-        self.pc.onChanged=onChanged_example
-        self.pc.onBeforeChange=onBeforeChange_example
+        #self.pc.onChanged=onChanged_example
+        #self.pc.onBeforeChange=onBeforeChange_example
 
         self.vobjname = self.createInputPin("objectname", 'StringPin')
         self.vobjname.setData(name)
@@ -70,12 +76,9 @@ class FreeCAD_Placement(FreeCadNodeBase2):
 
 
     @staticmethod
-    def category():
+    def xcategory():
         return 'Placement'
 
-    @staticmethod
-    def keywords():
-        return ['freecad']
 
     @staticmethod
     def description():
@@ -92,10 +95,18 @@ class FreeCAD_Placement(FreeCadNodeBase2):
         else:
             sayW("no object found",self.vobjname.getData())
 
+    @staticmethod
+    def category():
+        return 'Placement'
+
+
+
+
+
 
 
 def nodelist():
     return [
-            FreeCAD_Placement
+            FreeCAD_Placement,
                 
         ]

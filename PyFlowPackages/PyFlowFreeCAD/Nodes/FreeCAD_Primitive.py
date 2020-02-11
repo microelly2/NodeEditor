@@ -479,6 +479,79 @@ class FreeCAD_Elevation(FreeCadNodeBase2):
 
 
 
+class FreeCAD_VectorArray(FreeCadNodeBase2):
+    '''
+    Array of Vectors 
+    and a generated default BSplineSurface
+    '''
+
+    dok=4
+    def __init__(self, name="MyVectorArray"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        self.shapeout = self.createOutputPin('Shape_out', 'ShapePin')
+
+        a=self.createInputPin("vecA", 'VectorPin',FreeCAD.Vector(20,0,0))
+        a.description="step vector for the first dimension"
+        
+        a=self.createInputPin("vecB", 'VectorPin',FreeCAD.Vector(0,10,0))
+        a.description="step vector for the 2nd dimension"
+        
+        a=self.createInputPin("vecC", 'VectorPin')
+        a.description="step vector for the 3rd dimension"
+        
+        a=self.createInputPin("vecBase", 'VectorPin')
+        a.description="starting point of the array"
+        
+        a=self.createInputPin("countA", 'Integer',5)
+        a.description="number of elements in the first direction"
+        
+        a=self.createInputPin("countB", 'Integer',8)
+        a.description="number of elements in the 2nd direction"
+        
+        a=self.createInputPin("countC", 'Integer',1)
+        a.description="if c>1 a 3 dimensional arry of vector is created"
+        
+        a=self.createInputPin("randomX", 'Float',5)
+        a.description="adds some randomness onto the x coordinates of the points"
+        
+        a=self.createInputPin("randomY", 'Float',5)
+        a.description="adds some randomness onto the y coordinates of the points"
+        
+        a=self.createInputPin("randomZ", 'Float',5)
+        a.description="adds some randomness onto the z coordinates of the points"
+        
+
+        a=self.createInputPin("degreeA", 'Integer',3)
+        a.description="degree of the generated surface in u direction, degreeA = 0 means wire model"
+        
+        a=self.createInputPin("degreeB", 'Integer',3)
+        a.description="degree of the generated surface in u direction, degreeB = 0 means wire model"
+        
+        a=self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
+        a.description="2 or 3 dimensional array of vectors"
+        
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_VectorArray.__doc__
+
+    @staticmethod
+    def category():
+        return 'Primitive'
+
+    @staticmethod
+    def keywords():
+        return ['BSpline','Array','Surface','Grid','Part']
+
+
+
+
 
 
 def nodelist():
@@ -493,6 +566,7 @@ def nodelist():
                 FreeCAD_BSplineCurve,
                 FreeCAD_Simplex,
                 FreeCAD_Elevation,
+                FreeCAD_VectorArray,
 
 
         ]

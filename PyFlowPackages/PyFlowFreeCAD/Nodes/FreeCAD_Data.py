@@ -13,7 +13,6 @@ class FreeCAD_Repeat(FreeCadNodeBase2):
     list of the same element repeated
     '''
 
-    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -23,17 +22,24 @@ class FreeCAD_Repeat(FreeCadNodeBase2):
 
         a=self.createInputPin('in', 'AnyPin',constraint='1')   
         a.description="element to repeat"
+
         a=self.createOutputPin('out', 'AnyPin',structure=StructureType.Array,constraint='1')
-        a.description="count repetitions of elment in" 
+        a.description="__count__ repetitions of element __in__" 
+
         a=self.createInputPin('count', 'Integer',2) 
-        a.description="how often to repeat element in"
+        a.description="how often to repeat element __in__"
           
         a=self.createOutputPin('Shapes', 'ShapeListPin')
-        a.description="list of shapes if input element is a shape"
+        a.description="list of shapes if input element __in__ is a shape"
+
         
     @staticmethod
     def description():
         return FreeCAD_Repeat.__doc__
+
+    @staticmethod
+    def category():
+        return 'Data'
 
 
 
@@ -42,7 +48,6 @@ class FreeCAD_Index(FreeCadNodeBase2):
     returns item with a given index from a list
     '''
 
-    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -55,6 +60,7 @@ class FreeCAD_Index(FreeCadNodeBase2):
         
         a=self.createInputPin('index', 'Integer',2)
         a.description='position of the item in the list starting with 0'
+
         a=self.createOutputPin('item', 'AnyPin',constraint='1')
         a.description="element of list at index position"
         
@@ -62,6 +68,10 @@ class FreeCAD_Index(FreeCadNodeBase2):
     @staticmethod
     def description():
         return FreeCAD_Index.__doc__
+
+    @staticmethod
+    def category():
+        return 'Data'
 
 
 def nodelist():

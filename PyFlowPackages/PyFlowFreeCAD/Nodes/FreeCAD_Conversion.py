@@ -6,14 +6,11 @@ from PyFlow.Packages.PyFlowFreeCAD.Nodes import *
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Base import FreeCadNodeBase2
 
 
-
-
 class FreeCAD_Transformation(FreeCadNodeBase2):
     '''
     affine transformation matrix
     '''
 
-    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -24,17 +21,21 @@ class FreeCAD_Transformation(FreeCadNodeBase2):
         a=self.createInputPin('vectorX', 'VectorPin',FreeCAD.Vector(1,0,0))
         a.recomputeNode=True
         a.description="the result of the first base vector X=(1,0,0)"
+
         a=self.createInputPin('vectorY', 'VectorPin',FreeCAD.Vector(0,1,0))
         a.recomputeNode=True
         a.description="the result of the 2nd base vector Y=(0,1,0)"
+
         a=self.createInputPin('vectorZ', 'VectorPin',FreeCAD.Vector(0,0,1))
         a.recomputeNode=True
         a.description="the result of the 3rd base vector X=(0,0,1)"
+
         a=self.createInputPin('vector0', 'VectorPin',FreeCAD.Vector(0,0,0))
         a.recomputeNode=True
         a.description="movement vector after generic affine transformation"
         
-        self.createOutputPin('transformation', 'TransformationPin' )
+        a=self.createOutputPin('transformation', 'TransformationPin' )
+        a.description="a transformation matrix"
 
     @staticmethod
     def description():
@@ -45,14 +46,12 @@ class FreeCAD_Transformation(FreeCadNodeBase2):
         return 'Conversion'
 
 
-
 class FreeCAD_IndexToList(FreeCadNodeBase2):
     '''
     create a flag list with 1 for the numbers 
     and 0 for the others
     '''
 
-    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -64,6 +63,7 @@ class FreeCAD_IndexToList(FreeCadNodeBase2):
         a.enableOptions(PinOptions.AllowMultipleConnections)
         a.disableOptions(PinOptions.SupportsOnlyArrays)
         a.description="numbers where the flag should be 1 (the others are 0)"
+
         a=self.createOutputPin('flags', 'BoolPin',structure=StructureType.Array)
         a.description="list of 0's and 1's"
 
@@ -77,10 +77,9 @@ class FreeCAD_IndexToList(FreeCadNodeBase2):
 
 class FreeCAD_ListOfShapes(FreeCadNodeBase2):
     '''
-    create a list of shapes from single shapes
+    create a ordered list of shapes from single shapes
     '''
 
-    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -110,10 +109,9 @@ class FreeCAD_ListOfShapes(FreeCadNodeBase2):
 
 class FreeCAD_ListOfPlacements(FreeCadNodeBase2):
     '''
-    create a list of placements from  lists of data
+    create a orderd list of placements from  lists of data
     '''
 
-    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -151,7 +149,6 @@ class FreeCAD_Zip(FreeCadNodeBase2):
     create a list of vectors from the lists of coordinates
     '''
 
-    dok = 4
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -193,6 +190,7 @@ class FreeCAD_uv2xyz(FreeCadNodeBase2):
 
         a=self.createInputPin("points",'VectorPin', structure=StructureType.Array)
         a.description='list of vectors with uv coodinates - used are vectors with x=u, y=v'
+
         a=self.createInputPin("Shape",'ShapePin')
         a.description='the reference bspline surface'
       
@@ -221,6 +219,7 @@ class FreeCAD_xyz2uv(FreeCadNodeBase2):
 
         a=self.createInputPin("points",'VectorPin', structure=StructureType.Array)
         a.description="a list of vectors"
+
         a=self.createInputPin("Shape",'ShapePin')
         a.description='a bspline surface'
       
@@ -280,18 +279,151 @@ class FreeCAD_FlipSwapArray(FreeCadNodeBase2):
 
 
 
+class FreeCAD_ListOfVectors(FreeCadNodeBase2):
+    '''
+    create a ordered list of vectors from  single vectors
+    the order of the vector is defined by
+    the y coordinate of the vector nodes
+    '''
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createOutputPin('vectors', 'VectorPin', structure=StructureType.Array)
+        a.description='ordered vector list'
+
+        self.pas=self.createInputPin('pattern', 'VectorPin')
+        self.pas.enableOptions(PinOptions.AllowMultipleConnections)
+        self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
+        self.pas.description='here multiple vectors can be connected to get them ordered'
+
+    @staticmethod
+    def description():
+        return FreeCAD_ListOfVectorlist.__doc__
+
+    @staticmethod
+    def category():
+        return 'Conversion'
+
+
+class FreeCAD_ListOfVectorlist(FreeCadNodeBase2):
+    '''
+    create a list of vector lists,
+    this can be a 2 dimensional array of vectors
+    '''
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createOutputPin('vectorarray', 'VectorPin', structure=StructureType.Array)
+        a.description="the list of list of vectors"
+        
+
+        self.pas=self.createInputPin('vectorlists', 'VectorPin', structure=StructureType.Array)
+        self.pas.enableOptions(PinOptions.AllowMultipleConnections)
+        self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
+        self.pas.description='here multiple lists vectors can be connected to get them ordered'
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_ListOfVectorlist.__doc__
+
+    @staticmethod
+    def category():
+        return 'Conversion'
+
+
+class FreeCAD_MoveVectors(FreeCadNodeBase2):
+    '''
+    move a list of vectors
+    '''
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
+        a.description="list of vectors to move"
+        
+        self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
+
+        a=self.createInputPin('mover', 'VectorPin')
+        a.description="__mover__ is added to all __vectors__"
+
+        a.recomputeNode=True
+        a.description ="mover vector"
+
+    @staticmethod
+    def description():
+        return FreeCAD_MoveVectors.__doc__
+
+    @staticmethod
+    def category():
+        return 'Conversion'
+
+
+class FreeCAD_ScaleVectors(FreeCadNodeBase2):
+    '''
+    scale list of vectors
+    '''
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('vectors', 'VectorPin', structure=StructureType.Array)
+        a.description="list of vectors to scale"
+        
+        self.createOutputPin('vectors_out', 'VectorPin', structure=StructureType.Array)
+
+        a=self.createInputPin('scaler', 'VectorPin',FreeCAD.Vector(1,1,1))    
+        a.recomputeNode=True
+        a.description ="factors to scale the three  ain axes"
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_ScaleVectors.__doc__
+
+    @staticmethod
+    def category():
+        return 'Conversion'
+
+
+
 __all__= [
-		FreeCAD_FlipSwapArray,
-		FreeCAD_IndexToList,
-		FreeCAD_ListOfPlacements,
-		FreeCAD_ListOfShapes,
-		FreeCAD_Transformation,
-		FreeCAD_Zip,
-		
-		FreeCAD_xyz2uv,
-		FreeCAD_uv2xyz,
-		
-	]
+        FreeCAD_FlipSwapArray,
+        FreeCAD_IndexToList,
+        FreeCAD_ListOfPlacements,
+        FreeCAD_ListOfShapes,
+        FreeCAD_Transformation,
+        FreeCAD_Zip,
+        
+        FreeCAD_xyz2uv,
+        FreeCAD_uv2xyz,
+        
+        FreeCAD_ListOfVectors,
+        FreeCAD_ListOfVectorlist,
+        FreeCAD_MoveVectors,
+        FreeCAD_ScaleVectors,
+
+        
+    ]
 
 def nodelist():
-	return __all__
+    return __all__
