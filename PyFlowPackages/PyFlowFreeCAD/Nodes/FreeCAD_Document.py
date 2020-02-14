@@ -605,3 +605,15 @@ class FreeCAD_Conny(FreeCadNodeBase2):
         return ['Edge','FilledFace',]
 
 
+
+def nodelist():
+    return [
+			FreeCAD_View3D,
+			FreeCAD_bakery,
+			FreeCAD_Ref,
+			#FreeCAD_RefList,
+			FreeCAD_LOD,
+			
+			
+		]
+

@@ -134,8 +134,6 @@ class FreeCAD_UVprojection(FreeCadNodeBase2):
 
 
 
-
-
 def nodelist():
     return [
 			FreeCAD_Parallelprojection,

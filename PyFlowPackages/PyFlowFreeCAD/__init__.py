@@ -70,6 +70,10 @@ nodelistcol += nodelist()
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Data import nodelist
 nodelistcol += nodelist()
 
+from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Document import nodelist
+nodelistcol += nodelist()
+
+
 from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_File import nodelist
 nodelistcol += nodelist()
 
