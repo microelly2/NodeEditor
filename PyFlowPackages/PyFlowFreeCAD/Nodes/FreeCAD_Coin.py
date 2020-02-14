@@ -11,9 +11,10 @@ from nodeeditor.cointools import *
 
 class FreeCAD_ShapePattern(FreeCadNodeBase2):
     '''
-
+    repeat 3D coin objects along a list of positions
     '''
 
+    videos='https://youtu.be/PC6-fJGbFxg'
     dok = 0
     def __init__(self, name="MyToy"):
 
@@ -73,13 +74,17 @@ class FreeCAD_ShapePattern(FreeCadNodeBase2):
     def category():
         return 'Coin'
 
+    @staticmethod
+    def description():
+        return FreeCAD_ShapePattern.__doc__
+
 
 class FreeCAD_QuadMesh(FreeCadNodeBase2):
     '''
-
+    create a coin quadmesh for fast visualization
     '''
 
-    dok = 0
+    videos='https://youtu.be/B-d1-RsRhzw' 
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
@@ -87,42 +92,56 @@ class FreeCAD_QuadMesh(FreeCadNodeBase2):
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
         
         a=self.createInputPin('hide','Boolean')
+        a.description='hide the representation'
         
         a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description='array of points to build the grid' 
 
     @staticmethod
     def category():
         return 'Coin'
 
+    @staticmethod
+    def description():
+        return FreeCAD_QuadMesh.__doc__
 
+
+
+#+# dragger hand muss verbessert werden - eigen pin und kruemmung hinzunehmen
 
 class FreeCAD_Dragger(FreeCadNodeBase):
     '''
     a coin tool to display a draggable placement or a list of such placements
     '''
 
-    dok = 0
+    videos='https://youtu.be/W_i2X9FR9vY https://youtu.be/tX8y4BHj7BM https://youtu.be/EQ6_5EFUiI4 https://youtu.be/5vhxx2Mt9QI'
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
 
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         
-        self.inExec = self.createInputPin('start', 'ExecPin', None, self.start)
-        
-        
+        self.inExec = self.createInputPin('start', 'ExecPin', None, self.start)        
         self.inExec = self.createInputPin('stop', 'ExecPin', None, self.stop)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
    
         a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        a.description='one or more starting position for dragger(s)'
         a=self.createOutputPin('Points_out', 'VectorPin',structure=StructureType.Array)
+        a.description='the final positions of the draggers'
+        
         a=self.createOutputPin('point_out', 'VectorPin')
+        a.description='the final position of the first dragger'
      
         a=self.createOutputPin('hand', 'VectorPin',structure=StructureType.Array)
+        a.description='data for the final placement of the first dragger (includes tangent and curvature information'
+
         a=self.createOutputPin('hands', 'PlacementPin',structure=StructureType.Array)
+        a.description='data for the final placement of all draggers'
         
-        self.inExec = self.createInputPin('reset', 'ExecPin', None, self.resetpoints)
+        a = self.createInputPin('reset', 'ExecPin', None, self.resetpoints)
         a.setInputWidgetVariant("Slider")
+        
 
     def start(self, *args, **kwargs):
         import nodeeditor.dev
@@ -148,23 +167,22 @@ class FreeCAD_Dragger(FreeCadNodeBase):
     def category():
         return 'Coin'
 
+    @staticmethod
+    def description():
+        return FreeCAD_Dragger.__doc__
+
+
 class FreeCAD_Camera(FreeCadNodeBase2):
     '''
 
     '''
-
-    dok = 0
+    videos='https://youtu.be/feBz9Gp2GFU'
     def __init__(self, name="MyToy"):
 
         super(self.__class__, self).__init__(name)
         self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
         self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
 
-        #a=self.createInputPin('filename', 'String','/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/testdata.csv')
-        
-        #a=self.createInputPin('positionX', 'Float',0)
-        #a=self.createInputPin('positionY', 'Float',0)
-        #a=self.createInputPin('positionZ', 'Float',0)
         a=self.createInputPin('position', 'VectorPin')
         
         if 0:
@@ -173,10 +191,8 @@ class FreeCAD_Camera(FreeCadNodeBase2):
             a=self.createInputPin('directionZ', 'Float',0)
         
             a=self.createInputPin('usePointAt', 'Boolean',True)
-        #a=self.createInputPin('pointAtX', 'Float',0)
-        #a=self.createInputPin('pointAtY', 'Float',0)
-        a=self.createInputPin('angle', 'Float',0)
-    
+
+        a=self.createInputPin('angle', 'Float',0)   
         a=self.createInputPin('pointAt', 'VectorPin')
         
         # geht nicht
@@ -194,6 +210,11 @@ class FreeCAD_Camera(FreeCadNodeBase2):
     @staticmethod
     def category():
         return 'Coin'
+
+    @staticmethod
+    def description():
+        return FreeCAD_Camera.__doc__
+
 
 
 def nodelist():
