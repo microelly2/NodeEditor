@@ -52,10 +52,22 @@ def run_FreeCAD_Collect_Vectors(self, mode=None):
     #say(len(self.points),len(pointsd))
     if not self.inRefresh.hasConnections():
         self.outExec.call()
-    
 
 
 
+
+'''
+Discretizes the curve and returns a list of points.
+The function accepts keywords as argument:
+discretize(Number=n) => gives a list of 'n' equidistant points
+discretize(QuasiNumber=n) => gives a list of 'n' quasi equidistant points (is faster than the method above)
+discretize(Distance=d) => gives a list of equidistant points with distance 'd'
+discretize(Deflection=d) => gives a list of points with a maximum deflection 'd' to the curve
+discretize(QuasiDeflection=d) => gives a list of points with a maximum deflection 'd' to the curve (faster)
+discretize(Angular=a,Curvature=c,[Minimum=m]) => gives a list of points with an angular deflection of 'a'
+                                    and a curvature deflection of 'c'. Optionally a minimum number of points
+                                    can be set which by default is set to 2.        
+'''
 
 
 def run_FreeCAD_Discretize(self,*args, **kwargs):
@@ -64,7 +76,13 @@ def run_FreeCAD_Discretize(self,*args, **kwargs):
     edge=self.getPinObject("Wire")
     say(edge)
     if edge is None: return
-    ptsa=edge.discretize(count)
+    
+    
+    k=self.getData('deflection') 
+    if k>0:
+        ptsa=edge.discretize(QuasiDeflection=k*0.01)
+    else:
+		ptsa=edge.discretize(count)
 
     self.setPinObject("Shape_out",Part.makePolygon(ptsa))
     if 0:
