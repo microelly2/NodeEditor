@@ -47,7 +47,7 @@ from nodeeditor.say import *
 
 import nodeeditor
 if devmode:
-    #hgreload(nodeeditor.dev)
+    reload(nodeeditor.dev)
     reload(nodeeditor.dev_Development)
     pass
 
@@ -56,6 +56,7 @@ if devmode:
 #reload(nodeeditor.dev_Points)
 
 #reload(nodeeditor.dev_BSpline)
+
 
 #reload(nodeeditor.dev_Primitive)
 

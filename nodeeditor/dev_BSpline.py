@@ -33,90 +33,27 @@ def run_FreeCAD_BSplineSegment(self):
         sayErr("no Shape -- abort ")
         return
 
-    bs=sh.Surface.copy()
+    try:
+        bs=sh.Surface.copy()
+    except:
+        bc=sh.Curve.copy()
+        bs= None
 
-    ustart=self.getData('uStart')*0.01
-    vstart=self.getData('vStart')*0.01
-    uend=self.getData('uEnd')*0.01
-    vend=self.getData('vEnd')*0.01
-    [ua,ue,va,ve]=sh.ParameterRange
-    bs.segment(ua+(ue-ua)*ustart,ua+(ue-ua)*uend,va+(ve-va)*vstart,va+(ve-va)*vend)
-    self.setPinObject('Shape_out',bs.toShape())
+    if bs is None:
+        ustart=self.getData('uStart')*0.01
+        uend=self.getData('uEnd')*0.01
+        [ua,ue]=sh.ParameterRange
+        bc.segment(ua+(ue-ua)*ustart,ua+(ue-ua)*uend)
+        self.setPinObject('Shape_out',bc.toShape())
+    else:
+        ustart=self.getData('uStart')*0.01
+        vstart=self.getData('vStart')*0.01
+        uend=self.getData('uEnd')*0.01
+        vend=self.getData('vEnd')*0.01
+        [ua,ue,va,ve]=sh.ParameterRange
+        bs.segment(ua+(ue-ua)*ustart,ua+(ue-ua)*uend,va+(ve-va)*vstart,va+(ve-va)*vend)
+        self.setPinObject('Shape_out',bs.toShape())
      
-def run_FreeCAD_BSplineOffset(self):
-
-    sh=self.getPinObject("Shape") 
-    if sh is None:
-        sayErOb(self,"no Shape")    
-        return
-    
-    h=self.getData("height")
-
-    bs=sh.Surface
-    [ua,ue,va,ve]=sh.ParameterRange
-    
-    size=self.getData('sizeU')
-    sizeV=self.getData('sizeV')
-    say(size)
-
-    # point to offset
-    points=np.array([[bs.value(ua+(ue-ua)*u/size,va+(ve-va)*v/size) for v in range(size+1)]  for u in range(size+1)])
-
-    # find normals to expand
-    nomrs=[]
-    errors=[]
-    for u in range(size+1):
-        nus=[]
-        for v in range(size+1):
-            try:
-                nus += [bs.normal(ua+(ue-ua)*u/size,va+(ve-va)*v/size)]
-            except:
-                say("Error normal for",u,v)
-                errors +=[(u,v)]
-                nus += [FreeCAD.Vector()]
-        nomrs += [nus]       
-
-    norms=np.array(nomrs)
-    
-    # reair invalid normals 
-    for (u,v) in errors:
-        say(size,u,v)
-        du=1
-        dv=1
-        if u==size:
-            du =-1
-        if v==size:
-            dv =-1
-        say("new normal used",norms[u+du,v+dv])
-        norms[u,v]=norms[u+du,v+dv]
-
-    # calculate secure height without collsions
-    # #+#todo: improve algorithm to handle collisions
-    rs=[]
-    for u in range(1,size):
-        for v in range(1,size):                
-            n=FreeCAD.Vector(norms[u,v])
-            a=FreeCAD.Vector(*(points[u+1,v]-points[u,v]))
-            aa=a.normalize()
-            rs +=[0.5*a.Length/abs(aa.dot(n))]
-            
-    say("offset works for maximum height with out collisions", min(rs))
-
-
-    newpts=points+ norms*h
-    self.setData('Points_out',newpts.tolist())   
-
-    bsa=noto.createBSplineSurface(newpts,udegree=1,vdegree=1)
-    self.setPinObject('Shape_out',bsa.toShape())
-
-    # test quality
-    testpts=np.array([[bsa.value(ua+(ue-ua)*u/size,va+(ve-va)*v/size) for v in range(size+1)]  for u in range(size+1)])
-    ptsn=testpts.reshape((size+1)**2,3)
-    
-    dists=[sh.distToShape(Part.Vertex(*p))[0] for p in ptsn]
-    say("distance expected min max",round(abs(h),2),round(min(dists),2),round(max(dists),2))
-
-    
     
     
      
@@ -1116,3 +1053,156 @@ def run_FreeCAD_UVGrid(self,*args, **kwargs):
 
 def run_FreeCAD_FillEdge(self):
     sayW("Fill Edge not yet implemented")
+
+
+
+
+def run_FreeCAD_CurveOffset(self):
+    import Part
+   
+
+    edge=self.getPinObject("Shape_in")
+    
+    if edge is None:
+        sayW("no shape edge")
+        return
+
+    Z=FreeCAD.Vector(0,0,1)
+    col=[]
+
+    lastdd=100
+
+    edstart=edge
+    ed=edstart
+
+    loops=self.getData("loops")
+    for i in range(loops):
+
+        cs=ed.Curve
+
+        size=300
+
+        norms=[]
+        
+        if  i > 1:
+            #step=self.getData("step")/10
+            #size=int(round(edstart.Length/step))
+            #tas=[]
+            say("get distant points size ",size)
+            points=cs.discretize(size+1)
+        
+        else:
+            deflection=self.getData("deflection")
+            points=cs.discretize(QuasiDeflection=deflection*0.001)
+        
+        for p in points:
+            v=cs.parameter(p)
+            t =cs.tangent(v)[0]
+            norms += [t.cross(Z)]
+        
+        dd=self.getData("mindd")/100
+        
+        if self.getData('flip'):
+            dd = -dd
+
+        distA=self.getData("distA")
+
+        pts=[]
+        ptserr=[]
+
+        if 1:
+            for n,p in zip(norms,points):
+                neup=p+n*dd
+                zp=edstart.distToShape(Part.Vertex(*neup))[1][0][0]
+
+                if (p-zp).Length >distA*0.01:
+                    #say("ABweichung",(p-zp).Length)
+                    #say("p",p)
+                    #say("neup",neup)
+                    #say("zp",zp)
+                    #say(edstart.distToShape(Part.Vertex(*neup)))
+                    if i == 0:
+                        ptserr += [neup]
+                    else:
+                        pts +=[neup]
+                else:
+                    pts +=[neup]
+
+
+
+        lp=len(pts)
+
+        def checkcross(A,B,C,D):
+            ''' schneiden sich die strecken AC und BD innen?'''
+
+            a=C-A
+            b=B-D
+            c=B-A
+
+            aa=np.array([[a.x,a.y],[b.x,b.y]])
+            aa=np.array([[a.x,b.x],[a.y,b.y]])
+            bb=np.array([c.x,c.y])
+            x=np.linalg.solve(aa,bb)
+
+            fa= 0<x[0] and x[0]<1
+            fb= 0<x[1] and x[1]<1
+            
+            return fa and fb
+
+        def cut(i,j):
+
+                A=pts[i]
+                B=pts[i+1]
+                C=pts[j]
+                D=pts[j+1]
+                
+                return checkcross(A,C,B,D)
+
+        fehler=[0]
+        for i in range(lp-2):
+            for j in range(lp-2):
+                if i >= j:
+                    continue
+                if cut(i,j):
+                    fehler += [i,j]
+
+        fehler += [-1]
+
+        neupol=[]
+
+        for l in range(int(len(fehler)/2)):
+            neupol += pts[fehler[2*l]:fehler[2*l+1]]
+
+        neupol += pts[fehler[-1]:]
+        pts=neupol
+
+        col= [Part.makePolygon(pts)]
+        FreeCADGui.updateGui()
+
+        bc=Part.BSplineCurve()
+        
+        bc.buildFromPoles(pts)
+        ed=bc.toShape()
+
+        if not self.getData('asPolygon'):
+            col = [ed]
+
+        self.setPinObject("Shape_out",Part.Compound(col))
+        self.outExec.call()
+  
+    
+    ptsn=bc.discretize(size+1)
+
+    dists=[edstart.distToShape(Part.Vertex(*p))[0] for p in ptsn]
+    say("distance expected min max",abs(dd),round(min(dists),2),round(max(dists),2))
+    
+
+
+
+
+
+
+
+
+
+

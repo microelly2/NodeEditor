@@ -160,6 +160,13 @@ class FreeCAD_Discretize(FreeCadNodeBase2):
 
         a=self.createInputPin("count", 'Integer', True)
         a=self.createInputPin("Wire", 'ShapePin', True)
+        
+        
+        a=self.createInputPin('deflection',"Integer")
+        a.setInputWidgetVariant("Slider")
+        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+        a.setInputWidgetVariant("Simple2")
+
 
         self.createOutputPin('Shape_out', 'ShapePin')
         self.createOutputPin('Compound_out', 'ShapePin') # Faces compound without tolerance
@@ -1135,6 +1142,74 @@ class FreeCAD_Nurbs(FreeCadNodeBase2):
     def category():
         return 'Nurbs'
 
+class FreeCAD_CloseFace(FreeCadNodeBase2):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+   
+        a=self.createInputPin('Shape_in', 'ShapePin')
+        a=self.createInputPin('swap', 'Boolean')
+        a=self.createInputPin('tangentForce', 'Integer',50)
+        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+
+        
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+    @staticmethod
+    def description():
+        return FreeCAD_CloseFace.__doc__
+
+    @staticmethod
+    def category():
+        return 'Nurbs'
+
+
+class FreeCAD_CurveOffset(FreeCadNodeBase2):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+   
+        a=self.createInputPin('Shape_in', 'ShapePin')
+        a=self.createInputPin('flip', 'Boolean')
+        a=self.createInputPin('asPolygon', 'Boolean')
+        a=self.createInputPin('loops', 'Integer',10)
+        a.annotationDescriptionDict={ "ValueRange":(0,100)}
+
+        a=self.createInputPin('deflection', 'Integer',10)
+        a.annotationDescriptionDict={ "ValueRange":(1,100)}
+        
+        a=self.createInputPin('mindd', 'Integer',10)
+        a.annotationDescriptionDict={ "ValueRange":(1,100)}
+        
+        a=self.createInputPin('distA', 'Integer',10)
+        a.annotationDescriptionDict={ "ValueRange":(1,100)}
+        # Wegnehmen zu naher Punkte - Buchten entfernen
+        
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+    @staticmethod
+    def description():
+        return FreeCAD_CloseFace.__doc__
+
+    @staticmethod
+    def category():
+        return 'BSpline'
 
 
 def nodelist():
@@ -1169,5 +1244,7 @@ def nodelist():
                 FreeCAD_BSplineOffset,
                 FreeCAD_Nurbs,
                 
+                FreeCAD_CloseFace,
+                FreeCAD_CurveOffset
                 #FreeCAD_Placement3
         ]
