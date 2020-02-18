@@ -20,39 +20,6 @@ print ("reloaded: "+ __file__)
 from nodeeditor.cointools import *
 
 
-def run_FreeCAD_Collect_Vectors(self, mode=None):
-    #say("collect",mode)
-    if mode=="reset":
-        self.points=[]
-        return
-
-
-    maxSize=self.getData("maxSize")
-    red=self.getData("reduce")
-    point = self.getData("point")
-    try:
-        if (self.points[-1]-point).Length <0.01:
-#           say("zu dicht")
-            return
-    except:
-        pass
-
-    # point.y *= -1.
-
-    self.points += [point]
-    #say(len(self.points))
-    if maxSize >0 and len(self.points)>maxSize:
-            self.points = self.points[len(self.points)-maxSize:]
-    if len(self.points)>2 and red>2:
-        pol=Part.makePolygon(self.points)
-        pointsd=pol.discretize(red)
-    else:
-        pointsd=self.points
-    self.setData("points",pointsd)
-    #say(len(self.points),len(pointsd))
-    if not self.inRefresh.hasConnections():
-        self.outExec.call()
-
 
 
 
@@ -82,7 +49,7 @@ def run_FreeCAD_Discretize(self,*args, **kwargs):
     if k>0:
         ptsa=edge.discretize(QuasiDeflection=k*0.01)
     else:
-		ptsa=edge.discretize(count)
+        ptsa=edge.discretize(count)
 
     self.setPinObject("Shape_out",Part.makePolygon(ptsa))
     if 0:

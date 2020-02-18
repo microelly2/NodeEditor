@@ -25,6 +25,7 @@ if devmode:
 #import nodeeditor.dev_  as 
 
 import nodeeditor.dev_Generator as Generator
+import nodeeditor.dev_Construction as Construction
 
 import nodeeditor.dev_Information  as Information
 
@@ -48,7 +49,7 @@ from nodeeditor.say import *
 import nodeeditor
 if devmode:
     reload(nodeeditor.dev)
-    reload(nodeeditor.dev_Development)
+    #reload(nodeeditor.dev_Development)
     pass
 
 
@@ -57,6 +58,7 @@ if devmode:
 
 #reload(nodeeditor.dev_BSpline)
 
+#reload(nodeeditor.dev_Sensor)
 
 #reload(nodeeditor.dev_Primitive)
 

@@ -550,8 +550,8 @@ class FreeCAD_ToyWidgets(FreeCadNodeBase2):
 def nodelist():
     return [
     
-    FreeCAD_PinsTest,    
-    FreeCAD_ToyWidgets,
+    #FreeCAD_PinsTest,    
+    #FreeCAD_ToyWidgets,
     
     FreeCAD_Toy3,
  

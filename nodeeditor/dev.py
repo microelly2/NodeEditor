@@ -2164,7 +2164,7 @@ def run_FreeCAD_Zip(self):
 
 
 
-def run_FreeCAD_ImportFile(self):
+def run_FreeCAD_ImportCSVFile(self):
 
     try:
         self.last
@@ -2859,6 +2859,11 @@ def run_FreeCAD_Nurbs(self):
     #shape=FreeCAD.ActiveDocument.Cone.Shape.Face1
     #shape=FreeCAD.ActiveDocument.Sphere.Shape.Face1
     shape=self.getPinObject("shape")
+    if shape is None:
+        sayErOb(self,"no shape")
+        return
+
+        return
     n=shape.toNurbs()
     say(n.Faces)
     say(n.Edges)
@@ -3289,7 +3294,10 @@ from nodeeditor.tools import *
 
 def run_FreeCAD_CloseFace(self):
 
-    fac=self.getPinObject('shape')
+    fac=self.getPinObject('Shape_in')
+    if fac is None:
+        sayW("no Shape_in")
+        return
     swap=self.getData('swap')
     force=self.getData("tangentForce")*0.01
 
@@ -3453,5 +3461,73 @@ def run_FreeCAD_BSplineOffset(self):
     say("distance expected min max",round(abs(h),2),round(min(dists),2),round(max(dists),2))
 
     
+
+
+    
+def run_FreeCAD_Tube(self):
+    #+# todo better normal for 3d curve
+    floats=self.getData('parameter')
+    radius=self.getData('radius')
+
+    cc=self.getPinObject("backbone")
+    if cc is None:
+        say("no backbone curve abort")
+        return
+    say("expected parameter range", cc.ParameterRange)
+    curve=cc.Curve
+    pts=[]
+    for f,r  in zip(floats,radius):
+        f *= 0.1
+        r *= 0.1
+        p=curve.value(f)
+        t=curve.tangent(f)[0]
+        if 0:
+            h=FreeCAD.Vector(0,0,1)
+            n=t.cross(h)
+        else:
+            n=curve.normal(f)
+            h=n.cross(t)
+            
+        pts += [[p-h*r,p+n*r,p+h*r,p-n*r]]
+    
+    # aufrichten normale
+    z=pts[0]
+    pts2 =[z]
+    for i in range(len(pts)-1):
+        a=z
+        b=pts[i+1]
+        sums=[]
+        for j in range(4):
+            sums +=[sum([(a[k-j]-b[k]).Length for k in range(4)])]
+        say(sums.index(min(sums)))
+        index=sums.index(min(sums))
+        z=b[index:]+b[:index]
+        pts2 += [z]
+        
+    self.setData("points",pts2)
+    
+
+
     
     
+def run_FreeCAD_Reduce(self):
+
+    flags=self.getData("selection")
+    eids=self.getData("shapes")
+    say(self.name)
+    if eids is None:
+        return
+    shapes=[store.store().get(eid)  for eid in eids]
+    reduced=[]
+    for f,s in zip(shapes,flags):
+        if s:
+             reduced += [f]
+    try:
+        rc=Part.Compound(reduced)
+    except:
+       rc=Part.Shape()
+    say("!!rc=",rc)
+    self.setPinObject("Shape_out",rc)
+    self.setColor(b=0,a=0.4)
+    
+
