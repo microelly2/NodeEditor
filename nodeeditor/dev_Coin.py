@@ -216,3 +216,337 @@ def run_FreeCAD_Dragger(self,**k):
         say("create preview")
         self.preview()
 
+
+
+
+
+def run_FreeCAD_QuadMesh(self):
+
+    try:
+        FreeCADGui.ActiveDocument.ActiveView.getSceneGraph().removeChild(self.gg)
+    except:
+        pass
+
+    if self.getData('hide'):
+        return
+
+    points=self.getData('points')
+    vps=np.array(points)
+    try:
+        (a,b,c)=vps.shape
+    except:
+        sayErOb(self,"points have no grid structure")
+        return
+        
+    tt=vps.reshape(a*b,3)
+
+    result = coin.SoSeparator()
+
+    myMaterial = coin.SoMaterial()
+    myMaterial.diffuseColor = (.78, .57, .11)
+    result.addChild(myMaterial)
+
+    myCoords = coin.SoCoordinate3()
+    myCoords.point.setValues(0, a*b, tt)
+    result.addChild(myCoords)
+
+    myQuadMesh = coin.SoQuadMesh()
+    myQuadMesh.verticesPerRow = b
+    myQuadMesh.verticesPerColumn = a
+
+    result.addChild(myQuadMesh)
+
+    sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+    sg.addChild(result)
+    self.gg=result
+        
+
+
+    
+def run_FreeCAD_ShapePattern(self):
+
+    ptsa=np.array(self.getData('points'))
+
+    # todo 3 kinds of input: single vector, list of vectors, array of vectors
+    
+    try:
+        (a,b,c)=ptsa.shape
+        pts=ptsa.reshape(a*b,3)
+    except:
+        pts=ptsa
+    
+    if ptsa.shape==(3):
+        say("single point")
+        pts=np.array([FreeCAD.Vector(ptsa)]).reshape(1,3)
+    
+    
+    ptsa=np.array(self.getData('forces'))
+
+    try:
+        (a,b,c)=ptsa.shape
+        diffs=ptsa.reshape(a*b,3)
+    except:
+        diffs=ptsa
+    
+    try:
+        if diffs.shape==pts.shape:
+            diffs=[a-b for a,b in zip(diffs,pts)]
+            say("diffs berechnet")
+            say(diffs[:4])      
+        else:
+            diffs=[FreeCAD.Vector(0,0,10+3*random.random()) for p in pts]    
+    except:
+        diffs=[FreeCAD.Vector(0,0,10+3*random.random()) for p in pts]    
+    
+    # single value or list
+    radius=self.getData('radius')
+    if isinstance(radius, list):
+        rr=radius[0]
+    else:
+        rr=radius
+
+    w=self.getData('width')
+    w=(w+101)/201
+
+    h=self.getData('height')
+    h=(h+101)/201*50
+    
+    rand=(self.getData('randomize')+100)/200
+
+    colors=[(0.5+random.random()*0.3,0.6+random.random()*0.4,random.random()*0.3) for p in pts]
+    radius=[ (rand*(0.5-random.random())+1)*rr*w for p in pts]
+ 
+
+    try:
+        sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+        sg.removeChild(self.sg2)
+    except:
+        say("noch kein sdfgd")
+
+    if self.getData('hide'):
+        return
+   
+    
+
+    a=time.time()
+    sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
+    sg2= coin.SoSeparator()
+
+    mode=self.getData('mode')
+
+    for p,c,r,d in zip(pts,colors,radius,diffs):
+            
+            trans = coin.SoTranslation()
+            p=FreeCAD.Vector(p)
+            
+            if mode =='sphere':
+                trans.translation.setValue(p[0],p[1],p[2])
+                cub = coin.SoSphere()
+                cub.radius.setValue(2*r)
+                col = coin.SoBaseColor()
+                col.rgb=(c[2],c[0],c[1])
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(trans)
+                myCustomNode.addChild(cub)
+
+            elif mode =='line':
+                p1=(p[0],p[1],p[2])
+                p1=(p[0]+d[0],p[1]+d[1],p[2]+d[2]*h)
+                p2=(p[0],p[1],p[2])
+                dash = coin.SoSeparator()
+                v = coin.SoVertexProperty()
+                v.vertex.set1Value(0, p1)
+                v.vertex.set1Value(1, p2)
+                l = coin.SoLineSet()
+                l.vertexProperty = v
+                dash.addChild(l)
+                drawstyle = coin.SoDrawStyle()
+                drawstyle.lineWidth =2
+                col = coin.SoBaseColor()
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(drawstyle)
+                myCustomNode.addChild(trans)
+                myCustomNode.addChild(dash)
+
+            elif mode =='cube':
+                trans.translation.setValue(p[0],p[1],p[2]+0.5*h)
+                cub = coin.SoCube()
+                cub.width.setValue(2*r)
+                cub.height.setValue(2*r)
+                cub.depth.setValue(h)
+                col = coin.SoBaseColor()
+                col.rgb=(c[2],c[0],c[1])                
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(trans)
+                myCustomNode.addChild(cub)
+
+            elif mode =='cone':
+                trans.translation.setValue(p[0],p[1],p[2]+0.5*h)
+                cub = coin.SoCone()
+                cub.height.setValue(h)
+                cub.bottomRadius.setValue(2*r)
+                myRotation = coin.SoRotationXYZ()
+                myRotation.angle = coin.M_PI/2
+                myRotation.axis = coin.SoRotationXYZ.X
+                col = coin.SoBaseColor()
+                col.rgb=(c[2],c[0],c[1])
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(trans)
+                myCustomNode.addChild(myRotation) 
+                myCustomNode.addChild(cub)
+
+            elif mode =='human':
+                say('not yet implemented')
+                #+# todo
+                
+            else: # mode == 'tree'
+                trans.translation.setValue(p[0],p[1],p[2]+1*h)
+                cub = coin.SoCone()
+                cub.height.setValue(2*h)
+                cub.bottomRadius.setValue(2*r)
+                myRotation = coin.SoRotationXYZ()
+                myRotation.angle = coin.M_PI/2
+                myRotation.axis = coin.SoRotationXYZ.X
+                col = coin.SoBaseColor()
+                col.rgb=(c[2],c[0],c[1])
+                trans2 = coin.SoTranslation()
+                trans2.translation.setValue(0,0.6*h,0)
+                cub2 = coin.SoCone()
+                cub2.height.setValue(1*h)
+                cub2.bottomRadius.setValue(1.4*r)
+                myCustomNode = coin.SoSeparator()
+                myCustomNode.addChild(col)
+                myCustomNode.addChild(trans)
+                myCustomNode.addChild(myRotation) 
+                myCustomNode.addChild(cub)
+                myCustomNode.addChild(trans2)
+                myCustomNode.addChild(cub2)
+            
+            sg2.addChild(myCustomNode)
+
+    sg.addChild(sg2)
+    self.sg2=sg2
+
+
+
+
+def run_FreeCAD_Camera(self):
+    '''
+    v=Gui.ActiveDocument.ActiveView
+    cam=v.getCameraNode()
+
+
+    cam.scaleHeight(23)
+
+    cam.viewBoundingBox
+
+
+    cam.pointAt
+    # SoCamera::pointAt(SbVec3f const &)
+
+
+     cam.position
+     
+    cam.position.get() -> string
+    cam.orientation.get()
+
+
+    cam.position.set("20 4 5")
+
+    v.setCamera("SoPerspectiveCamera")
+
+    cam.heightAngle.get()
+    '''
+  
+    v=FreeCADGui.ActiveDocument.ActiveView
+    
+    #FreeCADGui.activeDocument().activeView().setCameraType("Perspective")
+    
+    cam=v.getCameraNode()
+    say(cam.__class__.__name__)
+    typ=cam.__class__.__name__
+    
+    if 0:
+        dx=self.getData('directionX')
+        dy=self.getData('directionY')
+        dz=self.getData('directionZ')
+        r=FreeCAD.Rotation(FreeCAD.Vector(0,0,-1),FreeCAD.Vector(dx,dy,dz))
+        cdir="{} {} {} {}".format(r.Axis.x,r.Axis.y,r.Axis.z,r.Angle)
+        cam.orientation.set(cdir)
+        say("direction",cam.orientation.get())
+    
+    cam.orientation.set("0 0 1 0")
+    
+    pos=self.getPinByName('position')
+    if 0 and len(pos.affected_by) == 0:
+        x=self.getData('positionX')
+        y=self.getData('positionY')
+        z=self.getData('positionZ')
+    else:
+         (x,y,z)=self.getData("position")   
+    
+
+
+    pos="{} {} {}".format(x,y,-z)
+    say("Position",pos)
+    cam.position.set(pos)
+
+    if typ != "SoPerspectiveCamera":
+        cam.height.set(str(z))
+    else:
+        say("angle",cam.heightAngle.get())
+        cam.heightAngle.set(str(self.getData("angle")/50))
+        #cam.widthAngle.set(str(self.getData("angle")/50))
+        say("angle",cam.heightAngle.get())
+        # das hat keinen einflass..
+        #say("aspect ratio",cam.aspectRatio.get())
+        #cam.aspectRatio.set("0.2")
+        
+    
+    
+
+    
+    
+    
+
+    if 1:# self.getData('usePointAt'):
+        pos=self.getPinByName('pointAt')
+        if 0 and len(pos.affected_by) == 0:
+            vec=coin.SbVec3f(self.getData('pointAtX'),self.getData('pointAtY'),self.getData('pointAtZ'))
+        else:
+            vec=coin.SbVec3f(*self.getData("pointAt" ) ) 
+        
+        cam.pointAt(vec)
+        roll=0
+        cam.pointAt(vec,coin.SbVec3f(0,0.0+math.sin(math.pi*roll/180),0.0+math.cos(math.pi*roll/180)))
+    
+
+    say("-----------------")
+    #cam.nearDistance.set('0')
+    #say("ND",cam.nearDistance.get())
+    cam.farDistance.set('10000')
+    #say("FD",cam.farDistance.get())
+    #say(v)
+    
+    if self.getData("trackimages"):
+        
+        fn=self.getData("trackName")
+        dn="/tmp/{}".format(fn)
+        dirname = os.path.dirname(dn) 
+        if not path.exists(dirname):
+            os.mkdir(dirname)
+        if self.getData("timestamp"):
+            tt=str(time.time())
+        else:
+            tt=''
+            
+        v.saveImage("/tmp/{}{}.png".format(fn,tt))
+        self.setData("image","/tmp/{}{}.png".format(fn,tt))
+
+
+
+

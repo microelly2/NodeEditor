@@ -56,7 +56,7 @@ class FreeCAD_PinsTest(FreeCadNodeBase2):
             p=self.createOutputPin(pn+"_out_array", pn+'Pin', structure=StructureType.Array)
 #           p=self.createOutputPin(pn+"_out_dict", pn+'Pin', structure=PinStructure.Dict)
 
-		#a pin for different types
+        #a pin for different types
         self.createInputPin("FloatOrInt","AnyPin", None,  supportedPinDataTypes=["FloatPin", "IntPin"])
         self.createInputPin("Shape_or_Rotation","AnyPin", None,  supportedPinDataTypes=["ShapePin", "RotationPin"])
 
@@ -544,6 +544,39 @@ class FreeCAD_ToyWidgets(FreeCadNodeBase2):
 
 
 
+class FreeCAD_StepData(FreeCadNodeBase2):
+    '''
+    '''
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        #self.inExec = self.createInputPin("create Shape", 'ExecPin', None, self.createShape)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        
+        a = self.createInputPin("filename", 'StringPin',
+                "/media/thomas/Intenso1/stel-stlfc/product.step")
+
+        self.process = self.createInputPin('process', 'Boolean')
+        a=self.createOutputPin('Points_out', 'VectorPin',structure=StructureType.Array)
+        
+
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+        
+        
+
+
+    @staticmethod
+    def description():
+        return FreeCAD_StepData.__doc__
+
+    @staticmethod
+    def category():
+        return 'Development'
+
+
+
 
 
 
@@ -563,4 +596,5 @@ def nodelist():
     ##FreeCAD_ReduceSurface,
     FreeCAD_elastic,
     FreeCAD_Forum,
+    FreeCAD_StepData
 ]

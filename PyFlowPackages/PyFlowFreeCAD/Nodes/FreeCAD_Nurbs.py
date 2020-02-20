@@ -1169,7 +1169,7 @@ class FreeCAD_CloseFace(FreeCadNodeBase2):
 
     @staticmethod
     def category():
-        return 'Nurbs'
+        return 'BSpline'
 
 
 class FreeCAD_CurveOffset(FreeCadNodeBase2):

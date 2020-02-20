@@ -55,3 +55,79 @@ def run_FreeCAD_Collect_Vectors(self, mode=None):
     if not self.inRefresh.hasConnections():
         self.outExec.call()
 
+def run_FreeCAD_Collect_Data(self, mode=None):
+
+    if mode=="reset":
+        self.points=[]
+    
+    else:
+
+        maxSize=self.getData("maxSize")    
+        point = self.getData("data")
+
+        self.points += [point]
+        if maxSize >0 and len(self.points)>maxSize:
+                self.points = self.points[len(self.points)-maxSize:]   
+
+    self.setData("collection",self.points)
+
+    if not self.inRefresh.hasConnections():
+        self.outExec.call()
+
+def run_FreeCAD_ImportCSVFile(self):
+
+    try:
+        self.last
+    except:
+        self.last=time.time()
+        
+    filename=self.getData('filename')
+    
+    (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(filename)
+    #say(os.stat(filename))
+
+    if not self.getData('force') and self.last > mtime:
+        sayErr("---------------not new")
+        return
+        
+    self.last = time.time()
+
+    f=open(filename,"r")
+    contents =f.read()
+    ls=contents.splitlines()
+    rr=[]
+    vs=[]
+    seps=self.getData('separator')
+    sepk={
+        'tabulator':'\t',
+        'space':' ',
+        'semicolon':';',
+        'comma':',',
+    }    
+        
+    sep=sepk[seps]
+    for l in ls:
+        try:
+            if l.startswith('#'):
+                continue
+            rr += [[float(a) for a in l.split(sep)]]
+            ff=[float(a) for a in l.split(sep)]
+        except:
+            pass
+        vs += [FreeCAD.Vector(*ff[:3])]
+        
+    self.setData('data',rr)
+    self.setData('points',vs)
+    say(vs)
+
+
+
+    if 0: # tessellation tests temp
+        tt=FreeCAD.ActiveDocument.BePlane.Shape.Face1
+        ta=time.time()
+        zz=tt.tessellate(0.1)
+        say("Tessellate",len(str(zz)))
+        
+        say(time.time()-ta)
+    
+

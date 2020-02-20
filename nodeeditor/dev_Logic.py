@@ -150,3 +150,27 @@ def run_FreeCAD_False(self):
     self.setData("false",[False]*self.getData("count"))
     self.setColor(b=0,a=0.4)
     
+
+
+def run_FreeCAD_FloatToy(self):
+    #+# todo add scale and start parameter proc
+    floats=[]
+    start=self.getData("start")
+    scale=self.getData("scale")
+    limit=self.getData("limit")
+    for i in range(limit):
+        if i==0:
+            v=self.getData("float")
+        else:
+            v=self.getData("float"+str(i))
+        floats += [v*scale+start]
+    
+
+    trailer=self.getData("trailer")
+    say("trailer",trailer)
+    floats += trailer
+    say("len floats",len(floats))
+
+    self.setData("floats",floats)
+    self.setColor(b=0,a=0.4)
+    

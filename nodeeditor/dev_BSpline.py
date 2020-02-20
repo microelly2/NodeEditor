@@ -1198,6 +1198,225 @@ def run_FreeCAD_CurveOffset(self):
     
 
 
+def run_FreeCAD_BSplineOffset(self):
+    sayl()
+
+    sh=self.getPinObject("Shape") 
+    if sh is None:
+        sayErOb(self,"no Shape")    
+        return
+    
+    h=self.getData("height")
+
+    bs=sh.Surface
+    [ua,ue,va,ve]=sh.ParameterRange
+    
+    size=self.getData('sizeU')
+    sizeV=self.getData('sizeV')
+    say(size)
+
+    # point to offset
+    points=np.array([[bs.value(ua+(ue-ua)*u/size,va+(ve-va)*v/size) for v in range(size+1)]  for u in range(size+1)])
+
+    # find normals to expand
+    nomrs=[]
+    errors=[]
+    for u in range(size+1):
+        nus=[]
+        for v in range(size+1):
+            try:
+                nus += [bs.normal(ua+(ue-ua)*u/size,va+(ve-va)*v/size)]
+            except:
+                say("Error normal for",u,v)
+                errors +=[(u,v)]
+                nus += [FreeCAD.Vector()]
+        #nus=FreeCAD.Vector(0,0,10)
+        nomrs += [nus] 
+              
+
+    norms=np.array(nomrs)
+    
+    # reair invalid normals 
+    for (u,v) in errors:
+        say(size,u,v)
+        du=1
+        dv=1
+        if u==size:
+            du =-1
+        if v==size:
+            dv =-1
+        say("new normal used",norms[u+du,v+dv])
+        norms[u,v]=norms[u+du,v+dv]
+
+    # calculate secure height without collsions
+    # #+#todo: improve algorithm to handle collisions
+    if 1:
+        rs=[]
+        for u in range(1,size):
+            for v in range(1,size):                
+                n=FreeCAD.Vector(norms[u,v])
+                a=FreeCAD.Vector(*(points[u+1,v]-points[u,v]))
+                aa=a.normalize()
+                rs +=[0.5*a.Length/abs(aa.dot(n))]
+                
+        say("Q offset works for maximum height with out collisions", min(rs))
+
+
+    newpts=points+ norms*h
+
+    self.setData('Points_out',newpts.tolist())   
+
+    ud=2
+    vd=2
+    bsa=noto.createBSplineSurface(newpts,udegree=ud,vdegree=vd)
+    self.setPinObject('Shape_out',bsa.toShape())
+
+    # test quality
+    testpts=np.array([[bsa.value(ua+(ue-ua)*u/size,va+(ve-va)*v/size) for v in range(size+1)]  for u in range(size+1)])
+    ptsn=testpts.reshape((size+1)**2,3)
+    
+    dists=[sh.distToShape(Part.Vertex(*p))[0] for p in ptsn]
+    say("distance expected min max",round(abs(h),2),round(min(dists),2),round(max(dists),2))
+
+    
+
+
+
+from nodeeditor.tools import *
+
+def run_FreeCAD_CloseFace(self):
+
+    fac=self.getPinObject('Shape_in')
+    if fac is None:
+        sayW("no Shape_in")
+        return
+    swap=self.getData('swap')
+    force=self.getData("tangentForce")*0.01
+
+    sf=fac.Face1.Surface
+    
+    poles=sf.getPoles()
+    ud=sf.UDegree   
+    vd=sf.VDegree
+
+    umults=sf.getUMultiplicities()
+    vmults=sf.getVMultiplicities()
+
+    if swap:
+        ud,vd=vd,ud  
+        umults,vmults=vmults,umults     
+        poles=np.array(poles).swapaxes(0,1)
+
+    a=[FreeCAD.Vector(p) for p in poles[0]]
+    b=[FreeCAD.Vector(p) for p in poles[1]]
+    d=[FreeCAD.Vector(p) for p in poles[-2]]
+    c=[FreeCAD.Vector(p) for p in poles[-1]]
+   
+
+
+    ptsk=[]
+    for ap,bp,cp,dp in zip(a,b,c,d):
+        dist=(cp-ap).Length*force
+        na=(ap-bp).normalize()
+        nc=(cp-dp).normalize()
+        #ptsk += [[ap,ap+na*dist,cp+nc*dist,cp]]
+        ptsk += [[ap,ap+na*dist,(ap+na*dist+cp+nc*dist)*0.5,cp+nc*dist,cp]]
+
+    bs=createBSplineSurface(ptsk,
+                udegree=3,vdegree=3,
+                uperiodic=False,vperiodic=False,
+                uclosed=False,vclosed=False,weights=None)
+
+    if swap:
+        bs.increaseDegree(vd,ud)
+    else:
+        bs.increaseDegree(ud,vd)
+    
+        
+    if swap:
+        poles1=np.array(sf.getPoles()).swapaxes(0,1)[::-1]
+        poles2=np.array(bs.getPoles()).swapaxes(0,1)
+    else:
+        poles1=np.array(sf.getPoles())[::-1]
+        poles2=np.array(bs.getPoles()).swapaxes(0,1)#[::-1]
+    
+    pall=np.concatenate([poles1,poles2[1:-1]])
+    pall2=np.concatenate([pall[-ud:],pall[:-ud]])
+
+    kk=ud
+    pall2=np.concatenate([pall[-kk:],pall[:-kk]])
+    
+    dd=pall2.shape[0]
+    say("dd",dd)
+    say(umults[1:-1],sum(umults[1:-1]))
+    if sum(umults[1:-1])<=(dd-2*ud-1):
+        say("FUEGE reste eine")
+        umults2=[1,ud] +umults[1:-1]+[ud,1]
+        kdd=dd-sum(umults2)
+        say(kdd)
+        umults2 +=[1]*(kdd+1)
+        say(sum(umults2))
+    else:
+        umults2=[1,ud] +[1]*(dd-2*ud-1)+[ud,1]
+    
+    
+    say("pall2 shape",pall2.shape)
+    say("!u2!",umults2,ud,len(umults2),sum(umults2))
+    say("!v!",vmults,vd,len(vmults),sum(vmults))
+    
+    bs2=Part.BSplineSurface()
+    bs2.buildFromPolesMultsKnots(pall2,umults2,vmults,range(len(umults2)),range(len(vmults)),
+            True,False,ud,vd)        
+
+    self.setPinObject("Shape_out",bs2.toShape())
+
+
+
+
+def run_FreeCAD_replacePoles(self):
+
+    sh=self.getPinObject("Shape")
+    if sh is None:
+        sayErr("no Shape - abort")
+        return
+    
+    sf=sh.Surface
+    poles=np.array(sf.getPoles())
+    points=np.array(self.getData('poles'))
+    [uix,vix]=self.getData('polesIndex')
+    #say(poles.shape)
+    #say(points.shape)
+    #say([uix,vix])
+ 
+     # daten holen und neu aufbauen
+    ud=sf.UDegree
+    vd=sf.VDegree
+
+
+    ap=np.array(sf.getPoles())
+
+    uk=np.array(sf.getUKnots())
+    vk=np.array(sf.getVKnots())
+   
+    
+    mu=np.array(sf.getUMultiplicities())
+    mv=np.array(sf.getVMultiplicities())
+    start=ap[uix,vix]
+    
+    #ap[uix-1:uix+2,vix-1:vix+2] += (points-start)*0.8
+    #ap[uix:uix+1,vix:vix+1] += (points-start)*0.2
+    #ap[uix-1:uix+2,vix-1:vix+2] += (points)*0.8
+    ap[uix:uix+1,vix:vix+1] += (points)*1
+
+    fa=Part.BSplineSurface()
+    fa.buildFromPolesMultsKnots(ap,mu,mv,uk,vk,False,False,ud,vd)
+    self.setPinObject('Shape_out',fa.toShape())
+    
+ 
+
+    
+
+
 
 
 
