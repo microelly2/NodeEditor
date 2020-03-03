@@ -56,7 +56,7 @@ from nodeeditor.say import *
 import nodeeditor
 if devmode:
     #reload(nodeeditor.dev)
-    #reload(nodeeditor.dev_Development)
+    reload(nodeeditor.dev_Development)
     #reload(nodeeditor.dev_Combination)
     pass
 
