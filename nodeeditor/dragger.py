@@ -36,7 +36,6 @@ class EventFilter(QtCore.QObject):
                 return
 
             if self.displayObjects<time.time()-delta:
-                
                 #clearReportView(name="dragger")
                 if self.t != None:
                     say(self.t[0])

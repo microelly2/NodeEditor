@@ -2,7 +2,7 @@
 #-------------------------------------------------
 #-- freecad wrapper for pyflow
 #--
-#-- microelly 2019 
+#-- microelly 2019
 #--
 #-- GNU Lesser General Public License (LGPL)
 #-------------------------------------------------
@@ -76,7 +76,7 @@ def QtEnvironment():
 
 
 def refresh_gui():
-    
+
     store=saveGraph(False)
     # say(store)
     loadGraph(store)
@@ -92,11 +92,11 @@ def refresh_gui():
     gg=pfwrap.getGraphManager().getAllGraphs()[0]
     say(gg)
 
-    #geaendert 
+    #geaendert
 #   saveData = pfwrap.getGraphManager().serialize()
 #   saveData = pfwrap.getGraphManager().serialize()
 #                json.dump(saveData, f, indent=4)
-        
+
 
     #saveData = gg.serialize()
     sayl("naCH SE")
@@ -304,7 +304,7 @@ def ConeTorusBoxandImagenode():
     FreeCAD.ActiveDocument.addObject("Part::Cone","Cone")
     FreeCAD.ActiveDocument.addObject("Part::Torus","Torus")
     FreeCAD.ActiveDocument.addObject("Part::Box","Box")
-    
+
     t = pfwrap.createNode('PyFlowBase',"imageDisplay","ImageXX")
     t.setPosition(-100,-200)
     t.entity.setData('/home/thomas/Bilder/freeka.png')
@@ -477,7 +477,7 @@ def createPolygonFromCoordinateListswithnumpy():
     create Polygon from CoordinateLists with numpy
     create 3 random lists
     zip them to a vector list
-    create a polygon 
+    create a polygon
     '''
 
     instance=pfwrap.getInstance()
@@ -585,7 +585,7 @@ def reset():
     if 'aa' not in FreeCAD.listDocuments().keys():
         FreeCAD.open(u"/home/thomas/aa.FCStd")
     FreeCAD.setActiveDocument("aa")
-    
+
     try:
         pfwrap.deleteInstance()
         del(FreeCAD.PF)
@@ -654,7 +654,7 @@ class MyDockWidget(QDockWidget):
 
         w=pfwrap.getInstance()
         w.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self)
-        
+
         l.addWidget(pfwrap.getInstance().canvasWidget)
 
 
@@ -758,7 +758,7 @@ def saveGraph(storage = True):
         a.graph=str(saveData)
         return None
     else:
-        return saveData 
+        return saveData
 
 
 def loadFile():
@@ -789,7 +789,7 @@ class ViewProvider:
     def __init__(self, obj):
         obj.Proxy = self
 
-def createObjectWithAllProperties(): 
+def createObjectWithAllProperties():
     obj=FreeCAD.ActiveDocument.addObject("Part::FeaturePython","allProps")
     for p in obj.supportedProperties():
         pn=str(p).replace('Part::Property','a')
@@ -1128,11 +1128,11 @@ fn='compb'
 
 def loadAll():
     showPyFlow()
-    try: 
+    try:
         FreeCAD.getDocument(fn)
     except:
         FreeCAD.open(u"/home/thomas/{}.FCStd".format(fn))
-    
+
     FreeCAD.setActiveDocument(fn)
     FreeCAD.ActiveDocument=FreeCAD.getDocument(fn)
     FreeCADGui.ActiveDocument=FreeCADGui.getDocument(fn)
@@ -1165,7 +1165,7 @@ def view3DExample():
     rib = pfwrap.createFunction('PyFlowFreeCAD',"Vector","workspace")
     rib.setPosition(-100,0)
     gg.addNode(rib)
-    
+
     rib5 = pfwrap.createFunction('PyFlowFreeCAD',"Vector","view3D")
     rib5.setPosition(100,0)
     gg.addNode(rib5)
@@ -1195,19 +1195,19 @@ def createAllNodesforTests():
     # erzeuge für alle Nodes ein Objekt und lasse es laufen compute()
 
     nn=[]
-    
+
     nodelistcol=[]
     if 1:
-  
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin import nodelist
         nodelistcol += nodelist()
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Combination import nodelist
         nodelistcol += nodelist()
-        
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Conversion import nodelist
         nodelistcol += nodelist()
-        
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development import nodelist
         nodelistcol += nodelist()
 
@@ -1215,17 +1215,17 @@ def createAllNodesforTests():
         nodelistcol += nodelist()
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D import nodelist
-        nodelistcol += nodelist()       
-        
+        nodelistcol += nodelist()
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel import nodelist
         nodelistcol += nodelist()
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image import nodelist
         nodelistcol += nodelist()
-        
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Information import nodelist
         nodelistcol += nodelist()
-        
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Lambda import nodelist
         nodelistcol += nodelist()
 
@@ -1237,38 +1237,38 @@ def createAllNodesforTests():
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object import nodelist
         nodelistcol += nodelist()
-        
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement import nodelist
         nodelistcol += nodelist()
-            
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitive import nodelist
         nodelistcol += nodelist()
-        
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection import nodelist
         nodelistcol += nodelist()
-        
+
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensor import nodelist
         nodelistcol += nodelist()
 
         from PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal import nodelist
         nodelistcol += nodelist()
 
-    
+
     x0=-300
     x=x0
     y=-400
     nodes={}
-    
+
     for i,n in enumerate(nodelistcol):
         #if i>13:break
         FreeCADGui.updateGui()
         name=n.__name__
         if name=="FreeCAD_Tread":
             say("ignore", name)
-            continue 
+            continue
 
         # if i>170 or i<70: continue
-            
+
 
 
         say("-----------",i, n.__name__)
@@ -1390,12 +1390,12 @@ def LODDemo():
     t2.setPosition(-200,0)
     t2.setData("shapeOnly",True)
     gg.addNode(t2)
-    
+
     t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Toy","MyToy")
     t2.setPosition(-200,0)
     #t2.setData("shapeOnly",True)
     gg.addNode(t2)
-    
+
     t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Boolean","Bool")
     t2.setPosition(-200,0)
     #t2.setData("shapeOnly",True)
@@ -1411,12 +1411,12 @@ def LODDemo():
 
     t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_LOD","myLOD")
     t2.setPosition(100,200)
-    
+
     t2.compute()
     gg.addNode(t2)
 
     connection = pfwrap.connect(t2,'Shape',rib5,'Shape')
-    
+
     refresh_gui()
 
 
@@ -1432,7 +1432,7 @@ def voronoi():
 
     t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Voronoi","myLOD")
     t2.setPosition(100,200)
-    
+
     t2.compute()
     gg.addNode(t2)
 
@@ -1487,7 +1487,7 @@ def VoronoiforPointcloud():
 
     t2 = pfwrap.createNode('PyFlowFreeCAD',"FreeCAD_Voronoi","myVoronoi")
     t2.setPosition(100,200)
-    
+
     #t2.compute()
     #gg.addNode(t2)
 
@@ -1667,7 +1667,7 @@ def getdescription(pin):
         'uCount': 'number of u Iso curves',
         'vCount': 'number of v Iso curves',
         'randomize': 'add some random noise to the layout',
-        
+
         }
 
 
@@ -1711,7 +1711,7 @@ def createSender():
 
 def createBlinker():
     a=Blinker()
-    
+
 def createReceiver():
     a=Receiver()
 
@@ -1731,7 +1731,7 @@ def  test_AA():
         App.setActiveDocument("")
         App.ActiveDocument=None
         Gui.ActiveDocument=None
-    
+
     FreeCAD.open(u"/home/thomas/Schreibtisch/move_2.FCStd")
     App.setActiveDocument("move_2")
     App.ActiveDocument=App.getDocument("move_2")
@@ -1756,17 +1756,17 @@ def test_BB():
     n.compute()
     n=getNodebyName("FreeCAD_VectorArray8")
     n.compute()
-     
-     
-def test_CC():     
+
+
+def test_CC():
     allnodes=createAllNodesforTests()
-    
+
 
 
 def createnodewithallpins():
     import  PyFlow.Packages.PyFlowFreeCAD
     pincs=PyFlow.Packages.PyFlowFreeCAD.PyFlowFreeCAD.GetPinClasses()
-  
+
 
     instance=pfwrap.getInstance()
     clearGraph()
@@ -1775,7 +1775,7 @@ def createnodewithallpins():
     gg.addNode(toy)
 
     say(toy)
-    refresh_gui()    
+    refresh_gui()
 
 
 
@@ -1786,7 +1786,7 @@ def reset():
 
 
 def T1():
-    
+
     for n in FreeCAD.PF.graphManager.get().getAllNodes():
         yid="ID_"+str(n.uid)
         yid=yid.replace('-','_')
@@ -1794,7 +1794,7 @@ def T1():
         if a != None:
             FreeCAD.ActiveDocument.removeObject(yid)
             n._preview = True
-    
+
 
 
 def createNewNodeDocu():
@@ -1824,22 +1824,22 @@ def createNodeDocu(onlyNew=False):
         doclevel={}
         for c in cnks:
             if c[7:] in ['PinsTest']:
-                continue 
+                continue
 
             try:
-                
-                
+
+
                 say("=====FC"+c[7:]+"=====")
-                RESOURCES_DIR="/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/icons" 
+                RESOURCES_DIR="/home/thomas/.FreeCAD/Mod.PyFlow/NodeEditor/PyFlowPackages/PyFlowFreeCAD/UI/icons"
                 image=RESOURCES_DIR + "/"+ c.lower()+".svg"
                 if os.path.exists(image):
                     say("{{:icons_pyflow:"+c.lower()+".svg|}}")
                 say("/*")
                 node = classNodes[c]("nodeName")
                 say("*/")
-                
+
                 say("[[::pyflow::categories#"+ classNodes[c].category()+"|"+ classNodes[c].category() +" ...]]")
-                
+
 #               if node.dok != 2: continue
                 try:
                     doclevel[node.dok]  += [c]
@@ -1852,7 +1852,7 @@ def createNodeDocu(onlyNew=False):
                 docs=node.__doc__
                 for s in docs.split('\n'):
                     say("  "+s.lstrip())
-                
+
                 say("[[nodes::{}|More ...]]\n\n".format(c[8:]))
 
                 try:
@@ -1926,24 +1926,24 @@ def createNodeDocu(onlyNew=False):
             for c in doclevel[k]:
                 say("[[nodes::{}]]".format(c[8:]))
                 say("[[nodes#fc_{}|/°/  ]]".format(c[8:]))
-        
+
     say()
     say("number of nodes {}".format(len(cnks)))
-    
- 
- 
- 
+
+
+
+
     return
     # nur kategorien ab hier
     say("############################################")
     say("############################################")
     say("############################################")
-    
-    
+
+
 
     import PyFlow.Packages.PyFlowFreeCAD.Nodes
 
-    for modul in [ 
+    for modul in [
 
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Algebra,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Coin,
@@ -1953,37 +1953,37 @@ def createNodeDocu(onlyNew=False):
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Development,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_File,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Flow,
-            
+
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Geom2D,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_HighLevel,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Image,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Information,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Lambda,
-            
+
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Logic,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Nurbs,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Object,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Placement,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Primitive,
-            
+
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Projection,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Sensor,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Signal,
             PyFlow.Packages.PyFlowFreeCAD.Nodes.FreeCAD_Voronoi,
-            
+
 
         ]:
-                
+
         mn=modul.__name__
         k=mn[44:]
 
         say("====={}=====".format(k))
-        
+
         say("=={}==".format(modul.__name__))
         say()
         say(modul.__doc__)
 
-        
+
         try:
             _=kats[k]
         except:
@@ -2000,7 +2000,7 @@ def createNodeDocu(onlyNew=False):
         FreeCAD.kats=kats
 
 
-    
+
 
 
 def T3(): # docfun():
@@ -2009,7 +2009,7 @@ def T3(): # docfun():
     packages = GET_PACKAGES()
     kats={}
     for pn in packages:
-        
+
         if str(pn).startswith('PyFlowBase'):
             continue
         #say("!",pn)
@@ -2020,7 +2020,7 @@ def T3(): # docfun():
             say("======={}=======".format(ll.__class__.__name__))
             for fn in ll.getFunctions():
                 fun=ll.getFunctions()[fn]
-                
+
                 say("====={}======".format(fun.__name__))
                 docs=fun.__doc__
                 if docs is not None:
@@ -2029,7 +2029,7 @@ def T3(): # docfun():
                 #say("/*")
                 node=pfwrap.createFunction(pn,l,fn)
                 #say("*/")
-            
+
                 try:
                     kats[node.category()] +=  [fn]
                 except:
@@ -2082,7 +2082,7 @@ def T3(): # docfun():
 
 
     say()
-    say("!number of nodes {}".format(nc))  
+    say("!number of nodes {}".format(nc))
 
 
 def getfun(fname):
@@ -2101,7 +2101,7 @@ def getfun(fname):
 
 def dumpScriptforGraph():
     ''' skript zum aufsetzen graph'''
-    
+
     nodes=FreeCAD.PF.graphManager.get().getAllNodes()
     say()
     say('#####################################')
@@ -2118,21 +2118,21 @@ def dumpScriptforGraph():
         if pn != None:
              say("_{}=pfwrap.createFunction('{}','{}','{}')".format(n.name,pn,ln,n.__class__.__name__))
         else:
-            say("_{}=pfwrap.createNode('{}','{}','{}')".format(n.name,tt[2],n.__class__.__name__,n.name))    
-            
+            say("_{}=pfwrap.createNode('{}','{}','{}')".format(n.name,tt[2],n.__class__.__name__,n.name))
+
         say("_{}.setPosition({},{})".format(n.name,int(round(n.x)),int(round(n.y))))
         say("gg.addNode(_{})".format(n.name))
         say()
         say("#{}.setData(pinname,value)".format(n.name))
-        
+
         say()
-    
+
     say()
-    
+
     for ix, n in enumerate(nodes):
             pins=n.getOrderedPins()
             for pin in pins:
-                if pin.direction == PinDirection.Output:                 
+                if pin.direction == PinDirection.Output:
                     s=getConnectedPins(pin)
                     if len(s)>0:
                         for p in s:
@@ -2144,19 +2144,66 @@ def dumpScriptforGraph():
 
 def T2():
     import toponaming
-    reload (toponaming)  
-    
+    reload (toponaming)
+
     toponaming.main()
-        
+
 def T2():
     import elastic
-    reload (elastic)  
-    
+    reload (elastic)
+
     elastic.main()
 
 
 def T2():
+    import step2
+    reload (step2)
+
+    step2.main()
+
+def T3():
     import step
-    reload (step)  
-    
-    step.main()
+    reload (step)
+
+    step.main2()
+
+
+
+def T3():
+
+    import forum_monitor
+    reload (forum_monitor)
+
+    forum_monitor.read_forum()
+
+
+def T2():
+ 
+    import forum_monitor
+    reload (forum_monitor)
+
+    #forum_monitor.analyse_weblinks()
+    sayl("DONE----------")
+   
+def T1():
+ 
+    import forum_monitor
+    reload (forum_monitor)
+
+    forum_monitor.create_entries_v3()
+    sayl("DONE----------")
+
+
+def test_AA():
+    import forum_monitor
+    reload (forum_monitor)
+
+    forum_monitor.chain_threads()
+    sayl("DONE----------")
+	
+def test_BB():
+    import forum_monitor
+    reload (forum_monitor)
+
+    forum_monitor.get_post_ip()
+    sayl("DONE----------")
