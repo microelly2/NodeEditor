@@ -637,6 +637,8 @@ def run_FreeCAD_Toy3(self):
     dit=self.getData('data')
     say(dit)
     
+    sayl()
+    
     def myf(einezahl,anderezahl,a,b=3):
         say("MYF einz",einezahl)
         say("andnz",anderezahl)
@@ -715,6 +717,11 @@ def run_FreeCAD_Toy3(self):
         Part.show(Part.Compound(col))
 
 
+def run_FreeCAD_Toy3(self):
+		sayl()
+		dat=self.getData("data")
+		say(dat)
+		
 
 
 
@@ -1330,6 +1337,8 @@ def params2obj(idd,data):
 
 
 def run_FreeCAD_StepData(self,*args,**kvals):
+    
+    sayl()
 
     #------------------------
 
@@ -1365,12 +1374,20 @@ def run_FreeCAD_StepData(self,*args,**kvals):
     # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
     # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    def process_nested_parent_str(attr_str,idx=0):
+    def process_nested_parent_strV1(attr_str,idx=0):
         '''
         The first letter should be a parenthesis
         input string: "(1,4,(5,6),7)"
         output: ['1','4',['5','6'],'7']
         '''
+        say("**",attr_str)
+        ma=re.match("([^\(]*)\((.*)\)([^\(]*)$",attr_str)
+        if 0 and ma is not None:
+            say("match pattern")
+            say(ma.group(1))
+            say(ma.group(2))
+            say(ma.group(3))
+        
         params = []
         current_param = ''
         k = 0
@@ -1382,18 +1399,72 @@ def run_FreeCAD_StepData(self,*args,**kvals):
                 current_param = ''
             elif ch=='(':
                 nv = attr_str[k:]
-                current_param, progress = process_nested_parent_str(nv)
-                params.append(current_param)
+                current_param2, progress = process_nested_parent_str(nv)
+                say("got from inner call",current_param2)
+                params.append(current_param2)
+                say("params --",params)
                 current_param = ''
                 k += progress+1
             elif ch==')':
                 params.append(current_param)
+                say("k",k)
                 return params,k
             else:
                 current_param += ch
         params.append(current_param)
+        say("done")
         return params,k
 
+    def process_nested_parent_str(attr_str,idx=0):
+        '''
+        The first letter should be a parenthesis
+        input string: "(1,4,(5,6),7)"
+        output: ['1','4',['5','6'],'7']
+        '''
+        #say("**",idx,"---",attr_str)
+        ma=re.match("([^\(]*)\((.*)\)([^\(]*)$",attr_str)
+        if 0 and ma is not None:
+            say("match pattern")
+            say(ma.group(1))
+            say(ma.group(2))
+            say(ma.group(3))
+        
+        
+        params = []
+        current_param = ''
+        k = 0
+        new_str=['"']
+        while (k<len(attr_str)):
+            ch = attr_str[k]
+            k += 1
+            if ch==',':
+                if new_str[-1] ==']' or new_str[-1] =='"' :
+                    new_str += [',','"']
+                  
+                else:
+                    new_str += ['"',',','"']
+            elif ch=='(':
+                new_str[-1]=' ' 
+                new_str += ['[',' ','"']
+            elif ch==')':
+                if new_str[-1] ==']':
+                    new_str += [']']
+                else:
+                    new_str +=  ['"',']']
+            else:
+                new_str  += [ch]
+        if new_str[-1] !=']':
+            new_str += '"'
+        new_str="".join(new_str)
+        
+        #say("done",new_str)
+        try:
+            hh=eval(new_str)
+            say(hh)
+        except:
+            hh=[]
+        #say(len(hh))
+        return hh,len(hh)
 
 
 
@@ -1517,7 +1588,14 @@ def run_FreeCAD_StepData(self,*args,**kvals):
                     # fill number of ancestors dict
                     #self._number_of_ancestors[number_of_ancestors].append(instance_int_id) # this kind of sorting don't work on non-trivial files
                     # parse attributes string
+                    #say(entity_name)
+                    #say("!! in ",entity_attrs)
+                    
                     entity_attrs_list, str_len = process_nested_parent_str(entity_attrs)
+                    #say("!! rc ",entity_attrs_list)
+                    #if entity_name.startswith("B_SPLINE_S"):
+                    #    return
+                        
                     # then finally append this instance to the disct instance
                     self._instances_definition[instance_int_id] = (entity_name,entity_attrs_list)
                 else: #does not match with entity instance definition, parse the header
@@ -1659,15 +1737,163 @@ def run_FreeCAD_StepData(self,*args,**kvals):
         
 #       for idd in  p21loader._instances_definition:
 #           print(p21loader._instances_definition[idd])
+
+        sayl("Abbruch")
+        #return
+
         
         for idd in  self.p21loader._instances_definition:
                 print(idd,self.p21loader._instances_definition[idd])
     
     
     
+        import step2
+        reload(step2)
+        sayl("step2 loaded !!")
+        import step
+        reload(step)
+
+        entities,types = step2.main()
     
+    
+        driver=step.getDriver()
+        with driver.session() as session:
+            session.write_transaction(step.clear)
+
+        say("-----------------------------------")
+
+    
+    
+        def sref(s):
+            return "R-->"+s[1:]
+        
+        
+        def makelist(v):
+            vs=[]
+            for p in v:
+                if isinstance(p,list):
+                    vs += [makelist(p)]
+                elif p.startswith("#"):
+                    vs += [ sref(p) ]
+                elif p=='':
+                    vs += ['']
+                else:
+                    try:
+                        rc=int(p)
+                    except:
+                        try:
+                            rc=float(p)
+                        except:
+                            rc=p
+                    vs += [rc]
+            return vs
+            
+        errors=[]   
+        for idd in  self.p21loader._instances_definition:
+                dat=self.p21loader._instances_definition[idd]
+                enti=dat[0].lower()
+                if dat[0]=='':
+                    #sayW("ignore")
+                    continue
+
+                    
+                if not enti.startswith('b_spline'):   
+
+                    continue
+
+                #say("#----------------------------",idd)
+                say()
+                print(idd,self.p21loader._instances_definition[idd])
+                dbparams={
+                    'project':'myFilename',
+                    'stepid':idd
+                }
+                
+
+
+                try:
+                    _=entities[enti]
+                    
+                    #step2.displayEntity(entities, types,name=enti)
+                    
+                    #say(entities[enti])
+                    #say("________________")
+                    #say("dart 1",dat[1])
+                    #say(len(entities[enti]),len(dat[1]))
+                    if len(entities[enti]) < len(dat[1]):
+                            #say("ignore first param")
+                            params=dat[1][1:]
+                    else:
+                        params=dat[1]
+                    
+                    #say("!! params",params)
+                    #step2.displayEntity(entities, types,name=enti)
+                    for p,v in zip(entities[enti],params):
+                        #say("LINE-----------",p,v)
+                        if isinstance(v,list):
+                            say(p[0],makelist(v))
+                            dbparams[p[0]]=makelist(v)
+                        elif v.startswith('#'):
+                            say(p[0],sref(v))
+                            dbparams[p[0]]=sref(v)
+                        elif re.match("\[.*\]",v):
+                            say(p[0],makelist(v))
+                            dbparams[p[0]]=makelist(v)
+                        elif p[1]=='REAL':
+                            say(p[0],float(v))
+                            dbparams[p[0]]=float(v)
+                        elif p[1]=='INTEGER':
+                            say(p[0],int(v))
+                            dbparams[p[0]]=int(v)
+
+                        else:
+                            say(p[0],v)
+                            dbparams[p[0]]=v
+                            
+            
+                        
+                except Exception as ex:
+                    sayW(ex)
+                    sayW("no entitiy for ",enti)
+                    errors +=[enti]
+                    if enti=='b_spline_surface_with_knots':
+                        return
+            
+                if enti.startswith('b_spline'):   
+
+                    FreeCAD.dbparams=dbparams                         
+                    say(enti)
         
         
         
+
+                    import json
+
+                    params={}
+                    for p in FreeCAD.dbparams:
+                        if isinstance(FreeCAD.dbparams[p],list):
+                            params[p]=json.dumps(FreeCAD.dbparams[p])
+                        else:
+                            params[p]=FreeCAD.dbparams[p]
+                    
+                    say(enti,idd,params)
+                    typ=enti
+                    kid=idd
+                    #params={'a':23,'b':56}
+
+                    with driver.session() as session:
+                        rc=session.write_transaction(step.createNode2, kid,typ,params)
+                        say("RC",rc)
+                        for k in rc.keys():
+                            print (rc.data())
+                        FreeCAD.rc=rc
+        
+        
+        
+        say('errors...')
+        for e in errors:
+            say(e)
+          
+        FreeCAD.ents=entities
 
 
