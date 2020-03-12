@@ -306,7 +306,7 @@ class ArrayInputWidget(InputWidgetRaw):
         pass
 
     def XresizeEvent(self, event):
-        
+
         if self.width() < 260:
             for x in [self.dsbX, self.dsbY, self.dsbZ]:
                 x.hideSlider()
@@ -432,11 +432,11 @@ class IntInputWidgetSlider2(InputWidgetSingle):
                 valueRange = kwds["pinAnnotations"]["ValueRange"]
             if "DraggerSteps" in kwds["pinAnnotations"]:
                 draggerSteps= kwds["pinAnnotations"]["DraggerSteps"]
-                
+
         say(valueRange)
         say(draggerSteps)
-        # def __init__(self, parent=None, draggerSteps=draggerSteps, sliderRange=[-100, 100], *args, **kwargs):                
-        self.sb = slider(self,draggerSteps=draggerSteps,sliderRange=valueRange) 
+        # def __init__(self, parent=None, draggerSteps=draggerSteps, sliderRange=[-100, 100], *args, **kwargs):
+        self.sb = slider(self,draggerSteps=draggerSteps,sliderRange=valueRange)
         self.setWidget(self.sb)
         self.sb.valueChanged.connect(self.dataSetCallback)
 
@@ -446,16 +446,96 @@ class IntInputWidgetSlider2(InputWidgetSingle):
     def setWidgetValue(self, val):
         self.sb.setValue(int(val))
 
+'''
+...
+logOutput = QTextEdit(parent)
+logOutput.setReadOnly(True)
+logOutput.setLineWrapMode(QTextEdit.NoWrap)
+
+font = logOutput.font()
+font.setFamily("Courier")
+font.setPointSize(10)
+
+theLayout.addWidget(logOutput)
+...
+
+To append text in an arbitrary color to the end of the text area and to automatically scroll the text area so that the new text is always visible, you can use something like
+
+Automatic Scroll Snippet:
+
+...
+logOutput.moveCursor(QTextCursor.End)
+logOutput.setCurrentFont(font)
+logOutput.setTextColor(color)
+
+logOutput.insertPlainText(text)
+
+sb = logOutput.verticalScrollBar()
+sb.setValue(sb.maximum())
+
+
+   self.lineNumberArea.setGeometry(QRect(cr.left(), cr.top(),
+                    self.lineNumberAreaWidth(), cr.height()))
+
+
+
+self.b = QPlainTextEdit(self)
+
+You can add text into the text area programatically:
+
+self.b.insertPlainText("You can write text here.\n")
+
+Set its position (horizontal,vertical) inside the window:
+
+self.b.move(10,10)
+
+And turn it into the change (width,height)
+
+self.b.resize(400,200)
+
+QPlainTextEdit example
+
+
+'''
+
+
+class MultilineInputWidget(InputWidgetSingle):
+    """
+    String data input widget
+    """
+
+    def __init__(self, parent=None, **kwds):
+        super(MultilineInputWidget, self).__init__(parent=parent, **kwds)
+        self.le = QTextEdit(self)
+
+        self.le.resize(400,200)
+        sb = self.le.verticalScrollBar()
+        sb.setValue(500)
+
+        self.setWidget(self.le)
+        self.le.textChanged.connect(lambda: self.dataSetCallback(self.le.toPlainText()))
+
+    def blockWidgetSignals(self, bLocked):
+        self.le.blockSignals(bLocked)
+
+    def setWidgetValue(self, val):
+        self.le.setText(str(val))
+
+
+
 
 
 def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WIDGET_VARIANT,  **kwds):
     '''
     factory method
     '''
-    #say("widgetvariant",widgetVariant,dataType)
+    say("widgetvariant",widgetVariant,dataType)
     if widgetVariant == "NO":
         return MyNoWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
-    
+
+
+
+
     if dataType == 'StringPin' or dataType=='String':
         if widgetVariant == DEFAULT_WIDGET_VARIANT:
             return StringInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
@@ -465,11 +545,16 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
             return EnumInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
         elif widgetVariant == "ObjectPathWIdget":
             return ObjectPathWIdget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+        elif widgetVariant == "MultilineWidget":
+            return MultilineInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
+
+
+
     if dataType == 'BoolPin' or dataType=='Boolean':
         return BoolInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
-     
-    
+
+
     if dataType == 'FloatPin' or dataType == 'Float':
         say("FreeCAD -- float pin", widgetVariant)
 
@@ -486,15 +571,15 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
             if kwds["pinAnnotations"] is not None and "ValueRange" in kwds["pinAnnotations"]:
                 return FloatInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
-        
+
         return FloatInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
 
     if dataType == 'IntPin' or dataType == 'Integer':
         sayl('integer pin in FreeCAD')
         say("widgetvariant",widgetVariant,dataType)
-        
-        
+
+
         if widgetVariant == "Slider":
             return IntInputWidgetSlider2(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
         if widgetVariant == "Simple":
@@ -510,7 +595,7 @@ def getInputWidget(dataType, dataSetter, defaultValue, widgetVariant=DEFAULT_WID
         return IntInputWidgetSimpleSlider(dataSetCallback=dataSetter, defaultValue=defaultValue, **kwds)
 
     if dataType == 'VectorPin':
-        
+
         return VectorInputWidget(dataSetCallback=dataSetter, defaultValue=defaultValue,  **kwds)
     if dataType == 'RotationPin':
         return None
