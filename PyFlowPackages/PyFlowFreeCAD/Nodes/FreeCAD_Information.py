@@ -285,6 +285,31 @@ class FreeCAD_ShapeExplorer(FreeCadNodeBase2):
         return []
 
 
+class FreeCAD_Plot2D(FreeCadNodeBase2):
+    '''
+    verschieben nach FreeCAD Information
+    '''
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+        a=self.createInputPin('comment', 'StringPin')
+        a=self.createInputPin('x', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('y', 'FloatPin',structure=StructureType.Array)
+        a=self.createInputPin('mode','String',"run")
+        
+        a=self.createOutputPin('Shape_out', 'ShapePin')
+
+
+
+    @staticmethod
+    def category():
+        return 'Information'
+
+
 
 
 
@@ -384,6 +409,7 @@ __all__= [
 		FreeCAD_DistToShape,
 		FreeCAD_Object2,
 		FreeCAD_Plot,
+		FreeCAD_Plot2D,
 		
 		FreeCAD_ShapeExplorer,
 		

@@ -105,7 +105,9 @@ def run_FreeCAD_Object2(self, *args, **kwargs):
 def run_FreeCAD_Plot(self,*args, **kwargs):
 
     
-    sayl()
+    sayl("huhuhu44")
+
+    
     mode=self.getData("Figure")
     say("mode",mode)
 
@@ -132,11 +134,13 @@ def run_FreeCAD_Plot(self,*args, **kwargs):
     say(y)
     say(len(x),len(y))
 
-
+    #x=[1,2,3]
+    #y=[1,5,3]
+    
     if len(y)  != 0:
         N=len(y)
         if len(x) != len(y):
-            x = np.linspace(0, 10, N, endpoint=True)
+            x = np.linspace(0, len(y), N, endpoint=True)
         else:
             x=np.array(x)
 
@@ -159,8 +163,27 @@ def run_FreeCAD_Plot(self,*args, **kwargs):
 
 
     plt.show()
+    
+    
     fig.canvas.draw()
-    fig.canvas.flush_events()
+    #fig.canvas.flush_events()
 
 
 
+def run_FreeCAD_Plot2D(self):
+        xs=self.getData('x')
+        #print(xs)
+        ys=self.getData('y')
+        #ys=[0,12,-3,5,0,4,8]
+        #print(ys)
+        if len(xs) == 0:
+            print("def xs",len(ys)) 
+            xs=np.linspace(0,len(ys)-1,len(ys))*100
+            print (xs)
+            #xs=[0,1,2,3]
+        #print(xs)
+        pts=[FreeCAD.Vector(x,y) for x,y in zip(xs,ys)]
+        #print(pts)
+        pol=Part.makePolygon(pts)
+        #Part.show(pol)
+        self.setPinObject("Shape_out",pol)
