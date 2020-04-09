@@ -764,3 +764,27 @@ class Numpy(FunctionLibraryBase):
         return sum(x)
 
 
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
+    def log10(
+			x=('Float', [10,100],{PinSpecifires.ENABLED_OPTIONS: PinOptions.ArraySupported}),
+		):
+		
+        """
+        log10(list)
+        """
+        
+        return list(np.log10(np.array(x)))
+
+
+    @staticmethod
+    @IMPLEMENT_NODE(returns=('FloatPin', [],{'constraint': '1', "enabledOptions": PinOptions.ArraySupported | PinOptions.AllowAny}), meta={'Category': 'numpy|operations', 'Keywords': ['list','scale','multiply']})
+    def gradient(
+			x=('Float', [0,1,4,7,4,2],{PinSpecifires.ENABLED_OPTIONS: PinOptions.ArraySupported}),
+		):
+		
+        """
+		gradient
+        """
+        
+        return list(np.gradient(np.array(x)))
