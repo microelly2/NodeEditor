@@ -157,6 +157,36 @@ class FreeCAD_ImportCSVFile(FreeCadNodeBase2):
     def category():
         return 'Sensor'
         
+class FreeCAD_ImportAnyCSVFile(FreeCadNodeBase2):
+    '''
+
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin('filename', 'String','/home/thomas/CORONA/COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+        
+        a=self.createInputPin('force', 'Boolean',True)
+        a=self.createInputPin('separator', 'String',True)
+        a.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":["space","tabulator","comma","semicolon"]
+            }
+        a.setInputWidgetVariant("EnumWidget")
+        a.setData("comma")
+
+        
+        
+        a=self.createOutputPin('data', 'StringPin',structure=StructureType.Array)
+
+    @staticmethod
+    def category():
+        return 'Sensor'
 
 
 class FreeCAD_Collect_Vectors(FreeCadNodeBase):
@@ -288,6 +318,7 @@ def nodelist():
                 FreeCAD_Keyboard,
                 
                 FreeCAD_ImportCSVFile,
+                FreeCAD_ImportAnyCSVFile,
                 
                 FreeCAD_Collect_Vectors,
                 FreeCAD_Collect_Data,

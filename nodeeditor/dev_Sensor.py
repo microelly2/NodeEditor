@@ -75,6 +75,8 @@ def run_FreeCAD_Collect_Data(self, mode=None):
         self.outExec.call()
 
 def run_FreeCAD_ImportCSVFile(self):
+    
+    say('kok')
 
     try:
         self.last
@@ -112,9 +114,11 @@ def run_FreeCAD_ImportCSVFile(self):
                 continue
             rr += [[float(a) for a in l.split(sep)]]
             ff=[float(a) for a in l.split(sep)]
+            vs += [FreeCAD.Vector(*ff[:3])]
         except:
+            rr += [[a for a in l.split(sep)]]
             pass
-        vs += [FreeCAD.Vector(*ff[:3])]
+        
         
     self.setData('data',rr)
     self.setData('points',vs)
@@ -130,4 +134,50 @@ def run_FreeCAD_ImportCSVFile(self):
         
         say(time.time()-ta)
     
+def run_FreeCAD_ImportAnyCSVFile(self):
+    
+    say('kok 222')
+
+    try:
+        self.last
+    except:
+        self.last=time.time()
+        
+    filename=self.getData('filename')
+    
+    (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(filename)
+    say(os.stat(filename))
+
+    if not self.getData('force') and self.last > mtime:
+        sayErr("---------------not new")
+        return
+        
+    self.last = time.time()
+
+    f=open(filename,"r")
+    contents =f.read()
+    ls=contents.splitlines()
+    print ("ls", len(ls))
+    rr=[]
+    vs=[]
+    seps=self.getData('separator')
+    sepk={
+        'tabulator':'\t',
+        'space':' ',
+        'semicolon':';',
+        'comma':',',
+    }    
+        
+    sep=sepk[seps]
+    for l in ls:
+        rr += [[a for a in l.split(sep)]]
+    
+        
+    self.setData('data',rr)
+    say(rr)
+
+
+
+    
+
 
