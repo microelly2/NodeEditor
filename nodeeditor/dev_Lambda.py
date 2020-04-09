@@ -248,6 +248,57 @@ def run_FreeCAD_CurveFit(self):
     print("results",rc)
     self.setData("y_out",list(rc))
     self.setData("params_out",list(popt))
+    self.setPinObject('function_out',f)
+    return
+    
+
+
+def run_FreeCAD_ApplyFunction(self):
+    
+    f=self.getPinObject('function')
+    
+    
+    selfun=self.getData('selectFunction')
+
+    def linfun(x,a,b):
+        return a*np.array(x)+b
+
+    def quadfun(x,a,b,c):
+        return a*np.square(np.array(x))+b*np.array(x)+c   
+    
+    def expfun(x,a,b,c):
+        return a*np.exp(np.array(x)*b)+c   
+    
+    def invfun(x,a,b,c):
+        #return a*np.log10(np.abs(np.array(x))*b)+c   
+        return a*np.reciprocal(np.array(x)+b)+c   
+    
+    ftab={
+    'a*x+b':linfun,
+    'a*x²+b*x+c':quadfun,
+    'a*exp(b*x)+c':expfun,
+    'a/(x+b)+c':invfun,
+    }
+
+
+    #print("selfun",selfun)
+    #print ("ftab", ftab.keys())
+    
+    #f=ftab[selfun]
+    
+    xdata=[0,1,2,3,4,5]
+    ydata=[0,2,3,5,6,7]
+    xdata=self.getData('x')
+    params=self.getData('params')
+    
+    if f is None:
+        sayErOb(self,"no fuction")
+        return
+        
+    rc=f(xdata, *params)
+    print("results",rc)
+    self.setData("y_out",list(rc))
+    # self.setData("params_out",list(popt))
     return
 
     
@@ -271,7 +322,6 @@ def run_FreeCAD_CurveFit(self):
     say(result.x)
     self.setData('result',np.round(result.x,7).tolist())
     self.setData('minimum',result.fun)
-
 
 
     

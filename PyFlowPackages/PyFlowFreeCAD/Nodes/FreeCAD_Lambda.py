@@ -135,7 +135,7 @@ class FreeCAD_CurveFit(FreeCadNodeBase2):
         #a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
         self.createInputPin('params_start', 'FloatPin',structure=StructureType.Array)
         
-
+        a=self.createOutputPin('function_out', 'FunctionPin')       
         self.createOutputPin('y_out', 'FloatPin',structure=StructureType.Array)
         self.createOutputPin('params_out', 'FloatPin',structure=StructureType.Array)
 
@@ -146,6 +146,45 @@ class FreeCAD_CurveFit(FreeCadNodeBase2):
     @staticmethod
     def category():
         return 'Lambda'
+
+
+class FreeCAD_ApplyFunction(FreeCadNodeBase2):
+    '''
+    calculate function for a serie of x values
+    '''
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin("selectFunction",'String','a*x+b')
+        a.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":['a*x+b', 'a*x²+b*x+c', 'a*exp(b*x)+c', 'a/(x+b)+c']
+            }
+        a.setInputWidgetVariant("EnumWidget")
+        a.setData("a*x+b")
+   
+        a=self.createInputPin('function', 'FunctionPin')
+        
+        a=self.createInputPin('x', 'FloatPin',[10,5,3,1],structure=StructureType.Array)
+     
+        
+        self.createInputPin('params', 'FloatPin',structure=StructureType.Array)
+        
+
+        self.createOutputPin('y_out', 'FloatPin',structure=StructureType.Array)
+
+    @staticmethod
+    def description():
+        return FreeCAD_ApplyFunction.__doc__
+
+    @staticmethod
+    def category():
+        return 'Lambda'
+
 
 
 
@@ -321,7 +360,8 @@ def nodelist():
                 #FreeCAD_MinimizeFunction,
                 
                 FreeCAD_MinimizeFunction2,  
-                FreeCAD_CurveFit,           
+                FreeCAD_CurveFit, 
+                FreeCAD_ApplyFunction, 
                 FreeCAD_ReduceFunction,                
                 FreeCAD_SumDistances,
                #FreeCAD_SumForces,
