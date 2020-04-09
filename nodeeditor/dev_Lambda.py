@@ -181,10 +181,7 @@ from scipy import optimize
 def run_FreeCAD_MinimizeFunction2(self):
     
     f=self.getPinObject('function')
-    if f is None:
-        sayErOb(self,"no fuction")
-        return
-        
+    
     start=self.getData('start')
     method=self.getData('Method')
     say("start value(s)",start)
@@ -200,6 +197,80 @@ def run_FreeCAD_MinimizeFunction2(self):
     self.setData('result',np.round(result.x,7).tolist())
     self.setData('minimum',result.fun)
 
+
+def run_FreeCAD_CurveFit(self):
+    
+    f=self.getPinObject('function')
+    
+    
+    selfun=self.getData('selectFunction')
+
+    def linfun(x,a,b):
+        return a*np.array(x)+b
+
+    def quadfun(x,a,b,c):
+        return a*np.square(np.array(x))+b*np.array(x)+c   
+    
+    def expfun(x,a,b,c):
+        return a*np.exp(np.array(x)*b)+c   
+    
+    def invfun(x,a,b,c):
+        #return a*np.log10(np.abs(np.array(x))*b)+c   
+        return a*np.reciprocal(np.array(x)+b)+c   
+    
+    ftab={
+    'a*x+b':linfun,
+    'a*x²+b*x+c':quadfun,
+    'a*exp(b*x)+c':expfun,
+    'a/(x+b)+c':invfun,
+    }
+
+
+    #print("selfun",selfun)
+    #print ("ftab", ftab.keys())
+    
+    f=ftab[selfun]
+    
+    xdata=[0,1,2,3,4,5]
+    ydata=[0,2,3,5,6,7]
+    xdata=self.getData('x')
+    ydata=self.getData('y')
+    
+    if f is None:
+        sayErOb(self,"no fuction")
+        return
+        
+    popt, pcov = optimize.curve_fit(f, xdata, ydata) 
+    print ("RESULTS")
+    print (popt)
+    print (pcov)
+    rc=f(xdata, *popt)
+    print("results",rc)
+    self.setData("y_out",list(rc))
+    self.setData("params_out",list(popt))
+    return
+
+    
+    
+    
+    if f is None:
+        sayErOb(self,"no fuction")
+        return
+       
+    start=self.getData('start')
+    method=self.getData('Method')
+    say("start value(s)",start)
+    if len(start)==0:
+        start=[0]
+        
+    a=time.time()
+    result = optimize.minimize(f, x0=start,  method=method)
+
+    say("quality",np.round(result.fun,5),np.round(result.x,2),result.message,method)
+    say("run time for scipy.optimize.minimum",method,round(time.time()-a,3))
+    say(result.x)
+    self.setData('result',np.round(result.x,7).tolist())
+    self.setData('minimum',result.fun)
 
 
 

@@ -106,6 +106,47 @@ see https://docs.scipy.org/doc/scipy/reference/optimize.html'''
         return 'Lambda'
 
 
+class FreeCAD_CurveFit(FreeCadNodeBase2):
+    '''
+    fit a curve by points
+    using scipy.optimize.curve_fit
+    '''
+
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+
+        a=self.createInputPin("selectFunction",'String','a*x+b')
+        a.annotationDescriptionDict={ 
+                "editable": False,
+                "ValueList":['a*x+b', 'a*x²+b*x+c', 'a*exp(b*x)+c', 'a/(x+b)+c']
+            }
+        a.setInputWidgetVariant("EnumWidget")
+        a.setData("a*x+b")
+   
+        a=self.createInputPin('function', 'FunctionPin')
+        
+        a=self.createInputPin('x', 'FloatPin',[10,5,3,1],structure=StructureType.Array)
+        a=self.createInputPin('y', 'FloatPin',[1,2,4,8],structure=StructureType.Array)
+        
+        
+        #a=self.createInputPin('points', 'VectorPin',structure=StructureType.Array)
+        self.createInputPin('params_start', 'FloatPin',structure=StructureType.Array)
+        
+
+        self.createOutputPin('y_out', 'FloatPin',structure=StructureType.Array)
+        self.createOutputPin('params_out', 'FloatPin',structure=StructureType.Array)
+
+    @staticmethod
+    def description():
+        return FreeCAD_Function.__doc__
+
+    @staticmethod
+    def category():
+        return 'Lambda'
+
 
 
 class FreeCAD_Expression2Function(FreeCadNodeBase2):
@@ -279,7 +320,8 @@ def nodelist():
                 FreeCAD_Function,
                 #FreeCAD_MinimizeFunction,
                 
-                FreeCAD_MinimizeFunction2,             
+                FreeCAD_MinimizeFunction2,  
+                FreeCAD_CurveFit,           
                 FreeCAD_ReduceFunction,                
                 FreeCAD_SumDistances,
                #FreeCAD_SumForces,
