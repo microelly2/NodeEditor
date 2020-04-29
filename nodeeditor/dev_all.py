@@ -65,7 +65,7 @@ if devmode:
 #reload(nodeeditor.dev_Points)
 
 #reload(nodeeditor.dev_BSpline)
-#reload(nodeeditor.dev_HighLevel)
+reload(nodeeditor.dev_HighLevel)
 #reload(nodeeditor.dev_Sensor)
 
 #reload(nodeeditor.dev_Primitive)

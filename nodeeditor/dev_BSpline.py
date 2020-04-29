@@ -1489,7 +1489,7 @@ def run_FreeCAD_Helmet3(self):
 
     ptsa=np.array(border)
     assert dome.shape == (3,3,3)
-    assert ptsa.shape= (16,3)
+    assert ptsa.shape == (16,3)
 
     poles=np.zeros((5,5,3))
     poles[0,0:-1]=ptsa[12:17][::-1]

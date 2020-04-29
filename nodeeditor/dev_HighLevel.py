@@ -359,3 +359,109 @@ def run_FreeCAD_swept(self):
 
 
 
+def run_FreeCAD_Develope(self):
+	
+
+	sel = FreeCADGui.Selection.getSelectionEx()
+	face = sel[0].SubObjects[0]
+	
+	obn=sel[0].ObjectName
+	sn=sel[0].SubElementNames[0]
+	
+	dist=self.getData('distance')
+	
+	say(face.Surface.__class__.__name__) 
+	if face.Surface.__class__.__name__ == 'Cone':
+
+		f=face.toNurbs().Face1
+		sf=f.Surface
+
+
+		startA=f.valueAt(0,0) 
+		apex=face.Surface.Apex
+		r0=(startA-apex).Length
+		r=face.Surface.Radius
+
+		import math
+
+		def uv2p(u,v):
+			devp=FreeCAD.Vector((r0+v)*math.cos(r/r0*u),(r0+v)*math.sin(r/r0*u))
+			return devp
+
+
+		col=[]
+		for e in face.Edges:
+			print (e)
+			dd=max(int(round(e.Length/dist))+1,3)
+			say(dd)
+			pts=e.discretize(dd)
+			ptsn=[]
+			for p in pts:
+				try:
+					[u,v]=sf.parameter(p)
+					#print(u,v,p)
+					ptsn += [uv2p(u,v)]
+					#ptsn += [FreeCAD.Vector(u,v)]
+				except:
+					print ("error",p)
+			try:
+				pol=Part.makePolygon(ptsn)
+				# Part.show(pol)
+				print (pol.Length)
+				col += [pol]
+			except:
+				col += [e]
+
+
+	elif face.Surface.__class__.__name__ == 'Cylinder':
+		
+		
+		f=face.toNurbs().Face1
+		sf=f.Surface
+		radius=face.Surface.Radius
+		print (f.ParameterRange)
+		
+		def uv2p(u,v):
+			devp=FreeCAD.Vector(radius*u,v)
+			return devp
+
+		col=[]
+		for e in face.Edges:
+			print (e)
+			dd=max(int(round(e.Length/dist))+1,3)
+			say(dd)
+			pts=e.discretize(dd)
+			ptsn=[]
+			for p in pts:
+				try:
+					[u,v]=sf.parameter(p)
+					#print(u,v,p)
+					ptsn += [uv2p(u,v)]
+					#ptsn += [FreeCAD.Vector(u,v)]
+				except:
+					print ("error",p)
+			try:
+				pol=Part.makePolygon(ptsn)
+				# Part.show(pol)
+				print (pol.Length)
+				col += [pol]
+			except:
+				col += [e]
+
+	elif face.Surface.__class__.__name__ == 'Plane':
+		r=face.Surface.Rotation
+		r.invert()
+		ff=face.copy()
+		ff.Placement.Rotation=r
+		col=[ff]
+	else:
+		print (face.Surface.__class__.__name__ )
+		raise Exception("selected face not developable")
+	if self.getData('bake'):
+		Part.show(Part.Compound(col))
+		FreeCAD.ActiveDocument.ActiveObject.Label=obn+"."+sn
+
+	self.setPinObject('Shape_out',Part.Compound(col))
+
+
+		
