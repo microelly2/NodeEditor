@@ -1212,6 +1212,41 @@ class FreeCAD_CurveOffset(FreeCadNodeBase2):
         return 'BSpline'
 
 
+class FreeCAD_Helmet3(FreeCadNodeBase2):
+    '''
+    3rd version of a helmet: tangent border
+    '''
+
+    dok = 0
+    def __init__(self, name="MyToy"):
+
+        super(self.__class__, self).__init__(name)
+        self.inExec = self.createInputPin(DEFAULT_IN_EXEC_NAME, 'ExecPin', None, self.compute)
+        self.outExec = self.createOutputPin(DEFAULT_OUT_EXEC_NAME, 'ExecPin')
+   
+        a=self.createInputPin('border', 'VectorPin', structure=StructureType.Array)
+        a=self.createInputPin('dome', 'VectorPin', structure=StructureType.Array)
+   
+   
+        a=self.createInputPin('flip', 'Boolean')
+        a=self.createInputPin('heightBorder', 'Float',1.0)
+        a.annotationDescriptionDict={ "ValueRange":(0.01,100)}
+
+        
+        self.createOutputPin('Shape_out', 'ShapePin')
+
+    @staticmethod
+    def description():
+        return FreeCAD_Helmet3.__doc__
+
+    @staticmethod
+    def category():
+        return 'BSpline'
+
+
+
+
+
 def nodelist():
     return [
                 FreeCAD_ApproximateBSpline,
@@ -1245,6 +1280,7 @@ def nodelist():
                 FreeCAD_Nurbs,
                 
                 FreeCAD_CloseFace,
-                FreeCAD_CurveOffset
+                FreeCAD_CurveOffset,
                 #FreeCAD_Placement3
+                FreeCAD_Helmet3,
         ]

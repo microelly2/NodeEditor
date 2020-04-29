@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 import json
-from time import clock
+#from time import clock
 import pkgutil
 import uuid
 import shutil
@@ -48,6 +48,8 @@ EDITOR_TARGET_FPS = 60
 
 from PyFlow.App import PyFlow, getOrCreateMenu, generateRandomString,  winTitle
 from nodeeditor.say import *
+from PyFlow.Core.Common import currentProcessorTime
+
 
 class FreeCADPyFlow(PyFlow):
     
@@ -174,6 +176,23 @@ class FreeCADPyFlow(PyFlow):
 
 
     def mainLoop(self):
+        deltaTime = currentProcessorTime() - self._lastClock
+        ds = (deltaTime * 1000.0)
+        if ds > 0:
+            self.fps = int(1000.0 / ds)
+
+        # Tick all graphs
+        # each graph will tick owning raw nodes
+        # each raw node will tick it's ui wrapper if it exists
+        self.graphManager.get().Tick(deltaTime)
+
+        # Tick canvas. Update ui only stuff such animation etc.
+        self.canvasWidget.Tick(deltaTime)
+
+        self._lastClock = currentProcessorTime()
+
+
+    def XmainLoop(self):
         
         deltaTime = clock() - self._lastClock
         ds = (deltaTime * 1000.0)

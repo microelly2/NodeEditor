@@ -433,69 +433,6 @@ def run_FreeCAD_Tripod(self,*args, **kwargs):
 
 
 
-def patchgrid(self):
-
-    shape=self.getPinObject("Face_in")
-    es=shape.Edges
-    sf=shape.Surface
-    e=es[0]
-
-    pts=e.discretize(200)
-
-    pams=np.array([sf.parameter(p) for p in pts])
-    pamsA=np.array([(u,v) for (v,u) in pams])
-
-    pamms= pams[pams[:,0].argsort()]
-    pammsA= pamsA[pamsA[:,0].argsort()]
-
-    segs={}
-    pamss2=[(round(k[0],1),k[1]) for k in pams]
-    for p in pamss2:
-        try:
-            segs[p[0]]+=[p[1]]
-        except:
-            segs[p[0]]=[p[1]]
-
-    col=[]
-    for s in segs:
-        mi=min(segs[s])
-        ma=max(segs[s])
-        if mi != ma:
-            ss=sf.uIso(s)
-            ss.segment(mi,ma)
-            col += [ss.toShape()]
-
-    us=col
-    col=[]
-    
-        
-
-    segsA={}
-    pamss2A=[(round(k[0],1),k[1]) for k in pamsA]
-
-    for p in pamss2A:
-        try:
-            segsA[p[0]]+=[p[1]]
-        except:
-            segsA[p[0]]=[p[1]]
-
-
-
-    col=[]
-    for s in segsA:
-        mi=min(segsA[s])
-        ma=max(segsA[s])
-        if mi != ma:
-            ss=sf.vIso(s)
-            ss.segment(mi,ma)
-            
-            
-            col += [ss.toShape()]
-
-
-    vs=col
-    return (us,vs)
-
 
 
 def check(xa,ya,xb,yb):

@@ -153,3 +153,6 @@ def run_FreeCAD_UVprojection(self,*args, **kwargs):
     #see without extra part >>> s.Face1.extrude(FreeCAD.Vector(0,1,1))
     #<Solid object at 0x660e520>
 
+
+		
+	
