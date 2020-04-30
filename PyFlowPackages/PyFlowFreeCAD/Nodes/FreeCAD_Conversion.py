@@ -300,6 +300,9 @@ class FreeCAD_ListOfVectors(FreeCadNodeBase2):
         self.pas.enableOptions(PinOptions.AllowMultipleConnections)
         self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
         self.pas.description='here multiple vectors can be connected to get them ordered'
+        self.pas.setInputWidgetVariant("NO")
+
+        
 
     @staticmethod
     def description():
@@ -331,6 +334,7 @@ class FreeCAD_ListOfVectorlist(FreeCadNodeBase2):
         self.pas.enableOptions(PinOptions.AllowMultipleConnections)
         self.pas.disableOptions(PinOptions.SupportsOnlyArrays)
         self.pas.description='here multiple lists vectors can be connected to get them ordered'
+        self.pas.setInputWidgetVariant("NO")
 
 
     @staticmethod

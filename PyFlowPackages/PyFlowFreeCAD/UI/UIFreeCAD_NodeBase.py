@@ -146,6 +146,7 @@ class FreeCADUIFunctionBase(UINodeBase):
 
     def f3(self):
         say("run f3")
+        self._rawNode.clearError()
         self._rawNode.compute()
 
     def f2(self):

@@ -59,6 +59,7 @@ class ComputeTool(ShelfTool):
          for n in nodes2:
              if n.getWrapper().isSelected():
                 say(n,n.x)
+                n.clearError()
                 n.compute()
 
 

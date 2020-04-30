@@ -264,8 +264,6 @@ class FreeCAD_ShapeExplorer(FreeCadNodeBase2):
                         a=FreeCAD.tt.linkedTo[0]['rhsNodeName']
                         say("call owning------------------",tt.owningNode().getName())
 
-                        #start the follower node
-                        #tt.owningNode().compute()
 
         self.outExec.call()
 

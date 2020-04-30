@@ -22,8 +22,6 @@ def run_FreeCAD_ListOfVectorlist(self):
     ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
     col=[]
     for i in ySortedPins:
-        # hack to get current values #+# todo debug
-        i.owningNode().compute()
         vv=i.owningNode().getData(i.name)
         col +=[vv]
     say("shape result",np.array(col).shape)
@@ -32,16 +30,13 @@ def run_FreeCAD_ListOfVectorlist(self):
 
 
 
+
+
 def run_FreeCAD_ListOfShapes(self):
     
-    say()
-    say("list of vectors dump ...")
-    say("Hack recompute input nodes is active")
     ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
     b=[]
     for i in ySortedPins:
-        # hack to get current values #+# todo debug
-        # i.owningNode().compute()
         vv=i.owningNode().getPinObject(i.name)
         say(i.name,vv)
         b += [vv]
@@ -54,17 +49,10 @@ def run_FreeCAD_ListOfShapes(self):
 
 def run_FreeCAD_ListOfVectors(self):
     
-    say()
-    say("list of vectors dump ...")
-    say("Hack recompute input nodes is active")
     ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
     b=[]
     for i in ySortedPins:
-        # hack to get current values #+# todo debug
-        i.owningNode().compute()
         vv=i.owningNode().getData(i.name)
-        #say(i.name,vv)
-        #say(np.array(vv).shape)
         if len(np.array(vv).shape)>1:
             ll=np.array(vv).shape
             vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
@@ -79,17 +67,10 @@ def run_FreeCAD_ListOfVectors(self):
 
 def run_FreeCAD_ListOfVectorList(self):
     
-    say()
-    say("list of vectors dump ...")
-    say("Hack recompute input nodes is active")
     ySortedPins = sorted(self.pas.affected_by, key=lambda pin: pin.owningNode().y)
     b=[]
     for i in ySortedPins:
-        # hack to get current values #+# todo debug
-        i.owningNode().compute()
         vv=i.owningNode().getData(i.name)
-        #say(i.name,vv)
-        #say(np.array(vv).shape)
         if len(np.array(vv).shape)>1:
             ll=np.array(vv).shape
             vv=np.array(vv).reshape(np.prod(ll[:-1]),3)
@@ -138,8 +119,8 @@ def run_FreeCAD_uv2xyz(self):
     
 
 def run_FreeCAD_xyz2uv(self):
-	sayW("not implemetned")
-	sayl()
+    sayW("not implemetned")
+    sayl()
 
 
 

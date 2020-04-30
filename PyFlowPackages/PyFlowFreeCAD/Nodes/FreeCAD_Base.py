@@ -66,6 +66,7 @@ class FreeCadNodeBase(NodeBase):
             self._started=time.time()
             say(self.__class__.category())
         
+        self.clearError()
         import nodeeditor.dev_all
         reload(nodeeditor.dev_all)
         a="nodeeditor.dev_all.{}.run_{}(self)".format(self.__class__.category(),self.__class__.__name__)
